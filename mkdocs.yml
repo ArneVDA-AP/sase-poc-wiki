@@ -1,0 +1,87 @@
+site_name: Security Project Wiki
+site_description: SASE PoC — OPNsense / Squid / ClamAV / c-icap / NetBird
+site_author: Arne
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: teal
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - search.share
+    - content.code.copy
+    - content.tooltips
+    - toc.follow
+
+plugins:
+  - search:
+      lang: nl
+  - tags:
+      tags_file: tags.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - def_list
+  - abbr
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Architecture: overview/architecture.md
+  - Components:
+    - components/index.md
+  - Concepts:
+    - concepts/index.md
+  - Decisions:
+    - decisions/index.md
+  - Findings:
+    - findings/index.md
+  - Tags: tags.md
+  - Log: log.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com
