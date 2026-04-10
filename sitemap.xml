@@ -1,661 +1,661 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
     <url>
-        <loc>None./</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="None"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/"/>
     </url>
     <url>
-        <loc>Nonelog/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/log/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonelog/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/log/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/log/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/log/"/>
     </url>
     <url>
-        <loc>Nonetags/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/tags/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonetags/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/tags/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/tags/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/tags/"/>
     </url>
     <url>
-        <loc>Nonecomponents/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/"/>
     </url>
     <url>
-        <loc>Nonecomponents/caddy/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/caddy/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/caddy/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/caddy/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/caddy/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/caddy/"/>
     </url>
     <url>
-        <loc>Nonecomponents/clamav-cicap/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/clamav-cicap/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/clamav-cicap/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/clamav-cicap/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/clamav-cicap/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/clamav-cicap/"/>
     </url>
     <url>
-        <loc>Nonecomponents/gns3/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/gns3/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/gns3/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/gns3/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/gns3/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/gns3/"/>
     </url>
     <url>
-        <loc>Nonecomponents/ioc2rpz/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/ioc2rpz/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/ioc2rpz/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/ioc2rpz/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/ioc2rpz/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/ioc2rpz/"/>
     </url>
     <url>
-        <loc>Nonecomponents/netbird/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/netbird/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/netbird/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/netbird/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/netbird/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/netbird/"/>
     </url>
     <url>
-        <loc>Nonecomponents/python-dlp/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/python-dlp/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/python-dlp/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/python-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/python-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/python-dlp/"/>
     </url>
     <url>
-        <loc>Nonecomponents/squid/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/squid/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/squid/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/squid/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/squid/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/squid/"/>
     </url>
     <url>
-        <loc>Nonecomponents/suricata/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/suricata/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/suricata/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/suricata/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/suricata/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/suricata/"/>
     </url>
     <url>
-        <loc>Nonecomponents/vyos/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/vyos/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/vyos/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/vyos/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/vyos/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/vyos/"/>
     </url>
     <url>
-        <loc>Noneconcepts/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/"/>
     </url>
     <url>
-        <loc>Noneconcepts/dlp/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/dlp/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/dlp/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/dlp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/dlp/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/dlp/"/>
     </url>
     <url>
-        <loc>Noneconcepts/icap/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/icap/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/icap/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/icap/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/icap/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/icap/"/>
     </url>
     <url>
-        <loc>Noneconcepts/rpz/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/rpz/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/rpz/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/rpz/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/rpz/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/rpz/"/>
     </url>
     <url>
-        <loc>Noneconcepts/sase/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/sase/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/sase/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/sase/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/sase/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/sase/"/>
     </url>
     <url>
-        <loc>Noneconcepts/ssl-bump/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/ssl-bump/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/ssl-bump/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/ssl-bump/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/ssl-bump/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/ssl-bump/"/>
     </url>
     <url>
-        <loc>Noneconcepts/wpad-pac/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/wpad-pac/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/wpad-pac/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/wpad-pac/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/wpad-pac/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/wpad-pac/"/>
     </url>
     <url>
-        <loc>Noneconcepts/zero-trust/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/zero-trust/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/zero-trust/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/zero-trust/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/zero-trust/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/zero-trust/"/>
     </url>
     <url>
-        <loc>Nonedecisions/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/"/>
     </url>
     <url>
-        <loc>Nonedecisions/bind-tsig-intermediary/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/bind-tsig-intermediary/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/bind-tsig-intermediary/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/bind-tsig-intermediary/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/bind-tsig-intermediary/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/bind-tsig-intermediary/"/>
     </url>
     <url>
-        <loc>Nonedecisions/ca-posture-hybrid/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ca-posture-hybrid/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/ca-posture-hybrid/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/ca-posture-hybrid/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ca-posture-hybrid/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ca-posture-hybrid/"/>
     </url>
     <url>
-        <loc>Nonedecisions/gns3-vs-eveng/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/gns3-vs-eveng/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/gns3-vs-eveng/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/gns3-vs-eveng/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/gns3-vs-eveng/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/gns3-vs-eveng/"/>
     </url>
     <url>
-        <loc>Nonedecisions/ids-vs-ips/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ids-vs-ips/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/ids-vs-ips/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/ids-vs-ips/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ids-vs-ips/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ids-vs-ips/"/>
     </url>
     <url>
-        <loc>Nonedecisions/ioc2rpz-vs-unbound-native/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ioc2rpz-vs-unbound-native/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/ioc2rpz-vs-unbound-native/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/ioc2rpz-vs-unbound-native/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ioc2rpz-vs-unbound-native/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ioc2rpz-vs-unbound-native/"/>
     </url>
     <url>
-        <loc>Nonedecisions/suricata-wan-lan/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/suricata-wan-lan/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/suricata-wan-lan/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/suricata-wan-lan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/suricata-wan-lan/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/suricata-wan-lan/"/>
     </url>
     <url>
-        <loc>Nonedecisions/two-layer-dlp/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/two-layer-dlp/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/two-layer-dlp/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/two-layer-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/two-layer-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/two-layer-dlp/"/>
     </url>
     <url>
-        <loc>Nonedecisions/wpad-vs-transparent-proxy/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/wpad-vs-transparent-proxy/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/wpad-vs-transparent-proxy/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/wpad-vs-transparent-proxy/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/wpad-vs-transparent-proxy/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/wpad-vs-transparent-proxy/"/>
     </url>
     <url>
-        <loc>Nonedecisions/zitadel-idp-broker/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/zitadel-idp-broker/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/zitadel-idp-broker/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/zitadel-idp-broker/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/zitadel-idp-broker/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/zitadel-idp-broker/"/>
     </url>
     <url>
-        <loc>Nonefindings/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/"/>
     </url>
     <url>
-        <loc>Nonefindings/docker-volume-recreation/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/docker-volume-recreation/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/docker-volume-recreation/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/docker-volume-recreation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/docker-volume-recreation/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/docker-volume-recreation/"/>
     </url>
     <url>
-        <loc>Nonefindings/ioc2rpz-gui-js-bug/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/ioc2rpz-gui-js-bug/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/ioc2rpz-gui-js-bug/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/ioc2rpz-gui-js-bug/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/ioc2rpz-gui-js-bug/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/ioc2rpz-gui-js-bug/"/>
     </url>
     <url>
-        <loc>Nonefindings/iptables-forward-ordering/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/iptables-forward-ordering/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/iptables-forward-ordering/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/iptables-forward-ordering/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/iptables-forward-ordering/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/iptables-forward-ordering/"/>
     </url>
     <url>
-        <loc>Nonefindings/netbird-config-zero-bytes/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/netbird-config-zero-bytes/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/netbird-config-zero-bytes/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/netbird-config-zero-bytes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/netbird-config-zero-bytes/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/netbird-config-zero-bytes/"/>
     </url>
     <url>
-        <loc>Nonefindings/netbird-primary-nameserver/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/netbird-primary-nameserver/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/netbird-primary-nameserver/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/netbird-primary-nameserver/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/netbird-primary-nameserver/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/netbird-primary-nameserver/"/>
     </url>
     <url>
-        <loc>Nonefindings/pre-auth-ssl-bump-params/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/pre-auth-ssl-bump-params/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/pre-auth-ssl-bump-params/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/pre-auth-ssl-bump-params/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/pre-auth-ssl-bump-params/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/pre-auth-ssl-bump-params/"/>
     </url>
     <url>
-        <loc>Nonefindings/pyicap-collections-bug/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/pyicap-collections-bug/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/pyicap-collections-bug/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/pyicap-collections-bug/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/pyicap-collections-bug/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/pyicap-collections-bug/"/>
     </url>
     <url>
-        <loc>Nonefindings/squid-clearlog-destroys-file/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/squid-clearlog-destroys-file/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/squid-clearlog-destroys-file/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/squid-clearlog-destroys-file/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/squid-clearlog-destroys-file/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/squid-clearlog-destroys-file/"/>
     </url>
     <url>
-        <loc>Nonefindings/stevenblack-incompatible/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/stevenblack-incompatible/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/stevenblack-incompatible/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/stevenblack-incompatible/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/stevenblack-incompatible/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/stevenblack-incompatible/"/>
     </url>
     <url>
-        <loc>Nonefindings/suricata-interface-default-bug/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/suricata-interface-default-bug/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/suricata-interface-default-bug/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/suricata-interface-default-bug/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/suricata-interface-default-bug/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/suricata-interface-default-bug/"/>
     </url>
     <url>
-        <loc>Nonefindings/suricata-netmap-virtio/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/suricata-netmap-virtio/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/suricata-netmap-virtio/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/suricata-netmap-virtio/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/suricata-netmap-virtio/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/suricata-netmap-virtio/"/>
     </url>
     <url>
-        <loc>Nonefindings/unbound-config-path/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/unbound-config-path/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/unbound-config-path/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/unbound-config-path/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/unbound-config-path/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/unbound-config-path/"/>
     </url>
     <url>
-        <loc>Nonefindings/unbound-no-tsig/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/unbound-no-tsig/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/unbound-no-tsig/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/unbound-no-tsig/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/unbound-no-tsig/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/unbound-no-tsig/"/>
     </url>
     <url>
-        <loc>Nonefindings/wt0-pf-rdr-limitation/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/wt0-pf-rdr-limitation/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/wt0-pf-rdr-limitation/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/wt0-pf-rdr-limitation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/wt0-pf-rdr-limitation/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/wt0-pf-rdr-limitation/"/>
     </url>
     <url>
-        <loc>Noneoverview/architecture/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/overview/architecture/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneoverview/architecture/"/>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/overview/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/overview/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/overview/architecture/"/>
     </url>
     <url>
-        <loc>Nonenl/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="None"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/"/>
     </url>
     <url>
-        <loc>Nonenl/log/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/log/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/log/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonelog/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/log/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/log/"/>
     </url>
     <url>
-        <loc>Nonenl/tags/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/tags/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/tags/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonetags/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/tags/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/tags/"/>
     </url>
     <url>
-        <loc>Nonenl/components/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/"/>
     </url>
     <url>
-        <loc>Nonenl/components/caddy/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/caddy/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/caddy/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/caddy/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/caddy/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/caddy/"/>
     </url>
     <url>
-        <loc>Nonenl/components/clamav-cicap/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/clamav-cicap/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/clamav-cicap/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/clamav-cicap/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/clamav-cicap/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/clamav-cicap/"/>
     </url>
     <url>
-        <loc>Nonenl/components/gns3/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/gns3/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/gns3/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/gns3/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/gns3/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/gns3/"/>
     </url>
     <url>
-        <loc>Nonenl/components/ioc2rpz/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/ioc2rpz/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/ioc2rpz/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/ioc2rpz/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/ioc2rpz/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/ioc2rpz/"/>
     </url>
     <url>
-        <loc>Nonenl/components/netbird/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/netbird/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/netbird/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/netbird/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/netbird/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/netbird/"/>
     </url>
     <url>
-        <loc>Nonenl/components/python-dlp/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/python-dlp/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/python-dlp/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/python-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/python-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/python-dlp/"/>
     </url>
     <url>
-        <loc>Nonenl/components/squid/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/squid/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/squid/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/squid/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/squid/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/squid/"/>
     </url>
     <url>
-        <loc>Nonenl/components/suricata/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/suricata/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/suricata/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/suricata/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/suricata/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/suricata/"/>
     </url>
     <url>
-        <loc>Nonenl/components/vyos/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/vyos/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/components/vyos/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonecomponents/vyos/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/vyos/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/vyos/"/>
     </url>
     <url>
-        <loc>Nonenl/concepts/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/"/>
     </url>
     <url>
-        <loc>Nonenl/concepts/dlp/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/dlp/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/dlp/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/dlp/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/dlp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/dlp/"/>
     </url>
     <url>
-        <loc>Nonenl/concepts/icap/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/icap/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/icap/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/icap/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/icap/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/icap/"/>
     </url>
     <url>
-        <loc>Nonenl/concepts/rpz/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/rpz/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/rpz/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/rpz/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/rpz/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/rpz/"/>
     </url>
     <url>
-        <loc>Nonenl/concepts/sase/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/sase/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/sase/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/sase/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/sase/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/sase/"/>
     </url>
     <url>
-        <loc>Nonenl/concepts/ssl-bump/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/ssl-bump/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/ssl-bump/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/ssl-bump/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/ssl-bump/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/ssl-bump/"/>
     </url>
     <url>
-        <loc>Nonenl/concepts/wpad-pac/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/wpad-pac/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/wpad-pac/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/wpad-pac/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/wpad-pac/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/wpad-pac/"/>
     </url>
     <url>
-        <loc>Nonenl/concepts/zero-trust/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/zero-trust/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/concepts/zero-trust/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneconcepts/zero-trust/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/concepts/zero-trust/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/concepts/zero-trust/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/bind-tsig-intermediary/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/bind-tsig-intermediary/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/bind-tsig-intermediary/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/bind-tsig-intermediary/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/bind-tsig-intermediary/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/bind-tsig-intermediary/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/ca-posture-hybrid/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ca-posture-hybrid/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/ca-posture-hybrid/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/ca-posture-hybrid/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ca-posture-hybrid/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ca-posture-hybrid/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/gns3-vs-eveng/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/gns3-vs-eveng/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/gns3-vs-eveng/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/gns3-vs-eveng/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/gns3-vs-eveng/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/gns3-vs-eveng/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/ids-vs-ips/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ids-vs-ips/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/ids-vs-ips/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/ids-vs-ips/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ids-vs-ips/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ids-vs-ips/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/ioc2rpz-vs-unbound-native/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ioc2rpz-vs-unbound-native/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/ioc2rpz-vs-unbound-native/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/ioc2rpz-vs-unbound-native/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/ioc2rpz-vs-unbound-native/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/ioc2rpz-vs-unbound-native/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/suricata-wan-lan/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/suricata-wan-lan/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/suricata-wan-lan/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/suricata-wan-lan/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/suricata-wan-lan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/suricata-wan-lan/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/two-layer-dlp/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/two-layer-dlp/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/two-layer-dlp/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/two-layer-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/two-layer-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/two-layer-dlp/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/wpad-vs-transparent-proxy/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/wpad-vs-transparent-proxy/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/wpad-vs-transparent-proxy/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/wpad-vs-transparent-proxy/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/wpad-vs-transparent-proxy/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/wpad-vs-transparent-proxy/"/>
     </url>
     <url>
-        <loc>Nonenl/decisions/zitadel-idp-broker/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/zitadel-idp-broker/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/decisions/zitadel-idp-broker/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonedecisions/zitadel-idp-broker/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/decisions/zitadel-idp-broker/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/decisions/zitadel-idp-broker/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/docker-volume-recreation/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/docker-volume-recreation/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/docker-volume-recreation/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/docker-volume-recreation/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/docker-volume-recreation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/docker-volume-recreation/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/ioc2rpz-gui-js-bug/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/ioc2rpz-gui-js-bug/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/ioc2rpz-gui-js-bug/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/ioc2rpz-gui-js-bug/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/ioc2rpz-gui-js-bug/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/ioc2rpz-gui-js-bug/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/iptables-forward-ordering/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/iptables-forward-ordering/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/iptables-forward-ordering/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/iptables-forward-ordering/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/iptables-forward-ordering/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/iptables-forward-ordering/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/netbird-config-zero-bytes/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/netbird-config-zero-bytes/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/netbird-config-zero-bytes/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/netbird-config-zero-bytes/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/netbird-config-zero-bytes/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/netbird-config-zero-bytes/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/netbird-primary-nameserver/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/netbird-primary-nameserver/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/netbird-primary-nameserver/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/netbird-primary-nameserver/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/netbird-primary-nameserver/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/netbird-primary-nameserver/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/pre-auth-ssl-bump-params/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/pre-auth-ssl-bump-params/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/pre-auth-ssl-bump-params/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/pre-auth-ssl-bump-params/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/pre-auth-ssl-bump-params/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/pre-auth-ssl-bump-params/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/pyicap-collections-bug/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/pyicap-collections-bug/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/pyicap-collections-bug/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/pyicap-collections-bug/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/pyicap-collections-bug/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/pyicap-collections-bug/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/squid-clearlog-destroys-file/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/squid-clearlog-destroys-file/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/squid-clearlog-destroys-file/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/squid-clearlog-destroys-file/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/squid-clearlog-destroys-file/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/squid-clearlog-destroys-file/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/stevenblack-incompatible/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/stevenblack-incompatible/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/stevenblack-incompatible/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/stevenblack-incompatible/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/stevenblack-incompatible/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/stevenblack-incompatible/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/suricata-interface-default-bug/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/suricata-interface-default-bug/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/suricata-interface-default-bug/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/suricata-interface-default-bug/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/suricata-interface-default-bug/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/suricata-interface-default-bug/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/suricata-netmap-virtio/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/suricata-netmap-virtio/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/suricata-netmap-virtio/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/suricata-netmap-virtio/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/suricata-netmap-virtio/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/suricata-netmap-virtio/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/unbound-config-path/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/unbound-config-path/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/unbound-config-path/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/unbound-config-path/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/unbound-config-path/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/unbound-config-path/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/unbound-no-tsig/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/unbound-no-tsig/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/unbound-no-tsig/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/unbound-no-tsig/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/unbound-no-tsig/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/unbound-no-tsig/"/>
     </url>
     <url>
-        <loc>Nonenl/findings/wt0-pf-rdr-limitation/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/wt0-pf-rdr-limitation/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/findings/wt0-pf-rdr-limitation/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Nonefindings/wt0-pf-rdr-limitation/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/wt0-pf-rdr-limitation/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/wt0-pf-rdr-limitation/"/>
     </url>
     <url>
-        <loc>Nonenl/overview/architecture/</loc>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/overview/architecture/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
-        <xhtml:link rel="alternate" hreflang="nl" href="Nonenl/overview/architecture/"/>
-        <xhtml:link rel="alternate" hreflang="en" href="Noneoverview/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/overview/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/overview/architecture/"/>
     </url>
 </urlset>
