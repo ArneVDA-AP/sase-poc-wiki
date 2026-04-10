@@ -98,6 +98,14 @@ plugins:
             NetBird primary nameserver: NetBird primaire nameserver
             NetBird config zero bytes: NetBird config nul bytes
             Docker volume recreation: Docker volume hermaak
+            Runbooks: Runbooks
+            01 — Lab Environment: 01 — Labomgeving
+            02 — ZTNA Overlay: 02 — ZTNA-overlay
+            03 — Proxy & WPAD: 03 — Proxy & WPAD
+            04 — Malware & DLP: 04 — Malware & DLP
+            05 — IDS: 05 — IDS
+            06 — DNS Threat Intel: 06 — DNS Threat Intel
+            07 — Access Policy: 07 — Toegangsbeleid
 
 markdown_extensions:
   - admonition
@@ -162,6 +170,15 @@ nav:
     - GNS3 vs EVE-NG: decisions/gns3-vs-eveng.md
     - Zitadel as IdP Broker: decisions/zitadel-idp-broker.md
     - CA + Posture Hybrid: decisions/ca-posture-hybrid.md
+  - Runbooks:
+    - runbooks/index.md
+    - 01 — Lab Environment: runbooks/01-lab-environment.md
+    - 02 — ZTNA Overlay: runbooks/02-ztna-overlay.md
+    - 03 — Proxy & WPAD: runbooks/03-proxy-wpad.md
+    - 04 — Malware & DLP: runbooks/04-malware-dlp.md
+    - 05 — IDS: runbooks/05-ids.md
+    - 06 — DNS Threat Intel: runbooks/06-dns-threat-intel.md
+    - 07 — Access Policy: runbooks/07-access-policy.md
   - Findings:
     - findings/index.md
     - wt0 pf rdr limitation: findings/wt0-pf-rdr-limitation.md
