@@ -72,12 +72,51 @@ nav:
   - Architecture: overview/architecture.md
   - Components:
     - components/index.md
+    - Squid: components/squid.md
+    - ClamAV / c-icap: components/clamav-cicap.md
+    - Python DLP: components/python-dlp.md
+    - Suricata: components/suricata.md
+    - ioc2rpz: components/ioc2rpz.md
+    - NetBird: components/netbird.md
+    - Caddy: components/caddy.md
+    - GNS3: components/gns3.md
+    - VyOS: components/vyos.md
   - Concepts:
     - concepts/index.md
+    - SASE: concepts/sase.md
+    - Zero Trust: concepts/zero-trust.md
+    - ICAP: concepts/icap.md
+    - SSL Bump: concepts/ssl-bump.md
+    - WPAD/PAC: concepts/wpad-pac.md
+    - RPZ: concepts/rpz.md
+    - DLP: concepts/dlp.md
   - Decisions:
     - decisions/index.md
+    - WPAD vs Transparent Proxy: decisions/wpad-vs-transparent-proxy.md
+    - Two-Layer DLP: decisions/two-layer-dlp.md
+    - ioc2rpz vs Unbound native: decisions/ioc2rpz-vs-unbound-native.md
+    - BIND as TSIG Intermediary: decisions/bind-tsig-intermediary.md
+    - IDS vs IPS: decisions/ids-vs-ips.md
+    - Suricata WAN+LAN: decisions/suricata-wan-lan.md
+    - GNS3 vs EVE-NG: decisions/gns3-vs-eveng.md
+    - Zitadel as IdP Broker: decisions/zitadel-idp-broker.md
+    - CA + Posture Hybrid: decisions/ca-posture-hybrid.md
   - Findings:
     - findings/index.md
+    - wt0 pf rdr limitation: findings/wt0-pf-rdr-limitation.md
+    - pre-auth ssl-bump params: findings/pre-auth-ssl-bump-params.md
+    - Squid clearlog destroys file: findings/squid-clearlog-destroys-file.md
+    - StevenBlack incompatible: findings/stevenblack-incompatible.md
+    - Suricata interface default bug: findings/suricata-interface-default-bug.md
+    - Suricata Netmap/virtio: findings/suricata-netmap-virtio.md
+    - Unbound no TSIG: findings/unbound-no-tsig.md
+    - Unbound config path: findings/unbound-config-path.md
+    - ioc2rpz GUI JS bug: findings/ioc2rpz-gui-js-bug.md
+    - pyicap collections bug: findings/pyicap-collections-bug.md
+    - iptables FORWARD ordering: findings/iptables-forward-ordering.md
+    - NetBird primary nameserver: findings/netbird-primary-nameserver.md
+    - NetBird config zero bytes: findings/netbird-config-zero-bytes.md
+    - Docker volume recreation: findings/docker-volume-recreation.md
   - Tags: tags.md
   - Log: log.md
 
