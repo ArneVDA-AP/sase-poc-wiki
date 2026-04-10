@@ -9,8 +9,6 @@ tags: [network, sase, firewall]
 **Status:** ✅ Deployed — site01 operational at `192.168.122.33`. sitepc01 (client node on Site-LAN) has no OS installed.  
 **Config location:** `/etc/vyos/config.boot` on site01
 
-<!-- TODO: insufficient source detail — VyOS configuration steps not documented in source materials beyond topology/addressing -->
-
 ---
 
 ## How it works in this stack

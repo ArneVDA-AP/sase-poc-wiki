@@ -34,9 +34,66 @@ theme:
 
 plugins:
   - search:
-      lang: nl
+      lang:
+        - en
+        - nl
   - tags:
       tags_file: tags.md
+  - i18n:
+      default_language: en
+      default_language_only: false
+      languages:
+        nl:
+          name: Nederlands
+          build: true
+          nav_translations:
+            Home: Startpagina
+            Architecture: Architectuur
+            Components: Componenten
+            Concepts: Concepten
+            Decisions: Beslissingen
+            Findings: Bevindingen
+            Tags: Tags
+            Log: Logboek
+            Squid: Squid
+            ClamAV / c-icap: ClamAV / c-icap
+            Python DLP: Python DLP
+            Suricata: Suricata
+            ioc2rpz: ioc2rpz
+            NetBird: NetBird
+            Caddy: Caddy
+            GNS3: GNS3
+            VyOS: VyOS
+            SASE: SASE
+            Zero Trust: Zero Trust
+            ICAP: ICAP
+            SSL Bump: SSL Bump
+            WPAD/PAC: WPAD/PAC
+            RPZ: RPZ
+            DLP: DLP
+            WPAD vs Transparent Proxy: WPAD vs Transparante Proxy
+            Two-Layer DLP: Twee-laags DLP
+            ioc2rpz vs Unbound native: ioc2rpz vs Unbound native
+            BIND as TSIG Intermediary: BIND als TSIG-tussenstap
+            IDS vs IPS: IDS vs IPS
+            Suricata WAN+LAN: Suricata WAN+LAN
+            GNS3 vs EVE-NG: GNS3 vs EVE-NG
+            Zitadel as IdP Broker: Zitadel als IdP-broker
+            CA + Posture Hybrid: CA + Posture Hybride
+            wt0 pf rdr limitation: wt0 pf rdr beperking
+            pre-auth ssl-bump params: pre-auth ssl-bump parameters
+            Squid clearlog destroys file: Squid clearlog vernietigt bestand
+            StevenBlack incompatible: StevenBlack incompatibel
+            Suricata interface default bug: Suricata interface default bug
+            Suricata Netmap/virtio: Suricata Netmap/virtio
+            Unbound no TSIG: Unbound geen TSIG
+            Unbound config path: Unbound config-pad
+            ioc2rpz GUI JS bug: ioc2rpz GUI JS bug
+            pyicap collections bug: pyicap collections bug
+            iptables FORWARD ordering: iptables FORWARD-volgorde
+            NetBird primary nameserver: NetBird primaire nameserver
+            NetBird config zero bytes: NetBird config nul bytes
+            Docker volume recreation: Docker volume hermaak
 
 markdown_extensions:
   - admonition

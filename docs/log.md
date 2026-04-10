@@ -70,3 +70,15 @@ Append-only log of wiki changes.
 **Source documents ingested:** Verslag18–27 (10 session reports), Doc1–Doc7 (7 implementation documents), SASE_Architectuur_Overzicht.md (1 architecture overview)
 
 **Total pages created:** 37
+
+---
+
+## 2026-04-10 — Lint pass
+
+**Files updated:**
+
+- `tags.md` — Populated controlled tag vocabulary (was empty stub): 4 page-type tags, 12 component tags, 15 protocol/technology tags, 5 security concept tags
+- `components/vyos.md` — Removed TODO stub comment (VyOS is intentionally a topology-only stub; no source detail exists for config)
+
+**Lint findings resolved:** 2 of 3 actionable items from lint report.  
+**Deferred:** WireGuard concept page — WireGuard is NetBird's transport protocol; all WireGuard content belongs in `components/netbird.md`.
