@@ -97,6 +97,12 @@ The deny rules for blacklists appear before all allow rules. Squid is first-matc
 
 **StevenBlack hosts format is incompatible** — OPNsense Remote ACLs expect a tar.gz archive in Squid ACL format, not a hosts file. Use UT1 Toulouse instead. See [Finding: StevenBlack incompatible](../findings/stevenblack-incompatible.md).
 
+**`--management-url` is mandatory for self-hosted NetBird** — when installing the NetBird agent on pop01, the `--management-url` flag must point to the self-hosted management server. Without it, the client falls back to the NetBird cloud management endpoint and will never join the sandbox overlay.
+
+**OPNsense GUI cannot bind Squid to `wt0`** — the `wt0` interface has `IPv4 Configuration Type: None` because its IP is managed by WireGuard, not OPNsense's DHCP/static stack. The Squid GUI dropdown only shows interfaces with OPNsense-managed IPs. This is why the pre-auth include file is needed for the overlay listener.
+
+**Handbook NAT rule (port 443 → 3129) is irrelevant** — the handbook describes a NAT rule for port 443 → 3129. This is only needed for transparent proxy mode, where the firewall intercepts outbound traffic. In explicit proxy mode, the client sends a `CONNECT` request to Squid on port 3128 directly. No DNAT is required.
+
 ---
 
 ## Related

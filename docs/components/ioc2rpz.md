@@ -80,7 +80,7 @@ Replace the bundled SSL certificate (expired July 2022) with a new self-signed c
 
 Access via `https://ioc2rpz.sandbox.local` (proxied by Caddy). After first login, configure:
 
-**Server:** Public IP `192.168.122.23`, NS `ns1.ioc2rpz.local`
+**Server:** Public IP `192.168.122.23`, NS `ns1.ioc2rpz.local`, ACL: `127.0.0.1, 172.20.0.2` (GUI container), `172.20.0.1`
 
 **TSIG keys:**
 - `tkey_mgmt_1` — management key, hmac-md5
@@ -154,7 +154,7 @@ rpz:
 
 **`python` must stay in module-config** — OPNsense uses `unbound-dnsbl/dnsbl_module.py` for its built-in DNS blocklist feature. Removing `python` from module-config breaks this.
 
-**`configctl unbound check` false positive** — the checker has a hardcoded whitelist of "known" module combinations. `respip python validator iterator` is not in the list but works at runtime. Ignore the error and proceed with restart.
+**`configctl unbound check` false positive** — the checker has a hardcoded whitelist of "known" module combinations. `respip python validator iterator` is not in the list but works at runtime. Ignore the error and proceed with restart. This is tracked in NLnetLabs/unbound issue #1373 (November 2025).
 
 Apply:
 ```bash
@@ -207,7 +207,9 @@ rpz: applied [ioc2rpz-threat-intel] testentry.rpz.urlhaus.abuse.ch. rpz-nxdomain
 
 **ioc2rpz.gui JS login bug** — upstream bug in `io2auth.js`. Apply the sed fix after each container rebuild. See [Finding: ioc2rpz GUI JS bug](../findings/ioc2rpz-gui-js-bug.md).
 
-**DNS NOTIFY does not reach BIND** — ioc2rpz sends NOTIFY to `192.168.122.13:53` (Unbound port), not `53530` (BIND port). BIND discovers updates only at the next SOA poll (3600 s). Manual trigger: `rndc retransfer threat-intel.rpz.sase`. In production, add a `pf rdr` rule redirecting port-53 NOTIFY from `192.168.122.23` to port 53530.
+**DNS NOTIFY does not reach BIND** — ioc2rpz sends NOTIFY to `192.168.122.13:53` (Unbound port), not `53530` (BIND port). BIND discovers updates only at the next SOA poll (3600 s). Manual trigger: `rndc -p 953 retransfer threat-intel.rpz.sase`. In production, add a `pf rdr` rule redirecting port-53 NOTIFY from `192.168.122.23` to port 53530.
+
+**BIND zone directory uses `secondary/`, not `slave/`** — modern BIND (9.20+) uses the naming convention `secondary` instead of the legacy `slave`. Zone files are stored at `/usr/local/etc/namedb/secondary/threat-intel.rpz.sase.db`. Documentation referencing `/slave/` is outdated.
 
 **OPNsense Unbound WebUI shows "manual overwrites" warning** — this is expected and harmless. The rpz.conf overrides module-config, which OPNsense detects. Document this in operational runbooks so administrators are not surprised.
 

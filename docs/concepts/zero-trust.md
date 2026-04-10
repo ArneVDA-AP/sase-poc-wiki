@@ -33,10 +33,11 @@ Gates 1 and 2 are architecturally designed and documented (Addendum E, April 202
 
 **Zero Trust vs VPN:** VPN gives network access; Zero Trust gives resource access. NetBird implements this via WireGuard mesh + ACL policies — each resource has its own explicit policy, and peers that lack a policy cannot even route to that resource.
 
-**Zero Trust principles (Microsoft framework):**
-- *Verify Explicitly* → Gate 1 (identity) + Gate 2 (device)
+**Zero Trust principles (Microsoft framework) — explicit gate mapping:**
+- *Verify Explicitly (identity)* → Gate 1: Entra ID CA evaluates who the user is (MFA, sign-in risk, geolocation)
+- *Verify Explicitly (device)* → Gate 2: NetBird posture checks evaluate what the device is (OS version, AV, client version)
 - *Use Least Privilege* → NetBird ACL policies per resource group
-- *Assume Breach* → Gate 3 pipeline + Suricata on LAN segment
+- *Assume Breach* → Gate 3: SWG pipeline + Suricata inspect all content in the data plane, regardless of who passed Gates 1 and 2
 
 **CA device compliance on unmanaged BYOD:** Entra ID CA can check device compliance (OS version, AV status, disk encryption) only for Intune-enrolled devices. BYOD students will not enroll personal laptops in MDM. NetBird posture checks fill this gap — they evaluate device state at WireGuard tunnel-build time without requiring MDM enrollment.
 

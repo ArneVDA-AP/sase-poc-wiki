@@ -30,6 +30,6 @@ The GUI JavaScript bug is a known upstream issue with a simple sed fix applied a
 ## Consequences
 
 - ioc2rpz Docker container must be running on mgmt01 for zone updates to occur. Initial zone load persists in BIND/Unbound even if ioc2rpz goes down temporarily.
-- ioc2rpz sends NOTIFY to `192.168.122.13:53` (Unbound port, not BIND port `53530`). BIND only discovers updates at the next SOA poll interval (3600 s). Manual trigger: `rndc retransfer threat-intel.rpz.sase`. Production fix: `pf rdr` to redirect NOTIFY from `192.168.122.23` on port 53 to port 53530.
+- ioc2rpz sends NOTIFY to `192.168.122.13:53` (Unbound port, not BIND port `53530`). BIND only discovers updates at the next SOA poll interval (3600 s). Manual trigger: `rndc -p 953 retransfer threat-intel.rpz.sase`. Production fix: `pf rdr` to redirect NOTIFY from `192.168.122.23` on port 53 to port 53530.
 - The SSL certificate bundled in the ioc2rpz.gui Docker image expired in July 2022. Replace with a fresh self-signed cert before container start.
 - ioc2rpz's GUI is proxied by Caddy at `https://ioc2rpz.sandbox.local`.

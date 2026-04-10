@@ -129,3 +129,40 @@ Append-only log of wiki changes.
 - `components/caddy.md` — Added runbook links to Related
 
 **Total new pages:** 8 runbook pages. **Total updated pages:** 10.
+
+---
+
+## 2026-04-10 — Accuracy and completeness pass
+
+**Problem addressed:** A full cross-reference audit compared all 18 raw source files against all 51 wiki pages. The audit found 7 factual inaccuracies and ~40 technical gaps where the raw sources contained details not captured in the wiki.
+
+**Inaccuracies fixed (7):**
+
+- `findings/pre-auth-ssl-bump-params.md` — Corrected: pre-auth include IS visible in `squid -k parse` (only invisible in `grep http_port squid.conf`)
+- `findings/suricata-interface-default-bug.md` — Corrected: vtnet1 DID have a BPF fd open; Suricata wasn't routing packets to it
+- `findings/ioc2rpz-gui-js-bug.md` — Corrected: browser displays "Unknown error!!!" (not silent failure); added permanent fix options
+- `decisions/ca-posture-hybrid.md` — Corrected Policy 4 name: `SASE-PoC-Risk-Block` (was `SASE-PoC-Sign-in-Risk`)
+- `decisions/ioc2rpz-vs-unbound-native.md` — Added missing `-p 953` to `rndc retransfer` command
+- `decisions/bind-tsig-intermediary.md` — Added missing `-p 953` to `rndc retransfer` command
+- `decisions/ids-vs-ips.md` — Replaced placeholder "Bevinding 23.x" with 23.3/23.4/23.5
+
+**Gaps filled (22 files updated):**
+
+- `concepts/wpad-pac.md` — Added NRPT/auto-discovery non-functional explanation; DHCP option 252 production path
+- `concepts/zero-trust.md` — Added explicit gate-to-principle mapping (Verify Explicitly identity/device, Assume Breach)
+- `components/squid.md` — Added `--management-url` mandatory gotcha; `wt0` IPv4 Configuration Type: None; handbook NAT rule irrelevant
+- `components/netbird.md` — Added distribution groups vs ACL distinction; WireGuard port 51820; `process_check` platform limitations
+- `components/python-dlp.md` — Added code review findings (OOM, log injection, exception handling, PyPDF2→pypdf); Docker daemon autostart
+- `components/clamav-cicap.md` — Added `StructuredSSNFormatStripped no`; handbook `/squid_clamav` gotcha; YARA persistence; scope limitations
+- `components/suricata.md` — Added `sysctl dev.netmap.admode=2` failure; Divert `pfctl` diagnostic; XFF/SID 2031071 visibility; Dell PowerEdge IPS readiness
+- `components/ioc2rpz.md` — Added server ACL field; GitHub issue #1373; `secondary/` vs `slave/`; `rndc -p 953` in NOTIFY section
+- `components/gns3.md` — Added second SNI entry `netbird.sase.local`; mobile01 cabling; overlay roles column; `Fase3-Security-Complete` snapshot
+- `overview/architecture.md` — Added SWG identity gap to trust boundaries; CASB Phase 4 planned to component map
+- `runbooks/02-ztna-overlay.md` — Added `management.json` validation field names
+- `runbooks/03-proxy-wpad.md` — Added `.banking.example.com` to no-bump list
+- `runbooks/06-dns-threat-intel.md` — Added ioc2rpz server ACL field
+- `runbooks/07-access-policy.md` — Added GeoIP limitation; ~60-70% coverage estimate; multi-OS AV paths; C2 beaconing threat; process_check spoofability
+- `findings/iptables-forward-ordering.md` — Added iptables non-persistence warning + `netfilter-persistent` solution
+- `findings/ioc2rpz-gui-js-bug.md` — Added permanent fix options (forked image, volume-mounted JS)
+
+**Total files updated:** 22

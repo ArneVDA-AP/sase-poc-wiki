@@ -32,5 +32,5 @@ configctl proxy restart
 ## Lessons
 
 - Every `http_port` directive that needs SSL Bump must explicitly include the ssl-bump parameters — there is no inheritance from other listeners
-- The pre-auth include file is not visible in `squid -k parse` output (it only shows the main file), but it is loaded and active
+- The pre-auth include file IS visible in `squid -k parse` output (both `http_port` lines appear). It is only invisible in `grep http_port squid.conf` because it lives in the `pre-auth/` include directory, not in `squid.conf` itself
 - After any change to the pre-auth include, `configctl proxy restart` is required — not a GUI Apply

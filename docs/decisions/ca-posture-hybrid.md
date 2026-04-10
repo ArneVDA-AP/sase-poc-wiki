@@ -49,7 +49,7 @@ All policies targeted at app registration `cebe0d74-be9f-49ac-9f35-65f11586c1bb`
 | `SASE-PoC-MFA-Required` | Require MFA for all users |
 | `SASE-PoC-Geo-Block` | Block access outside named locations (Belgium, Netherlands) |
 | `SASE-PoC-Block-Legacy-Auth` | Block legacy authentication protocols |
-| `SASE-PoC-Sign-in-Risk` | Block high sign-in risk (Entra ID Protection) |
+| `SASE-PoC-Risk-Block` | Block high sign-in risk (Entra ID Protection) |
 
 ## Planned Gate 2 checks (Addendum E)
 

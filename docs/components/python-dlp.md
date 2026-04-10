@@ -102,6 +102,14 @@ Use `printf`, not `echo -e` — FreeBSD's `/bin/sh` does not interpret `-e` as a
 
 **Algorithmic validators have thresholds** — a single credit card number in a POST body does not trigger a block by default. Tune thresholds in `dlp_server.py` according to the use case.
 
+**Code review — 10 issues identified, 3 critical fixes applied:**
+- **OOM risk:** Original code had no body size limit — a large upload could exhaust container memory. Fix: uploads > 10 MB are passed through (fail-open) without scanning.
+- **Log injection:** The `X-Client-IP` header value was written directly to log output without sanitization. A crafted header could inject fake log lines. Fix: sanitize before logging.
+- **No exception handling:** Exceptions in `dlpscan_REQMOD` would crash the handler with no response to Squid. Fix: scan exceptions result in fail-open (request passes through).
+- **PyPDF2 → pypdf:** PyPDF2 is end-of-life (no longer maintained). Replaced with `pypdf`, which is the active fork.
+
+**Docker daemon autostart required** — `restart: unless-stopped` in `docker-compose.yml` only restarts the container if the Docker daemon is running. On mgmt01 reboot, the Docker daemon must also be enabled for autostart (`systemctl enable docker`). Without this, the DLP container does not start after a reboot.
+
 ---
 
 ## Related

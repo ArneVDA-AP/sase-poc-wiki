@@ -12,7 +12,7 @@ tags: [finding, suricata, workaround]
 
 Suricata was configured to monitor WAN and LAN interfaces. vtnet1 (LAN) generated zero alerts despite dc01 producing traffic (apt update, SSH sessions). Rule test cases that should fire on vtnet1 produced no events.
 
-`procstat -f <PID> | grep bpf` showed only one BPF file descriptor open, not two.
+`procstat -f <PID> | grep bpf` confirmed vtnet1 had a BPF device open at the OS level, but Suricata was not routing packets to it — the BPF descriptor existed but produced zero events.
 
 ## Root cause
 

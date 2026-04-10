@@ -165,9 +165,11 @@ Minimum version: <fill in output of 'netbird version' on mobile01>
 
 ```
 Windows path: C:\Program Files\Windows Defender\MsMpEng.exe
+macOS path:   /usr/libexec/syspolicyd  (XProtect)
+Linux path:   /usr/sbin/clamd          (ClamAV daemon)
 ```
 
-> **Gotcha: If no path is specified for a given OS, NetBird blocks connections from that OS by default.** iOS and Android have no `process_check` available — mobile platforms are blocked if the posture check includes a process check. For the PoC this is acceptable (mobile01 is Windows).
+> **Gotcha: If no path is specified for a given OS, NetBird blocks connections from that OS by default.** iOS and Android have no `process_check` available — mobile platforms are blocked if the posture check includes a process check. For the PoC this is acceptable (mobile01 is Windows). Note that process checks are spoofable — a dummy binary at the expected path satisfies the check without actually running the security software.
 
 ### Check 4 — Geo-location Check
 
@@ -270,6 +272,10 @@ Posture checks are per-policy, not global. Link to every policy that BYOD client
 | No AV definition version check | Process check only verifies the process runs | Intune/Defender health attestation |
 | CA device compliance unavailable | Unmanaged BYOD, no Intune enrollment | Intune enrollment (unrealistic for 4000 BYOD) |
 | Posture evaluates at tunnel setup, not continuously | No real-time session evaluation | NetBird periodic re-evaluation; CAE for production |
+| GeoIP not 100% accurate | IP geolocation databases have errors | Mitigated by combining CA geo-block (Gate 1) with NetBird geo-check (Gate 2) — different GeoIP databases |
+| C2 beaconing via WireGuard tunnel | A compromised device can use the WireGuard tunnel (port 51820) as a C2 beaconing channel — outside Squid's visibility | Gate 2 (posture) + endpoint detection; Suricata sees WireGuard as encrypted UDP |
+
+> **Coverage estimate:** The PoC implements ~60–70% of the context-aware access control that commercial SASE solutions (Zscaler ZPA, Netskope Private Access) provide. The main gaps are endpoint attestation (TPM-based, not process-based) and Continuous Access Evaluation (CAE).
 
 See [Concept: Zero Trust](../concepts/zero-trust.md) for the full three-gate model analysis.
 

@@ -223,6 +223,7 @@ login.microsoftonline.com
 .microsoft.com
 .paypal.com
 .apple.com
+.banking.example.com
 ```
 
 > **Gotcha: `login.microsoftonline.com` MUST be in the no-bump list.** If Squid bumps the Microsoft login page, the OIDC certificate chain breaks and Entra ID authentication fails for all NetBird clients.

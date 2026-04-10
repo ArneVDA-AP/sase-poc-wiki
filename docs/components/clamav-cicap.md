@@ -61,6 +61,7 @@ StructuredDataDetection yes
 StructuredMinCreditCardCount 3
 StructuredMinSSNCount 3
 StructuredSSNFormatNormal yes
+StructuredSSNFormatStripped no
 StructuredCCOnly no
 ```
 
@@ -136,6 +137,15 @@ YARA files in `/var/db/clamav/` are auto-loaded by ClamAV. Matches appear with `
 **YARA rules do not algorithmically validate** — `DLP_IBAN_Pattern` matches format but does not run mod-97 checksum validation. `DLP_BSN_Candidate` matches 9-digit clusters but does not run the 11-proof. False positives are possible. The [Python DLP server](python-dlp.md) on the upload path does algorithmic validation.
 
 **`--ssl-no-revoke` required for curl.exe testing** — curl.exe on Windows uses the schannel TLS stack which attempts CRL/OCSP verification on the SSL Bump certificate. Self-signed CAs have no revocation endpoint, so this fails. Add `--ssl-no-revoke` to all CLI test commands.
+
+**Handbook uses `/squid_clamav` as ICAP service path** — older handbook versions specify `icap://localhost:1344/squid_clamav`. The correct service path on OPNsense's c-icap installation is `/virus_scan`. Using the handbook path returns ICAP 404.
+
+**YARA persistence after OPNsense firmware updates** — YARA files in `/var/db/clamav/` survive OPNsense updates as long as they are not in update-managed directories. After a firmware update, verify that `dlp_custom.yar` is still present and `clamdscan --reload` completes without error.
+
+**ClamAV/ICAP scope limitations** — ClamAV can only inspect traffic that flows through Squid. The following traffic is NOT inspected:
+- Sites in the SSL Bump no-bump list (e.g. `.microsoft.com`) — encrypted bytes pass through without decryption
+- Clients that do not use WPAD/PAC or have disabled the proxy setting — their traffic bypasses Squid entirely
+- Non-HTTP protocols (SSH, SMB, DNS to external servers) — handled by Suricata, not ClamAV
 
 ---
 

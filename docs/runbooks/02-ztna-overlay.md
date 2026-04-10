@@ -134,10 +134,13 @@ curl -k https://netbird.sandbox.local/zitadel/debug/ready
 # Must return "ok" or HTTP 200
 ```
 
-Verify `management.json` — all URL references must use `https://netbird.sandbox.local`, not bare IPs:
+Verify `management.json` — all URL references must use `https://netbird.sandbox.local`, not bare IPs. Check these specific fields:
 
 ```bash
 cat management.json | grep -i "netbird.sandbox.local"
+# Key fields to verify:
+#   HttpConfig.AuthIssuer          → must reference netbird.sandbox.local
+#   IdpManagerConfig.ClientConfig.Issuer → must reference netbird.sandbox.local
 ```
 
 > **Gotcha: Docker volume mounts require container recreation, not restart.** `docker compose restart caddy` does NOT apply new volume mounts. Always use `docker compose up -d caddy`.

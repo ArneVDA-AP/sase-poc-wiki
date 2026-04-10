@@ -50,6 +50,10 @@ Switch-Site  ──── site01 eth1       (site01 Site-LAN)
 Switch-Site  ──── sitepc01 ens3     (sitepc01 Site-LAN)
 ```
 
+```
+NAT-Internet ──── mobile01 NIC1     (separate TAP — external network simulation)
+```
+
 mobile01 is a VMware VM on a team member's laptop — not a GNS3 node. It connects directly via its own network adapter, simulating a real BYOD user outside the GNS3 topology. It reaches the SASE stack exclusively through the NetBird WireGuard tunnel.
 
 ### IP addressing
@@ -71,11 +75,11 @@ mobile01 is a VMware VM on a team member's laptop — not a GNS3 node. It connec
 
 **NetBird overlay (100.64.0.0/10):**
 
-| Node | Overlay IP |
-|------|-----------|
-| pop01 | `100.70.154.79` |
-| mgmt01 | `100.70.135.241` |
-| mobile01 | `100.70.95.98` |
+| Node | Overlay IP | Role |
+|------|-----------|------|
+| pop01 | `100.70.154.79` | Data plane, exit node, DNS primary |
+| mgmt01 | `100.70.135.241` | Management plane, WPAD server |
+| mobile01 | `100.70.95.98` | BYOD client |
 
 ### External access port forwards
 
@@ -90,7 +94,14 @@ iptables -t nat -A PREROUTING -p tcp --dport 7033 -j DNAT --to 192.168.122.33:22
 iptables -I FORWARD 1 -d 192.168.122.0/24 -j ACCEPT
 ```
 
-The GNS3 host also runs nginx SNI stream passthrough on port 443, routing `netbird.sandbox.local` → `192.168.122.23:443`.
+The GNS3 host also runs nginx SNI stream passthrough on port 443, routing by hostname:
+
+| SNI hostname | Target |
+|-------------|--------|
+| `netbird.sandbox.local` | `192.168.122.23:443` (sandbox mgmt01) |
+| `netbird.sase.local` | `192.168.122.20:443` (team project mgmt01) |
+
+Two SNI entries avoid port conflicts between the sandbox and the team project stack running on the same GNS3 host.
 
 ---
 
@@ -107,6 +118,7 @@ Current snapshots:
 | Name | Contents |
 |------|----------|
 | `Fase2-ZTNA-Complete` | Full ZTNA stack operational (NetBird, Zitadel, Entra ID federation) |
+| `Fase3-Security-Complete` | Planned — after Zeek/RITA deployment |
 
 ---
 

@@ -184,6 +184,7 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 | GNS3 / Topology | [gns3.md](../components/gns3.md) | Virtualisation infrastructure | ✅ Operational |
 | VyOS | [vyos.md](../components/vyos.md) | SD-WAN / SASE Gateway (remote site) | ⚠️ Partial |
 | Entra ID CA + Posture Checks | [netbird.md](../components/netbird.md) | Context-aware access (Gates 1+2) | 🔲 Planned |
+| CASB (API layer) | — | Wazuh + Microsoft Graph API for app-level controls | 🔲 Planned (Phase 4) |
 
 ---
 
@@ -198,6 +199,7 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 | NetBird ACL policies | Which peer can reach which resource | NetBird management |
 | Unbound RPZ | DNS-level domain allow/deny | pop01 Unbound |
 | OPNsense pf | Stateful firewall (baseline) | pop01 |
+| SWG identity gap | Squid does not know *who* is browsing — no identity-based proxy policies; URL filtering is user-agnostic | pop01 Squid |
 | DC-LAN egress | No SWG inspection — routed by OPNsense, not proxied | pop01 vtnet1 gateway |
 
 **DC-LAN inspection gap:** dc01 uses pop01 as its default gateway (`10.0.0.1`) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does **not** pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not BYOD browsers.

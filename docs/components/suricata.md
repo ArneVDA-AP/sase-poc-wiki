@@ -21,7 +21,7 @@ Suricata runs in PCAP capture mode on pop01, reading raw frames from BPF devices
 
 **Why not wt0 (NetBird):** WireGuard is a Layer 3 VPN. Traffic routed via wt0 does not appear as ingress frames on that interface from BPF's perspective. `tcpdump` on wt0 with a TCP filter shows 0 packets. Suricata on wt0 would see nothing. See [Finding: wt0 pf rdr limitation](../findings/wt0-pf-rdr-limitation.md) and [Decision: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
 
-**IDS mode, not IPS:** Suricata runs in IDS mode (PCAP, no packet dropping). Netmap IPS mode requires NIC drivers with native Netmap support (Intel igb/ixgbe, Broadcom bge) — virtio NICs in QEMU have none. Divert IPS requires explicit `pf divert-to` firewall rules that were not configured. The drop/alert policy table is configured and ready for IPS activation on physical hardware. See [Decision: IDS vs IPS](../decisions/ids-vs-ips.md) and [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
+**IDS mode, not IPS:** Suricata runs in IDS mode (PCAP, no packet dropping). Netmap IPS mode requires NIC drivers with native Netmap support (Intel igb/ixgbe, Broadcom bge) — virtio NICs in QEMU have none. Even `sysctl dev.netmap.admode=2` (emulated Netmap mode) did not resolve this — emulated Netmap supports IDS capture, not the IPS drop path. Divert IPS requires explicit `pf divert-to` firewall rules (`pfctl -s rules | grep divert` returns empty, confirming none are configured). The OPNsense documentation states: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." The drop/alert policy table is configured and ready for IPS activation on physical hardware with supported NICs (Dell PowerEdge servers in the Atlascollege production environment have Intel/Broadcom NICs with native Netmap support). See [Decision: IDS vs IPS](../decisions/ids-vs-ips.md) and [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
 
 **RAM requirement:** Running Suricata + ClamAV + Squid concurrently requires **minimum 8 GB RAM** on pop01. Hyperscan pattern compilation of ET Open rules peaks at ~4 GB RSS. At 6 GB, the OOM killer silently terminates services without log output.
 
@@ -130,7 +130,7 @@ Four detection categories confirmed after vtnet1 fix:
 
 | Component | Direction | What |
 |-----------|-----------|------|
-| [Squid](squid.md) | parallel | Suricata on vtnet0 sees Squid's upstream connections — re-encrypted HTTPS; TLS metadata visible |
+| [Squid](squid.md) | parallel | Suricata on vtnet0 sees Squid's upstream connections — re-encrypted HTTPS; TLS metadata visible; XFF headers reveal originating BYOD client IP (SID 2031071 showed `100.70.95.98` from mobile01) |
 | [NetBird](netbird.md) | HOME_NET dependency | `100.64.0.0/10` must be in HOME_NET for correct rule evaluation |
 | [ioc2rpz/RPZ](ioc2rpz.md) | complementary | Abuse.ch URLhaus in Suricata signatures and RPZ feeds overlap in source; Suricata detects connections, RPZ prevents DNS resolution |
 

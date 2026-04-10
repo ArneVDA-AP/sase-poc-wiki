@@ -135,6 +135,8 @@ Resource: DC-LAN, Type: IP Range, Range: 10.0.0.0/8, Group: SASE-InternalResourc
 
 Network Routes bypass ACL policies by default. Networks require group linkage by design. DC-LAN must use Networks for zero-trust correctness; exit node must use Network Routes (NetBird documentation limitation for 0.0.0.0/0).
 
+**Distribution groups vs ACL policies:** These serve different purposes — the distribution group determines *which peers receive the DNS/network configuration*, while the ACL policy determines *whether traffic actually flows*. If a peer is in the distribution group but lacks an ACL policy allowing traffic, it receives the config but cannot reach the resource. Symptom: `netbird status` shows `Nameservers: 0/1 Available` on mgmt01 if mgmt01 is not in a source group of the Datacenter Access ACL policy that covers the nameserver.
+
 ### DNS configuration
 
 NetBird Dashboard → DNS:
@@ -155,7 +157,7 @@ The empty match-domains setting routes **all** DNS queries from NetBird clients 
 | [Squid](squid.md) | transport | wt0 overlay IP `100.70.154.79` must exist for Squid pre-auth listener |
 | [ioc2rpz/RPZ](ioc2rpz.md) | DNS dependency | Primary nameserver setting routes all client DNS through Unbound RPZ |
 | [Caddy](caddy.md) | → browser | WPAD PAC file served by Caddy on mgmt01 overlay IP, reachable only via NetBird |
-| [Suricata](suricata.md) | visibility | Suricata sees WireGuard as encrypted UDP on vtnet0 — inner payload not inspectable |
+| [Suricata](suricata.md) | visibility | Suricata sees WireGuard as encrypted UDP (port 51820) on vtnet0 — inner payload not inspectable |
 | [Three-gate model](../decisions/ca-posture-hybrid.md) | auth layer | Gate 1 (Entra ID CA) + Gate 2 (posture checks) both hook into the NetBird login flow |
 
 ClamAV/Python DLP ICAP traffic from pop01 to mgmt01 travels over the `192.168.122.0/24` WAN segment, not the NetBird overlay. That communication path functions even when the NetBird tunnel is down.
@@ -171,6 +173,8 @@ ClamAV/Python DLP ICAP traffic from pop01 to mgmt01 travels over the `192.168.12
 **Docker volume mounts require container recreation** — `docker compose restart caddy` does not apply new volume mounts. Use `docker compose up -d caddy` instead.
 
 **Zitadel groups claim mismatch** — Zitadel uses nested `roles` JSON; NetBird expects a flat `groups` array. If groups do not propagate to NetBird, check the Zitadel Action script for groups-claim transformation. See NetBird Zitadel documentation.
+
+**`process_check` platform limitations** — NetBird's `process_check` posture check is not available on iOS/Android. When configuring `os_version_check`, if no path is specified for a given OS, that OS is **blocked by default** (not allowed). This is a security-positive default but can lock out entire platforms unintentionally. Note that process checks are spoofable — a dummy binary at the expected path satisfies the check without actually running the security software.
 
 ---
 

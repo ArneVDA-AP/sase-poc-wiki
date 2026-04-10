@@ -28,7 +28,7 @@ OPNsense offers two IPS activation paths: Netmap (native kernel bypass) and Dive
 
 IDS mode (PCAP), with the drop/alert policy table configured and ready for IPS activation when deployed on physical hardware.
 
-Netmap IPS was tested and confirmed non-functional on virtio NICs. When Netmap IPS was activated: Suricata reported 0 packets processed, and all previous alert activity stopped. Reverting to PCAP IDS restored normal operation. (Verslag23, Bevinding 23.x)
+Netmap IPS was tested and confirmed non-functional on virtio NICs. When Netmap IPS was activated: Suricata reported 0 packets processed, and all previous alert activity stopped. Reverting to PCAP IDS restored normal operation. (Verslag23, Bevinding 23.3/23.4/23.5)
 
 The differentiated policy table (drop vs. alert by category) is configured in OPNsense. On physical hardware with supported NICs, switching to IPS mode requires only enabling the IPS toggle — the policies are already correct.
 

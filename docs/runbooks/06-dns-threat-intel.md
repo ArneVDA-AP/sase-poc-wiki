@@ -133,6 +133,7 @@ Name:      sase-poc-rpz
 MGMT IP:   172.20.0.3 (Docker internal)
 Public IP: 192.168.122.23
 NS:        ns1.ioc2rpz.local
+ACL:       127.0.0.1, 172.20.0.2 (GUI container), 172.20.0.1
 ```
 
 **TSIG Keys (create two):**
