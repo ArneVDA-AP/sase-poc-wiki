@@ -2585,7 +2585,7 @@
 </table>
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
 <p>IDS mode (PCAP), with the drop/alert policy table configured and ready for IPS activation when deployed on physical hardware.</p>
-<p>Netmap IPS was tested and confirmed non-functional on virtio NICs. When Netmap IPS was activated: Suricata reported 0 packets processed, and all previous alert activity stopped. Reverting to PCAP IDS restored normal operation. (Verslag23, Bevinding 23.x)</p>
+<p>Netmap IPS was tested and confirmed non-functional on virtio NICs. When Netmap IPS was activated: Suricata reported 0 packets processed, and all previous alert activity stopped. Reverting to PCAP IDS restored normal operation. (Verslag23, Bevinding 23.3/23.4/23.5)</p>
 <p>The differentiated policy table (drop vs. alert by category) is configured in OPNsense. On physical hardware with supported NICs, switching to IPS mode requires only enabling the IPS toggle — the policies are already correct.</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>

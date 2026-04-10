@@ -2546,7 +2546,7 @@
 <strong>Severity:</strong> Blocker</p>
 <h2 id="what-happened">What happened<a class="headerlink" href="#what-happened" title="Permanent link">&para;</a></h2>
 <p>Suricata was configured to monitor WAN and LAN interfaces. vtnet1 (LAN) generated zero alerts despite dc01 producing traffic (apt update, SSH sessions). Rule test cases that should fire on vtnet1 produced no events.</p>
-<p><code>procstat -f &lt;PID&gt; | grep bpf</code> showed only one BPF file descriptor open, not two.</p>
+<p><code>procstat -f &lt;PID&gt; | grep bpf</code> confirmed vtnet1 had a BPF device open at the OS level, but Suricata was not routing packets to it — the BPF descriptor existed but produced zero events.</p>
 <h2 id="root-cause">Root cause<a class="headerlink" href="#root-cause" title="Permanent link">&para;</a></h2>
 <p><code>custom.yaml</code> contained:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">pcap</span><span class="p">:</span>

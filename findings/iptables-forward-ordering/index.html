@@ -2565,6 +2565,7 @@
 <li>When adding FORWARD rules on a host running libvirt, always use <code>-I FORWARD 1</code> (insert at top), never <code>-A FORWARD</code> (append)</li>
 <li>Diagnosing: <code>iptables -L FORWARD --line-numbers</code> to see rule positions and the libvirt chain location</li>
 <li>libvirt's REJECT rule is by design — it prevents unmanaged traffic from crossing between libvirt networks</li>
+<li>These iptables rules are <strong>not persistent across reboots</strong> of the GNS3 host. Install <code>netfilter-persistent</code> (<code>apt install iptables-persistent</code>) and run <code>netfilter-persistent save</code> after adding rules. Without this, all port forwards and FORWARD rules are lost on reboot</li>
 </ul>
 
 

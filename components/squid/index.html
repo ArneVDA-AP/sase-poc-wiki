@@ -2811,6 +2811,9 @@
 <p><strong>Browser cache masks URL filtering</strong> — when testing URL blocks, always use <code>curl.exe -x http://100.70.154.79:3128 http://target.com</code> rather than a browser. Browser cache can serve a cached response even after the URL is blocked.</p>
 <p><strong><code>squid -k parse</code> segfaults at end</strong> — the parse output before the crash is valid and useful for diagnostics. The segfault is an OPNsense/FreeBSD quirk, not a configuration error.</p>
 <p><strong>StevenBlack hosts format is incompatible</strong> — OPNsense Remote ACLs expect a tar.gz archive in Squid ACL format, not a hosts file. Use UT1 Toulouse instead. See <a href="../../findings/stevenblack-incompatible/">Finding: StevenBlack incompatible</a>.</p>
+<p><strong><code>--management-url</code> is mandatory for self-hosted NetBird</strong> — when installing the NetBird agent on pop01, the <code>--management-url</code> flag must point to the self-hosted management server. Without it, the client falls back to the NetBird cloud management endpoint and will never join the sandbox overlay.</p>
+<p><strong>OPNsense GUI cannot bind Squid to <code>wt0</code></strong> — the <code>wt0</code> interface has <code>IPv4 Configuration Type: None</code> because its IP is managed by WireGuard, not OPNsense's DHCP/static stack. The Squid GUI dropdown only shows interfaces with OPNsense-managed IPs. This is why the pre-auth include file is needed for the overlay listener.</p>
+<p><strong>Handbook NAT rule (port 443 → 3129) is irrelevant</strong> — the handbook describes a NAT rule for port 443 → 3129. This is only needed for transparent proxy mode, where the firewall intercepts outbound traffic. In explicit proxy mode, the client sends a <code>CONNECT</code> request to Squid on port 3128 directly. No DNAT is required.</p>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>

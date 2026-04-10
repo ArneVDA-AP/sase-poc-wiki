@@ -2505,6 +2505,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2026-04-10-accuracy-and-completeness-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-04-10 — Accuracy and completeness pass
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2672,6 +2683,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2026-04-10-accuracy-and-completeness-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-04-10 — Accuracy and completeness pass
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2816,6 +2838,39 @@
 <li><code>components/caddy.md</code> — Added runbook links to Related</li>
 </ul>
 <p><strong>Total new pages:</strong> 8 runbook pages. <strong>Total updated pages:</strong> 10.</p>
+<hr />
+<h2 id="2026-04-10-accuracy-and-completeness-pass">2026-04-10 — Accuracy and completeness pass<a class="headerlink" href="#2026-04-10-accuracy-and-completeness-pass" title="Permanent link">&para;</a></h2>
+<p><strong>Problem addressed:</strong> A full cross-reference audit compared all 18 raw source files against all 51 wiki pages. The audit found 7 factual inaccuracies and ~40 technical gaps where the raw sources contained details not captured in the wiki.</p>
+<p><strong>Inaccuracies fixed (7):</strong></p>
+<ul>
+<li><code>findings/pre-auth-ssl-bump-params.md</code> — Corrected: pre-auth include IS visible in <code>squid -k parse</code> (only invisible in <code>grep http_port squid.conf</code>)</li>
+<li><code>findings/suricata-interface-default-bug.md</code> — Corrected: vtnet1 DID have a BPF fd open; Suricata wasn't routing packets to it</li>
+<li><code>findings/ioc2rpz-gui-js-bug.md</code> — Corrected: browser displays "Unknown error!!!" (not silent failure); added permanent fix options</li>
+<li><code>decisions/ca-posture-hybrid.md</code> — Corrected Policy 4 name: <code>SASE-PoC-Risk-Block</code> (was <code>SASE-PoC-Sign-in-Risk</code>)</li>
+<li><code>decisions/ioc2rpz-vs-unbound-native.md</code> — Added missing <code>-p 953</code> to <code>rndc retransfer</code> command</li>
+<li><code>decisions/bind-tsig-intermediary.md</code> — Added missing <code>-p 953</code> to <code>rndc retransfer</code> command</li>
+<li><code>decisions/ids-vs-ips.md</code> — Replaced placeholder "Bevinding 23.x" with 23.3/23.4/23.5</li>
+</ul>
+<p><strong>Gaps filled (22 files updated):</strong></p>
+<ul>
+<li><code>concepts/wpad-pac.md</code> — Added NRPT/auto-discovery non-functional explanation; DHCP option 252 production path</li>
+<li><code>concepts/zero-trust.md</code> — Added explicit gate-to-principle mapping (Verify Explicitly identity/device, Assume Breach)</li>
+<li><code>components/squid.md</code> — Added <code>--management-url</code> mandatory gotcha; <code>wt0</code> IPv4 Configuration Type: None; handbook NAT rule irrelevant</li>
+<li><code>components/netbird.md</code> — Added distribution groups vs ACL distinction; WireGuard port 51820; <code>process_check</code> platform limitations</li>
+<li><code>components/python-dlp.md</code> — Added code review findings (OOM, log injection, exception handling, PyPDF2→pypdf); Docker daemon autostart</li>
+<li><code>components/clamav-cicap.md</code> — Added <code>StructuredSSNFormatStripped no</code>; handbook <code>/squid_clamav</code> gotcha; YARA persistence; scope limitations</li>
+<li><code>components/suricata.md</code> — Added <code>sysctl dev.netmap.admode=2</code> failure; Divert <code>pfctl</code> diagnostic; XFF/SID 2031071 visibility; Dell PowerEdge IPS readiness</li>
+<li><code>components/ioc2rpz.md</code> — Added server ACL field; GitHub issue #1373; <code>secondary/</code> vs <code>slave/</code>; <code>rndc -p 953</code> in NOTIFY section</li>
+<li><code>components/gns3.md</code> — Added second SNI entry <code>netbird.sase.local</code>; mobile01 cabling; overlay roles column; <code>Fase3-Security-Complete</code> snapshot</li>
+<li><code>overview/architecture.md</code> — Added SWG identity gap to trust boundaries; CASB Phase 4 planned to component map</li>
+<li><code>runbooks/02-ztna-overlay.md</code> — Added <code>management.json</code> validation field names</li>
+<li><code>runbooks/03-proxy-wpad.md</code> — Added <code>.banking.example.com</code> to no-bump list</li>
+<li><code>runbooks/06-dns-threat-intel.md</code> — Added ioc2rpz server ACL field</li>
+<li><code>runbooks/07-access-policy.md</code> — Added GeoIP limitation; ~60-70% coverage estimate; multi-OS AV paths; C2 beaconing threat; process_check spoofability</li>
+<li><code>findings/iptables-forward-ordering.md</code> — Added iptables non-persistence warning + <code>netfilter-persistent</code> solution</li>
+<li><code>findings/ioc2rpz-gui-js-bug.md</code> — Added permanent fix options (forked image, volume-mounted JS)</li>
+</ul>
+<p><strong>Total files updated:</strong> 22</p>
 
 
 

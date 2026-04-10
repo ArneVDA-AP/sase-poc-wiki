@@ -2958,8 +2958,11 @@
 <a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>curl<span class="w"> </span>-k<span class="w"> </span>https://netbird.sandbox.local/zitadel/debug/ready
 <a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># Must return &quot;ok&quot; or HTTP 200</span>
 </code></pre></div>
-<p>Verify <code>management.json</code> — all URL references must use <code>https://netbird.sandbox.local</code>, not bare IPs:</p>
+<p>Verify <code>management.json</code> — all URL references must use <code>https://netbird.sandbox.local</code>, not bare IPs. Check these specific fields:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>cat<span class="w"> </span>management.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">&quot;netbird.sandbox.local&quot;</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c1"># Key fields to verify:</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1">#   HttpConfig.AuthIssuer          → must reference netbird.sandbox.local</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1">#   IdpManagerConfig.ClientConfig.Issuer → must reference netbird.sandbox.local</span>
 </code></pre></div>
 <blockquote>
 <p><strong>Gotcha: Docker volume mounts require container recreation, not restart.</strong> <code>docker compose restart caddy</code> does NOT apply new volume mounts. Always use <code>docker compose up -d caddy</code>.

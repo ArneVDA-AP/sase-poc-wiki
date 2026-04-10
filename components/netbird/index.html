@@ -2876,6 +2876,7 @@ This allows mobile01 to reach pop01 proxy (<code>100.70.154.79:3128</code>) and 
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Resource: DC-LAN, Type: IP Range, Range: 10.0.0.0/8, Group: SASE-InternalResources
 </code></pre></div></p>
 <p>Network Routes bypass ACL policies by default. Networks require group linkage by design. DC-LAN must use Networks for zero-trust correctness; exit node must use Network Routes (NetBird documentation limitation for 0.0.0.0/0).</p>
+<p><strong>Distribution groups vs ACL policies:</strong> These serve different purposes — the distribution group determines <em>which peers receive the DNS/network configuration</em>, while the ACL policy determines <em>whether traffic actually flows</em>. If a peer is in the distribution group but lacks an ACL policy allowing traffic, it receives the config but cannot reach the resource. Symptom: <code>netbird status</code> shows <code>Nameservers: 0/1 Available</code> on mgmt01 if mgmt01 is not in a source group of the Datacenter Access ACL policy that covers the nameserver.</p>
 <h3 id="dns-configuration">DNS configuration<a class="headerlink" href="#dns-configuration" title="Permanent link">&para;</a></h3>
 <p>NetBird Dashboard → DNS:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Custom DNS zone:   sandbox.local → pop01 (100.70.154.79)
@@ -2911,7 +2912,7 @@ This allows mobile01 to reach pop01 proxy (<code>100.70.154.79:3128</code>) and 
 <tr>
 <td><a href="../suricata/">Suricata</a></td>
 <td>visibility</td>
-<td>Suricata sees WireGuard as encrypted UDP on vtnet0 — inner payload not inspectable</td>
+<td>Suricata sees WireGuard as encrypted UDP (port 51820) on vtnet0 — inner payload not inspectable</td>
 </tr>
 <tr>
 <td><a href="../../decisions/ca-posture-hybrid/">Three-gate model</a></td>
@@ -2927,6 +2928,7 @@ This allows mobile01 to reach pop01 proxy (<code>100.70.154.79:3128</code>) and 
 <p><strong>OPNsense WebUI lockout after Apply Changes</strong> — some firewall changes produce a lockout where pf rules are temporarily incorrect. Fix: <code>configctl filter reload</code> from the OPNsense shell, not <code>pfctl -f</code>. This restores OPNsense-generated rules correctly.</p>
 <p><strong>Docker volume mounts require container recreation</strong> — <code>docker compose restart caddy</code> does not apply new volume mounts. Use <code>docker compose up -d caddy</code> instead.</p>
 <p><strong>Zitadel groups claim mismatch</strong> — Zitadel uses nested <code>roles</code> JSON; NetBird expects a flat <code>groups</code> array. If groups do not propagate to NetBird, check the Zitadel Action script for groups-claim transformation. See NetBird Zitadel documentation.</p>
+<p><strong><code>process_check</code> platform limitations</strong> — NetBird's <code>process_check</code> posture check is not available on iOS/Android. When configuring <code>os_version_check</code>, if no path is specified for a given OS, that OS is <strong>blocked by default</strong> (not allowed). This is a security-positive default but can lock out entire platforms unintentionally. Note that process checks are spoofable — a dummy binary at the expected path satisfies the check without actually running the security software.</p>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>

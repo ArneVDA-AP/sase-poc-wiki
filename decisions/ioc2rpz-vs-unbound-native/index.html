@@ -2589,7 +2589,7 @@
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
 <li>ioc2rpz Docker container must be running on mgmt01 for zone updates to occur. Initial zone load persists in BIND/Unbound even if ioc2rpz goes down temporarily.</li>
-<li>ioc2rpz sends NOTIFY to <code>192.168.122.13:53</code> (Unbound port, not BIND port <code>53530</code>). BIND only discovers updates at the next SOA poll interval (3600 s). Manual trigger: <code>rndc retransfer threat-intel.rpz.sase</code>. Production fix: <code>pf rdr</code> to redirect NOTIFY from <code>192.168.122.23</code> on port 53 to port 53530.</li>
+<li>ioc2rpz sends NOTIFY to <code>192.168.122.13:53</code> (Unbound port, not BIND port <code>53530</code>). BIND only discovers updates at the next SOA poll interval (3600 s). Manual trigger: <code>rndc -p 953 retransfer threat-intel.rpz.sase</code>. Production fix: <code>pf rdr</code> to redirect NOTIFY from <code>192.168.122.23</code> on port 53 to port 53530.</li>
 <li>The SSL certificate bundled in the ioc2rpz.gui Docker image expired in July 2022. Replace with a fresh self-signed cert before container start.</li>
 <li>ioc2rpz's GUI is proxied by Caddy at <code>https://ioc2rpz.sandbox.local</code>.</li>
 </ul>

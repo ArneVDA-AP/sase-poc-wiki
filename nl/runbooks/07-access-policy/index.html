@@ -3074,9 +3074,11 @@
 </code></pre></div>
 <h3 id="check-3-process-check-antivirus">Check 3 — Process Check (Antivirus)<a class="headerlink" href="#check-3-process-check-antivirus" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Windows path: C:\Program Files\Windows Defender\MsMpEng.exe
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>macOS path:   /usr/libexec/syspolicyd  (XProtect)
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Linux path:   /usr/sbin/clamd          (ClamAV daemon)
 </code></pre></div>
 <blockquote>
-<p><strong>Gotcha: If no path is specified for a given OS, NetBird blocks connections from that OS by default.</strong> iOS and Android have no <code>process_check</code> available — mobile platforms are blocked if the posture check includes a process check. For the PoC this is acceptable (mobile01 is Windows).</p>
+<p><strong>Gotcha: If no path is specified for a given OS, NetBird blocks connections from that OS by default.</strong> iOS and Android have no <code>process_check</code> available — mobile platforms are blocked if the posture check includes a process check. For the PoC this is acceptable (mobile01 is Windows). Note that process checks are spoofable — a dummy binary at the expected path satisfies the check without actually running the security software.</p>
 </blockquote>
 <h3 id="check-4-geo-location-check">Check 4 — Geo-location Check<a class="headerlink" href="#check-4-geo-location-check" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Action:    Allow
@@ -3350,8 +3352,21 @@
 <td>No real-time session evaluation</td>
 <td>NetBird periodic re-evaluation; CAE for production</td>
 </tr>
+<tr>
+<td>GeoIP not 100% accurate</td>
+<td>IP geolocation databases have errors</td>
+<td>Mitigated by combining CA geo-block (Gate 1) with NetBird geo-check (Gate 2) — different GeoIP databases</td>
+</tr>
+<tr>
+<td>C2 beaconing via WireGuard tunnel</td>
+<td>A compromised device can use the WireGuard tunnel (port 51820) as a C2 beaconing channel — outside Squid's visibility</td>
+<td>Gate 2 (posture) + endpoint detection; Suricata sees WireGuard as encrypted UDP</td>
+</tr>
 </tbody>
 </table>
+<blockquote>
+<p><strong>Coverage estimate:</strong> The PoC implements ~60–70% of the context-aware access control that commercial SASE solutions (Zscaler ZPA, Netskope Private Access) provide. The main gaps are endpoint attestation (TPM-based, not process-based) and Continuous Access Evaluation (CAE).</p>
+</blockquote>
 <p>See <a href="../../concepts/zero-trust/">Concept: Zero Trust</a> for the full three-gate model analysis.</p>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>

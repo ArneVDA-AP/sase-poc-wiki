@@ -2566,7 +2566,7 @@
 <h2 id="lessons">Lessons<a class="headerlink" href="#lessons" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Every <code>http_port</code> directive that needs SSL Bump must explicitly include the ssl-bump parameters — there is no inheritance from other listeners</li>
-<li>The pre-auth include file is not visible in <code>squid -k parse</code> output (it only shows the main file), but it is loaded and active</li>
+<li>The pre-auth include file IS visible in <code>squid -k parse</code> output (both <code>http_port</code> lines appear). It is only invisible in <code>grep http_port squid.conf</code> because it lives in the <code>pre-auth/</code> include directory, not in <code>squid.conf</code> itself</li>
 <li>After any change to the pre-auth include, <code>configctl proxy restart</code> is required — not a GUI Apply</li>
 </ul>
 

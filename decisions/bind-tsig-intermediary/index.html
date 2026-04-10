@@ -2616,7 +2616,7 @@
 <ul>
 <li>BIND (os-bind plugin) must be installed and configured on pop01 alongside Unbound</li>
 <li>BIND listens only on <code>127.0.0.1:53530</code> with <code>loopback_only</code> ACLs — it is not exposed as a resolver</li>
-<li>ioc2rpz sends NOTIFY to <code>192.168.122.13:53</code> (default DNS port, hitting Unbound, not BIND on 53530). BIND discovers zone updates only via SOA refresh (3600 s). Manual retransfer: <code>rndc retransfer threat-intel.rpz.sase</code></li>
+<li>ioc2rpz sends NOTIFY to <code>192.168.122.13:53</code> (default DNS port, hitting Unbound, not BIND on 53530). BIND discovers zone updates only via SOA refresh (3600 s). Manual retransfer: <code>rndc -p 953 retransfer threat-intel.rpz.sase</code></li>
 <li>TSIG key (<code>tkey_rpz_transfer</code>, hmac-sha256) must be explicitly linked to the RPZ zone in the ioc2rpz GUI — leaving it empty causes TSIG errors on every AXFR attempt</li>
 </ul>
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
