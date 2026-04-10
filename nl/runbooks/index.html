@@ -2365,10 +2365,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#build-order" class="md-nav__link">
+  <a href="#bouwvolgorde" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build order
+        Bouwvolgorde
       
     </span>
   </a>
@@ -2376,10 +2376,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#runbook-catalog" class="md-nav__link">
+  <a href="#runbook-overzicht" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Runbook catalog
+        Runbook-overzicht
       
     </span>
   </a>
@@ -2387,10 +2387,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#dependency-graph" class="md-nav__link">
+  <a href="#afhankelijkheidsgraph" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dependency graph
+        Afhankelijkheidsgraph
       
     </span>
   </a>
@@ -2398,10 +2398,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-reference-key-ports" class="md-nav__link">
+  <a href="#snelreferentie-belangrijkste-poorten" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick reference — key ports
+        Snelreferentie — belangrijkste poorten
       
     </span>
   </a>
@@ -2437,18 +2437,18 @@
 
 
 <h1 id="runbooks">Runbooks<a class="headerlink" href="#runbooks" title="Permanent link">&para;</a></h1>
-<p>Step-by-step deployment guides for building the SASE PoC stack from scratch. Each runbook restores the linear build narrative from the original implementation documents, with warnings and gotchas placed exactly at the step where they occur.</p>
-<p><strong>How to use:</strong> Follow the runbooks in order. Each runbook states its prerequisites — which prior runbooks must be completed first. Every step ends with a verification so you know when to proceed. For deeper conceptual understanding, follow the links to the corresponding component, concept, and decision pages.</p>
+<p>Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aan. Elke runbook herstelt de lineaire opbouwvolgorde uit de originele implementatiedocumenten, met waarschuwingen en valkuilen op exact het moment dat ze zich voordoen.</p>
+<p><strong>Gebruik:</strong> Volg de runbooks op volgorde. Elke runbook vermeldt zijn vereisten — welke voorgaande runbooks eerst afgerond moeten zijn. Elke stap eindigt met een verificatie zodat je weet wanneer je door kunt gaan. Voor dieper conceptueel begrip kun je de links naar de bijbehorende component-, concept- en beslissingsartikelen volgen.</p>
 <hr />
-<h2 id="build-order">Build order<a class="headerlink" href="#build-order" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>01 Lab Environment
+<h2 id="bouwvolgorde">Bouwvolgorde<a class="headerlink" href="#bouwvolgorde" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>01 Labomgeving
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a> └─► 02 ZTNA Overlay
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>      ├─► 03 Proxy &amp; WPAD ─► 04 Malware &amp; DLP
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>      │                      05 IDS (parallel with 04)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>      │                      05 IDS (parallel met 04)
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>      └─► 06 DNS Threat Intel
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>           └─► 07 Access Policy (after all above)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>           └─► 07 Toegangsbeleid (na alles hierboven)
 </code></pre></div>
-<h2 id="runbook-catalog">Runbook catalog<a class="headerlink" href="#runbook-catalog" title="Permanent link">&para;</a></h2>
+<h2 id="runbook-overzicht">Runbook-overzicht<a class="headerlink" href="#runbook-overzicht" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2456,72 +2456,72 @@
 <th>Runbook</th>
 <th>Node(s)</th>
 <th>Status</th>
-<th>Description</th>
+<th>Beschrijving</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>1</td>
-<td><a href="01-lab-environment/">Lab Environment</a></td>
-<td>GNS3 host (poc-1a)</td>
-<td>Operational</td>
-<td>Proxmox VM, GNS3 Server, topology, IP addressing, snapshots</td>
+<td><a href="01-lab-environment/">Labomgeving</a></td>
+<td>GNS3-host (poc-1a)</td>
+<td>Operationeel</td>
+<td>Proxmox VM, GNS3 Server, topologie, IP-adressering, snapshots</td>
 </tr>
 <tr>
 <td>2</td>
 <td><a href="02-ztna-overlay/">ZTNA Overlay</a></td>
-<td>mgmt01 + all peers</td>
-<td>Operational</td>
-<td>NetBird + Zitadel + Entra ID, groups, ACLs, exit node, DNS</td>
+<td>mgmt01 + alle peers</td>
+<td>Operationeel</td>
+<td>NetBird + Zitadel + Entra ID, groepen, ACL's, exit node, DNS</td>
 </tr>
 <tr>
 <td>3</td>
 <td><a href="03-proxy-wpad/">Proxy &amp; WPAD</a></td>
 <td>pop01 + mgmt01</td>
-<td>Operational</td>
-<td>Squid explicit proxy, WPAD/PAC via Caddy, SSL Bump, URL filtering</td>
+<td>Operationeel</td>
+<td>Squid expliciete proxy, WPAD/PAC via Caddy, SSL Bump, URL-filtering</td>
 </tr>
 <tr>
 <td>4</td>
 <td><a href="04-malware-dlp/">Malware &amp; DLP</a></td>
 <td>pop01 + mgmt01</td>
-<td>Operational</td>
-<td>ClamAV/c-icap RESPMOD, YARA rules, Python DLP REQMOD</td>
+<td>Operationeel</td>
+<td>ClamAV/c-icap RESPMOD, YARA-regels, Python DLP REQMOD</td>
 </tr>
 <tr>
 <td>5</td>
 <td><a href="05-ids/">IDS</a></td>
 <td>pop01</td>
-<td>Operational</td>
-<td>Suricata on WAN+LAN, Hyperscan, 79,620+ rules, drop/alert policies</td>
+<td>Operationeel</td>
+<td>Suricata op WAN+LAN, Hyperscan, 79.620+ regels, drop/alert-beleid</td>
 </tr>
 <tr>
 <td>6</td>
 <td><a href="06-dns-threat-intel/">DNS Threat Intel</a></td>
 <td>mgmt01 + pop01</td>
-<td>Operational</td>
-<td>ioc2rpz feeds, BIND TSIG intermediary, Unbound RPZ, 71,767 records</td>
+<td>Operationeel</td>
+<td>ioc2rpz-feeds, BIND TSIG-intermediair, Unbound RPZ, 71.767 records</td>
 </tr>
 <tr>
 <td>7</td>
-<td><a href="07-access-policy/">Access Policy</a></td>
+<td><a href="07-access-policy/">Toegangsbeleid</a></td>
 <td>Entra ID + NetBird</td>
-<td>Planned</td>
-<td>Conditional Access (4 policies), posture checks, five validation scenarios</td>
+<td>Gepland</td>
+<td>Conditional Access (4 beleidsregels), posturecontroles, vijf validatiescenario's</td>
 </tr>
 </tbody>
 </table>
-<h2 id="dependency-graph">Dependency graph<a class="headerlink" href="#dependency-graph" title="Permanent link">&para;</a></h2>
+<h2 id="afhankelijkheidsgraph">Afhankelijkheidsgraph<a class="headerlink" href="#afhankelijkheidsgraph" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Runbook</th>
-<th>Depends on</th>
+<th>Afhankelijk van</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>01 Lab Environment</td>
+<td>01 Labomgeving</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2534,34 +2534,34 @@
 </tr>
 <tr>
 <td>04 Malware &amp; DLP</td>
-<td>03 (SSL Bump required)</td>
+<td>03 (SSL Bump vereist)</td>
 </tr>
 <tr>
 <td>05 IDS</td>
-<td>03 (Squid operational), 01 (8 GB RAM)</td>
+<td>03 (Squid operationeel), 01 (8 GB RAM)</td>
 </tr>
 <tr>
 <td>06 DNS Threat Intel</td>
-<td>02 (NetBird DNS relay)</td>
+<td>02 (NetBird DNS-relay)</td>
 </tr>
 <tr>
-<td>07 Access Policy</td>
-<td>02, 03, 04, 05, 06 (full stack)</td>
+<td>07 Toegangsbeleid</td>
+<td>02, 03, 04, 05, 06 (volledige stack)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="quick-reference-key-ports">Quick reference — key ports<a class="headerlink" href="#quick-reference-key-ports" title="Permanent link">&para;</a></h2>
+<h2 id="snelreferentie-belangrijkste-poorten">Snelreferentie — belangrijkste poorten<a class="headerlink" href="#snelreferentie-belangrijkste-poorten" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
 <th>Service</th>
-<th>Address</th>
-<th>Port</th>
+<th>Adres</th>
+<th>Poort</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Squid proxy (BYOD)</td>
+<td>Squid-proxy (BYOD)</td>
 <td><code>100.70.154.79</code></td>
 <td>3128</td>
 </tr>
@@ -2571,7 +2571,7 @@
 <td>53</td>
 </tr>
 <tr>
-<td>BIND (TSIG secondary)</td>
+<td>BIND (TSIG secundair)</td>
 <td><code>127.0.0.1</code></td>
 <td>53530</td>
 </tr>
@@ -2601,7 +2601,7 @@
 <td>443</td>
 </tr>
 <tr>
-<td>WPAD PAC file</td>
+<td>WPAD PAC-bestand</td>
 <td><code>wpad.sandbox.local</code></td>
 <td>80</td>
 </tr>
