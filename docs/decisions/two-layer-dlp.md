@@ -33,3 +33,11 @@ The c-icap developer confirmed that `virus_scan` does not correctly parse `multi
 - Only POST/PUT/PATCH requests are routed to Python DLP — GET requests carry no user-uploaded content and adding them only increases latency
 - ClamAV YARA rules provide download DLP (matching after file decomposition, so `.docx` unpacking works); Python DLP provides upload DLP with full algorithmic validation
 - pyicap library requires a Python 3.10+ compatibility patch in the Dockerfile — see [Finding: pyicap collections bug](../findings/pyicap-collections-bug.md)
+
+## Related
+
+- [Component: ClamAV/c-icap](../components/clamav-cicap.md)
+- [Component: Python DLP](../components/python-dlp.md)
+- [Component: Squid](../components/squid.md)
+- [Concept: DLP](../concepts/dlp.md)
+- [Concept: ICAP](../concepts/icap.md)

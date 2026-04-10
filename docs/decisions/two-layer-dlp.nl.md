@@ -33,3 +33,11 @@ De c-icap-ontwikkelaar bevestigde dat `virus_scan` `multipart/form-data` niet co
 - Alleen POST/PUT/PATCH-aanvragen worden naar Python DLP gerouteerd — GET-aanvragen bevatten geen door gebruikers geüploade inhoud en ze toevoegen verhoogt alleen de latentie
 - ClamAV YARA-regels bieden download-DLP (matching na bestandsdecompositie, dus `.docx`-uitpakken werkt); Python DLP biedt upload-DLP met volledige algoritmische validatie
 - pyicap-bibliotheek vereist een Python 3.10+-compatibiliteitspatch in de Dockerfile — zie [Bevinding: pyicap collections bug](../findings/pyicap-collections-bug.md)
+
+## Gerelateerd
+
+- [Component: ClamAV/c-icap](../components/clamav-cicap.md)
+- [Component: Python DLP](../components/python-dlp.md)
+- [Component: Squid](../components/squid.md)
+- [Concept: DLP](../concepts/dlp.md)
+- [Concept: ICAP](../concepts/icap.md)

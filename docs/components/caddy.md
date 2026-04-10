@@ -1,6 +1,6 @@
 ---
 title: "Caddy — WPAD Server, Reverse Proxy, TLS Terminator"
-tags: [network, sase, proxy, tls]
+tags: [caddy, network, sase, proxy, tls, wpad]
 ---
 
 # Caddy — WPAD Server, Reverse Proxy, TLS Terminator
@@ -33,16 +33,16 @@ Served at `http://wpad.sandbox.local/wpad.dat` with MIME type `application/x-ns-
 
 ```javascript
 function FindProxyForURL(url, host) {
-    // Direct for internal/overlay addresses
-    if (isInNet(host, "10.0.0.0", "255.0.0.0")) return "DIRECT";
-    if (isInNet(host, "100.64.0.0", "255.192.0.0")) return "DIRECT";
-    if (isInNet(host, "192.168.0.0", "255.255.0.0")) return "DIRECT";
-    // All other traffic via Squid on pop01
+    if (isPlainHostName(host)) return "DIRECT";
+    if (shExpMatch(host, "10.*")) return "DIRECT";
+    if (shExpMatch(host, "100.64.*")) return "DIRECT";
+    if (shExpMatch(host, "127.*")) return "DIRECT";
+    if (shExpMatch(host, "*.sandbox.local")) return "DIRECT";
     return "PROXY 100.70.154.79:3128";
 }
 ```
 
-The PAC file must return `DIRECT` for the NetBird overlay subnet (`100.64.0.0/10`) — routing NetBird management traffic through Squid would break the overlay itself.
+The PAC file uses `shExpMatch()` instead of `isInNet()` or `dnsResolve()` — DNS-related PAC functions can timeout in the WinHTTP context, causing proxy configuration delays. `isPlainHostName()` returns DIRECT for single-label hostnames (no dots). The overlay subnet (`100.64.*`), loopback (`127.*`), DC-LAN (`10.*`), and all `*.sandbox.local` internal names bypass the proxy. Everything else goes through Squid on pop01.
 
 ### Caddyfile — NetBird TLS
 
@@ -75,16 +75,31 @@ The WPAD and ioc2rpz blocks are added to the same Caddyfile:
 
 ```caddyfile
 http://wpad.sandbox.local {
+    header /wpad.dat Content-Type application/x-ns-proxy-autoconfig
     root * /srv/wpad
     file_server
-    header Content-Type application/x-ns-proxy-autoconfig
 }
 
-https://ioc2rpz.sandbox.local {
+wpad.sandbox.local {
     tls internal
-    reverse_proxy ioc2rpz-ioc2rpz-gui-1:80
+    header /wpad.dat Content-Type application/x-ns-proxy-autoconfig
+    root * /srv/wpad
+    file_server
+}
+
+ioc2rpz.sandbox.local {
+    tls internal
+    reverse_proxy https://192.168.122.23:8444 {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
 }
 ```
+
+Two WPAD blocks are required: WinHTTP tries HTTPS first when fetching the PAC file, even when the configured URL uses `http://`. Without the HTTPS block, Caddy logs show TLS handshake errors from the client. The HTTPS block uses `tls internal` (Caddy's built-in local CA).
+
+The ioc2rpz GUI container listens on HTTPS port 8444 with a self-signed certificate. Caddy proxies to `https://192.168.122.23:8444` with `tls_insecure_skip_verify` to accept the self-signed cert.
 
 ### Applying changes
 
@@ -112,7 +127,7 @@ docker compose up -d caddy   # applies new mounts
 
 **Docker volume recreation** — new volume mounts in `docker-compose.yml` for the `caddy` service only take effect with `docker compose up -d caddy`, not `docker compose restart caddy`. The `restart` command reuses the existing container without re-reading volume mount changes.
 
-**WPAD requires HTTP (not HTTPS)** — browsers only fetch WPAD PAC files over plain HTTP. The WPAD virtual host must listen on HTTP, not HTTPS. The Caddy block for `wpad.sandbox.local` must not have a `tls` directive.
+**WPAD requires both HTTP and HTTPS blocks** — WinHTTP attempts to fetch the PAC file over HTTPS first, even when the configured URL specifies `http://`. Without an HTTPS server block for `wpad.sandbox.local`, Caddy logs show `TLS handshake error` from the client. The Caddyfile must include both an `http://wpad.sandbox.local` block and a `wpad.sandbox.local` block with `tls internal`.
 
 ---
 

@@ -12,11 +12,17 @@
         <meta name="author" content="Arne">
       
       
+        <link rel="canonical" href="https://ArneVDA-AP.github.io/sase-poc-wiki/log/">
+      
       
         <link rel="prev" href="../tags/">
       
       
       
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../nl/log/" hreflang="nl">
         
       
       
@@ -148,6 +154,32 @@
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
     
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../nl/log/" hreflang="nl" class="md-select__link">
+              Nederlands
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
     
     
       
@@ -2115,6 +2147,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2026-04-10-lint-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-04-10 — Lint pass
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-04-10-review-fixes-accuracy-coherence-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-04-10 — Review fixes (accuracy + coherence + schema)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2232,6 +2286,28 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2026-04-10-lint-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-04-10 — Lint pass
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-04-10-review-fixes-accuracy-coherence-schema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-04-10 — Review fixes (accuracy + coherence + schema)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2327,6 +2403,26 @@
 </ul>
 <p><strong>Source documents ingested:</strong> Verslag18–27 (10 session reports), Doc1–Doc7 (7 implementation documents), SASE_Architectuur_Overzicht.md (1 architecture overview)</p>
 <p><strong>Total pages created:</strong> 37</p>
+<hr />
+<h2 id="2026-04-10-lint-pass">2026-04-10 — Lint pass<a class="headerlink" href="#2026-04-10-lint-pass" title="Permanent link">&para;</a></h2>
+<p><strong>Files updated:</strong></p>
+<ul>
+<li><code>tags.md</code> — Populated controlled tag vocabulary (was empty stub): 4 page-type tags, 12 component tags, 15 protocol/technology tags, 5 security concept tags</li>
+<li><code>components/vyos.md</code> — Removed TODO stub comment (VyOS is intentionally a topology-only stub; no source detail exists for config)</li>
+</ul>
+<p><strong>Lint findings resolved:</strong> 2 of 3 actionable items from lint report.<br />
+<strong>Deferred:</strong> WireGuard concept page — WireGuard is NetBird's transport protocol; all WireGuard content belongs in <code>components/netbird.md</code>.</p>
+<hr />
+<h2 id="2026-04-10-review-fixes-accuracy-coherence-schema">2026-04-10 — Review fixes (accuracy + coherence + schema)<a class="headerlink" href="#2026-04-10-review-fixes-accuracy-coherence-schema" title="Permanent link">&para;</a></h2>
+<p><strong>Files updated:</strong></p>
+<ul>
+<li><code>components/caddy.md</code> — <strong>Critical:</strong> replaced incorrect <code>isInNet()</code> PAC file with actual deployed <code>shExpMatch()</code> version; corrected WPAD HTTP-only claim (WinHTTP tries HTTPS first — both blocks required); replaced incorrect ioc2rpz reverse proxy target (<code>ioc2rpz-ioc2rpz-gui-1:80</code> → <code>https://192.168.122.23:8444</code> with <code>tls_insecure_skip_verify</code>); added missing HTTPS WPAD Caddyfile block; added <code>caddy</code> and <code>wpad</code> tags to frontmatter</li>
+<li><code>overview/architecture.md</code> — Added DC-LAN egress inspection gap to trust boundaries table with explanatory note; added ICAP <code>bypass=on</code> fail-open row to trust boundaries</li>
+<li><code>decisions/two-layer-dlp.md</code> — Added Related section with back-links to component and concept pages</li>
+<li><code>decisions/bind-tsig-intermediary.md</code> — Added Related section with back-links to ioc2rpz component and RPZ concept</li>
+<li><code>concepts/sase.md</code> — Qualified inline CASB status from "Operational" to "Partial" (URL filtering + DLP only, no app-level controls)</li>
+</ul>
+<p><strong>Review findings resolved:</strong> 4 critical, 3 minor, 2 suggestions. Source-verified against <code>raw/Doc1_Squid_WPAD_PAC.md</code>, <code>raw/Doc4_DNS_Threat_Intelligence.md</code>, <code>raw/Verslag19.md</code>, and <code>raw/Verslag24.md</code>.</p>
 
 
 

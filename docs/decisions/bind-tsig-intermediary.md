@@ -38,4 +38,8 @@ This is a protocol-gap bridge: BIND exists solely because Unbound 1.24.2 lacks T
 - ioc2rpz sends NOTIFY to `192.168.122.13:53` (default DNS port, hitting Unbound, not BIND on 53530). BIND discovers zone updates only via SOA refresh (3600 s). Manual retransfer: `rndc retransfer threat-intel.rpz.sase`
 - TSIG key (`tkey_rpz_transfer`, hmac-sha256) must be explicitly linked to the RPZ zone in the ioc2rpz GUI — leaving it empty causes TSIG errors on every AXFR attempt
 
-See also: [Finding: Unbound no TSIG](../findings/unbound-no-tsig.md)
+## Related
+
+- [Component: ioc2rpz](../components/ioc2rpz.md)
+- [Concept: RPZ](../concepts/rpz.md)
+- [Finding: Unbound no TSIG](../findings/unbound-no-tsig.md)

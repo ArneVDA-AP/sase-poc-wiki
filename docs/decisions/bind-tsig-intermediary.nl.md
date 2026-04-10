@@ -38,4 +38,8 @@ Dit is een protocol-gap-brug: BIND bestaat uitsluitend omdat Unbound 1.24.2 TSIG
 - ioc2rpz stuurt NOTIFY naar `192.168.122.13:53` (standaard DNS-poort, raakt Unbound, niet BIND op 53530). BIND ontdekt zone-updates alleen via SOA-verversing (3600 s). Handmatige retransfer: `rndc retransfer threat-intel.rpz.sase`
 - TSIG-sleutel (`tkey_rpz_transfer`, hmac-sha256) moet expliciet worden gekoppeld aan de RPZ-zone in de ioc2rpz GUI — als leeg gelaten, veroorzaakt dit TSIG-fouten bij elke AXFR-poging
 
-Zie ook: [Bevinding: Unbound geen TSIG](../findings/unbound-no-tsig.md)
+## Gerelateerd
+
+- [Component: ioc2rpz](../components/ioc2rpz.md)
+- [Concept: RPZ](../concepts/rpz.md)
+- [Bevinding: Unbound geen TSIG](../findings/unbound-no-tsig.md)

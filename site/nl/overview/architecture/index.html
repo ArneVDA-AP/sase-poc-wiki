@@ -1,0 +1,2936 @@
+
+<!doctype html>
+<html lang="nl" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SASE PoC — OPNsense / Squid / ClamAV / c-icap / NetBird">
+      
+      
+        <meta name="author" content="Arne">
+      
+      
+        <link rel="canonical" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/overview/architecture/">
+      
+      
+        <link rel="prev" href="../../">
+      
+      
+        <link rel="next" href="../../components/">
+      
+      
+        
+          <link rel="alternate" href="../../../overview/architecture/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="nl">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Systeemarchitectuur - Security Project Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#systeemarchitectuur" class="md-skip">
+          Ga naar inhoud
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../" title="Security Project Wiki" class="md-header__button md-logo" aria-label="Security Project Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Security Project Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Systeemarchitectuur
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Selecteer taal">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../overview/architecture/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="nl" class="md-select__link">
+              Nederlands
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Zoeken" placeholder="Zoeken" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Zoeken">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Delen" aria-label="Delen" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Leegmaken" aria-label="Leegmaken" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Zoeken initialiseren
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Startpagina
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architectuur
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../components/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Componenten
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../concepts/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Concepten
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../decisions/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Beslissingen
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../findings/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Bevindingen
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../log/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Logboek
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigatie" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Security Project Wiki" class="md-nav__button md-logo" aria-label="Security Project Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Security Project Wiki
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Startpagina
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectuur
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectuur
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Inhoudsopgave">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Inhoudsopgave
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ontwerpfilosofie-castle-moat-edge-handhaving" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Ontwerpfilosofie: Castle &amp; Moat → Edge-handhaving
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-nodes-en-hun-rollen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Nodes en hun rollen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-netwerksegmenten" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Netwerksegmenten
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-control-plane-vs-data-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Control Plane vs Data Plane
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-verkeersstromen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Verkeersstromen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Verkeersstromen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-byod-httphttps-verkeer-het-hoofdinspectiepad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 BYOD HTTP/HTTPS-verkeer (het hoofdinspectiepad)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-dns-resolutie-threat-intelligence-pad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 DNS-resolutie (threat intelligence-pad)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-zone-transferketen-threat-intelligence-updatepad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Zone-transferketen (threat intelligence-updatepad)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-ztna-tunnelopbouw-identiteitsverificatiepad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 ZTNA-tunnelopbouw (identiteitsverificatiepad)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-de-vier-laags-inspectiepipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. De vier-laags inspectiepipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-componentenkaart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Componentenkaart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-vertrouwensgrenzen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Vertrouwensgrenzen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gerelateerd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gerelateerd
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../components/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Componenten
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Componenten
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/squid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/clamav-cicap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ClamAV / c-icap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/python-dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/suricata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/ioc2rpz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/netbird/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/caddy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caddy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/gns3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/vyos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VyOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../concepts/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepten
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepten
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/sase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SASE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/zero-trust/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero Trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/icap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICAP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/ssl-bump/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSL Bump
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/wpad-pac/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WPAD/PAC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/rpz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RPZ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../decisions/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Beslissingen
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Beslissingen
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/wpad-vs-transparent-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WPAD vs Transparante Proxy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/two-layer-dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Twee-laags DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ioc2rpz-vs-unbound-native/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz vs Unbound native
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/bind-tsig-intermediary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BIND als TSIG-tussenstap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ids-vs-ips/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IDS vs IPS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/suricata-wan-lan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata WAN+LAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/gns3-vs-eveng/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 vs EVE-NG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/zitadel-idp-broker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zitadel als IdP-broker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ca-posture-hybrid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CA + Posture Hybride
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../findings/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bevindingen
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bevindingen
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/wt0-pf-rdr-limitation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    wt0 pf rdr beperking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/pre-auth-ssl-bump-params/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pre-auth ssl-bump parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/squid-clearlog-destroys-file/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squid clearlog vernietigt bestand
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/stevenblack-incompatible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    StevenBlack incompatibel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/suricata-interface-default-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata interface default bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/suricata-netmap-virtio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata Netmap/virtio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/unbound-no-tsig/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unbound geen TSIG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/unbound-config-path/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unbound config-pad
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/ioc2rpz-gui-js-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz GUI JS bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/pyicap-collections-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pyicap collections bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/iptables-forward-ordering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    iptables FORWARD-volgorde
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-primary-nameserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird primaire nameserver
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-config-zero-bytes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird config nul bytes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/docker-volume-recreation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker volume hermaak
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../log/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logboek
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Inhoudsopgave">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Inhoudsopgave
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ontwerpfilosofie-castle-moat-edge-handhaving" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Ontwerpfilosofie: Castle &amp; Moat → Edge-handhaving
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-nodes-en-hun-rollen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Nodes en hun rollen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-netwerksegmenten" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Netwerksegmenten
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-control-plane-vs-data-plane" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Control Plane vs Data Plane
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-verkeersstromen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Verkeersstromen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Verkeersstromen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-byod-httphttps-verkeer-het-hoofdinspectiepad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 BYOD HTTP/HTTPS-verkeer (het hoofdinspectiepad)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-dns-resolutie-threat-intelligence-pad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 DNS-resolutie (threat intelligence-pad)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-zone-transferketen-threat-intelligence-updatepad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Zone-transferketen (threat intelligence-updatepad)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-ztna-tunnelopbouw-identiteitsverificatiepad" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 ZTNA-tunnelopbouw (identiteitsverificatiepad)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-de-vier-laags-inspectiepipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. De vier-laags inspectiepipeline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-componentenkaart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Componentenkaart
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-vertrouwensgrenzen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Vertrouwensgrenzen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gerelateerd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gerelateerd
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">architecture</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">netbird</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">network</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">opnsense</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">sase</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">squid</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">suricata</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">zero-trust</span>
+      
+    
+  </nav>
+
+
+
+<h1 id="systeemarchitectuur">Systeemarchitectuur<a class="headerlink" href="#systeemarchitectuur" title="Permanent link">&para;</a></h1>
+<p>Deze pagina beschrijft de volledige architectuur van de SASE PoC: nodes, netwerksegmenten, de control/data plane-splitsing en hoe alle beveiligingscomponenten met elkaar samenhangen. Elke componentpagina verwijst hiernaartoe voor architecturale context.</p>
+<hr />
+<h2 id="1-ontwerpfilosofie-castle-moat-edge-handhaving">1. Ontwerpfilosofie: Castle &amp; Moat → Edge-handhaving<a class="headerlink" href="#1-ontwerpfilosofie-castle-moat-edge-handhaving" title="Permanent link">&para;</a></h2>
+<p>Het project verwerpt het traditionele perimetermodel waarbij vertrouwen voortkomt uit netwerkpositie. In het traditionele model beschermt een firewall één grens; iedereen binnenin is vertrouwd. Dit werkt niet voor Atlascollege: 4 000 studenten-BYOD-laptops die thuis, in cafés, treinen werken — er is geen "binnenste" meer.</p>
+<p>In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats <strong>op de PoP</strong> (Point of Presence) — de edge-node tussen clients en internet. Vertrouwen wordt bepaald door drie onafhankelijk geëvalueerde factoren:</p>
+<ol>
+<li><strong>Identiteit</strong> — wie ben je? (Entra ID + MFA)</li>
+<li><strong>Apparaatposture</strong> — wat is de toestand van je apparaat? (NetBird posture checks)</li>
+<li><strong>Inhoud</strong> — wat verstuur je? (SWG-inspectiepipeline)</li>
+</ol>
+<p>Dit is het <a href="../../concepts/zero-trust/">Zero Trust drie-gate model</a>.</p>
+<hr />
+<h2 id="2-nodes-en-hun-rollen">2. Nodes en hun rollen<a class="headerlink" href="#2-nodes-en-hun-rollen" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th>Platform</th>
+<th>Rol</th>
+<th>IP (WAN/mgmt)</th>
+<th>IP (overlay)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>pop01</strong></td>
+<td>OPNsense 25.1 (FreeBSD)</td>
+<td>Data plane PoP: firewall, proxy, IDS, DNS-resolver</td>
+<td><code>192.168.122.13</code></td>
+<td><code>100.70.154.79</code></td>
+</tr>
+<tr>
+<td><strong>mgmt01</strong></td>
+<td>Ubuntu 24.04 (Docker)</td>
+<td>Management/control plane: NetBird-stack, ioc2rpz, DLP ICAP, WPAD</td>
+<td><code>192.168.122.23</code></td>
+<td><code>100.70.135.241</code></td>
+</tr>
+<tr>
+<td><strong>dc01</strong></td>
+<td>Ubuntu 24.04</td>
+<td>Datacentersimulatie — interne resource-doelwit</td>
+<td><code>10.0.0.100</code> (DC-LAN)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>site01</strong></td>
+<td>VyOS</td>
+<td>SASE-gateway voor remote site — WAN-connectiviteit + NAT</td>
+<td><code>192.168.122.33</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>sitepc01</strong></td>
+<td>Ubuntu 24.04 (geen OS)</td>
+<td>Gepland remote site-endpoint — nog niet operationeel</td>
+<td><code>172.16.10.50</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>mobile01</strong></td>
+<td>Windows 11 (VMware, buiten GNS3)</td>
+<td>BYOD-client — simuleert studentlaptop van elke locatie</td>
+<td>extern</td>
+<td><code>100.70.95.98</code></td>
+</tr>
+</tbody>
+</table>
+<p>Alle nodes behalve mobile01 draaien in GNS3 op een Proxmox-gehoste Ubuntu-VM. Zie <a href="../../components/gns3/">GNS3 / Topologie</a> voor de volledige infrastructuurlaag.</p>
+<hr />
+<h2 id="3-netwerksegmenten">3. Netwerksegmenten<a class="headerlink" href="#3-netwerksegmenten" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>CIDR</th>
+<th>Doel</th>
+<th>Verbonden nodes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WAN / beheer</strong></td>
+<td><code>192.168.122.0/24</code></td>
+<td>GNS3 libvirt NAT; underlay voor al het inter-node-verkeer; GNS3 host internet</td>
+<td>pop01, mgmt01, site01 (allemaal via vtnet0/ens3)</td>
+</tr>
+<tr>
+<td><strong>DC-LAN</strong></td>
+<td><code>10.0.0.0/24</code></td>
+<td>Intern datacentersegment — simuleert on-premise resources</td>
+<td>pop01 (vtnet1 = gateway <code>.1</code>), dc01 (<code>.100</code>)</td>
+</tr>
+<tr>
+<td><strong>Site-LAN</strong></td>
+<td><code>172.16.10.0/24</code></td>
+<td>Remote site-segment</td>
+<td>site01 (eth1 = gateway <code>.1</code>), sitepc01 (<code>.50</code>, geen OS)</td>
+</tr>
+<tr>
+<td><strong>NetBird Overlay</strong></td>
+<td><code>100.64.0.0/10</code> (WireGuard mesh)</td>
+<td>Versleutelde overlay — client-transport voor al het SASE-verkeer</td>
+<td>pop01, mgmt01, mobile01</td>
+</tr>
+</tbody>
+</table>
+<p>mobile01 bevindt zich <strong>niet</strong> op het WAN-segment. Het verbindt uitsluitend via de NetBird WireGuard-overlay, als simulatie van een echte externe gebruiker zonder directe verbinding naar het interne netwerk.</p>
+<hr />
+<h2 id="4-control-plane-vs-data-plane">4. Control Plane vs Data Plane<a class="headerlink" href="#4-control-plane-vs-data-plane" title="Permanent link">&para;</a></h2>
+<p>Een bewuste architecturale splitsing die commerciële SASE weerspiegelt:</p>
+<p><strong>Management plane (mgmt01):</strong>
+- NetBird management-stack (Zitadel OIDC, management server, Caddy reverse proxy) — via Docker Compose
+- ioc2rpz — threat intelligence-aggregatie en RPZ-zonepublicatie
+- Caddy — WPAD-server, ioc2rpz GUI-proxy
+- Python DLP ICAP-server — upload-scanning op poort <code>192.168.122.23:1345</code></p>
+<p><strong>Data plane (pop01):</strong>
+- OPNsense firewall en routing
+- Squid expliciete proxy (pre-auth listener <code>100.70.154.79:3128</code>)
+- SSL Bump (SASE-PoC-CA)
+- URL-filtering (UT1 Toulouse Remote ACL + handmatige blacklist)
+- ClamAV + c-icap (malware-scanning + DLP laag 1, ICAP RESPMOD op <code>127.0.0.1:1344</code>)
+- Unbound DNS-resolver (RPZ ingeschakeld via <code>respip</code>-module)
+- BIND 9.20 (os-bind, niet-resolverende secundaire zone voor TSIG-geauthenticeerde zone-transfer, poort <code>53530</code>)
+- Suricata IDS (vtnet0 WAN + vtnet1 LAN, PCAP-modus)
+- NetBird-agent (exit node, routing peer, WPAD-listener)</p>
+<hr />
+<h2 id="5-verkeersstromen">5. Verkeersstromen<a class="headerlink" href="#5-verkeersstromen" title="Permanent link">&para;</a></h2>
+<h3 id="51-byod-httphttps-verkeer-het-hoofdinspectiepad">5.1 BYOD HTTP/HTTPS-verkeer (het hoofdinspectiepad)<a class="headerlink" href="#51-byod-httphttps-verkeer-het-hoofdinspectiepad" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mobile01
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  │ ① DNS-opzoeking: wpad.sandbox.local → 100.70.135.241 (mgmt01)
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  │   (via NetBird primaire nameserver → pop01 Unbound → RPZ-controle → opgelost)
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  │
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>  │ ② PAC-bestand opgehaald: http://wpad.sandbox.local/wpad.dat (Caddy op mgmt01)
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  │   Resultaat: PROXY 100.70.154.79:3128 voor al het externe verkeer
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>  │
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>  │ ③ Browser stuurt CONNECT naar pop01 Squid op 100.70.154.79:3128 (WireGuard-tunnel)
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>  │
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>  ▼
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>pop01 Squid (pre-auth listener, ssl-bump)
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>  │
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>  ├── URL-filtercontrole (UT1 / handmatige blacklist) → 403 indien geblokkeerd
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>  ├── ICAP REQMOD → Python DLP (mgmt01:1345) → 403 bij gevoelige data in upload
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>  ├── SSL Bump: TLS-terminatie + herencryptie (SASE-PoC-CA)
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>  └── ICAP RESPMOD → ClamAV/c-icap (pop01:1344) → 403 bij malware of DLP-match
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>  │
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>  ▼
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>Internet (via pop01 vtnet0 WAN)
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>  │
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>  └── Suricata IDS op vtnet0: ziet herencrypteerde upstream-verbindingen
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        TLS-metadata, DNS-anomalieën, C2-signatures, verdachte user-agent
+</code></pre></div>
+<h3 id="52-dns-resolutie-threat-intelligence-pad">5.2 DNS-resolutie (threat intelligence-pad)<a class="headerlink" href="#52-dns-resolutie-threat-intelligence-pad" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mobile01 of dc01
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  │ DNS-query (alle queries — via NetBird primaire nameserver)
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  ▼
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>pop01 Unbound (poort 53, respip-module actief)
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  │ RPZ-controle: staat het domein in threat-intel.rpz.sase?
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>  ├── Ja → NXDOMAIN (autoritatief, aa-vlag)
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>  └── Nee → doorsturen naar upstream DNS → antwoord teruggestuurd
+</code></pre></div>
+<h3 id="53-zone-transferketen-threat-intelligence-updatepad">5.3 Zone-transferketen (threat intelligence-updatepad)<a class="headerlink" href="#53-zone-transferketen-threat-intelligence-updatepad" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>URLhaus + ThreatFox feeds
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  ↓ HTTP-ophalen (periodiek)
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ioc2rpz (mgmt01 Docker, 192.168.122.23:53)
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  ↓ TSIG-geauthenticeerde AXFR (tkey_rpz_transfer, hmac-sha256)
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>BIND 9.20 (pop01, 127.0.0.1:53530, secundaire zone)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  ↓ niet-geauthenticeerde AXFR (loopback, geen auth vereist)
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Unbound RPZ (pop01, zone in-memory geladen via respip)
+</code></pre></div>
+<h3 id="54-ztna-tunnelopbouw-identiteitsverificatiepad">5.4 ZTNA-tunnelopbouw (identiteitsverificatiepad)<a class="headerlink" href="#54-ztna-tunnelopbouw-identiteitsverificatiepad" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>netbird up (mobile01)
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  │ OIDC-stroom → Zitadel (mgmt01) → Entra ID (aplab.be tenant)
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  │ [GEPLAND] Gate 1: Entra ID Conditional Access evalueert
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  │   - MFA vereist
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  │   - Geo-blokkering (alleen België)
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  │   - Legacy-authenticatie geblokkeerd
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  │   - Aanmeldrisico (Entra ID Protection, A5-licentie)
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  │ OIDC-token ontvangen
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  │
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  │ WireGuard-tunnelonderhandeling met pop01
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>  │ [GEPLAND] Gate 2: NetBird posture checks evalueren
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>  │   - OS-kernel ≥ 10.0.19041
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>  │   - NetBird-client ≥ minimumversie
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>  │   - MsMpEng.exe actief (Windows Defender)
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>  │   - Geo: België
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>  │ WireGuard-tunnel actief, ACL-policies toegepast
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>  ▼
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>pop01 (wt0-interface, overlay IP 100.70.154.79)
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>  BYOD-verkeer stroomt nu door inspectiepipeline (§5.1)
+</code></pre></div>
+<hr />
+<h2 id="6-de-vier-laags-inspectiepipeline">6. De vier-laags inspectiepipeline<a class="headerlink" href="#6-de-vier-laags-inspectiepipeline" title="Permanent link">&para;</a></h2>
+<p>Al het HTTP/HTTPS-verkeer van BYOD-clients passeert vier afzonderlijke inspectielagen. De lagen zijn <strong>aanvullend</strong>, niet redundant — elke laag inspecteert een domein dat de anderen niet kunnen zien:</p>
+<table>
+<thead>
+<tr>
+<th>Laag</th>
+<th>Component</th>
+<th>Locatie</th>
+<th>Inspecteert</th>
+<th>Protocol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Squid + URL-filtering</td>
+<td>pop01</td>
+<td>URLs, categorieën, HTTPS-verbindingsopbouw</td>
+<td>Applicatie</td>
+</tr>
+<tr>
+<td>2</td>
+<td>ClamAV + c-icap + YARA + SDD</td>
+<td>pop01:1344</td>
+<td>Gedownloade bestandsinhoud (malware + DLP laag 1)</td>
+<td>ICAP RESPMOD</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Python DLP ICAP</td>
+<td>mgmt01:1345</td>
+<td>Geüploade POST/PUT/PATCH-bodies (DLP laag 2)</td>
+<td>ICAP REQMOD</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Suricata IDS</td>
+<td>pop01 vtnet0+vtnet1</td>
+<td>Netwerkstromen, TLS-metadata, DNS, ruwe pakketjes</td>
+<td>Raw pcap</td>
+</tr>
+</tbody>
+</table>
+<p>Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op ruwe netwerkinterfaces, onafhankelijk van de proxy-pipeline.</p>
+<p><strong>Waarom Suricata NIET in de ICAP-pipeline zit:</strong> Suricata is een pakketstroom-engine die TCP-streams herbouwt en patronen over verbindingen heen correleert. Een HTTP-body geleverd via ICAP verliest die context. De splitsing is architectureel fundamenteel, geen PoC-beperking. Zie <a href="../../decisions/suricata-wan-lan/">Beslissing: Suricata WAN+LAN</a>.</p>
+<hr />
+<h2 id="7-componentenkaart">7. Componentenkaart<a class="headerlink" href="#7-componentenkaart" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Pagina</th>
+<th>Rol</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Squid + WPAD/PAC + SSL Bump</td>
+<td><a href="../../components/squid/">squid.md</a></td>
+<td>SWG-proxy, HTTPS-inspectie, URL-filtering</td>
+<td>✅ Operationeel</td>
+</tr>
+<tr>
+<td>ClamAV + c-icap</td>
+<td><a href="../../components/clamav-cicap/">clamav-cicap.md</a></td>
+<td>Malware-scanning + DLP laag 1 (downloads)</td>
+<td>✅ Operationeel</td>
+</tr>
+<tr>
+<td>Python DLP ICAP</td>
+<td><a href="../../components/python-dlp/">python-dlp.md</a></td>
+<td>DLP laag 2 (uploads/POST-bodies)</td>
+<td>✅ Operationeel</td>
+</tr>
+<tr>
+<td>Suricata IDS</td>
+<td><a href="../../components/suricata/">suricata.md</a></td>
+<td>Netwerklaag-bedreigingsdetectie</td>
+<td>✅ Operationeel</td>
+</tr>
+<tr>
+<td>ioc2rpz + BIND + Unbound RPZ</td>
+<td><a href="../../components/ioc2rpz/">ioc2rpz.md</a></td>
+<td>DNS threat intelligence</td>
+<td>✅ Operationeel</td>
+</tr>
+<tr>
+<td>NetBird + Zitadel + Entra ID</td>
+<td><a href="../../components/netbird/">netbird.md</a></td>
+<td>ZTNA-transportlaag</td>
+<td>✅ Operationeel</td>
+</tr>
+<tr>
+<td>Caddy</td>
+<td><a href="../../components/caddy/">caddy.md</a></td>
+<td>WPAD-server + reverse proxy</td>
+<td>✅ Operationeel</td>
+</tr>
+<tr>
+<td>GNS3 / Topologie</td>
+<td><a href="../../components/gns3/">gns3.md</a></td>
+<td>Virtualisatie-infrastructuur</td>
+<td>✅ Operationeel</td>
+</tr>
+<tr>
+<td>VyOS</td>
+<td><a href="../../components/vyos/">vyos.md</a></td>
+<td>SD-WAN / SASE-gateway (remote site)</td>
+<td>⚠️ Gedeeltelijk</td>
+</tr>
+<tr>
+<td>Entra ID CA + Posture Checks</td>
+<td><a href="../../components/netbird/">netbird.md</a></td>
+<td>Contextbewuste toegang (Gates 1+2)</td>
+<td>🔲 Gepland</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-vertrouwensgrenzen">8. Vertrouwensgrenzen<a class="headerlink" href="#8-vertrouwensgrenzen" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Grens</th>
+<th>Wat het handhaaft</th>
+<th>Waar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WireGuard-tunnelopbouw</td>
+<td>Identiteit (OIDC) + apparaatposture (gepland)</td>
+<td>pop01 wt0</td>
+</tr>
+<tr>
+<td>Squid ACL</td>
+<td>Netwerkniveau toestaan/weigeren per subnet</td>
+<td>pop01 Squid</td>
+</tr>
+<tr>
+<td>ICAP-pipeline</td>
+<td>Inhoudsniveau toestaan/weigeren per transactie</td>
+<td>pop01 + mgmt01</td>
+</tr>
+<tr>
+<td>ICAP fail-open</td>
+<td><code>bypass=on</code> — uploads passeren ongeïnspecteerd als Python DLP-container uitvalt</td>
+<td>pop01 Squid → mgmt01</td>
+</tr>
+<tr>
+<td>NetBird ACL-policies</td>
+<td>Welke peer welke resource kan bereiken</td>
+<td>NetBird management</td>
+</tr>
+<tr>
+<td>Unbound RPZ</td>
+<td>DNS-niveau domein toestaan/weigeren</td>
+<td>pop01 Unbound</td>
+</tr>
+<tr>
+<td>OPNsense pf</td>
+<td>Stateful firewall (basisbeveiliging)</td>
+<td>pop01</td>
+</tr>
+<tr>
+<td>DC-LAN-uitgaand verkeer</td>
+<td>Geen SWG-inspectie — gerouteerd door OPNsense, niet via proxy</td>
+<td>pop01 vtnet1 gateway</td>
+</tr>
+</tbody>
+</table>
+<p><strong>DC-LAN-inspectiegat:</strong> dc01 gebruikt pop01 als standaardgateway (<code>10.0.0.1</code>) voor internettoegang. Dit verkeer wordt gerouteerd door OPNsense en geïnspecteerd door Suricata op vtnet1, maar gaat <strong>niet</strong> via Squid/ICAP — er is geen WPAD/PAC- of proxyconfiguratie op dc01. DNS-queries van dc01 gaan wel via Unbound RPZ. Dit is een geaccepteerde scopebeperking: DC-resources zijn serverworkloads, geen BYOD-browsers.</p>
+<hr />
+<h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../concepts/sase/">Concept: SASE</a></li>
+<li><a href="../../concepts/zero-trust/">Concept: Zero Trust / Drie-gate model</a></li>
+<li><a href="../../concepts/icap/">Concept: ICAP</a></li>
+<li><a href="../../concepts/ssl-bump/">Concept: SSL Bump</a></li>
+<li><a href="../../concepts/wpad-pac/">Concept: WPAD/PAC</a></li>
+<li><a href="../../concepts/rpz/">Concept: RPZ / DNS Threat Intelligence</a></li>
+<li><a href="../../concepts/dlp/">Concept: DLP</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Terug naar boven
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.tooltips", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Gekopieerd naar klembord", "clipboard.copy": "Kopi\u00ebren naar klembord", "search.result.more.one": "1 extra overeenkomst op deze pagina", "search.result.more.other": "# extra overeenkomsten op deze pagina", "search.result.none": "Geen overeenkomende documenten", "search.result.one": "1 overeenkomende document", "search.result.other": "# overeenkomende documenten", "search.result.placeholder": "Typ om te beginnen met zoeken", "search.result.term.missing": "Ontbreekt", "select.version": "Selecteer versie"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

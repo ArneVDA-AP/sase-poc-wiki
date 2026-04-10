@@ -26,7 +26,7 @@ De PoC vervangt het perimetermodel door een SASE-stack waarbij:
 |-------------|------------------------|-------------------|--------|
 | **ZTNA** | Zscaler ZPA | NetBird + Zitadel + Entra ID (drie-gate model) | ✅ Operationeel |
 | **SWG** | Zscaler ZIA | Squid + SSL Bump + ClamAV + Python DLP + Unbound RPZ | ✅ Operationeel |
-| **CASB (inline)** | Netskope CASB | Squid + ICAP DLP-pipeline | ✅ Operationeel |
+| **CASB (inline)** | Netskope CASB | Squid + ICAP DLP-pipeline (URL-filtering + DLP — gedeeltelijk; geen app-niveau controles of shadow IT-detectie) | ⚠️ Gedeeltelijk |
 | **CASB (API)** | Defender for Cloud Apps | Wazuh + Microsoft Graph (gepland) | ⏳ Gepland |
 | **FWaaS** | Zscaler Cloud Firewall | OPNsense + Suricata IDS | Gedeeltelijk |
 | **SD-WAN** | Zscaler Zero Trust SD-WAN | VyOS site01 + NetBird op sitepc01 | Gedeeltelijk |

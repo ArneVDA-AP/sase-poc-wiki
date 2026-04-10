@@ -194,9 +194,13 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 | WireGuard-tunnelopbouw | Identiteit (OIDC) + apparaatposture (gepland) | pop01 wt0 |
 | Squid ACL | Netwerkniveau toestaan/weigeren per subnet | pop01 Squid |
 | ICAP-pipeline | Inhoudsniveau toestaan/weigeren per transactie | pop01 + mgmt01 |
+| ICAP fail-open | `bypass=on` — uploads passeren ongeïnspecteerd als Python DLP-container uitvalt | pop01 Squid → mgmt01 |
 | NetBird ACL-policies | Welke peer welke resource kan bereiken | NetBird management |
 | Unbound RPZ | DNS-niveau domein toestaan/weigeren | pop01 Unbound |
 | OPNsense pf | Stateful firewall (basisbeveiliging) | pop01 |
+| DC-LAN-uitgaand verkeer | Geen SWG-inspectie — gerouteerd door OPNsense, niet via proxy | pop01 vtnet1 gateway |
+
+**DC-LAN-inspectiegat:** dc01 gebruikt pop01 als standaardgateway (`10.0.0.1`) voor internettoegang. Dit verkeer wordt gerouteerd door OPNsense en geïnspecteerd door Suricata op vtnet1, maar gaat **niet** via Squid/ICAP — er is geen WPAD/PAC- of proxyconfiguratie op dc01. DNS-queries van dc01 gaan wel via Unbound RPZ. Dit is een geaccepteerde scopebeperking: DC-resources zijn serverworkloads, geen BYOD-browsers.
 
 ---
 

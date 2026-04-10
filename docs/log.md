@@ -82,3 +82,17 @@ Append-only log of wiki changes.
 
 **Lint findings resolved:** 2 of 3 actionable items from lint report.  
 **Deferred:** WireGuard concept page — WireGuard is NetBird's transport protocol; all WireGuard content belongs in `components/netbird.md`.
+
+---
+
+## 2026-04-10 — Review fixes (accuracy + coherence + schema)
+
+**Files updated:**
+
+- `components/caddy.md` — **Critical:** replaced incorrect `isInNet()` PAC file with actual deployed `shExpMatch()` version; corrected WPAD HTTP-only claim (WinHTTP tries HTTPS first — both blocks required); replaced incorrect ioc2rpz reverse proxy target (`ioc2rpz-ioc2rpz-gui-1:80` → `https://192.168.122.23:8444` with `tls_insecure_skip_verify`); added missing HTTPS WPAD Caddyfile block; added `caddy` and `wpad` tags to frontmatter
+- `overview/architecture.md` — Added DC-LAN egress inspection gap to trust boundaries table with explanatory note; added ICAP `bypass=on` fail-open row to trust boundaries
+- `decisions/two-layer-dlp.md` — Added Related section with back-links to component and concept pages
+- `decisions/bind-tsig-intermediary.md` — Added Related section with back-links to ioc2rpz component and RPZ concept
+- `concepts/sase.md` — Qualified inline CASB status from "Operational" to "Partial" (URL filtering + DLP only, no app-level controls)
+
+**Review findings resolved:** 4 critical, 3 minor, 2 suggestions. Source-verified against `raw/Doc1_Squid_WPAD_PAC.md`, `raw/Doc4_DNS_Threat_Intelligence.md`, `raw/Verslag19.md`, and `raw/Verslag24.md`.

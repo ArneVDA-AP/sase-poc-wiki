@@ -194,9 +194,13 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 | WireGuard tunnel establishment | Identity (OIDC) + device posture (planned) | pop01 wt0 |
 | Squid ACL | Network-level allow/deny per subnet | pop01 Squid |
 | ICAP pipeline | Content allow/deny per transaction | pop01 + mgmt01 |
+| ICAP fail-open | `bypass=on` — uploads pass uninspected if Python DLP container is down | pop01 Squid → mgmt01 |
 | NetBird ACL policies | Which peer can reach which resource | NetBird management |
 | Unbound RPZ | DNS-level domain allow/deny | pop01 Unbound |
 | OPNsense pf | Stateful firewall (baseline) | pop01 |
+| DC-LAN egress | No SWG inspection — routed by OPNsense, not proxied | pop01 vtnet1 gateway |
+
+**DC-LAN inspection gap:** dc01 uses pop01 as its default gateway (`10.0.0.1`) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does **not** pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not BYOD browsers.
 
 ---
 
