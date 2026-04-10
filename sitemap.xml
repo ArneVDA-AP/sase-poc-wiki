@@ -330,6 +330,62 @@
         <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/overview/architecture/"/>
     </url>
     <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/01-lab-environment/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/01-lab-environment/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/01-lab-environment/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/02-ztna-overlay/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/02-ztna-overlay/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/02-ztna-overlay/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/03-proxy-wpad/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/03-proxy-wpad/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/03-proxy-wpad/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/04-malware-dlp/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/04-malware-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/04-malware-dlp/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/05-ids/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/05-ids/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/05-ids/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/06-dns-threat-intel/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/06-dns-threat-intel/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/06-dns-threat-intel/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/07-access-policy/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/07-access-policy/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/07-access-policy/"/>
+    </url>
+    <url>
         <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/</loc>
         <lastmod>2026-04-10</lastmod>
         <changefreq>daily</changefreq>
@@ -657,5 +713,61 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/overview/architecture/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/overview/architecture/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/01-lab-environment/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/01-lab-environment/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/01-lab-environment/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/02-ztna-overlay/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/02-ztna-overlay/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/02-ztna-overlay/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/03-proxy-wpad/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/03-proxy-wpad/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/03-proxy-wpad/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/04-malware-dlp/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/04-malware-dlp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/04-malware-dlp/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/05-ids/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/05-ids/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/05-ids/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/06-dns-threat-intel/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/06-dns-threat-intel/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/06-dns-threat-intel/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/07-access-policy/</loc>
+        <lastmod>2026-04-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/07-access-policy/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/07-access-policy/"/>
     </url>
 </urlset>
