@@ -40,10 +40,13 @@ plugins:
   - tags:
       tags_file: tags.md
   - i18n:
-      default_language: en
-      default_language_only: false
+      docs_structure: suffix
       languages:
-        nl:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: nl
           name: Nederlands
           build: true
           nav_translations:
