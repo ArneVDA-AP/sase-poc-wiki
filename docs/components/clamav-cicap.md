@@ -148,3 +148,4 @@ YARA files in `/var/db/clamav/` are auto-loaded by ClamAV. Matches appear with `
 - [Component: Squid](squid.md)
 - [Component: Python DLP](python-dlp.md)
 - [Decision: Two-layer DLP](../decisions/two-layer-dlp.md)
+- [Runbook: Malware & DLP Pipeline](../runbooks/04-malware-dlp.md)

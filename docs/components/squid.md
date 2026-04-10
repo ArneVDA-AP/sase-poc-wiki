@@ -112,3 +112,4 @@ The deny rules for blacklists appear before all allow rules. Squid is first-matc
 - [Finding: pre-auth ssl-bump params](../findings/pre-auth-ssl-bump-params.md)
 - [Finding: Squid clearlog destroys file](../findings/squid-clearlog-destroys-file.md)
 - [Finding: StevenBlack incompatible](../findings/stevenblack-incompatible.md)
+- [Runbook: Proxy & WPAD](../runbooks/03-proxy-wpad.md)

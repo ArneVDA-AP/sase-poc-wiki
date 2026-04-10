@@ -96,3 +96,36 @@ Append-only log of wiki changes.
 - `concepts/sase.md` — Qualified inline CASB status from "Operational" to "Partial" (URL filtering + DLP only, no app-level controls)
 
 **Review findings resolved:** 4 critical, 3 minor, 2 suggestions. Source-verified against `raw/Doc1_Squid_WPAD_PAC.md`, `raw/Doc4_DNS_Threat_Intelligence.md`, `raw/Verslag19.md`, and `raw/Verslag24.md`.
+
+---
+
+## 2026-04-10 — Runbooks added (deployment guides)
+
+**Problem addressed:** The wiki was structured as a modular reference (components, concepts, decisions, findings) — excellent for lookups, but missing the linear step-by-step deployment trails from the original raw implementation documents. An engineer rebuilding the system had to hop between pages to reconstruct the build order.
+
+**Files created:**
+
+### Runbooks
+- `runbooks/index.md` — Build order, dependency graph, runbook catalog
+- `runbooks/01-lab-environment.md` — Proxmox VM, GNS3 Server, topology, IP addressing, snapshots (from Doc5)
+- `runbooks/02-ztna-overlay.md` — NetBird + Zitadel + Entra ID, 15 steps, groups, ACLs, exit node, DNS (from Doc6)
+- `runbooks/03-proxy-wpad.md` — Squid explicit proxy, WPAD/PAC via Caddy, SSL Bump, URL filtering, 10 steps (from Doc1)
+- `runbooks/04-malware-dlp.md` — ClamAV/c-icap RESPMOD, YARA rules, Python DLP REQMOD, 7 steps (from Doc2)
+- `runbooks/05-ids.md` — Suricata on WAN+LAN, Hyperscan, 79,620+ rules, 6 steps (from Doc3)
+- `runbooks/06-dns-threat-intel.md` — ioc2rpz, BIND TSIG intermediary, Unbound RPZ, 71,767 records, 7 steps (from Doc4)
+- `runbooks/07-access-policy.md` — Conditional Access (4 policies), posture checks, 5 validation scenarios, planned (from Doc7)
+
+**Files updated:**
+
+- `index.md` — Added Runbooks section to catalog table (8 entries)
+- `overview/architecture.md` — Added link to runbooks in Related section
+- `components/gns3.md` — Added runbook link to Related
+- `components/netbird.md` — Added runbook links to Related
+- `components/squid.md` — Added runbook link to Related
+- `components/clamav-cicap.md` — Added runbook link to Related
+- `components/python-dlp.md` — Added runbook link to Related
+- `components/suricata.md` — Added runbook link to Related
+- `components/ioc2rpz.md` — Added runbook link to Related
+- `components/caddy.md` — Added runbook links to Related
+
+**Total new pages:** 8 runbook pages. **Total updated pages:** 10.

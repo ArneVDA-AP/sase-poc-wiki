@@ -135,3 +135,4 @@ Mitigation: add `fsck_y_enable="YES"` to `/etc/rc.conf` on pop01 — FreeBSD the
 - [Component: VyOS](vyos.md)
 - [Finding: iptables FORWARD ordering](../findings/iptables-forward-ordering.md)
 - [Decision: GNS3 vs EVE-NG](../decisions/gns3-vs-eveng.md)
+- [Runbook: Lab Environment](../runbooks/01-lab-environment.md)

@@ -41,6 +41,15 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | [GNS3 vs EVE-NG](decisions/gns3-vs-eveng.md) | Multi-user requirement; QCOW2 format; EVE-NG single-session limitation |
 | [Zitadel as IdP broker](decisions/zitadel-idp-broker.md) | Quickstart installs Zitadel; Entra ID as external IdP; CA still fires |
 | [CA + Posture hybrid (Three-Gate Model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementary not substitutable; BYOD Intune gap |
+| **Runbooks** | |
+| [Runbooks overview](runbooks/index.md) | Build order, dependency graph, step-by-step deployment guides |
+| [01 — Lab Environment](runbooks/01-lab-environment.md) | Proxmox VM, GNS3 Server, topology, IP addressing, snapshots |
+| [02 — ZTNA Overlay](runbooks/02-ztna-overlay.md) | NetBird + Zitadel + Entra ID, groups, ACLs, exit node, DNS |
+| [03 — Proxy & WPAD](runbooks/03-proxy-wpad.md) | Squid explicit proxy, WPAD/PAC via Caddy, SSL Bump, URL filtering |
+| [04 — Malware & DLP](runbooks/04-malware-dlp.md) | ClamAV/c-icap RESPMOD, YARA rules, Python DLP REQMOD |
+| [05 — IDS](runbooks/05-ids.md) | Suricata on WAN+LAN, Hyperscan, 79,620+ rules |
+| [06 — DNS Threat Intel](runbooks/06-dns-threat-intel.md) | ioc2rpz, BIND TSIG, Unbound RPZ, 71,767 records |
+| [07 — Access Policy](runbooks/07-access-policy.md) | Conditional Access, posture checks, validation scenarios (planned) |
 | **Findings** | |
 | [wt0 pf rdr limitation](findings/wt0-pf-rdr-limitation.md) | WireGuard Layer 3 — pf rdr cannot intercept on wt0 |
 | [pre-auth ssl-bump params](findings/pre-auth-ssl-bump-params.md) | Bare http_port without ssl-bump = no inspection on overlay listener |

@@ -184,3 +184,5 @@ ClamAV/Python DLP ICAP traffic from pop01 to mgmt01 travels over the `192.168.12
 - [Decision: GNS3 vs EVE-NG](../decisions/gns3-vs-eveng.md)
 - [Finding: NetBird primary nameserver](../findings/netbird-primary-nameserver.md)
 - [Finding: NetBird config zero bytes](../findings/netbird-config-zero-bytes.md)
+- [Runbook: ZTNA Overlay](../runbooks/02-ztna-overlay.md)
+- [Runbook: Access Policy](../runbooks/07-access-policy.md)

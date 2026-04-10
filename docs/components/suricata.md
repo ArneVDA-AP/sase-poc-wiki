@@ -159,3 +159,4 @@ Four detection categories confirmed after vtnet1 fix:
 - [Finding: Suricata interface default bug](../findings/suricata-interface-default-bug.md)
 - [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md)
 - [Finding: wt0 pf rdr limitation](../findings/wt0-pf-rdr-limitation.md)
+- [Runbook: IDS](../runbooks/05-ids.md)

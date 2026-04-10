@@ -113,3 +113,4 @@ Use `printf`, not `echo -e` — FreeBSD's `/bin/sh` does not interpret `-e` as a
 - [Component: ClamAV/c-icap](clamav-cicap.md)
 - [Decision: Two-layer DLP](../decisions/two-layer-dlp.md)
 - [Finding: pyicap collections bug](../findings/pyicap-collections-bug.md)
+- [Runbook: Malware & DLP Pipeline](../runbooks/04-malware-dlp.md)

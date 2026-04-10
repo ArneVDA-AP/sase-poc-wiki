@@ -226,3 +226,4 @@ rpz: applied [ioc2rpz-threat-intel] testentry.rpz.urlhaus.abuse.ch. rpz-nxdomain
 - [Finding: ioc2rpz GUI JS bug](../findings/ioc2rpz-gui-js-bug.md)
 - [Finding: iptables FORWARD ordering](../findings/iptables-forward-ordering.md)
 - [Finding: NetBird primary nameserver](../findings/netbird-primary-nameserver.md)
+- [Runbook: DNS Threat Intelligence](../runbooks/06-dns-threat-intel.md)

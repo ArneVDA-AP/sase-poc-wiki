@@ -140,3 +140,5 @@ docker compose up -d caddy   # applies new mounts
 - [Component: ioc2rpz](ioc2rpz.md)
 - [Decision: WPAD/PAC vs transparent proxy](../decisions/wpad-vs-transparent-proxy.md)
 - [Decision: Zitadel as IdP broker](../decisions/zitadel-idp-broker.md)
+- [Runbook: ZTNA Overlay](../runbooks/02-ztna-overlay.md)
+- [Runbook: Proxy & WPAD](../runbooks/03-proxy-wpad.md)
