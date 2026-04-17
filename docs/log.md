@@ -166,3 +166,22 @@ Append-only log of wiki changes.
 - `findings/ioc2rpz-gui-js-bug.md` — Added permanent fix options (forked image, volume-mounted JS)
 
 **Total files updated:** 22
+
+---
+
+## 2026-04-17 — New source document ingest: SASE_PoC_Testrapport.md
+
+**New source document:** `raw/SASE_PoC_Testrapport.md` — comprehensive F1–F15 acceptance test report (v1.0, April 2026), covering all sandbox test results with exact commands, actual output, and rationale.
+
+**Files created:**
+
+- `testing/acceptance-tests.md` — F1–F15 overall status table, per-test rationale and key output, additional T-A1–T-A9 tests, per-pillar coverage summary, F15 step-by-step breakdown, test environment table
+- `decisions/sdwan-descoped.md` — SD-WAN features F12/F13/F14 explicitly descoped (IPsec, QoS, uCPE); Zero Trust rationale; Zscaler alignment; consequence for sitepc01
+- `findings/curl-ssl-no-revoke.md` — Windows curl Schannel CRL check fails on SASE-PoC-CA; `--ssl-no-revoke` required for all proxy HTTPS tests from Windows
+- `findings/suricata-connection-pooling.md` — Squid connection pooling causes one Suricata alert per SID per flow; not suppression; expected behavior
+
+**Files updated:**
+
+- `index.md` — Added Testing section (1 entry), new decision (SD-WAN descoped), two new findings
+
+**Source document ingested:** `SASE_PoC_Testrapport.md` (1 test report)

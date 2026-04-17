@@ -41,6 +41,9 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | [GNS3 vs EVE-NG](decisions/gns3-vs-eveng.md) | Multi-user requirement; QCOW2 format; EVE-NG single-session limitation |
 | [Zitadel as IdP broker](decisions/zitadel-idp-broker.md) | Quickstart installs Zitadel; Entra ID as external IdP; CA still fires |
 | [CA + Posture hybrid (Three-Gate Model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementary not substitutable; BYOD Intune gap |
+| [SD-WAN Descoped (F12, F13, F14)](decisions/sdwan-descoped.md) | IPsec + QoS + uCPE removed — site-to-site tunnels contradict Zero Trust; sitepc01 → NetBird enrollment |
+| **Testing** | |
+| [Acceptance Tests (F1–F15)](testing/acceptance-tests.md) | Full F1–F15 status table, test commands, actual output, per-pillar coverage, planned tests |
 | **Runbooks** | |
 | [Runbooks overview](runbooks/index.md) | Build order, dependency graph, step-by-step deployment guides |
 | [01 — Lab Environment](runbooks/01-lab-environment.md) | Proxmox VM, GNS3 Server, topology, IP addressing, snapshots |
@@ -65,6 +68,8 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | [NetBird primary nameserver](findings/netbird-primary-nameserver.md) | Empty match-domains required for RPZ to cover external domains |
 | [NetBird config zero bytes](findings/netbird-config-zero-bytes.md) | FreeBSD UFS + QEMU SIGKILL = 0-byte config.json — backup after each session |
 | [Docker volume recreation](findings/docker-volume-recreation.md) | `docker compose restart` doesn't apply volume mount changes — use `up -d` |
+| [curl --ssl-no-revoke on Windows](findings/curl-ssl-no-revoke.md) | Schannel CRL check fails on SASE-PoC-CA — add `--ssl-no-revoke` to all proxy tests from Windows |
+| [Suricata connection pooling](findings/suricata-connection-pooling.md) | Squid reuses upstream TCP connections — one Suricata alert per SID per flow is correct, not suppression |
 
 ---
 

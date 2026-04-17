@@ -106,6 +106,11 @@ plugins:
             05 — IDS: 05 — IDS
             06 — DNS Threat Intel: 06 — DNS Threat Intel
             07 — Access Policy: 07 — Toegangsbeleid
+            SD-WAN Descoped: SD-WAN Geschrapt
+            Testing: Testen
+            Acceptance Tests (F1–F15): Acceptatietests (F1–F15)
+            curl --ssl-no-revoke on Windows: curl --ssl-no-revoke op Windows
+            Suricata connection pooling: Suricata verbindingspooling
 
 markdown_extensions:
   - admonition
@@ -170,6 +175,9 @@ nav:
     - GNS3 vs EVE-NG: decisions/gns3-vs-eveng.md
     - Zitadel as IdP Broker: decisions/zitadel-idp-broker.md
     - CA + Posture Hybrid: decisions/ca-posture-hybrid.md
+    - SD-WAN Descoped: decisions/sdwan-descoped.md
+  - Testing:
+    - Acceptance Tests (F1–F15): testing/acceptance-tests.md
   - Runbooks:
     - runbooks/index.md
     - 01 — Lab Environment: runbooks/01-lab-environment.md
@@ -195,6 +203,8 @@ nav:
     - NetBird primary nameserver: findings/netbird-primary-nameserver.md
     - NetBird config zero bytes: findings/netbird-config-zero-bytes.md
     - Docker volume recreation: findings/docker-volume-recreation.md
+    - curl --ssl-no-revoke on Windows: findings/curl-ssl-no-revoke.md
+    - Suricata connection pooling: findings/suricata-connection-pooling.md
   - Tags: tags.md
   - Log: log.md
 
