@@ -33,7 +33,7 @@
     
     
       
-        <title>Finding: Suricata Fires Once per SID per Flow (Squid Connection Pooling) - Security Project Wiki</title>
+        <title>Bevinding: Suricata vuurt één keer per SID per flow (Squid-verbindingspooling) - Security Project Wiki</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#finding-suricata-fires-once-per-sid-per-flow-squid-connection-pooling" class="md-skip">
+        <a href="#bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-verbindingspooling" class="md-skip">
           Ga naar inhoud
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Finding: Suricata Fires Once per SID per Flow (Squid Connection Pooling)
+              Bevinding: Suricata vuurt één keer per SID per flow (Squid-verbindingspooling)
             
           </span>
         </div>
@@ -2521,10 +2521,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-happened" class="md-nav__link">
+  <a href="#wat-er-gebeurde" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What happened
+        Wat er gebeurde
       
     </span>
   </a>
@@ -2532,10 +2532,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#root-cause" class="md-nav__link">
+  <a href="#oorzaak" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Root cause
+        Oorzaak
       
     </span>
   </a>
@@ -2543,10 +2543,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#resolution" class="md-nav__link">
+  <a href="#oplossing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Resolution
+        Oplossing
       
     </span>
   </a>
@@ -2554,10 +2554,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#lessons" class="md-nav__link">
+  <a href="#lessen" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lessons
+        Lessen
       
     </span>
   </a>
@@ -2565,10 +2565,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#related" class="md-nav__link">
+  <a href="#gerelateerd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Related
+        Gerelateerd
       
     </span>
   </a>
@@ -2672,10 +2672,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-happened" class="md-nav__link">
+  <a href="#wat-er-gebeurde" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What happened
+        Wat er gebeurde
       
     </span>
   </a>
@@ -2683,10 +2683,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#root-cause" class="md-nav__link">
+  <a href="#oorzaak" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Root cause
+        Oorzaak
       
     </span>
   </a>
@@ -2694,10 +2694,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#resolution" class="md-nav__link">
+  <a href="#oplossing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Resolution
+        Oplossing
       
     </span>
   </a>
@@ -2705,10 +2705,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#lessons" class="md-nav__link">
+  <a href="#lessen" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lessons
+        Lessen
       
     </span>
   </a>
@@ -2716,10 +2716,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#related" class="md-nav__link">
+  <a href="#gerelateerd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Related
+        Gerelateerd
       
     </span>
   </a>
@@ -2775,38 +2775,38 @@
 
 
 
-<h1 id="finding-suricata-fires-once-per-sid-per-flow-squid-connection-pooling">Finding: Suricata Fires Once per SID per Flow (Squid Connection Pooling)<a class="headerlink" href="#finding-suricata-fires-once-per-sid-per-flow-squid-connection-pooling" title="Permanent link">&para;</a></h1>
+<h1 id="bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-verbindingspooling">Bevinding: Suricata vuurt één keer per SID per flow (Squid-verbindingspooling)<a class="headerlink" href="#bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-verbindingspooling" title="Permanent link">&para;</a></h1>
 <p><strong>Component:</strong> <a href="../../components/suricata/">Suricata</a><br />
-<strong>Severity:</strong> Insight — not a bug</p>
-<h2 id="what-happened">What happened<a class="headerlink" href="#what-happened" title="Permanent link">&para;</a></h2>
-<p>During F9 validation testing, multiple <code>curl.exe</code> requests to the same destination via the Squid proxy generated only one Suricata alert per SID, regardless of how many requests were sent. This initially appeared to be alert suppression or a Suricata configuration issue.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c"># mobile01 — repeated three times</span>
+<strong>Ernst:</strong> Inzicht — geen bug</p>
+<h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
+<p>Tijdens F9-validatietests genereerden meerdere <code>curl.exe</code>-verzoeken naar dezelfde bestemming via de Squid-proxy slechts één Suricata-alert per SID, ongeacht het aantal verzonden verzoeken. Dit leek aanvankelijk op alertonderdrukking of een Suricata-configuratieprobleem.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c"># mobile01 — drie keer herhaald</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">testmyids</span><span class="p">.</span><span class="n">com</span><span class="p">/</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">testmyids</span><span class="p">.</span><span class="n">com</span><span class="p">/</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">testmyids</span><span class="p">.</span><span class="n">com</span><span class="p">/</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c"># Result: only one SID 2100498 alert in eve.json</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c"># Resultaat: slechts één SID 2100498-alert in eve.json</span>
 </code></pre></div>
-<h2 id="root-cause">Root cause<a class="headerlink" href="#root-cause" title="Permanent link">&para;</a></h2>
-<p>Squid connection pooling reuses upstream TCP connections. From Suricata's perspective on vtnet0, multiple sequential HTTP requests to the same server appear as traffic within a single TCP flow. Suricata correctly fires once per SID per flow — this is expected behavior by design, not suppression.</p>
-<p>The alert count in <code>eve.json</code> reflects the number of distinct upstream TCP flows, not the number of client HTTP requests.</p>
-<h2 id="resolution">Resolution<a class="headerlink" href="#resolution" title="Permanent link">&para;</a></h2>
-<p>No fix needed — this is correct behavior. For testing that requires a new Suricata alert for the same SID:</p>
+<h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
+<p>Squid-verbindingspooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow — dit is verwacht gedrag by design, geen onderdrukking.</p>
+<p>Het aantal alerts in <code>eve.json</code> weerspiegelt het aantal afzonderlijke upstream TCP-flows, niet het aantal HTTP-verzoeken van de client.</p>
+<h2 id="oplossing">Oplossing<a class="headerlink" href="#oplossing" title="Permanent link">&para;</a></h2>
+<p>Geen oplossing nodig — dit is correct gedrag. Voor tests die een nieuwe Suricata-alert vereisen voor dezelfde SID:</p>
 <ul>
-<li>Use a different destination host per test run</li>
-<li>Wait for the upstream Squid idle timeout to expire, closing the pooled connection</li>
-<li>Test against distinct URLs that each independently trigger the SID</li>
+<li>Gebruik een andere bestemmingshost per testrun</li>
+<li>Wacht tot de upstream Squid-inactieve time-out verstrijkt, waardoor de gepoolde verbinding wordt gesloten</li>
+<li>Test tegen afzonderlijke URL's die elk onafhankelijk de SID triggeren</li>
 </ul>
-<h2 id="lessons">Lessons<a class="headerlink" href="#lessons" title="Permanent link">&para;</a></h2>
+<h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>When interpreting Suricata alert counts during proxy-based testing, account for Squid connection pooling. One alert per SID per flow is expected and correct.</li>
-<li>This does not affect production detection: genuinely distinct malicious flows will each generate their own alert.</li>
-<li>Investigated and confirmed in Verslag23 (Bevinding 23.6).</li>
+<li>Houd bij het interpreteren van Suricata-alertaantallen tijdens proxy-gebaseerde tests rekening met Squid-verbindingspooling. Één alert per SID per flow is verwacht en correct.</li>
+<li>Dit heeft geen invloed op productiedetectie: werkelijk afzonderlijke kwaadaardige flows genereren elk hun eigen alert.</li>
+<li>Onderzocht en bevestigd in Verslag23 (Bevinding 23.6).</li>
 </ul>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../components/suricata/">Suricata</a></li>
 <li><a href="../../components/squid/">Squid</a></li>
-<li><a href="../../testing/acceptance-tests/">Testing: Acceptance Tests</a></li>
+<li><a href="../../testing/acceptance-tests/">Testen: Acceptatietests</a></li>
 </ul>
 
 

@@ -33,7 +33,7 @@
     
     
       
-        <title>Finding: curl --ssl-no-revoke Required on Windows for Proxy Tests - Security Project Wiki</title>
+        <title>Bevinding: curl --ssl-no-revoke vereist op Windows voor proxytests - Security Project Wiki</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#finding-curl-ssl-no-revoke-required-on-windows-for-proxy-tests" class="md-skip">
+        <a href="#bevinding-curl-ssl-no-revoke-vereist-op-windows-voor-proxytests" class="md-skip">
           Ga naar inhoud
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Finding: curl --ssl-no-revoke Required on Windows for Proxy Tests
+              Bevinding: curl --ssl-no-revoke vereist op Windows voor proxytests
             
           </span>
         </div>
@@ -2493,10 +2493,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-happened" class="md-nav__link">
+  <a href="#wat-er-gebeurde" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What happened
+        Wat er gebeurde
       
     </span>
   </a>
@@ -2504,10 +2504,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#root-cause" class="md-nav__link">
+  <a href="#oorzaak" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Root cause
+        Oorzaak
       
     </span>
   </a>
@@ -2515,10 +2515,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#resolution" class="md-nav__link">
+  <a href="#oplossing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Resolution
+        Oplossing
       
     </span>
   </a>
@@ -2526,10 +2526,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#lessons" class="md-nav__link">
+  <a href="#lessen" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lessons
+        Lessen
       
     </span>
   </a>
@@ -2537,10 +2537,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#related" class="md-nav__link">
+  <a href="#gerelateerd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Related
+        Gerelateerd
       
     </span>
   </a>
@@ -2672,10 +2672,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-happened" class="md-nav__link">
+  <a href="#wat-er-gebeurde" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What happened
+        Wat er gebeurde
       
     </span>
   </a>
@@ -2683,10 +2683,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#root-cause" class="md-nav__link">
+  <a href="#oorzaak" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Root cause
+        Oorzaak
       
     </span>
   </a>
@@ -2694,10 +2694,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#resolution" class="md-nav__link">
+  <a href="#oplossing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Resolution
+        Oplossing
       
     </span>
   </a>
@@ -2705,10 +2705,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#lessons" class="md-nav__link">
+  <a href="#lessen" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Lessons
+        Lessen
       
     </span>
   </a>
@@ -2716,10 +2716,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#related" class="md-nav__link">
+  <a href="#gerelateerd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Related
+        Gerelateerd
       
     </span>
   </a>
@@ -2775,36 +2775,36 @@
 
 
 
-<h1 id="finding-curl-ssl-no-revoke-required-on-windows-for-proxy-tests">Finding: curl --ssl-no-revoke Required on Windows for Proxy Tests<a class="headerlink" href="#finding-curl-ssl-no-revoke-required-on-windows-for-proxy-tests" title="Permanent link">&para;</a></h1>
+<h1 id="bevinding-curl-ssl-no-revoke-vereist-op-windows-voor-proxytests">Bevinding: curl --ssl-no-revoke vereist op Windows voor proxytests<a class="headerlink" href="#bevinding-curl-ssl-no-revoke-vereist-op-windows-voor-proxytests" title="Permanent link">&para;</a></h1>
 <p><strong>Component:</strong> <a href="../../components/squid/">Squid</a>, <a href="../../components/clamav-cicap/">ClamAV/c-icap</a><br />
-<strong>Severity:</strong> Gotcha</p>
-<h2 id="what-happened">What happened<a class="headerlink" href="#what-happened" title="Permanent link">&para;</a></h2>
-<p>When running ICAP pipeline tests from mobile01 (Windows 11) using <code>curl.exe</code> through the Squid proxy to an HTTPS destination, curl fails with a TLS error unless <code>--ssl-no-revoke</code> is specified:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c"># Fails without --ssl-no-revoke</span>
+<strong>Ernst:</strong> Valkuil</p>
+<h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
+<p>Bij het uitvoeren van ICAP-pijplijn-tests van mobile01 (Windows 11) met <code>curl.exe</code> via de Squid-proxy naar een HTTPS-bestemming, mislukt curl met een TLS-fout tenzij <code>--ssl-no-revoke</code> wordt opgegeven:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c"># Mislukt zonder --ssl-no-revoke</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">-o</span> <span class="n">eicar_test</span><span class="p">.</span><span class="n">txt</span> <span class="n">https</span><span class="p">://</span><span class="n">secure</span><span class="p">.</span><span class="n">eicar</span><span class="p">.</span><span class="n">org</span><span class="p">/</span><span class="n">eicar</span><span class="p">.</span><span class="n">com</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c"># Works</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c"># Werkt wel</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="p">-</span><span class="n">-ssl-no-revoke</span> <span class="n">-o</span> <span class="n">eicar_test</span><span class="p">.</span><span class="n">txt</span> <span class="n">https</span><span class="p">://</span><span class="n">secure</span><span class="p">.</span><span class="n">eicar</span><span class="p">.</span><span class="n">org</span><span class="p">/</span><span class="n">eicar</span><span class="p">.</span><span class="n">com</span>
 </code></pre></div>
-<p>Without <code>--ssl-no-revoke</code>, the request never reaches the ICAP pipeline — curl fails at TLS handshake.</p>
-<h2 id="root-cause">Root cause<a class="headerlink" href="#root-cause" title="Permanent link">&para;</a></h2>
-<p>Windows <code>curl.exe</code> uses the Schannel TLS backend, which attempts CRL (Certificate Revocation List) and OCSP validation on every certificate in the chain. When Squid performs SSL Bump, the certificate presented to the client is issued by the SASE-PoC-CA — a locally generated CA with no published CRL or OCSP endpoint. Schannel treats a missing revocation endpoint as a failure and aborts the connection.</p>
-<h2 id="resolution">Resolution<a class="headerlink" href="#resolution" title="Permanent link">&para;</a></h2>
-<p>Add <code>--ssl-no-revoke</code> to all <code>curl.exe</code> commands from Windows hosts that route through the SSL Bump proxy to HTTPS destinations. This flag instructs Schannel to skip revocation checks.</p>
-<p>This flag does not affect test validity — the ICAP pipeline blocking or passing behavior is entirely independent of the CRL check that Schannel is performing.</p>
-<h2 id="lessons">Lessons<a class="headerlink" href="#lessons" title="Permanent link">&para;</a></h2>
+<p>Zonder <code>--ssl-no-revoke</code> bereikt het verzoek de ICAP-pijplijn nooit — curl mislukt bij de TLS-handshake.</p>
+<h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
+<p>Windows <code>curl.exe</code> gebruikt de Schannel TLS-backend, die CRL- (Certificate Revocation List) en OCSP-validatie probeert voor elk certificaat in de keten. Wanneer Squid SSL Bump uitvoert, wordt het certificaat dat aan de client wordt gepresenteerd uitgegeven door de SASE-PoC-CA — een lokaal gegenereerde CA zonder gepubliceerd CRL- of OCSP-eindpunt. Schannel behandelt een ontbrekend intrekkingseindpunt als een fout en breekt de verbinding af.</p>
+<h2 id="oplossing">Oplossing<a class="headerlink" href="#oplossing" title="Permanent link">&para;</a></h2>
+<p>Voeg <code>--ssl-no-revoke</code> toe aan alle <code>curl.exe</code>-opdrachten van Windows-hosts die via de SSL Bump-proxy naar HTTPS-bestemmingen routeren. Deze vlag instrueert Schannel om intrekkingscontroles over te slaan.</p>
+<p>Deze vlag heeft geen invloed op de testgeldigheid — het blokkeer- of doorlaatgedrag van de ICAP-pijplijn is volledig onafhankelijk van de CRL-controle die Schannel uitvoert.</p>
+<h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>All Windows <code>curl.exe</code> proxy tests against HTTPS destinations require <code>--ssl-no-revoke</code> in this environment.</li>
-<li>Browser-based tests are unaffected: browsers handle the SASE-PoC-CA via the installed trusted CA and tolerate missing CRL endpoints more gracefully.</li>
-<li>PowerShell <code>Invoke-WebRequest</code> uses the same Schannel backend and has the same behavior — the same workaround applies if Invoke-WebRequest is used for testing.</li>
-<li>In production, the SASE-PoC-CA would be distributed via Group Policy and a CRL endpoint would be configured — making this issue moot.</li>
+<li>Alle Windows <code>curl.exe</code>-proxytests naar HTTPS-bestemmingen vereisen <code>--ssl-no-revoke</code> in deze omgeving.</li>
+<li>Browsertests worden niet beïnvloed: browsers behandelen de SASE-PoC-CA via de geïnstalleerde vertrouwde CA en tolereren ontbrekende CRL-eindpunten soepeler.</li>
+<li>PowerShell <code>Invoke-WebRequest</code> gebruikt dezelfde Schannel-backend en heeft hetzelfde gedrag — dezelfde workaround is van toepassing als Invoke-WebRequest wordt gebruikt voor tests.</li>
+<li>In productie zou de SASE-PoC-CA worden gedistribueerd via Groepsbeleid en zou een CRL-eindpunt worden geconfigureerd — waardoor dit probleem niet meer speelt.</li>
 </ul>
-<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../concepts/ssl-bump/">SSL Bump</a></li>
 <li><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></li>
 <li><a href="../../components/squid/">Squid</a></li>
-<li><a href="../../testing/acceptance-tests/">Testing: Acceptance Tests</a></li>
+<li><a href="../../testing/acceptance-tests/">Testen: Acceptatietests</a></li>
 </ul>
 
 
