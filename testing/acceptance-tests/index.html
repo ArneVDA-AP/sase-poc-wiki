@@ -1,0 +1,3957 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SASE PoC — OPNsense / Squid / ClamAV / c-icap / NetBird">
+      
+      
+        <meta name="author" content="Arne">
+      
+      
+        <link rel="canonical" href="https://ArneVDA-AP.github.io/sase-poc-wiki/testing/acceptance-tests/">
+      
+      
+        <link rel="prev" href="../../decisions/sdwan-descoped/">
+      
+      
+        <link rel="next" href="../../runbooks/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../../nl/testing/acceptance-tests/" hreflang="nl">
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Acceptance Test Results (F1–F15) - Security Project Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#acceptance-test-results-f1f15" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Security Project Wiki" class="md-header__button md-logo" aria-label="Security Project Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Security Project Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Acceptance Test Results (F1–F15)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../nl/testing/acceptance-tests/" hreflang="nl" class="md-select__link">
+              Nederlands
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../overview/architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architecture
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../components/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Components
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../concepts/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Concepts
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../decisions/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Decisions
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Testing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../runbooks/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Runbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../findings/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Findings
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../log/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Log
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Security Project Wiki" class="md-nav__button md-logo" aria-label="Security Project Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Security Project Wiki
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../components/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Components
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Components
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/squid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/clamav-cicap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ClamAV / c-icap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/python-dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/suricata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/ioc2rpz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/netbird/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/caddy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caddy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/gns3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/vyos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VyOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../concepts/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepts
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepts
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/sase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SASE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/zero-trust/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero Trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/icap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICAP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/ssl-bump/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSL Bump
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/wpad-pac/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WPAD/PAC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/rpz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RPZ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../decisions/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisions
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/wpad-vs-transparent-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WPAD vs Transparent Proxy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/two-layer-dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Two-Layer DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ioc2rpz-vs-unbound-native/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz vs Unbound native
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/bind-tsig-intermediary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BIND as TSIG Intermediary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ids-vs-ips/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IDS vs IPS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/suricata-wan-lan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata WAN+LAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/gns3-vs-eveng/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 vs EVE-NG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/zitadel-idp-broker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zitadel as IdP Broker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ca-posture-hybrid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CA + Posture Hybrid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/sdwan-descoped/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SD-WAN Descoped
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acceptance Tests (F1–F15)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acceptance Tests (F1–F15)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overall-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overall status
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overall status">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additional-validated-tests-outside-f1f15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional validated tests (outside F1–F15)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-per-sase-pillar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage per SASE pillar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validated-tests-rationale-and-key-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validated tests — rationale and key output
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validated tests — rationale and key output">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#f1-ztna-tunnel-connectivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F1 — ZTNA Tunnel Connectivity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f2-entra-id-sso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F2 — Entra ID SSO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f3-posture-check-planned" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F3 — Posture Check (Planned)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f4-datacenter-access-via-ztna" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F4 — Datacenter Access via ZTNA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f5-url-filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F5 — URL Filtering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f6-ssl-bump-inspection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F6 — SSL Bump Inspection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f7-malware-detection-clamaveicar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F7 — Malware Detection (ClamAV/EICAR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f8-firewall-segmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F8 — Firewall Segmentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f9-suricata-alert-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F9 — Suricata Alert Generation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-a1-dlp-yara-confidential-label-in-download" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T-A1 — DLP YARA: CONFIDENTIAL label in download
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-a2-dlp-sdd-structureddatadetection-threshold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T-A2 — DLP SDD: StructuredDataDetection threshold
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-a3-python-dlp-icap-reqmod-upload-cc-blocking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T-A3 — Python DLP ICAP REQMOD: upload CC blocking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-a4-t-a5-t-a6-dns-rpz-three-network-segments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T-A4, T-A5, T-A6 — DNS RPZ: three network segments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#planned-tests-and-blockers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Planned tests and blockers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Planned tests and blockers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#f10-central-log-aggregation-siem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F10 — Central Log Aggregation (SIEM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f11-casb-alert-and-remediation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F11 — CASB Alert and Remediation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#f15-full-stack-validation-step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F15 — Full-Stack Validation step-by-step
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test environment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../runbooks/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/01-lab-environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 — Lab Environment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/02-ztna-overlay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 — ZTNA Overlay
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/03-proxy-wpad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 — Proxy & WPAD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/04-malware-dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 — Malware & DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/05-ids/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 — IDS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/06-dns-threat-intel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 — DNS Threat Intel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/07-access-policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 — Access Policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../findings/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Findings
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Findings
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/wt0-pf-rdr-limitation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    wt0 pf rdr limitation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/pre-auth-ssl-bump-params/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pre-auth ssl-bump params
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/squid-clearlog-destroys-file/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squid clearlog destroys file
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/stevenblack-incompatible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    StevenBlack incompatible
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/suricata-interface-default-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata interface default bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/suricata-netmap-virtio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata Netmap/virtio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/unbound-no-tsig/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unbound no TSIG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/unbound-config-path/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unbound config path
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/ioc2rpz-gui-js-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz GUI JS bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/pyicap-collections-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pyicap collections bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/iptables-forward-ordering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    iptables FORWARD ordering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-primary-nameserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird primary nameserver
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-config-zero-bytes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird config zero bytes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/docker-volume-recreation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker volume recreation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/curl-ssl-no-revoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    curl --ssl-no-revoke on Windows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/suricata-connection-pooling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata connection pooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../log/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Log
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overall-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overall status
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Overall status">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#additional-validated-tests-outside-f1f15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Additional validated tests (outside F1–F15)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage-per-sase-pillar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage per SASE pillar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validated-tests-rationale-and-key-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validated tests — rationale and key output
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validated tests — rationale and key output">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#f1-ztna-tunnel-connectivity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F1 — ZTNA Tunnel Connectivity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f2-entra-id-sso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F2 — Entra ID SSO
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f3-posture-check-planned" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F3 — Posture Check (Planned)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f4-datacenter-access-via-ztna" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F4 — Datacenter Access via ZTNA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f5-url-filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F5 — URL Filtering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f6-ssl-bump-inspection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F6 — SSL Bump Inspection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f7-malware-detection-clamaveicar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F7 — Malware Detection (ClamAV/EICAR)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f8-firewall-segmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F8 — Firewall Segmentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f9-suricata-alert-generation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F9 — Suricata Alert Generation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-a1-dlp-yara-confidential-label-in-download" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T-A1 — DLP YARA: CONFIDENTIAL label in download
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-a2-dlp-sdd-structureddatadetection-threshold" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T-A2 — DLP SDD: StructuredDataDetection threshold
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-a3-python-dlp-icap-reqmod-upload-cc-blocking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T-A3 — Python DLP ICAP REQMOD: upload CC blocking
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-a4-t-a5-t-a6-dns-rpz-three-network-segments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        T-A4, T-A5, T-A6 — DNS RPZ: three network segments
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#planned-tests-and-blockers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Planned tests and blockers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Planned tests and blockers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#f10-central-log-aggregation-siem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F10 — Central Log Aggregation (SIEM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#f11-casb-alert-and-remediation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F11 — CASB Alert and Remediation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#f15-full-stack-validation-step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        F15 — Full-Stack Validation step-by-step
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test environment
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:casb" class="md-tag">casb</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:fwaas" class="md-tag">fwaas</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:sase" class="md-tag">sase</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:sd-wan" class="md-tag">sd-wan</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:swg" class="md-tag">swg</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:testing" class="md-tag">testing</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../tags/#tag:ztna" class="md-tag">ztna</a>
+      
+    
+  </nav>
+
+
+
+<h1 id="acceptance-test-results-f1f15">Acceptance Test Results (F1–F15)<a class="headerlink" href="#acceptance-test-results-f1f15" title="Permanent link">&para;</a></h1>
+<p><strong>Version:</strong> 1.0 — April 2026<br />
+<strong>Scope:</strong> Full sandbox test coverage — all F1–F15 acceptance tests (Handboek v4 §46) plus additional validation tests outside the original framework.<br />
+<strong>Source:</strong> <code>raw/SASE_PoC_Testrapport.md</code></p>
+<hr />
+<h2 id="overall-status">Overall status<a class="headerlink" href="#overall-status" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Name</th>
+<th>Pillar</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>F1</strong></td>
+<td>ZTNA Tunnel Connectivity</td>
+<td>ZTNA</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>F2</strong></td>
+<td>Entra ID SSO</td>
+<td>ZTNA</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>F3</strong></td>
+<td>Posture Check</td>
+<td>ZTNA</td>
+<td>⏳ Planned — architecture ready (Addendum E)</td>
+</tr>
+<tr>
+<td><strong>F4</strong></td>
+<td>Datacenter Access via ZTNA</td>
+<td>ZTNA</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>F5</strong></td>
+<td>URL Filtering</td>
+<td>SWG</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>F6</strong></td>
+<td>SSL Bump Inspection</td>
+<td>SWG</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>F7</strong></td>
+<td>Malware Detection (ClamAV)</td>
+<td>SWG</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>F8</strong></td>
+<td>Firewall Segmentation</td>
+<td>FWaaS</td>
+<td>✅ Validated (indirect — ZTNA ACL enforcement)</td>
+</tr>
+<tr>
+<td><strong>F9</strong></td>
+<td>Suricata Alert Generation</td>
+<td>FWaaS</td>
+<td>✅ Validated (extended beyond original definition)</td>
+</tr>
+<tr>
+<td><strong>F10</strong></td>
+<td>Central Log Aggregation (SIEM)</td>
+<td>SIEM</td>
+<td>⏳ Planned — requires Wazuh deployment</td>
+</tr>
+<tr>
+<td><strong>F11</strong></td>
+<td>CASB Alert and Remediation</td>
+<td>CASB</td>
+<td>⏳ Planned — requires Wazuh + Graph API</td>
+</tr>
+<tr>
+<td><strong>F12</strong></td>
+<td>IPsec Tunnel Connectivity</td>
+<td>SD-WAN</td>
+<td>✖ N/A — architectural decision (see <a href="../../decisions/sdwan-descoped/">SD-WAN Descoped</a>)</td>
+</tr>
+<tr>
+<td><strong>F13</strong></td>
+<td>QoS Traffic Classification</td>
+<td>SD-WAN</td>
+<td>✖ N/A — architectural decision</td>
+</tr>
+<tr>
+<td><strong>F14</strong></td>
+<td>Datacenter Access via SD-WAN</td>
+<td>SD-WAN</td>
+<td>✖ N/A — architectural decision</td>
+</tr>
+<tr>
+<td><strong>F15</strong></td>
+<td>Full-Stack SASE Validation</td>
+<td>Integration</td>
+<td>✅ Partial — steps 1–6 validated, steps 7–8 N/A (SD-WAN), step 9 planned (SIEM)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="additional-validated-tests-outside-f1f15">Additional validated tests (outside F1–F15)<a class="headerlink" href="#additional-validated-tests-outside-f1f15" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Name</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>T-A1</strong></td>
+<td>DLP YARA — CONFIDENTIAL label detection in download</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>T-A2</strong></td>
+<td>DLP SDD — StructuredDataDetection threshold (4× CC → block, 1× CC → pass)</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>T-A3</strong></td>
+<td>DLP ICAP REQMOD — Python DLP upload blocking (Luhn CC in POST)</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>T-A4</strong></td>
+<td>DNS RPZ — NXDOMAIN + aa-flag from pop01 local</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>T-A5</strong></td>
+<td>DNS RPZ — NXDOMAIN from mobile01 via NetBird overlay</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>T-A6</strong></td>
+<td>DNS RPZ — NXDOMAIN from dc01 via DC-LAN</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>T-A7</strong></td>
+<td>Suricata vtnet1 (LAN) — DC-LAN traffic detection</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>T-A8</strong></td>
+<td>Suricata suspicious User-Agent</td>
+<td>✅ Validated</td>
+</tr>
+<tr>
+<td><strong>T-A9</strong></td>
+<td>Suricata DNS anomaly detection</td>
+<td>✅ Validated</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="coverage-per-sase-pillar">Coverage per SASE pillar<a class="headerlink" href="#coverage-per-sase-pillar" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Pillar</th>
+<th>Validated</th>
+<th>Planned</th>
+<th>N/A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ZTNA</strong></td>
+<td>F1, F2, F4</td>
+<td>F3 (architecture ready)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>SWG</strong></td>
+<td>F5, F6, F7, T-A1, T-A2, T-A3, T-A4–A6</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>FWaaS</strong></td>
+<td>F8, F9, T-A7, T-A8, T-A9</td>
+<td>F10 (Wazuh dep.)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>CASB</strong></td>
+<td>—</td>
+<td>F11 (Wazuh + Graph API)</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>SD-WAN</strong></td>
+<td>—</td>
+<td>—</td>
+<td>F12, F13, F14</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="validated-tests-rationale-and-key-output">Validated tests — rationale and key output<a class="headerlink" href="#validated-tests-rationale-and-key-output" title="Permanent link">&para;</a></h2>
+<h3 id="f1-ztna-tunnel-connectivity">F1 — ZTNA Tunnel Connectivity<a class="headerlink" href="#f1-ztna-tunnel-connectivity" title="Permanent link">&para;</a></h3>
+<p><code>InterfaceAlias: wt0</code> in the Test-NetConnection output proves that all traffic exits via the WireGuard tunnel, not the VMware host NIC. If wt0 were not routing, the reply would arrive via the default adapter.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c"># mobile01 (PowerShell)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">netbird</span> <span class="n">status</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">Test-NetConnection</span> <span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span> <span class="n">-Port</span> <span class="n">443</span>
+</code></pre></div>
+<p>Expected output:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>FQDN: mobile01.netbird.selfhosted
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>NetBird IP: 100.70.95.98/16
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Peers count: 1/1 Connected
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>InterfaceAlias   : wt0          ← WireGuard tunnel, not host NIC
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>SourceAddress    : 100.70.95.98
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>TcpTestSucceeded : True
+</code></pre></div>
+<p>See <a href="../../components/netbird/">NetBird</a>.</p>
+<hr />
+<h3 id="f2-entra-id-sso">F2 — Entra ID SSO<a class="headerlink" href="#f2-entra-id-sso" title="Permanent link">&para;</a></h3>
+<p>Validates the full OIDC chain: mobile01 → NetBird → Zitadel → Entra ID (login.microsoftonline.com) → back to NetBird. The peer appearing in the NetBird Dashboard with the Entra ID username proves end-to-end identity linkage — not a local account.</p>
+<p>Test procedure:</p>
+<ol>
+<li><code>netbird down</code> on mobile01</li>
+<li><code>netbird up</code> → browser redirects to <code>https://netbird.sandbox.local</code> → Zitadel → <code>login.microsoftonline.com</code></li>
+<li>Authenticate as <code>2ITCSC1A-mobile_user1@aplab.be</code></li>
+<li>Tunnel becomes active; peer appears in Dashboard, auto-assigned to <code>SASE-MobileUsers</code> group via setup key auto-group</li>
+</ol>
+<p>See <a href="../../components/netbird/">NetBird</a>, <a href="../../decisions/zitadel-idp-broker/">Decision: Zitadel as IdP broker</a>.</p>
+<hr />
+<h3 id="f3-posture-check-planned">F3 — Posture Check (Planned)<a class="headerlink" href="#f3-posture-check-planned" title="Permanent link">&para;</a></h3>
+<p>Architecture fully specified in Addendum E (April 2026):</p>
+<ul>
+<li><strong>Gate 1:</strong> Four Entra ID CA policies — MFA enforcement, geo-block (Belgium only), legacy auth block, sign-in risk</li>
+<li><strong>Gate 2:</strong> Four NetBird posture checks — OS kernel ≥ 10.0.19041, client version, <code>MsMpEng.exe</code> AV process, geo Belgium</li>
+<li>Five planned validation scenarios, including negative tests (geo-block, OS version spoof, AV stopped, legacy auth, full positive end-to-end)</li>
+</ul>
+<p><strong>Critical precondition:</strong> Verify MFA registration on the test account before activating CA policies. Without prior MFA setup, the first login triggers an unrecoverable "MFA required but not configured" block, making the account inaccessible.</p>
+<p>Scheduled for after the interim evaluation (20 April 2026). See <a href="../../decisions/ca-posture-hybrid/">Decision: CA + Posture hybrid</a>.</p>
+<hr />
+<h3 id="f4-datacenter-access-via-ztna">F4 — Datacenter Access via ZTNA<a class="headerlink" href="#f4-datacenter-access-via-ztna" title="Permanent link">&para;</a></h3>
+<p>DC-LAN (10.0.0.0/24) is only reachable through the NetBird Networks mechanism. A host not enrolled in NetBird has no route to this subnet regardless of IP connectivity.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c"># mobile01 (PowerShell)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">Test-NetConnection</span> <span class="n">10</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">100</span> <span class="n">-Port</span> <span class="n">80</span>
+</code></pre></div>
+<p>Expected: <code>InterfaceAlias: wt0</code>, <code>TcpTestSucceeded: True</code>. Validates the <code>Datacenter Access</code> ACL policy and the Networks routing configuration.</p>
+<p>See <a href="../../components/netbird/">NetBird</a>.</p>
+<hr />
+<h3 id="f5-url-filtering">F5 — URL Filtering<a class="headerlink" href="#f5-url-filtering" title="Permanent link">&para;</a></h3>
+<p><code>curl.exe</code> with an explicit proxy argument bypasses the browser cache, which could otherwise mask blocking. <code>X-Squid-Error: ERR_ACCESS_DENIED</code> identifies the Squid block page — not a server-side 403.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c"># mobile01 (PowerShell)</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">gambling</span><span class="p">.</span><span class="n">com</span> <span class="n">-v</span>
+</code></pre></div>
+<p>Expected:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>&lt; HTTP/1.1 403 Forbidden
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>&lt; X-Squid-Error: ERR_ACCESS_DENIED 0
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a># Squid access log (pop01)
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>TCP_DENIED/403 ... GET http://gambling.com/ - HIER_NONE/-
+</code></pre></div>
+<p>Blocked categories: adult, malware, phishing, gambling (UT1 Toulouse Remote ACL) plus manual blacklist entries (<code>gambling.com</code>, <code>.bet365.com</code>, <code>.pokerstars.com</code>). See <a href="../../components/squid/">Squid</a>.</p>
+<hr />
+<h3 id="f6-ssl-bump-inspection">F6 — SSL Bump Inspection<a class="headerlink" href="#f6-ssl-bump-inspection" title="Permanent link">&para;</a></h3>
+<p>Two complementary tests prove selective, intentional HTTPS interception:</p>
+<ul>
+<li><strong>Normal HTTPS:</strong> Navigate to <code>https://google.com</code> → certificate issuer = <code>O = SASE PoC</code> (not Google)</li>
+<li><strong>No-bump exception:</strong> Navigate to <code>https://login.microsoftonline.com</code> → issuer = Microsoft Corporation (original certificate, not replaced)</li>
+</ul>
+<p>The second test is critical: it proves the implementation is deliberate, not blanket decryption. Microsoft login is in the no-bump list specifically because SSL Bump would break the Entra ID OIDC flow.</p>
+<p>See <a href="../../concepts/ssl-bump/">SSL Bump</a>, <a href="../../components/squid/">Squid</a>.</p>
+<hr />
+<h3 id="f7-malware-detection-clamaveicar">F7 — Malware Detection (ClamAV/EICAR)<a class="headerlink" href="#f7-malware-detection-clamaveicar" title="Permanent link">&para;</a></h3>
+<p>The 68-byte vs. 8245-byte comparison is the proof of active blocking: 68 bytes is the EICAR file; 8245 bytes is the Squid block page generated by the ICAP pipeline.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c"># mobile01 (PowerShell)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="p">-</span><span class="n">-ssl-no-revoke</span> <span class="n">-o</span> <span class="n">eicar_test</span><span class="p">.</span><span class="n">txt</span> <span class="n">https</span><span class="p">://</span><span class="n">secure</span><span class="p">.</span><span class="n">eicar</span><span class="p">.</span><span class="n">org</span><span class="p">/</span><span class="n">eicar</span><span class="p">.</span><span class="n">com</span>
+</code></pre></div>
+<blockquote>
+<p><code>--ssl-no-revoke</code> is required on Windows: Schannel attempts CRL/OCSP validation against the SASE-PoC-CA certificate, which has no published CRL endpoint. See <a href="../../findings/curl-ssl-no-revoke/">Finding: curl --ssl-no-revoke</a>.</p>
+</blockquote>
+<p>Expected:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a># c-icap log (pop01)
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>VIRUS DETECTED: Eicar-Test-Signature,
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  http client ip: 100.70.95.98,
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  http url: https://secure.eicar.org/eicar.com
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a># Squid access log
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>TCP_MISS/403 8245 GET https://secure.eicar.org/eicar.com
+</code></pre></div>
+<p>See <a href="../../components/clamav-cicap/">ClamAV/c-icap</a>.</p>
+<hr />
+<h3 id="f8-firewall-segmentation">F8 — Firewall Segmentation<a class="headerlink" href="#f8-firewall-segmentation" title="Permanent link">&para;</a></h3>
+<p>DC-LAN isolation is enforced at the overlay layer — only NetBird-enrolled peers with the <code>Datacenter Access</code> ACL policy can reach dc01.</p>
+<p>Validated by contrast:</p>
+<ul>
+<li>mobile01 <strong>without</strong> NetBird: <code>ping 10.0.0.100</code> → Destination unreachable (no route)</li>
+<li>mobile01 <strong>with</strong> NetBird + policy: <code>Test-NetConnection 10.0.0.100 -Port 80</code> → <code>TcpTestSucceeded: True</code> via <code>wt0</code></li>
+</ul>
+<p><strong>Architectural note:</strong> DC-LAN uses NetBird Networks (not Network Routes). Access requires both overlay enrollment and explicit group membership in <code>SASE-InternalResources</code>.</p>
+<p>See <a href="../../components/netbird/">NetBird</a>.</p>
+<hr />
+<h3 id="f9-suricata-alert-generation">F9 — Suricata Alert Generation<a class="headerlink" href="#f9-suricata-alert-generation" title="Permanent link">&para;</a></h3>
+<p>Four test categories validate four independent inspection domains across two interfaces:</p>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method</th>
+<th>SID</th>
+<th>Interface</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F9-1: HTTP content</td>
+<td><code>curl.exe -x ... http://testmyids.com/</code></td>
+<td>2100498 (GPL ATTACK_RESPONSE id check returned root)</td>
+<td>vtnet0</td>
+</tr>
+<tr>
+<td>F9-2: DNS anomaly</td>
+<td>Automatic — Unbound <code>.biz</code> TLD queries during normal operation</td>
+<td>2027863 (ET DNS Non-Compliant DNS Reply UDP)</td>
+<td>vtnet0</td>
+</tr>
+<tr>
+<td>F9-3: User-Agent</td>
+<td><code>curl.exe -x ... -A "BlackSun" http://example.com</code></td>
+<td>2008983 (ET MALWARE User-Agent BlackSun)</td>
+<td>vtnet0</td>
+</tr>
+<tr>
+<td>F9-4: LAN traffic</td>
+<td><code>apt update</code> on dc01</td>
+<td>2013504 (ET INFO GNU/Linux APT User-Agent Outbound)</td>
+<td>vtnet1</td>
+</tr>
+</tbody>
+</table>
+<p>vtnet1 verification:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>grep<span class="w"> </span><span class="s1">&#39;&quot;in_iface&quot;:&quot;vtnet1&quot;.*&quot;event_type&quot;:&quot;alert&quot;&#39;</span><span class="w"> </span>/var/log/suricata/eve.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># Expected: &gt; 0</span>
+</code></pre></div>
+<p><strong>Differentiated alert policy:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Policy</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>emerging-malware, botcc, C2, Abuse.ch</td>
+<td>Drop</td>
+<td>Always malicious — no legitimate traffic possible</td>
+</tr>
+<tr>
+<td>tor, info, policy, dns, web</td>
+<td>Alert</td>
+<td>False positive risk — monitor, do not block</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The Handboek originally defined F9 as "verify alert visible in Wazuh Dashboard." Wazuh is not yet deployed (Fase 4 — F10). Suricata detection is fully validated; the Wazuh integration is the only gap.</p>
+<p>Multiple curl requests to the same destination generate one Suricata alert per SID per flow — this is correct behavior, not suppression. Root cause: Squid connection pooling reuses upstream TCP connections; Suricata sees one flow. See <a href="../../findings/suricata-connection-pooling/">Finding: Suricata connection pooling</a>.</p>
+</blockquote>
+<p>See <a href="../../components/suricata/">Suricata</a>.</p>
+<hr />
+<h3 id="t-a1-dlp-yara-confidential-label-in-download">T-A1 — DLP YARA: CONFIDENTIAL label in download<a class="headerlink" href="#t-a1-dlp-yara-confidential-label-in-download" title="Permanent link">&para;</a></h3>
+<p>YARA operates after ClamAV's file decomposition engine — it matches on extracted document text, not raw bytes. Full pipeline: Squid SSL Bump → c-icap RESPMOD → ClamAV parse → YARA match → HTTP 403.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># pop01 — local verification</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>clamdscan<span class="w"> </span>/tmp/dlp_test.txt<span class="w">   </span><span class="c1"># file contains &quot;Dit document is CONFIDENTIAL...&quot;</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># Output: YARA.DLP_Confidential_Label.UNOFFICIAL FOUND</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c"># mobile01 — end-to-end via ICAP</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="p">-</span><span class="n">-ssl-no-revoke</span> <span class="n">-o</span> <span class="n">dlp_result</span><span class="p">.</span><span class="n">txt</span> <span class="n">http</span><span class="p">://</span><span class="n">wpad</span><span class="p">.</span><span class="n">sandbox</span><span class="p">.</span><span class="n">local</span><span class="p">/</span><span class="n">dlp_test</span><span class="p">.</span><span class="n">txt</span> <span class="n">-w</span> <span class="s2">&quot;%{http_code}&quot;</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c"># Output: 403</span>
+</code></pre></div>
+<p>YARA rules validated in sandbox:</p>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Pattern</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DLP_Confidential_Label</code></td>
+<td>CONFIDENTIAL, VERTROUWELIJK, GEHEIM, DO NOT DISTRIBUTE (nocase)</td>
+<td>✅ End-to-end</td>
+</tr>
+<tr>
+<td><code>DLP_IBAN_Pattern</code></td>
+<td>NL/DE/BE IBAN format regex</td>
+<td>✅ Local clamdscan</td>
+</tr>
+<tr>
+<td><code>DLP_BSN_Candidate</code></td>
+<td>Cluster of 9-digit sequences (threshold &gt;2)</td>
+<td>✅ Local clamdscan</td>
+</tr>
+<tr>
+<td><code>DLP_AWS_AccessKey</code></td>
+<td><code>AKIA[0-9A-Z]{16}</code></td>
+<td>✅ Local clamdscan</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Limitation:</strong> YARA rules do not perform algorithmic validation — no mod-97 for IBAN, no 11-proof for BSN. False positives are possible on download. The Python DLP layer (T-A3) provides algorithmic validation for uploads.</p>
+<p>See <a href="../../components/clamav-cicap/">ClamAV/c-icap</a>, <a href="../../concepts/dlp/">DLP</a>.</p>
+<hr />
+<h3 id="t-a2-dlp-sdd-structureddatadetection-threshold">T-A2 — DLP SDD: StructuredDataDetection threshold<a class="headerlink" href="#t-a2-dlp-sdd-structureddatadetection-threshold" title="Permanent link">&para;</a></h3>
+<p>ClamAV's StructuredDataDetection (SDD) uses Luhn validation — arbitrary 16-digit strings do not trigger. The threshold is <code>StructuredMinCreditCardCount: 3</code> (configured), so detection fires at 4+ valid CC numbers.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># 4 valid Luhn CC numbers → detected</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CC1: 4532015112830366 CC2: 4916338506082832 CC3: 5425233430109903 CC4: 2223000048410010&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/sdd_test.txt
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>clamdscan<span class="w"> </span>/tmp/sdd_test.txt
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Output: Heuristics.Structured.CreditCardNumber FOUND</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># 1 valid CC number → passes (below threshold)</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CC: 4532015112830366&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/sdd_test_single.txt
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>clamdscan<span class="w"> </span>/tmp/sdd_test_single.txt
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># Output: OK</span>
+</code></pre></div>
+<p>See <a href="../../components/clamav-cicap/">ClamAV/c-icap</a>.</p>
+<hr />
+<h3 id="t-a3-python-dlp-icap-reqmod-upload-cc-blocking">T-A3 — Python DLP ICAP REQMOD: upload CC blocking<a class="headerlink" href="#t-a3-python-dlp-icap-reqmod-upload-cc-blocking" title="Permanent link">&para;</a></h3>
+<p>ClamAV c-icap cannot parse <code>multipart/form-data</code> POST bodies — this is a confirmed upstream limitation (SourceForge: not implemented in the <code>virus_scan</code> service). Python DLP fills this gap via ICAP REQMOD.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c"># mobile01 (PowerShell)</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="p">-</span><span class="n">-ssl-no-revoke</span> <span class="n">-X</span> <span class="n">POST</span> <span class="p">`</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>  <span class="n">-d</span> <span class="s2">&quot;payment_info=4532015112830366&amp;name=Test+User&quot;</span> <span class="p">`</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>  <span class="n">https</span><span class="p">://</span><span class="n">httpbin</span><span class="p">.</span><span class="n">org</span><span class="p">/</span><span class="n">post</span>
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c"># Expected: HTML DLP block page, HTTP 403</span>
+</code></pre></div>
+<p>The DLP block page is distinguishable from Squid's generic 403 by its DLP-specific error message.</p>
+<p>ICAP OPTIONS verification (confirms REQMOD is active):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># pop01 (FreeBSD) — use printf, not echo -e (FreeBSD /bin/sh does not interpret -e as escape flag)</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;OPTIONS icap://192.168.122.23:1345/dlpscan ICAP/1.0\r\nHost: 192.168.122.23\r\n\r\n&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-w<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="m">192</span>.168.122.23<span class="w"> </span><span class="m">1345</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="c1"># Output: ICAP/1.0 200 OK</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1">#         Methods: REQMOD</span>
+</code></pre></div>
+<p>Validation matrix:</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Algorithm</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>4532015112830366</code> (CC)</td>
+<td>Luhn</td>
+<td>✅ End-to-end validated</td>
+</tr>
+<tr>
+<td><code>NL91ABNA0417164300</code> (IBAN)</td>
+<td>mod-97</td>
+<td>✅ Code present, not end-to-end tested</td>
+</tr>
+<tr>
+<td><code>111222333</code> (BSN)</td>
+<td>11-proof</td>
+<td>✅ Code present, not end-to-end tested</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../../components/python-dlp/">Python DLP</a>, <a href="../../decisions/two-layer-dlp/">Decision: Two-Layer DLP</a>.</p>
+<hr />
+<h3 id="t-a4-t-a5-t-a6-dns-rpz-three-network-segments">T-A4, T-A5, T-A6 — DNS RPZ: three network segments<a class="headerlink" href="#t-a4-t-a5-t-a6-dns-rpz-three-network-segments" title="Permanent link">&para;</a></h3>
+<p>Test domain: <code>testentry.rpz.urlhaus.abuse.ch</code> — a permanent abuse.ch validation entry, always present in the URLhaus RPZ feed.</p>
+<p>The <code>aa</code> (authoritative answer) flag is the key discriminator: a real internet NXDOMAIN lacks <code>aa</code>; an RPZ block is answered authoritatively by the local resolver without an upstream query.</p>
+<p>Control test confirms no over-blocking: <code>drill @127.0.0.1 google.com</code> returns <code>NOERROR</code> without the <code>aa</code> flag.</p>
+<table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>Command</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>T-A4</strong> pop01 (local)</td>
+<td><code>drill @127.0.0.1 testentry.rpz.urlhaus.abuse.ch</code></td>
+<td><code>rcode: NXDOMAIN, flags: aa</code></td>
+</tr>
+<tr>
+<td><strong>T-A5</strong> mobile01 (overlay)</td>
+<td><code>nslookup testentry.rpz.urlhaus.abuse.ch</code></td>
+<td>Non-existent domain</td>
+</tr>
+<tr>
+<td><strong>T-A6</strong> dc01 (DC-LAN)</td>
+<td><code>drill @10.0.0.1 testentry.rpz.urlhaus.abuse.ch</code></td>
+<td><code>rcode: NXDOMAIN, flags: aa</code></td>
+</tr>
+</tbody>
+</table>
+<p>Unbound RPZ log confirms the zone name and source IP for each query:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>rpz: applied [ioc2rpz-threat-intel] testentry.rpz.urlhaus.abuse.ch.
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  rpz-nxdomain 100.70.95.98@58107 testentry.rpz.urlhaus.abuse.ch. A IN
+</code></pre></div>
+<p>DNS path for T-A5: mobile01 → NetBird DNS relay (100.70.255.254) → pop01 Unbound → RPZ check → NXDOMAIN.</p>
+<p>See <a href="../../components/ioc2rpz/">ioc2rpz</a>, <a href="../../concepts/rpz/">RPZ</a>.</p>
+<hr />
+<h2 id="planned-tests-and-blockers">Planned tests and blockers<a class="headerlink" href="#planned-tests-and-blockers" title="Permanent link">&para;</a></h2>
+<h3 id="f10-central-log-aggregation-siem">F10 — Central Log Aggregation (SIEM)<a class="headerlink" href="#f10-central-log-aggregation-siem" title="Permanent link">&para;</a></h3>
+<p>Requires Wazuh deployment (Fase 4). Log sources already available: Squid access log, Suricata <code>eve.json</code>, OPNsense firewall log, Python DLP Docker log. Wazuh-Suricata integration via the Wazuh OPNsense module is standard and requires no custom development.</p>
+<h3 id="f11-casb-alert-and-remediation">F11 — CASB Alert and Remediation<a class="headerlink" href="#f11-casb-alert-and-remediation" title="Permanent link">&para;</a></h3>
+<p>Requires Wazuh deployment and Microsoft Graph API configuration. Architecture is designed (Afbakening v1.2 §2.2):</p>
+<ul>
+<li><strong>Inline layer:</strong> Squid + ICAP (already operational)</li>
+<li><strong>API layer:</strong> Wazuh <code>ms-graph</code> module + Graph API (<code>AuditLog.Read.All</code>, <code>Directory.Read.All</code>)</li>
+<li><strong>Custom rules:</strong> SID 100200/100201 for SharePoint <code>SharingSet</code> + <code>Anyone</code>/<code>External</code> detection</li>
+<li><strong>Active Response:</strong> <code>sharepoint_remediate.sh</code></li>
+</ul>
+<p>Graph API tenant permissions confirmed 1 April 2026 (admin consent granted on <code>aplab.be</code>). Only remaining blocker: Wazuh deployment.</p>
+<hr />
+<h2 id="f15-full-stack-validation-step-by-step">F15 — Full-Stack Validation step-by-step<a class="headerlink" href="#f15-full-stack-validation-step-by-step" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Description</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Mobile user logs in via Entra ID</td>
+<td>✅ Validated (F2)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Visits HTTPS site → SSL Bump active</td>
+<td>✅ Validated (F6)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Visits blocked site → Blocked</td>
+<td>✅ Validated (F5)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Downloads EICAR → Blocked</td>
+<td>✅ Validated (F7)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Visits testmyids.com → Alert in IDS</td>
+<td>✅ Validated (F9-1)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Opens datacenter site → Success</td>
+<td>✅ Validated (F4)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Site user pings datacenter via tunnel</td>
+<td>✖ N/A — sitepc01 has no OS, IPsec descoped</td>
+</tr>
+<tr>
+<td>8</td>
+<td>QoS marking visible on VyOS</td>
+<td>✖ N/A — QoS architectural decision</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Management dashboard shows all services UP</td>
+<td>⏳ Planned (Wazuh)</td>
+</tr>
+</tbody>
+</table>
+<p>6 of 9 F15 steps validated. The 3 remaining are either architectural N/A (SD-WAN) or planned (SIEM).</p>
+<hr />
+<h2 id="test-environment">Test environment<a class="headerlink" href="#test-environment" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Snapshot at validation</td>
+<td><code>Fase2-ZTNA-Complete</code> (base), then Phase 3 incremental</td>
+</tr>
+<tr>
+<td>pop01 RAM</td>
+<td>8 GB (increased from 4 GB for concurrent Suricata + ClamAV load)</td>
+</tr>
+<tr>
+<td>ClamAV signatures</td>
+<td>daily v27953, main v63, bytecode v339 — 3,642,437 signatures</td>
+</tr>
+<tr>
+<td>Suricata rules</td>
+<td>ET Open + Abuse.ch: <strong>79,620+</strong> rules (Hyperscan engine)</td>
+</tr>
+<tr>
+<td>RPZ records</td>
+<td>URLhaus + ThreatFox: <strong>71,767</strong> records</td>
+</tr>
+<tr>
+<td>mobile01</td>
+<td>Windows 11, VMware, external — simulates BYOD outside school network</td>
+</tr>
+<tr>
+<td>NetBird overlay range</td>
+<td>100.64.0.0/10</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../overview/architecture/">Architecture</a></li>
+<li><a href="../../decisions/sdwan-descoped/">Decision: SD-WAN Descoped</a></li>
+<li><a href="../../decisions/ca-posture-hybrid/">Decision: CA + Posture hybrid (Three-Gate Model)</a></li>
+<li><a href="../../findings/curl-ssl-no-revoke/">Finding: curl --ssl-no-revoke on Windows</a></li>
+<li><a href="../../findings/suricata-connection-pooling/">Finding: Suricata connection pooling</a></li>
+<li><a href="../../components/netbird/">NetBird</a></li>
+<li><a href="../../components/squid/">Squid</a></li>
+<li><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></li>
+<li><a href="../../components/python-dlp/">Python DLP</a></li>
+<li><a href="../../components/suricata/">Suricata</a></li>
+<li><a href="../../components/ioc2rpz/">ioc2rpz</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.tooltips", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
