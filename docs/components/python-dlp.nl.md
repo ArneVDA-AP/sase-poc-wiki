@@ -92,6 +92,12 @@ Gebruik `printf`, niet `echo -e` — FreeBSD's `/bin/sh` interpreteert `-e` niet
 
 ---
 
+## NATS-integratie
+
+De Python DLP ICAP-server publiceert upload-inspectiegebeurtenissen naar `security.alert.dlp` op de NATS event bus. Wanneer een DLP-patroonovereenkomst wordt gevonden (Luhn-creditcard, IBAN mod-97, BSN 11-proef, AWS-sleutel), bevat het event: patroontype, aantal overeenkomsten, bron-IP, bestemmings-URL en HTTP-methode. DLP-events dragen bij aan de per-peer threat score. Aangezien de Python DLP-server al op mgmt01 draait (dezelfde host als NATS), publiceert deze rechtstreeks zonder cross-host-connectiviteit.
+
+---
+
 ## Bekende problemen / valkuilen
 
 **pyicap Python 3.10+-incompatibiliteit** — zie [Bevinding: pyicap collections-bug](../findings/pyicap-collections-bug.md). De Dockerfile patcht dit automatisch.
@@ -113,3 +119,5 @@ Gebruik `printf`, niet `echo -e` — FreeBSD's `/bin/sh` interpreteert `-e` niet
 - [Component: ClamAV/c-icap](clamav-cicap.md)
 - [Beslissing: Twee-laags DLP](../decisions/two-layer-dlp.md)
 - [Bevinding: pyicap collections-bug](../findings/pyicap-collections-bug.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)

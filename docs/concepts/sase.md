@@ -9,7 +9,7 @@ tags: [sase, zero-trust, network, architecture]
 
 ## How it applies here
 
-This project implements a SASE proof-of-concept for Atlascollege: 4000+ BYOD students connecting from arbitrary locations, Microsoft 365 as the core app platform. The traditional perimeter model (firewall + VPN = trusted) breaks under these conditions — students are never "inside the walls."
+This project implements a SASE proof-of-concept for Atlascollege: 4 000 users on managed Windows devices connecting from arbitrary locations, Microsoft 365 as the core app platform. The traditional perimeter model (firewall + VPN = trusted) breaks under these conditions — students are never "inside the walls."
 
 The PoC replaces the perimeter model with a SASE stack where:
 - **Transport** is a WireGuard overlay (NetBird) instead of a campus VPN
@@ -26,8 +26,9 @@ The PoC replaces the perimeter model with a SASE stack where:
 |-------------|----------------------|-------------------|--------|
 | **ZTNA** | Zscaler ZPA | NetBird + Zitadel + Entra ID (three-gate model) | ✅ Operational |
 | **SWG** | Zscaler ZIA | Squid + SSL Bump + ClamAV + Python DLP + Unbound RPZ | ✅ Operational |
-| **CASB (inline)** | Netskope CASB | Squid + ICAP DLP pipeline (URL filtering + DLP — partial; no app-level controls or shadow IT discovery) | ⚠️ Partial |
-| **CASB (API)** | Defender for Cloud Apps | Wazuh + Microsoft Graph (planned) | ⏳ Planned |
+| **CASB (Layer 1 — Inline)** | Netskope CASB | Squid + Identity Bridge — identity-based URL filtering + DLP pipeline | ✅ Operational |
+| **CASB (Layer 2 — API)** | Defender for Cloud Apps | Wazuh + M365 Management Activity API + Graph API Active Response | ✅ Operational |
+| **CASB (Layer 3 — Real-time)** | Netskope Real-time | NATS JetStream + Control Daemon — cross-component threat scoring + quarantine | ✅ Operational |
 | **FWaaS** | Zscaler Cloud Firewall | OPNsense + Suricata IDS | Partial |
 | **SD-WAN** | Zscaler Zero Trust SD-WAN | VyOS site01 + NetBird on sitepc01 | Partial |
 
@@ -44,3 +45,13 @@ The PoC replaces the perimeter model with a SASE stack where:
 - `raw/SASE_Architectuur_Overzicht.md` §1–3 (conceptual framing, five pillars, three-gate model)
 - `raw/Doc1_Squid_WPAD_PAC.md` §1 (SWG positioning)
 - `raw/Doc6_NetBird_ZTNA.md` §1 (ZTNA positioning)
+
+## CASB three-layer model
+
+The CASB implementation spans three enforcement layers, each covering a different time horizon:
+
+- **Layer 1 — Inline (Squid forward proxy):** Identity-based URL filtering and DLP on every HTTP/HTTPS request. Squid queries the Identity Bridge for the user's persona group and applies differentiated policies (e.g., Studenten blocked on ChatGPT; Docenten allowed). Operational since V31.
+- **Layer 2 — API-mode (Wazuh + M365 Management Activity API):** Polls SharePoint/OneDrive audit events for policy violations (anonymous shares, external shares). Wazuh custom rules (100600-family) detect violations; Active Response scripts revoke sharing links via Microsoft Graph API. Operational since V39.
+- **Layer 3 — Real-time event-driven (NATS + Control Daemon):** All detection silos publish events to the NATS bus. The control daemon maintains per-peer threat scores with sliding-window decay. When a peer exceeds the quarantine threshold, it is removed from policy-bearing persona groups — deny-by-default blocks all connectivity. Operational since V35.
+
+See: [Decision: CASB Three Layers](../decisions/casb-three-layers.md)

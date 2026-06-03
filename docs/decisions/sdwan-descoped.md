@@ -3,9 +3,9 @@ title: "Decision: SD-WAN Features Descoped (F12, F13, F14)"
 tags: [sd-wan, ztna, architecture, decision]
 ---
 
-# Decision: SD-WAN Features Descoped (F12, F13, F14)
+# Decision: Classic IPsec/uCPE SD-WAN Replaced by Zero Trust Branch Model
 
-**Status:** Implemented  
+**Status:** Implemented — different from originally planned (ZT-Branch model)  
 **Date:** March 2026 (Herziening v3), confirmed April 2026 (Research SD-WAN session)
 
 ## Context
@@ -39,6 +39,20 @@ Site users (sitepc01) will access the datacenter via individual NetBird enrollme
 - **VyOS** remains in the topology but its configuration is minimal — WAN connectivity and NAT only. See [VyOS](../components/vyos.md).
 - **sitepc01** datacenter access is planned via NetBird enrollment (not yet executed as of April 2026).
 - The architecture directly aligns with Zscaler's "Zero Trust SD-WAN" model: branches treated as untrusted networks (like cafés), every device authenticates individually, no site-to-site tunnels.
+
+## What was actually built
+
+The original IPsec/uCPE SD-WAN was replaced by a Zero Trust Branch model aligned with Zscaler/Netskope ZT-SD-WAN principles:
+
+- **VyOS site01** operates as SASE Gateway on Site-LAN (172.16.10.0/24)
+- **DSCP EF marking** on eth0 via `tc` — proven in Test #5 (V43: 0 drops under load for EF class vs 26 drops + 17k overlimits for bulk)
+- **Failover detection** CRITICAL < 30s — proven in Test #6 (V43)
+- **sitepc01** (Tiny11/Windows 11) operational on Site-LAN behind VyOS, dual-NIC
+- **Spoor-1-contract** B1–B4 fully closed (V43)
+
+F12–F14 measured a different paradigm (classic IPsec), not the ZT-Branch implementation. The ZT-Branch tests (#5 and #6) are the correct validation framework.
+
+See: [VyOS](../components/vyos.md), [Decision: ZT-SD-WAN Branch](../decisions/zt-sdwan-branch.md)
 
 ## Rationale
 

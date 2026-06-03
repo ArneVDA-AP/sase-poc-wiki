@@ -123,6 +123,12 @@ YARA-bestanden in `/var/db/clamav/` worden automatisch geladen door ClamAV. Over
 
 ---
 
+## NATS-integratie
+
+ClamAV/c-icap-detectiegebeurtenissen worden gepubliceerd naar de NATS event bus via `security.alert.malware`. Wanneer c-icap malware detecteert (virushandtekeningmatch, YARA-regelovereenkomst of SDD-drempeloverschrijding), wordt het event gepubliceerd met: detectietype, handtekeningnaam, bron-IP en opgevraagde URL. Deze events dragen bij aan de per-peer threat score die wordt bijgehouden door de [Control Daemon](control-daemon.md).
+
+---
+
 ## Bekende problemen / valkuilen
 
 **GUI-timeout bij eerste database-download** — de ClamAV-handtekeningdownload (~300 MB) duurt langer dan de GUI-timeout. De download gaat op de achtergrond door. Controleer met `freshclam --verbose`.
@@ -148,3 +154,5 @@ YARA-bestanden in `/var/db/clamav/` worden automatisch geladen door ClamAV. Over
 - [Component: Squid](squid.md)
 - [Component: Python DLP](python-dlp.md)
 - [Beslissing: Twee-laags DLP](../decisions/two-layer-dlp.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)

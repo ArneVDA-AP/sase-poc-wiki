@@ -70,3 +70,45 @@ Toevoeg-alleen log van wiki-wijzigingen.
 **Verwerkte brondocumenten:** Verslag18–27 (10 sessieverslagen), Doc1–Doc7 (7 implementatiedocumenten), SASE_Architectuur_Overzicht.md (1 architectuuroverzicht)
 
 **Totaal aantal aangemaakte pagina's:** 37
+
+---
+
+## 2026-06-03 — Grote update: V28–V44 broningest, nieuwe componenten, event-driven handhaving
+
+**Opgelost probleem:** De wiki was gebaseerd op V18–V27 en Doc1–Doc7. Sindsdien zijn 17 nieuwe verslagen (V28–V44) en 10 nieuwe implementatiedocumenten geproduceerd, die introduceerden: Identity Bridge, NATS JetStream event bus, Control Daemon, Wazuh SIEM, Zitadel Actions, Zero Trust Branch-model, CASB drielaags-architectuur, en volledige Gate 1+2 implementatie.
+
+**Scopewijzigingen:**
+- BYOD → beheerde Windows-apparaten (Intune-beheerd, Entra joined) per lectoraatmandaat R11
+- SD-WAN geschrapt → Zero Trust Branch-model met VyOS SASE Gateway
+- Gates 1+2 van gepland naar operationeel (5 CA-beleid, Intune-conformiteit)
+- CASB uitgebreid van gedeeltelijke inline naar drielaags model (inline + API + real-time)
+
+**Aangemaakte bestanden (42 nieuwe pagina's):**
+
+### Componenten (10 bestanden)
+- `components/identity-bridge.md` + `.nl.md` — FastAPI overlay-IP → Entra ID-persona groep
+- `components/nats-jetstream.md` + `.nl.md` — Centrale event bus die detectiesilo's verbindt
+- `components/control-daemon.md` + `.nl.md` — Threat scoring + quarantaine via NetBird API
+- `components/wazuh.md` + `.nl.md` — SIEM met NATS-forwarder + M365 Active Response
+- `components/zitadel.md` + `.nl.md` — OIDC IdP-broker met twee Zitadel Actions
+
+### Concepten (2 bestanden)
+- `concepts/identity-flow.md` + `.nl.md` — Volledige identiteitsketen
+
+### Beslissingen (14 bestanden)
+- 7 beslissingen × 2 talen: netbird-service-pat, nats-accounts-auth, groupsync-pad-b, casb-three-layers, managed-devices-scope, zt-sdwan-branch, control-daemon-scope
+
+### Bevindingen (16 bestanden)
+- 8 bevindingen × 2 talen: netbird-issue-3127, squid-overlay-bind-race, overlay-ip-instability, nats-store-dir, wazuh-cpu-glibc, wazuh-dashboard-airgate, netbird-jwt-allow-groups-lockout, dc-lan-isolation-route-acl
+
+### Testen (2 bestanden)
+- `testing/attack-scenarios.md` + `.nl.md` — 22 demovalidatie-scenario's per SASE-pijler
+
+### Runbooks (8 bestanden)
+- `runbooks/08-groupsync.md` + `.nl.md`, `runbooks/09-identity-bridge.md` + `.nl.md`, `runbooks/10-nats-jetstream.md` + `.nl.md`, `runbooks/11-wazuh.md` + `.nl.md`
+
+**Bijgewerkte bestanden (30+ bestanden):** Architectuur, index, concepten (sase, zero-trust), 6 bestaande componenten (NATS-integratie), VyOS volledige vervanging, beslissingen (sdwan-descoped, ca-posture-hybrid, zitadel-idp-broker), acceptatietests (F3/F10/F11/F15 + T-A10–T-A13), runbook-07, runbook-index, tags.
+
+**Verwerkte brondocumenten:** V28–V44 (17 verslagen), 10 implementatiedocumenten.
+
+**Totaal nieuwe pagina's:** 42. **Totaal bijgewerkte pagina's:** 30+.

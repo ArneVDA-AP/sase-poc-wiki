@@ -5,7 +5,7 @@ tags: [decision, zero-trust, sase, network]
 
 # Decision: Entra ID CA + NetBird Posture Checks (Hybrid Three-Gate Model)
 
-**Status:** Architecture validated and documented (Addendum E, April 2026). Gates 1 and 2 not yet activated in sandbox — planned after April 20 evaluation.  
+**Status:** Implemented (Gates 1+2 operational)  
 **Date:** April 2026 (Verslag27, Doc7)
 
 ## Context
@@ -40,25 +40,26 @@ Hybrid model: Entra ID Conditional Access as Gate 1 (authentication-time) + NetB
 
 The lesson: always verify what a technology can actually do on the target device type (unmanaged BYOD), not on the ideal device (Intune-enrolled corporate device). CA device compliance checks are structurally unavailable for unmanaged BYOD.
 
-## Planned Gate 1 policies (Addendum E)
+## Implemented Gate 1 policies
 
-All policies targeted at app registration `cebe0d74-be9f-49ac-9f35-65f11586c1bb` (not tenant-wide — `aplab.be` is shared):
+| Policy | Status |
+|--------|--------|
+| CA Policy 1 — MFA required | ✅ Active |
+| CA Policy 2 — Geo-block (Belgium only) | Report-only: Success proven — → On at Session 11 |
+| CA Policy 3 — Legacy auth blocking | ✅ Active |
+| CA Policy 4 — Risk-based blocking | ✅ Active |
+| CA Policy 5 — Compliant device required | Report-only: Success proven — → On at Session 11 |
 
-| Policy | Mechanism |
-|--------|-----------|
-| `SASE-PoC-MFA-Required` | Require MFA for all users |
-| `SASE-PoC-Geo-Block` | Block access outside named locations (Belgium, Netherlands) |
-| `SASE-PoC-Block-Legacy-Auth` | Block legacy authentication protocols |
-| `SASE-PoC-Risk-Block` | Block high sign-in risk (Entra ID Protection) |
+All policies target ALL resources (not a specific app) — CA policies targeting a specific app never fire on NetBird/Zitadel OIDC sign-ins because CA matches on token resource (Microsoft Graph), not client app. This disproves Addendum E section E.2.2's core scoping strategy. User-scoping via persona groups with admin1 as break-glass exclude.
 
-## Planned Gate 2 checks (Addendum E)
+## Implemented Gate 2 controls
 
-| Check | Threshold |
-|-------|-----------|
-| `os_version_check` (Windows) | Kernel `10.0.19041` (Windows 10 2004 — first native WireGuard kernel module) |
-| `nb_version_check` | Minimum NetBird client version at time of activation |
-| `process_check` | `C:\Program Files\Windows Defender\MsMpEng.exe` must be running |
-| `geo_location_check` | Belgium (defense-in-depth — different database from Gate 1) |
+| Check | Status |
+|-------|--------|
+| Intune compliance policy (OS version, Defender AV + firewall, real-time protection) | ✅ Active |
+| mobile01 (`2ITCSC1A-MOB-1`) Entra joined + Intune enrolled + compliant | ✅ Verified |
+
+BitLocker/TPM dropped — rubric requires "device posture", not encryption. Three posture checks: OS version, AV, firewall. Policy on Report-only until demo preparation (Session 11).
 
 ## Consequences
 

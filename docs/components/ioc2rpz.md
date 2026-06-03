@@ -201,6 +201,12 @@ rpz: applied [ioc2rpz-threat-intel] testentry.rpz.urlhaus.abuse.ch. rpz-nxdomain
 
 ---
 
+## NATS integration
+
+DNS RPZ block events are published to the NATS event bus via `security.alert.dns`. When Unbound's RPZ module returns NXDOMAIN for a threat-intelligence domain, the event is published with: queried domain, client IP, RPZ zone that matched. These events contribute to the per-peer threat score — repeated RPZ hits from a single client may indicate malware attempting to reach C2 infrastructure, which can trigger quarantine by the [Control Daemon](control-daemon.md).
+
+---
+
 ## Known issues / gotchas
 
 **iptables FORWARD rule ordering** — when adding port forwards for GUI access on the GNS3 host, always use `-I FORWARD 1`. Appending (`-A`) places the rule after libvirt's REJECT chain. See [Finding: iptables FORWARD ordering](../findings/iptables-forward-ordering.md).
@@ -228,4 +234,6 @@ rpz: applied [ioc2rpz-threat-intel] testentry.rpz.urlhaus.abuse.ch. rpz-nxdomain
 - [Finding: ioc2rpz GUI JS bug](../findings/ioc2rpz-gui-js-bug.md)
 - [Finding: iptables FORWARD ordering](../findings/iptables-forward-ordering.md)
 - [Finding: NetBird primary nameserver](../findings/netbird-primary-nameserver.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)
 - [Runbook: DNS Threat Intelligence](../runbooks/06-dns-threat-intel.md)

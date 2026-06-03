@@ -17,19 +17,19 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 |------|------|--------|--------|
 | **F1** | ZTNA-tunnelverbinding | ZTNA | ✅ Gevalideerd |
 | **F2** | Entra ID SSO | ZTNA | ✅ Gevalideerd |
-| **F3** | Posturecontrole | ZTNA | ⏳ Gepland — architectuur gereed (Addendum E) |
+| **F3** | Posturecontrole | ZTNA | ⏳ Deels bewezen — CA-beleid actief, Intune-enrolled (Report-only) |
 | **F4** | Datacentertoegang via ZTNA | ZTNA | ✅ Gevalideerd |
 | **F5** | URL-filtering | SWG | ✅ Gevalideerd |
 | **F6** | SSL-Bump-inspectie | SWG | ✅ Gevalideerd |
 | **F7** | Malwaredetectie (ClamAV) | SWG | ✅ Gevalideerd |
 | **F8** | Firewall-segmentatie | FWaaS | ✅ Gevalideerd (indirect — ZTNA ACL-handhaving) |
 | **F9** | Suricata-alertgeneratie | FWaaS | ✅ Gevalideerd (uitgebreid voorbij oorspronkelijke definitie) |
-| **F10** | Centrale logaggregatie (SIEM) | SIEM | ⏳ Gepland — vereist Wazuh-implementatie |
-| **F11** | CASB-alert en herstel | CASB | ⏳ Gepland — vereist Wazuh + Graph API |
+| **F10** | Centrale logaggregatie (SIEM) | SIEM | ✅ Operationeel — Wazuh + NATS-forwarder + pop01-agent |
+| **F11** | CASB-alert en herstel | CASB | ✅ Functioneel — Wazuh + M365 Management Activity API + Active Response |
 | **F12** | IPsec-tunnelverbinding | SD-WAN | ✖ N.v.t. — architectuurbeslissing (zie [SD-WAN Geschrapt](../decisions/sdwan-descoped.md)) |
 | **F13** | QoS-verkeersclassificatie | SD-WAN | ✖ N.v.t. — architectuurbeslissing |
 | **F14** | Datacentertoegang via SD-WAN | SD-WAN | ✖ N.v.t. — architectuurbeslissing |
-| **F15** | Volledige SASE-validatie | Integratie | ✅ Gedeeltelijk — stappen 1–6 gevalideerd, stappen 7–8 N.v.t. (SD-WAN), stap 9 gepland (SIEM) |
+| **F15** | Volledige SASE-validatie | Integratie | ✅ Gedeeltelijk — stappen 1–6 gevalideerd, stappen 7–8 N.v.t. (SD-WAN), stap 9 operationeel (SIEM via Wazuh) |
 
 ### Aanvullende gevalideerde tests (buiten F1–F15)
 
@@ -44,6 +44,10 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **T-A7** | Suricata vtnet1 (LAN) — DC-LAN-verkeersdetectie | ✅ Gevalideerd |
 | **T-A8** | Suricata verdachte User-Agent | ✅ Gevalideerd |
 | **T-A9** | Suricata DNS-anomaliedetectie | ✅ Gevalideerd |
+| **T-A10** | Identity Bridge — overlay-IP naar personagroepresolutie | ✅ Gevalideerd |
+| **T-A11** | NATS-eventbus — cross-componentgebeurtenisaflevering | ✅ Gevalideerd |
+| **T-A12** | Control Daemon — dreigingsscoreaccumulatie + quarantaine | ✅ Gevalideerd |
+| **T-A13** | Wazuh SIEM — NATS-gebeurtenisingestie + dashboardquery | ✅ Gevalideerd |
 
 ---
 
@@ -53,8 +57,8 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 |--------|-------------|---------|--------|
 | **ZTNA** | F1, F2, F4 | F3 (architectuur gereed) | — |
 | **SWG** | F5, F6, F7, T-A1, T-A2, T-A3, T-A4–A6 | — | — |
-| **FWaaS** | F8, F9, T-A7, T-A8, T-A9 | F10 (Wazuh-afhankelijkheid) | — |
-| **CASB** | — | F11 (Wazuh + Graph API) | — |
+| **FWaaS** | F8, F9, F10, T-A7, T-A8, T-A9 | — | — |
+| **CASB** | F11, T-A10, T-A11, T-A12, T-A13 | — | — |
 | **SD-WAN** | — | — | F12, F13, F14 |
 
 ---
@@ -102,17 +106,30 @@ Zie [NetBird](../components/netbird.md), [Beslissing: Zitadel als IdP-broker](..
 
 ---
 
-### F3 — Posturecontrole (Gepland)
+### F3 — Posturecontrole (Deels bewezen)
 
-Architectuur volledig gespecificeerd in Addendum E (april 2026):
+**Poort 1 — Entra ID Conditional Access:** Vijf CA-beleidsregels geïmplementeerd:
 
-- **Poort 1:** Vier Entra ID CA-beleidsregels — MFA-handhaving, geo-blokkering (alleen België), blokkering van verouderde authenticatie, aanmeldingsrisico
-- **Poort 2:** Vier NetBird-posturecontroles — OS-kernel ≥ 10.0.19041, clientversie, `MsMpEng.exe` AV-proces, geo België
-- Vijf geplande validatiescenario's, inclusief negatieve tests (geo-blokkering, OS-versie spoofing, AV gestopt, verouderde auth, volledig positieve end-to-end)
+| Beleid | Modus | Effect |
+|--------|-------|--------|
+| SASE-PoC-MFA-Required | Actief | MFA afgedwongen op NetBird-app |
+| SASE-PoC-Geo-Block | Report-only | België-only geobeperking (report-only tot demo) |
+| SASE-PoC-Block-Legacy-Auth | Actief | Exchange ActiveSync + verouderde clients geblokkeerd |
+| SASE-PoC-Risk-Block | Actief | Gemiddeld/Hoog aanmeldingsrisico triggert MFA |
+| SASE-PoC-Compliant-Device | Report-only | Intune-conform apparaat vereist (report-only tot demo) |
+
+**Poort 2 — Intune-apparaatnaleving:** Nalevingsbeleid dwingt OS-versie, Defender AV + firewall ingeschakeld, en realtime-beveiliging actief af.
+
+Ingeschreven apparaten:
+
+- **mobile01** — ingeschreven als `2ITCSC1A-MOB-1`, conform
+- **sitepc01** — ingeschreven als `docent1`, Entra joined + Intune-ingeschreven
+
+Twee beleidsregels blijven in report-only-modus (geo-blokkering, conform apparaat) tot de demo om lockout tijdens testen te vermijden.
 
 **Kritieke voorwaarde:** Controleer MFA-registratie op het testaccount voordat CA-beleidsregels worden geactiveerd. Zonder eerdere MFA-instelling triggert de eerste aanmelding een onherstelbare "MFA vereist maar niet geconfigureerd"-blokkering, waardoor het account ontoegankelijk wordt.
 
-Gepland na de tussentijdse evaluatie (20 april 2026). Zie [Beslissing: CA + Posture hybride](../decisions/ca-posture-hybrid.md).
+Zie [Beslissing: CA + Posture hybride](../decisions/ca-posture-hybrid.md).
 
 ---
 
@@ -234,7 +251,7 @@ grep '"in_iface":"vtnet1".*"event_type":"alert"' /var/log/suricata/eve.json | wc
 | emerging-malware, botcc, C2, Abuse.ch | Blokkeren | Altijd kwaadaardig — geen legitiem verkeer mogelijk |
 | tor, info, policy, dns, web | Alerteren | Risico op valse positieven — bewaken, niet blokkeren |
 
-> Het Handboek definieerde F9 oorspronkelijk als "controleer of alert zichtbaar is in Wazuh-dashboard." Wazuh is nog niet geïmplementeerd (Fase 4 — F10). Suricata-detectie is volledig gevalideerd; de Wazuh-integratie is de enige ontbrekende schakel.
+> Het Handboek definieerde F9 oorspronkelijk als "controleer of alert zichtbaar is in Wazuh-dashboard." Wazuh is nu operationeel (F10) en Suricata-alerts stromen via NATS naar Wazuh, waarmee deze leemte is gedicht. Suricata-detectie en Wazuh-integratie zijn beide volledig gevalideerd.
 
 > Meerdere curl-verzoeken naar dezelfde bestemming genereren één Suricata-alert per SID per flow — dit is correct gedrag, geen onderdrukking. Oorzaak: Squid-verbindingspooling hergebruikt upstream TCP-verbindingen; Suricata ziet één flow. Zie [Bevinding: Suricata verbindingspooling](../findings/suricata-connection-pooling.md).
 
@@ -355,22 +372,46 @@ Zie [ioc2rpz](../components/ioc2rpz.md), [RPZ](../concepts/rpz.md).
 
 ---
 
-## Geplande tests en blokkers
+### T-A10 — Identity Bridge: overlay-IP naar personagroepresolutie
+
+Test dat de Identity Bridge overlay-IP's correct vertaalt naar Entra ID-personagroepen. Valideert door het `/lookup`-eindpunt te bevragen met een bekend overlay-IP en te controleren dat de teruggegeven groep overeenkomt met de verwachte persona.
+
+---
+
+### T-A11 — NATS-eventbus: cross-componentgebeurtenisaflevering
+
+Test end-to-end gebeurtenisaflevering van een producent (bijv. Suricata) via NATS naar zowel de Control Daemon als Wazuh. Valideert door een Suricata-alert te triggeren en te controleren dat de gebeurtenis verschijnt in zowel NATS-monitoring als Wazuh.
+
+---
+
+### T-A12 — Control Daemon: dreigingsscoreaccumulatie + quarantaine
+
+Test dreigingsscoreaccumulatie en quarantaine. Valideert door meerdere gemiddeld-ernstige gebeurtenissen te sturen voor dezelfde client, de Redis-score toename te observeren, en te verifiëren dat de peer wordt verwijderd uit personagroepen wanneer de drempelwaarde wordt overschreden.
+
+---
+
+### T-A13 — Wazuh SIEM: NATS-gebeurtenisingestie + dashboardquery
+
+Test NATS-naar-Wazuh gebeurtenisingestie. Valideert door een detectiegebeurtenis te triggeren en vervolgens het Wazuh Discover-dashboard te bevragen naar de gebeurtenis met correcte velden.
+
+---
+
+## Operationele tests — voorheen gepland
 
 ### F10 — Centrale logaggregatie (SIEM)
 
-Vereist Wazuh-implementatie (Fase 4). Logbronnen zijn al beschikbaar: Squid-toegangslog, Suricata `eve.json`, OPNsense-firewalllog, Python DLP Docker-log. Wazuh-Suricata-integratie via de Wazuh OPNsense-module is standaard en vereist geen maatwerkontwikkeling.
+Wazuh is geïmplementeerd en operationeel. De NATS-forwarder bruggt Suricata-alerts van de eventbus naar Wazuh, en de pop01-agent voedt lokale logbronnen (Squid-toegangslog, Suricata `eve.json`, OPNsense-firewalllog, Python DLP Docker-log). Gebeurtenissen zijn opvraagbaar in het Wazuh Discover-dashboard.
 
 ### F11 — CASB-alert en herstel
 
-Vereist Wazuh-implementatie en Microsoft Graph API-configuratie. Architectuur is ontworpen (Afbakening v1.2 §2.2):
+Wazuh is geïmplementeerd met M365 Management Activity API-integratie en Active Response:
 
-- **Inline-laag:** Squid + ICAP (al operationeel)
-- **API-laag:** Wazuh `ms-graph`-module + Graph API (`AuditLog.Read.All`, `Directory.Read.All`)
+- **Inline-laag:** Squid + ICAP (operationeel)
+- **API-laag:** Wazuh + M365 Management Activity API
 - **Aangepaste regels:** SID 100200/100201 voor SharePoint `SharingSet` + `Anyone`/`External`-detectie
 - **Actieve respons:** `sharepoint_remediate.sh`
 
-Graph API-tenantmachtigingen bevestigd op 1 april 2026 (beheerdertoestemming verleend op `aplab.be`). Enige resterende blokker: Wazuh-implementatie.
+Graph API-tenantmachtigingen bevestigd op 1 april 2026 (beheerdertoestemming verleend op `aplab.be`).
 
 ---
 
@@ -386,9 +427,9 @@ Graph API-tenantmachtigingen bevestigd op 1 april 2026 (beheerdertoestemming ver
 | 6 | Opent datacentersite → Geslaagd | ✅ Gevalideerd (F4) |
 | 7 | Sitegebruiker pingt datacenter via tunnel | ✖ N.v.t. — sitepc01 heeft geen OS, IPsec geschrapt |
 | 8 | QoS-markering zichtbaar op VyOS | ✖ N.v.t. — QoS-architectuurbeslissing |
-| 9 | Managementdashboard toont alle services UP | ⏳ Gepland (Wazuh) |
+| 9 | Managementdashboard toont alle services UP | ✅ Operationeel (Wazuh SIEM geïmplementeerd) |
 
-6 van 9 F15-stappen gevalideerd. De 3 resterende zijn ofwel architectureel N.v.t. (SD-WAN) of gepland (SIEM).
+7 van 9 F15-stappen gevalideerd. De 2 resterende zijn architectureel N.v.t. (SD-WAN).
 
 ---
 

@@ -85,6 +85,14 @@ The deny rules for blacklists appear before all allow rules. Squid is first-matc
 
 ---
 
+## NATS integration
+
+Squid publishes proxy access events to the NATS event bus on mgmt01. A Python producer script on pop01 tails `access.log` and publishes structured events to `security.alert.proxy`. Events include: source IP (overlay), destination URL, HTTP method, response code, ACL decision, identity group (from external_acl). These events feed both the [Control Daemon](control-daemon.md) (real-time threat scoring) and [Wazuh](wazuh.md) SIEM (forensic analysis).
+
+Additionally, Squid integrates with the [Identity Bridge](identity-bridge.md) via `external_acl_type`: for each request, a helper queries `http://192.168.122.23:<port>/lookup?ip=%SRC` to resolve the overlay IP to an Entra ID persona group. This enables identity-based URL filtering (e.g., Studenten blocked from ChatGPT, Docenten allowed).
+
+---
+
 ## Known issues / gotchas
 
 **"Clear log" in WebUI destroys the logfile** — see [Finding: Squid clearlog](../findings/squid-clearlog-destroys-file.md). Use `> /var/log/squid/access.log` to truncate without deletion.
@@ -118,4 +126,8 @@ The deny rules for blacklists appear before all allow rules. Squid is first-matc
 - [Finding: pre-auth ssl-bump params](../findings/pre-auth-ssl-bump-params.md)
 - [Finding: Squid clearlog destroys file](../findings/squid-clearlog-destroys-file.md)
 - [Finding: StevenBlack incompatible](../findings/stevenblack-incompatible.md)
+- [Identity Bridge](identity-bridge.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)
+- [Concept: Identity Flow](../concepts/identity-flow.md)
 - [Runbook: Proxy & WPAD](../runbooks/03-proxy-wpad.md)

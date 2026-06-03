@@ -5,7 +5,7 @@ tags: [sase, architecture]
 
 # Project Wiki
 
-Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge) proof-of-concept voor Atlascollege — een school met 4000+ BYOD-studenten. De stack vervangt het traditionele perimetermodel door identiteitsgebaseerde, contextbewuste toegangscontrole met open-source componenten: NetBird (ZTNA), Squid (SWG), ClamAV + Python DLP (ICAP-inspectie), Suricata (IDS), ioc2rpz + Unbound (DNS threat intelligence) en Entra ID (identiteit). Alle componenten draaien op een GNS3-topologie gehost op Proxmox.
+Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge) proof-of-concept voor Atlascollege — een school met 4 000 gebruikers op beheerde Windows-apparaten (Intune-beheerd, Entra joined). De stack vervangt het traditionele perimetermodel door identiteitsgebaseerde, contextbewuste toegangscontrole met open-source componenten: NetBird (ZTNA), Squid (SWG), ClamAV + Python DLP (ICAP-inspectie), Suricata (IDS), ioc2rpz + Unbound (DNS threat intelligence), Entra ID (identiteit), NATS JetStream (event bus), Wazuh (SIEM) en een Python control daemon (real-time quarantaine). Alle componenten draaien op een GNS3-topologie gehost op Proxmox.
 
 ## Catalogus
 
@@ -22,7 +22,12 @@ Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge
 | [NetBird](components/netbird.md) | WireGuard ZTNA-overlay — Zitadel + Entra ID IdP-keten; ACL-policies; DNS primaire nameserver |
 | [Caddy](components/caddy.md) | WPAD PAC-bestandsserver, NetBird TLS-terminator, ioc2rpz GUI reverse proxy |
 | [GNS3](components/gns3.md) | Lab-virtualisatieplatform — geneste QEMU/KVM op Proxmox; meerdere gebruikers; GNS3 vs EVE-NG |
-| [VyOS](components/vyos.md) | SD-WAN-gateway voor remote site (site01); NAT voor Site-LAN |
+| [VyOS](components/vyos.md) | SASE Gateway voor remote site (site01); Zero Trust Branch-model; NAT voor Site-LAN |
+| [Identity Bridge](components/identity-bridge.md) | NetBird overlay-IP → Entra ID-groep (SWG↔ZTNA-koppeling) |
+| [NATS JetStream](components/nats-jetstream.md) | Centrale event bus — verbindt detectiesilo's |
+| [Control Daemon](components/control-daemon.md) | Threat scoring + real-time quarantaine via NetBird API |
+| [Wazuh](components/wazuh.md) | SIEM — NATS-forwarder + pop01-agent + M365 Active Response |
+| [Zitadel](components/zitadel.md) | OIDC IdP-broker — Entra ID → JWT group sync → NetBird |
 | **Concepten** | |
 | [SASE](concepts/sase.md) | Vijf SASE-pijlers; onze open-source invulling; commerciële equivalenten |
 | [Zero Trust](concepts/zero-trust.md) | Drie-gate model; never trust always verify; Gates 1–3 |
@@ -31,6 +36,7 @@ Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge
 | [WPAD/PAC](concepts/wpad-pac.md) | Browser proxy-autoconfiguratie; waarom transparante proxy faalt op wt0 |
 | [RPZ](concepts/rpz.md) | DNS Response Policy Zones; zone-transferketen; NXDOMAIN-handhaving |
 | [DLP](concepts/dlp.md) | Twee-laags DLP; algoritmische validatie vs patroonherkenning; upload vs download |
+| [Identiteitsstroom](concepts/identity-flow.md) | Volledige identiteitsketen: Entra ID → Zitadel → NetBird → Identity Bridge → Squid |
 | **Beslissingen** | |
 | [WPAD/PAC vs Transparante Proxy](decisions/wpad-vs-transparent-proxy.md) | Waarom expliciete proxy — pf rdr werkt niet op wt0 |
 | [Twee-laags DLP](decisions/two-layer-dlp.md) | ClamAV (downloads) + Python DLP (uploads) — multipart-parseerprobleem |
@@ -40,7 +46,15 @@ Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge
 | [Suricata WAN+LAN](decisions/suricata-wan-lan.md) | Waarom vtnet0 + vtnet1 — wt0 toont 0 pakketjes in BPF |
 | [GNS3 vs EVE-NG](decisions/gns3-vs-eveng.md) | Multi-gebruikersvereiste; QCOW2-formaat; EVE-NG single-session beperking |
 | [Zitadel als IdP-broker](decisions/zitadel-idp-broker.md) | Quickstart installeert Zitadel; Entra ID als externe IdP; CA viert nog steeds |
-| [CA + Posture hybride (Drie-gate model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementair niet uitwisselbaar; BYOD Intune-gat |
+| [CA + Posture hybride (Drie-gate model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementair niet uitwisselbaar |
+| [SD-WAN geschrapt (F12, F13, F14)](decisions/sdwan-descoped.md) | IPsec + QoS + uCPE verwijderd — site-to-site tunnels in strijd met Zero Trust; sitepc01 → NetBird-inschrijving |
+| [NetBird Service PAT](decisions/netbird-service-pat.md) | Service-user PAT voor Identity Bridge API-auth — vermijdt NetBird issue #3127 |
+| [NATS accounts auth](decisions/nats-accounts-auth.md) | `accounts{}`-model vereist voor JetStream API-toegang |
+| [GroupSync Pad B](decisions/groupsync-pad-b.md) | Zitadel verwijdert `2ITcsc1A-`-prefix — schone persona-groepnamen |
+| [CASB drie lagen](decisions/casb-three-layers.md) | Inline (Squid) + API (Wazuh) + Real-time (NATS+daemon) |
+| [Beheerde apparaten scope](decisions/managed-devices-scope.md) | BYOD → beheerde Windows-apparaten (lectoraatmandaat R11) |
+| [ZT SD-WAN Branch](decisions/zt-sdwan-branch.md) | Zero Trust Branch vervangt klassieke IPsec SD-WAN |
+| [Control Daemon scope](decisions/control-daemon-scope.md) | IDS-correlatie + proxy_block verwijderd uit threat scoring |
 | **Bevindingen** | |
 | [wt0 pf rdr beperking](findings/wt0-pf-rdr-limitation.md) | WireGuard Laag 3 — pf rdr kan niet onderscheppen op wt0 |
 | [pre-auth ssl-bump parameters](findings/pre-auth-ssl-bump-params.md) | Kale http_port zonder ssl-bump = geen inspectie op overlay-listener |
@@ -56,6 +70,32 @@ Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge
 | [NetBird primaire nameserver](findings/netbird-primary-nameserver.md) | Lege match-domains vereist zodat RPZ externe domeinen dekt |
 | [NetBird config nul bytes](findings/netbird-config-zero-bytes.md) | FreeBSD UFS + QEMU SIGKILL = 0-byte config.json — back-up na elke sessie |
 | [Docker volume hermaak](findings/docker-volume-recreation.md) | `docker compose restart` past volume-mount wijzigingen niet toe — gebruik `up -d` |
+| [curl --ssl-no-revoke op Windows](findings/curl-ssl-no-revoke.md) | Schannel CRL-controle faalt op SASE-PoC-CA — voeg `--ssl-no-revoke` toe aan alle proxytests vanaf Windows |
+| [Suricata connection pooling](findings/suricata-connection-pooling.md) | Squid hergebruikt upstream TCP-verbindingen — een Suricata-alert per SID per flow is correct, geen suppressie |
+| [NetBird issue #3127](findings/netbird-issue-3127.md) | Management API weigert peer-level groepswijzigingen — service-user PAT als workaround |
+| [Squid overlay bind race](findings/squid-overlay-bind-race.md) | Squid overlay-listener verloren bij herstart — `commBind EADDRNOTAVAIL` race |
+| [Overlay IP-instabiliteit](findings/overlay-ip-instability.md) | NetBird overlay-IP's kunnen wijzigen — Identity Bridge moet stale cache afhandelen |
+| [NATS store dir](findings/nats-store-dir.md) | JetStream-opslag moet op persistent Docker-volume staan |
+| [Wazuh CPU glibc](findings/wazuh-cpu-glibc.md) | CPU-piek bij opstarten door glibc-compatibiliteit |
+| [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard hostnaam-resolutieprobleem bij opstarten |
+| [NetBird JWT allow-groups lockout](findings/netbird-jwt-allow-groups-lockout.md) | JWT allow-groups inschakelen kan alle gebruikers buitensluiten bij verkeerde configuratie |
+| [DC-LAN isolatie route ACL](findings/dc-lan-isolation-route-acl.md) | NetBird Networks + ACL vereist voor DC-LAN-isolatie |
+| **Testen** | |
+| [Acceptatietests (F1–F15)](testing/acceptance-tests.nl.md) | Volledige F1–F15-statustabel, testcommando's, werkelijke output, dekking per pijler, geplande tests |
+| [Aanvals- & bypass-scenario's](testing/attack-scenarios.nl.md) | Demovalidatie-scenario's per SASE-pijler: ZTNA, SWG, CASB, FWaaS/IDS, DNS, NATS-handhaving |
+| **Runbooks** | |
+| [Runbook-overzicht](runbooks/index.md) | Bouwvolgorde, afhankelijkheidsgraph, stapsgewijze handleidingen |
+| [01 — Labomgeving](runbooks/01-lab-environment.md) | Proxmox VM, GNS3 Server, topologie, IP-adressering, snapshots |
+| [02 — ZTNA Overlay](runbooks/02-ztna-overlay.md) | NetBird + Zitadel + Entra ID, groepen, ACL's, exit node, DNS |
+| [03 — Proxy & WPAD](runbooks/03-proxy-wpad.md) | Squid expliciete proxy, WPAD/PAC via Caddy, SSL Bump, URL-filtering |
+| [04 — Malware & DLP](runbooks/04-malware-dlp.md) | ClamAV/c-icap RESPMOD, YARA-regels, Python DLP REQMOD |
+| [05 — IDS](runbooks/05-ids.md) | Suricata op WAN+LAN, Hyperscan, 79.620+ regels |
+| [06 — DNS Threat Intel](runbooks/06-dns-threat-intel.md) | ioc2rpz, BIND TSIG, Unbound RPZ, 71.767 records |
+| [07 — Toegangsbeleid](runbooks/07-access-policy.md) | Conditional Access, posturecontroles, validatiescenario's (gepland) |
+| [08 — GroupSync](runbooks/08-groupsync.md) | JWT group sync, Entra ID token config, Zitadel Actions |
+| [09 — Identity Bridge](runbooks/09-identity-bridge.md) | FastAPI overlay-IP → persona-groep, Squid external_acl |
+| [10 — NATS JetStream](runbooks/10-nats-jetstream.md) | Event bus, producers, Control Daemon, Redis |
+| [11 — Wazuh](runbooks/11-wazuh.md) | SIEM-stack, NATS-forwarder, M365 Active Response |
 
 ---
 
@@ -65,7 +105,7 @@ Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge
 
 | Service | Adres | Poort |
 |---------|-------|-------|
-| Squid proxy (BYOD) | `100.70.154.79` | 3128 |
+| Squid proxy | `100.70.154.79` | 3128 |
 | Unbound DNS | `100.70.154.79` | 53 |
 | BIND (TSIG secundair) | `127.0.0.1` | 53530 |
 | ioc2rpz | `192.168.122.23` | 53 |
@@ -89,6 +129,6 @@ Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge
 
 | Gate | Status | Technologie |
 |------|--------|-------------|
-| Gate 1 — Identiteit | ⚠️ Gepland | Entra ID Conditional Access (4 policies in Addendum E) |
-| Gate 2 — Apparaat | ⚠️ Gepland | NetBird Posture Checks (Addendum E) |
+| Gate 1 — Identiteit | ✅ Operationeel | Entra ID Conditional Access (5 policies) |
+| Gate 2 — Apparaat | ✅ Operationeel | Intune-apparaatconformiteit (Report-only tot demo) |
 | Gate 3 — Inhoud | ✅ Operationeel | Squid + ClamAV + Python DLP + Unbound RPZ + Suricata |

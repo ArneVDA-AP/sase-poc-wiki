@@ -8,9 +8,9 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 **Source:** `raw/Doc7_ZTNA_Context_Aware.md`
 **Node(s):** Entra ID (`aplab.be` tenant) + NetBird Dashboard
 **Prerequisites:** All prior runbooks completed (full SASE stack operational)
-**Status:** Planned — architecture validated (Addendum E), Gates 1 & 2 not yet implemented. Gate 3 fully operational.
+**Status:** Validated — 5 CA policies implemented (3 active, 2 report-only), Intune device compliance operational. Gate 3 fully operational.
 
-> **This runbook describes planned steps.** Gates 1 and 2 are architecture design and implementation plan, scheduled for post-interim evaluation (20 April 2026). Gate 3 is operational and covered by Runbooks 03-06. Status labels `[PLANNED]` and `[OPERATIONAL]` are absolute.
+> **Gate 1 is validated.** Five Conditional Access policies are implemented: MFA Required (active), Geo-Block Belgium only (report-only), Block Legacy Auth (active), Risk-Based Block (active), Compliant Device Required (report-only). Two policies remain in report-only mode until demo. Gate 2 (NetBird posture checks) is architecture-ready. Gate 3 is operational and covered by Runbooks 03-06.
 
 ---
 
@@ -30,7 +30,7 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 
 ---
 
-## [PLANNED] Step 1: Create Entra ID Conditional Access policies
+## [VALIDATED] Step 1: Create Entra ID Conditional Access policies
 
 Navigate to: `https://entra.microsoft.com → Protection → Conditional Access → Policies → New policy`
 
@@ -206,7 +206,9 @@ Posture checks are per-policy, not global. Link to every policy that BYOD client
 
 ## [PLANNED] Step 4: Validation scenarios
 
-### Scenario 1 — Positive test: compliant device, correct location
+### Scenario 1 — Positive test: compliant device, correct location [VALIDATED]
+
+> **Status:** Validated. 5 CA policies implemented (3 active, 2 report-only). MFA enforcement, legacy auth blocking, and risk-based blocking are active. Geo-block and compliant device policies are in report-only mode until demo.
 
 | Step | Action | Expected |
 |------|--------|----------|

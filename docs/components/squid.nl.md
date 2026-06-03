@@ -85,6 +85,14 @@ De weigeringsregels voor blokkeerlijsten staan voor alle toestemmingsregels. Squ
 
 ---
 
+## NATS-integratie
+
+Squid publiceert proxy-toegangsgebeurtenissen naar de NATS event bus op mgmt01. Een Python-producerscript op pop01 tailed `access.log` en publiceert gestructureerde events naar `security.alert.proxy`. Events bevatten: bron-IP (overlay), bestemmings-URL, HTTP-methode, responscode, ACL-beslissing en identiteitsgroep (via external_acl). Deze events voeden zowel de [Control Daemon](control-daemon.md) (realtime threat scoring) als [Wazuh](wazuh.md) SIEM (forensische analyse).
+
+Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `external_acl_type`: voor elk verzoek bevraagt een helper `http://192.168.122.23:<port>/lookup?ip=%SRC` om het overlay-IP om te zetten naar een Entra ID-personagroep. Dit maakt identiteitsgebaseerde URL-filtering mogelijk (bijv. Studenten geblokkeerd voor ChatGPT, Docenten toegestaan).
+
+---
+
 ## Bekende problemen / valkuilen
 
 **"Clear log" in WebUI verwijdert het logbestand** — zie [Bevinding: Squid clearlog](../findings/squid-clearlog-destroys-file.md). Gebruik `> /var/log/squid/access.log` om af te kappen zonder verwijdering.
@@ -112,3 +120,7 @@ De weigeringsregels voor blokkeerlijsten staan voor alle toestemmingsregels. Squ
 - [Bevinding: pre-auth ssl-bump-parameters](../findings/pre-auth-ssl-bump-params.md)
 - [Bevinding: Squid clearlog verwijdert bestand](../findings/squid-clearlog-destroys-file.md)
 - [Bevinding: StevenBlack incompatibel](../findings/stevenblack-incompatible.md)
+- [Identity Bridge](identity-bridge.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)
+- [Concept: Identity Flow](../concepts/identity-flow.md)

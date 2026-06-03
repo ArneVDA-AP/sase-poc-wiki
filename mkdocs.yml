@@ -111,6 +111,32 @@ plugins:
             Acceptance Tests (F1–F15): Acceptatietests (F1–F15)
             curl --ssl-no-revoke on Windows: curl --ssl-no-revoke op Windows
             Suricata connection pooling: Suricata verbindingspooling
+            Zitadel: Zitadel
+            Identity Bridge: Identity Bridge
+            NATS JetStream: NATS JetStream
+            Control Daemon: Control Daemon
+            Wazuh: Wazuh
+            Identity Flow: Identiteitsstroom
+            Managed Devices Scope: Beheerde apparaten-scope
+            Zero Trust Branch SD-WAN: Zero Trust Branch SD-WAN
+            NetBird Service PAT: NetBird Service PAT
+            NATS Accounts Auth: NATS Accounts-auth
+            GroupSync Path B: GroupSync Pad B
+            Three-Layer CASB: Drielaags CASB
+            Control Daemon Scope: Control Daemon-scope
+            Attack Scenarios: Aanvalsscenario's
+            08 — GroupSync: 08 — GroupSync
+            09 — Identity Bridge: 09 — Identity Bridge
+            10 — NATS JetStream: 10 — NATS JetStream
+            11 — Wazuh: 11 — Wazuh
+            NetBird issue 3127: NetBird issue 3127
+            Squid overlay bind race: Squid overlay bind-race
+            Overlay IP instability: Overlay-IP-instabiliteit
+            NATS store dir: NATS store-dir
+            Wazuh CPU glibc: Wazuh CPU glibc
+            Wazuh dashboard airgap: Wazuh dashboard airgap
+            NetBird JWT allow-groups lockout: NetBird JWT allow-groups lockout
+            DC LAN isolation route ACL: DC LAN-isolatie route-ACL
 
 markdown_extensions:
   - admonition
@@ -155,6 +181,11 @@ nav:
     - Caddy: components/caddy.md
     - GNS3: components/gns3.md
     - VyOS: components/vyos.md
+    - Zitadel: components/zitadel.md
+    - Identity Bridge: components/identity-bridge.md
+    - NATS JetStream: components/nats-jetstream.md
+    - Control Daemon: components/control-daemon.md
+    - Wazuh: components/wazuh.md
   - Concepts:
     - concepts/index.md
     - SASE: concepts/sase.md
@@ -164,6 +195,7 @@ nav:
     - WPAD/PAC: concepts/wpad-pac.md
     - RPZ: concepts/rpz.md
     - DLP: concepts/dlp.md
+    - Identity Flow: concepts/identity-flow.md
   - Decisions:
     - decisions/index.md
     - WPAD vs Transparent Proxy: decisions/wpad-vs-transparent-proxy.md
@@ -176,8 +208,16 @@ nav:
     - Zitadel as IdP Broker: decisions/zitadel-idp-broker.md
     - CA + Posture Hybrid: decisions/ca-posture-hybrid.md
     - SD-WAN Descoped: decisions/sdwan-descoped.md
+    - Managed Devices Scope: decisions/managed-devices-scope.md
+    - Zero Trust Branch SD-WAN: decisions/zt-sdwan-branch.md
+    - NetBird Service PAT: decisions/netbird-service-pat.md
+    - NATS Accounts Auth: decisions/nats-accounts-auth.md
+    - GroupSync Path B: decisions/groupsync-pad-b.md
+    - Three-Layer CASB: decisions/casb-three-layers.md
+    - Control Daemon Scope: decisions/control-daemon-scope.md
   - Testing:
     - Acceptance Tests (F1–F15): testing/acceptance-tests.md
+    - Attack Scenarios: testing/attack-scenarios.md
   - Runbooks:
     - runbooks/index.md
     - 01 — Lab Environment: runbooks/01-lab-environment.md
@@ -187,6 +227,10 @@ nav:
     - 05 — IDS: runbooks/05-ids.md
     - 06 — DNS Threat Intel: runbooks/06-dns-threat-intel.md
     - 07 — Access Policy: runbooks/07-access-policy.md
+    - 08 — GroupSync: runbooks/08-groupsync.md
+    - 09 — Identity Bridge: runbooks/09-identity-bridge.md
+    - 10 — NATS JetStream: runbooks/10-nats-jetstream.md
+    - 11 — Wazuh: runbooks/11-wazuh.md
   - Findings:
     - findings/index.md
     - wt0 pf rdr limitation: findings/wt0-pf-rdr-limitation.md
@@ -205,6 +249,14 @@ nav:
     - Docker volume recreation: findings/docker-volume-recreation.md
     - curl --ssl-no-revoke on Windows: findings/curl-ssl-no-revoke.md
     - Suricata connection pooling: findings/suricata-connection-pooling.md
+    - NetBird issue 3127: findings/netbird-issue-3127.md
+    - Squid overlay bind race: findings/squid-overlay-bind-race.md
+    - Overlay IP instability: findings/overlay-ip-instability.md
+    - NATS store dir: findings/nats-store-dir.md
+    - Wazuh CPU glibc: findings/wazuh-cpu-glibc.md
+    - Wazuh dashboard airgap: findings/wazuh-dashboard-airgate.md
+    - NetBird JWT allow-groups lockout: findings/netbird-jwt-allow-groups-lockout.md
+    - DC LAN isolation route ACL: findings/dc-lan-isolation-route-acl.md
   - Tags: tags.md
   - Log: log.md
 

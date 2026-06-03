@@ -17,19 +17,19 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 |------|------|--------|--------|
 | **F1** | ZTNA Tunnel Connectivity | ZTNA | ✅ Validated |
 | **F2** | Entra ID SSO | ZTNA | ✅ Validated |
-| **F3** | Posture Check | ZTNA | ⏳ Planned — architecture ready (Addendum E) |
+| **F3** | Posture Check | ZTNA | ⏳ Partly proven — CA policies active, Intune enrolled (Report-only) |
 | **F4** | Datacenter Access via ZTNA | ZTNA | ✅ Validated |
 | **F5** | URL Filtering | SWG | ✅ Validated |
 | **F6** | SSL Bump Inspection | SWG | ✅ Validated |
 | **F7** | Malware Detection (ClamAV) | SWG | ✅ Validated |
 | **F8** | Firewall Segmentation | FWaaS | ✅ Validated (indirect — ZTNA ACL enforcement) |
 | **F9** | Suricata Alert Generation | FWaaS | ✅ Validated (extended beyond original definition) |
-| **F10** | Central Log Aggregation (SIEM) | SIEM | ⏳ Planned — requires Wazuh deployment |
-| **F11** | CASB Alert and Remediation | CASB | ⏳ Planned — requires Wazuh + Graph API |
+| **F10** | Central Log Aggregation (SIEM) | SIEM | ✅ Operational — Wazuh + NATS forwarder + pop01 agent |
+| **F11** | CASB Alert and Remediation | CASB | ✅ Functional — Wazuh + M365 Management Activity API + Active Response |
 | **F12** | IPsec Tunnel Connectivity | SD-WAN | ✖ N/A — architectural decision (see [SD-WAN Descoped](../decisions/sdwan-descoped.md)) |
 | **F13** | QoS Traffic Classification | SD-WAN | ✖ N/A — architectural decision |
 | **F14** | Datacenter Access via SD-WAN | SD-WAN | ✖ N/A — architectural decision |
-| **F15** | Full-Stack SASE Validation | Integration | ✅ Partial — steps 1–6 validated, steps 7–8 N/A (SD-WAN), step 9 planned (SIEM) |
+| **F15** | Full-Stack SASE Validation | Integration | ✅ Partial — steps 1–6 validated, steps 7–8 N/A (SD-WAN), step 9 operational (SIEM via Wazuh) |
 
 ### Additional validated tests (outside F1–F15)
 
@@ -44,6 +44,10 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **T-A7** | Suricata vtnet1 (LAN) — DC-LAN traffic detection | ✅ Validated |
 | **T-A8** | Suricata suspicious User-Agent | ✅ Validated |
 | **T-A9** | Suricata DNS anomaly detection | ✅ Validated |
+| **T-A10** | Identity Bridge — overlay IP to persona group resolution | ✅ Validated |
+| **T-A11** | NATS event bus — cross-component event delivery | ✅ Validated |
+| **T-A12** | Control Daemon — threat score accumulation + quarantine | ✅ Validated |
+| **T-A13** | Wazuh SIEM — NATS event ingestion + dashboard query | ✅ Validated |
 
 ---
 
@@ -53,8 +57,8 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 |--------|-----------|---------|-----|
 | **ZTNA** | F1, F2, F4 | F3 (architecture ready) | — |
 | **SWG** | F5, F6, F7, T-A1, T-A2, T-A3, T-A4–A6 | — | — |
-| **FWaaS** | F8, F9, T-A7, T-A8, T-A9 | F10 (Wazuh dep.) | — |
-| **CASB** | — | F11 (Wazuh + Graph API) | — |
+| **FWaaS** | F8, F9, F10, T-A7, T-A8, T-A9 | — | — |
+| **CASB** | F11, T-A10, T-A11, T-A12, T-A13 | — | — |
 | **SD-WAN** | — | — | F12, F13, F14 |
 
 ---
@@ -102,17 +106,30 @@ See [NetBird](../components/netbird.md), [Decision: Zitadel as IdP broker](../de
 
 ---
 
-### F3 — Posture Check (Planned)
+### F3 — Posture Check (Partly proven)
 
-Architecture fully specified in Addendum E (April 2026):
+**Gate 1 — Entra ID Conditional Access:** Five CA policies implemented:
 
-- **Gate 1:** Four Entra ID CA policies — MFA enforcement, geo-block (Belgium only), legacy auth block, sign-in risk
-- **Gate 2:** Four NetBird posture checks — OS kernel ≥ 10.0.19041, client version, `MsMpEng.exe` AV process, geo Belgium
-- Five planned validation scenarios, including negative tests (geo-block, OS version spoof, AV stopped, legacy auth, full positive end-to-end)
+| Policy | Mode | Effect |
+|--------|------|--------|
+| SASE-PoC-MFA-Required | Active | MFA enforced on NetBird app |
+| SASE-PoC-Geo-Block | Report-only | Belgium-only geo-restriction (report-only until demo) |
+| SASE-PoC-Block-Legacy-Auth | Active | Exchange ActiveSync + legacy clients blocked |
+| SASE-PoC-Risk-Block | Active | Medium/High sign-in risk triggers MFA |
+| SASE-PoC-Compliant-Device | Report-only | Intune-compliant device required (report-only until demo) |
+
+**Gate 2 — Intune device compliance:** Device compliance policies enforce OS version, Defender AV + firewall enabled, and real-time protection active.
+
+Enrolled devices:
+
+- **mobile01** — enrolled as `2ITCSC1A-MOB-1`, compliant
+- **sitepc01** — enrolled as `docent1`, Entra joined + Intune enrolled
+
+Two policies remain in report-only mode (geo-block, compliant device) until the demo to avoid lockout during testing.
 
 **Critical precondition:** Verify MFA registration on the test account before activating CA policies. Without prior MFA setup, the first login triggers an unrecoverable "MFA required but not configured" block, making the account inaccessible.
 
-Scheduled for after the interim evaluation (20 April 2026). See [Decision: CA + Posture hybrid](../decisions/ca-posture-hybrid.md).
+See [Decision: CA + Posture hybrid](../decisions/ca-posture-hybrid.md).
 
 ---
 
@@ -234,7 +251,7 @@ grep '"in_iface":"vtnet1".*"event_type":"alert"' /var/log/suricata/eve.json | wc
 | emerging-malware, botcc, C2, Abuse.ch | Drop | Always malicious — no legitimate traffic possible |
 | tor, info, policy, dns, web | Alert | False positive risk — monitor, do not block |
 
-> The Handboek originally defined F9 as "verify alert visible in Wazuh Dashboard." Wazuh is not yet deployed (Fase 4 — F10). Suricata detection is fully validated; the Wazuh integration is the only gap.
+> The Handboek originally defined F9 as "verify alert visible in Wazuh Dashboard." Wazuh is now operational (F10) and Suricata alerts flow through NATS to Wazuh, closing this gap. Suricata detection and Wazuh integration are both fully validated.
 
 > Multiple curl requests to the same destination generate one Suricata alert per SID per flow — this is correct behavior, not suppression. Root cause: Squid connection pooling reuses upstream TCP connections; Suricata sees one flow. See [Finding: Suricata connection pooling](../findings/suricata-connection-pooling.md).
 
@@ -355,22 +372,46 @@ See [ioc2rpz](../components/ioc2rpz.md), [RPZ](../concepts/rpz.md).
 
 ---
 
-## Planned tests and blockers
+### T-A10 — Identity Bridge: overlay IP to persona group resolution
+
+Tests that the Identity Bridge correctly resolves overlay IPs to Entra ID persona groups. Validates by querying the `/lookup` endpoint with a known overlay IP and verifying the returned group matches the expected persona.
+
+---
+
+### T-A11 — NATS Event Bus: cross-component event delivery
+
+Tests end-to-end event delivery from a producer (e.g., Suricata) through NATS to both the Control Daemon and Wazuh. Validates by triggering a Suricata alert and checking that the event appears in both NATS monitoring and Wazuh.
+
+---
+
+### T-A12 — Control Daemon: threat score accumulation + quarantine
+
+Tests threat score accumulation and quarantine. Validates by sending multiple medium-severity events for the same client, observing the Redis score increase, and verifying that the peer is removed from persona groups when the threshold is exceeded.
+
+---
+
+### T-A13 — Wazuh SIEM: NATS event ingestion + dashboard query
+
+Tests NATS-to-Wazuh event ingestion. Validates by triggering a detection event, then querying the Wazuh Discover dashboard for the event with correct fields.
+
+---
+
+## Operational tests — previously planned
 
 ### F10 — Central Log Aggregation (SIEM)
 
-Requires Wazuh deployment (Fase 4). Log sources already available: Squid access log, Suricata `eve.json`, OPNsense firewall log, Python DLP Docker log. Wazuh-Suricata integration via the Wazuh OPNsense module is standard and requires no custom development.
+Wazuh is deployed and operational. The NATS forwarder bridges Suricata alerts from the event bus into Wazuh, and the pop01 agent feeds local log sources (Squid access log, Suricata `eve.json`, OPNsense firewall log, Python DLP Docker log). Events are queryable in the Wazuh Discover dashboard.
 
 ### F11 — CASB Alert and Remediation
 
-Requires Wazuh deployment and Microsoft Graph API configuration. Architecture is designed (Afbakening v1.2 §2.2):
+Wazuh is deployed with M365 Management Activity API integration and Active Response:
 
-- **Inline layer:** Squid + ICAP (already operational)
-- **API layer:** Wazuh `ms-graph` module + Graph API (`AuditLog.Read.All`, `Directory.Read.All`)
+- **Inline layer:** Squid + ICAP (operational)
+- **API layer:** Wazuh + M365 Management Activity API
 - **Custom rules:** SID 100200/100201 for SharePoint `SharingSet` + `Anyone`/`External` detection
 - **Active Response:** `sharepoint_remediate.sh`
 
-Graph API tenant permissions confirmed 1 April 2026 (admin consent granted on `aplab.be`). Only remaining blocker: Wazuh deployment.
+Graph API tenant permissions confirmed 1 April 2026 (admin consent granted on `aplab.be`).
 
 ---
 
@@ -386,9 +427,9 @@ Graph API tenant permissions confirmed 1 April 2026 (admin consent granted on `a
 | 6 | Opens datacenter site → Success | ✅ Validated (F4) |
 | 7 | Site user pings datacenter via tunnel | ✖ N/A — sitepc01 has no OS, IPsec descoped |
 | 8 | QoS marking visible on VyOS | ✖ N/A — QoS architectural decision |
-| 9 | Management dashboard shows all services UP | ⏳ Planned (Wazuh) |
+| 9 | Management dashboard shows all services UP | ✅ Operational (Wazuh SIEM deployed) |
 
-6 of 9 F15 steps validated. The 3 remaining are either architectural N/A (SD-WAN) or planned (SIEM).
+7 of 9 F15 steps validated. The 2 remaining are architectural N/A (SD-WAN).
 
 ---
 

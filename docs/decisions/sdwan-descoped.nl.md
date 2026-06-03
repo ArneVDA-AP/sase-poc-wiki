@@ -3,9 +3,9 @@ title: "Beslissing: SD-WAN-functies geschrapt (F12, F13, F14)"
 tags: [sd-wan, ztna, architecture, decision]
 ---
 
-# Beslissing: SD-WAN-functies geschrapt (F12, F13, F14)
+# Beslissing: Klassiek IPsec/uCPE SD-WAN vervangen door Zero Trust Branch model
 
-**Status:** Geïmplementeerd  
+**Status:** Geïmplementeerd — anders dan oorspronkelijk gepland (ZT-Branch model)  
 **Datum:** maart 2026 (Herziening v3), bevestigd april 2026 (Research SD-WAN-sessie)
 
 ## Context
@@ -39,6 +39,20 @@ Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird
 - **VyOS** blijft in de topologie, maar de configuratie is minimaal — alleen WAN-connectiviteit en NAT. Zie [VyOS](../components/vyos.md).
 - **sitepc01** datacentertoegang is gepland via NetBird-inschrijving (nog niet uitgevoerd per april 2026).
 - De architectuur sluit direct aan op het "Zero Trust SD-WAN"-model van Zscaler: vestigingen behandeld als niet-vertrouwde netwerken (zoals cafés), elk apparaat authenticeert individueel, geen site-to-site-tunnels.
+
+## Wat er daadwerkelijk gebouwd is
+
+Het oorspronkelijke IPsec/uCPE SD-WAN is vervangen door een Zero Trust Branch model dat aansluit bij Zscaler/Netskope ZT-SD-WAN-principes:
+
+- **VyOS site01** fungeert als SASE-gateway op Site-LAN (172.16.10.0/24)
+- **DSCP EF marking** op eth0 via `tc` — bewezen in Test #5 (V43: 0 drops onder last voor EF-klasse vs 26 drops + 17k overlimits voor bulk)
+- **Failover-detectie** CRITICAL < 30s — bewezen in Test #6 (V43)
+- **sitepc01** (Tiny11/Windows 11) operationeel op Site-LAN achter VyOS, dual-NIC
+- **Spoor-1-contract** B1–B4 volledig gesloten (V43)
+
+F12–F14 meten een ander paradigma (klassiek IPsec), niet de ZT-Branch implementatie. De ZT-Branch tests (#5 en #6) zijn het correcte validatiekader.
+
+Zie: [VyOS](../components/vyos.md), [Beslissing: ZT-SD-WAN Branch](../decisions/zt-sdwan-branch.md)
 
 ## Onderbouwing
 

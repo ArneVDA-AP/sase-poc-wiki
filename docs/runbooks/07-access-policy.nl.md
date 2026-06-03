@@ -8,9 +8,9 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 **Bron:** `raw/Doc7_ZTNA_Context_Aware.md`
 **Node(s):** Entra ID (`aplab.be`-tenant) + NetBird Dashboard
 **Vereisten:** Alle voorgaande runbooks afgerond (volledige SASE-stack operationeel)
-**Status:** Gepland — architectuur gevalideerd (Addendum E), Gates 1 & 2 nog niet geïmplementeerd. Gate 3 volledig operationeel.
+**Status:** Gevalideerd — 5 CA-beleidsregels geïmplementeerd (3 actief, 2 report-only), Intune-apparaatnaleving operationeel. Gate 3 volledig operationeel.
 
-> **Deze runbook beschrijft geplande stappen.** Gates 1 en 2 zijn architectuurontwerp en implementatieplan, gepland na de tussentijdse evaluatie (20 april 2026). Gate 3 is operationeel en wordt gedekt door Runbooks 03-06. Statuslabels `[GEPLAND]` en `[OPERATIONEEL]` zijn absoluut.
+> **Gate 1 is gevalideerd.** Vijf Conditional Access-beleidsregels zijn geïmplementeerd: MFA Required (actief), Geo-Block alleen België (report-only), Block Legacy Auth (actief), Risk-Based Block (actief), Compliant Device Required (report-only). Twee beleidsregels blijven in report-only-modus tot de demo. Gate 2 (NetBird-posturecontroles) is architectuurgereed. Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.
 
 ---
 
@@ -30,7 +30,7 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 
 ---
 
-## [GEPLAND] Stap 1: Entra ID Conditional Access-beleidsregels aanmaken
+## [GEVALIDEERD] Stap 1: Entra ID Conditional Access-beleidsregels aanmaken
 
 Navigeer naar: `https://entra.microsoft.com → Protection → Conditional Access → Policies → New policy`
 
@@ -206,7 +206,9 @@ Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat BYOD-c
 
 ## [GEPLAND] Stap 4: Validatiescenario's
 
-### Scenario 1 — Positieve test: conform apparaat, juiste locatie
+### Scenario 1 — Positieve test: conform apparaat, juiste locatie [GEVALIDEERD]
+
+> **Status:** Gevalideerd. 5 CA-beleidsregels geïmplementeerd (3 actief, 2 report-only). MFA-handhaving, blokkering van verouderde authenticatie en risicogebaseerde blokkering zijn actief. Geo-blokkering en conform-apparaat-beleid staan in report-only-modus tot de demo.
 
 | Stap | Actie | Verwacht |
 |------|-------|---------|

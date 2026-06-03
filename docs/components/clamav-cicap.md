@@ -124,6 +124,12 @@ YARA files in `/var/db/clamav/` are auto-loaded by ClamAV. Matches appear with `
 
 ---
 
+## NATS integration
+
+ClamAV/c-icap detection events are published to the NATS event bus via `security.alert.malware`. When c-icap detects malware (virus signature match, YARA rule hit, or SDD threshold exceeded), the event is published with: detection type, signature name, source IP, requested URL. These events contribute to the per-peer threat score maintained by the [Control Daemon](control-daemon.md).
+
+---
+
 ## Known issues / gotchas
 
 **GUI timeout on first database download** — the ClamAV signature download (~300 MB) takes longer than the GUI timeout. The download continues in the background. Verify with `freshclam --verbose`.
@@ -158,4 +164,6 @@ YARA files in `/var/db/clamav/` are auto-loaded by ClamAV. Matches appear with `
 - [Component: Squid](squid.md)
 - [Component: Python DLP](python-dlp.md)
 - [Decision: Two-layer DLP](../decisions/two-layer-dlp.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)
 - [Runbook: Malware & DLP Pipeline](../runbooks/04-malware-dlp.md)

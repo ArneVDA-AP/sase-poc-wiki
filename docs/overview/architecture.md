@@ -11,12 +11,12 @@ This page describes the complete architecture of the SASE PoC: its nodes, networ
 
 ## 1. Design Philosophy: Castle & Moat → Edge Enforcement
 
-The project rejects the traditional perimeter model where trust derives from network position. In the traditional model a firewall protects one boundary; everyone inside is trusted. This fails for Atlascollege: 4 000 student BYOD laptops working from home, cafés, trains — there is no "inside" anymore.
+The project rejects the traditional perimeter model where trust derives from network position. In the traditional model a firewall protects one boundary; everyone inside is trusted. This fails for Atlascollege: 4 000 users on managed Windows devices connecting from home, cafés, trains — there is no "inside" anymore.
 
 Instead, inspection and trust decisions happen **at the PoP** (Point of Presence) — the edge node that sits between clients and the internet. Trust is determined by three factors evaluated independently:
 
 1. **Identity** — who are you? (Entra ID + MFA)
-2. **Device posture** — what is your device's state? (NetBird posture checks)
+2. **Device posture** — what is your device's state? (Intune compliance + Entra ID CA)
 3. **Content** — what are you transferring? (SWG inspection pipeline)
 
 This is the [Zero Trust three-gate model](../concepts/zero-trust.md).
@@ -31,8 +31,8 @@ This is the [Zero Trust three-gate model](../concepts/zero-trust.md).
 | **mgmt01** | Ubuntu 24.04 (Docker) | Management/control plane: NetBird stack, ioc2rpz, DLP ICAP, WPAD | `192.168.122.23` | `100.70.135.241` |
 | **dc01** | Ubuntu 24.04 | Datacenter simulation — internal resource target | `10.0.0.100` (DC-LAN) | — |
 | **site01** | VyOS | SASE Gateway for remote site — WAN connectivity + NAT | `192.168.122.33` | — |
-| **sitepc01** | Ubuntu 24.04 (no OS) | Planned remote site endpoint — not yet operational | `172.16.10.50` | — |
-| **mobile01** | Windows 11 (VMware, off-GNS3) | BYOD client — simulates student laptop from any location | external | `100.70.95.98` |
+| **sitepc01** | Windows 11 (Tiny11) | Remote site endpoint — dual-NIC on Site-LAN, sandbox-enrolled | `172.16.10.x` | — |
+| **mobile01** | Windows 11 (VMware, off-GNS3) | Managed client — simulates Intune-enrolled device from any location | external | `100.70.95.98` |
 
 All nodes except mobile01 run inside GNS3 on a Proxmox-hosted Ubuntu VM. See [GNS3 / Topology](../components/gns3.md) for the full infrastructure layer.
 
@@ -57,6 +57,11 @@ A deliberate architectural split mirrors commercial SASE:
 
 **Management plane (mgmt01):**
 - NetBird management stack (Zitadel OIDC, management server, Caddy reverse proxy) — via Docker Compose
+- Identity Bridge (FastAPI) — maps overlay IPs to Entra ID persona groups for Squid
+- NATS JetStream — central event bus connecting all detection silos
+- Control Daemon — consumes NATS events, per-peer threat scoring, quarantine via NetBird API
+- Wazuh (manager + indexer + dashboard) — SIEM with NATS→Wazuh forwarder
+- Redis — threat score store + session state for control daemon
 - ioc2rpz — threat intelligence aggregation and RPZ zone publication
 - Caddy — WPAD server, ioc2rpz GUI proxy
 - Python DLP ICAP server — upload scanning on port `192.168.122.23:1345`
@@ -76,7 +81,7 @@ A deliberate architectural split mirrors commercial SASE:
 
 ## 5. Traffic Flows
 
-### 5.1 BYOD HTTP/HTTPS traffic (the main inspection path)
+### 5.1 Client HTTP/HTTPS traffic (the main inspection path)
 
 ```
 mobile01
@@ -91,6 +96,9 @@ mobile01
   ▼
 pop01 Squid (pre-auth listener, ssl-bump)
   │
+  ├── Identity Bridge lookup: external_acl queries mgmt01 with overlay IP (%SRC)
+  │     → returns Entra ID persona group (Studenten/Docenten/Admins)
+  │     → persona-ACL determines policy decision (identity-based filtering)
   ├── URL filter check (UT1 / manual blacklist) → 403 if blocked
   ├── ICAP REQMOD → Python DLP (mgmt01:1345) → 403 if sensitive data in upload
   ├── SSL Bump: TLS termination + re-encryption (SASE-PoC-CA)
@@ -132,30 +140,29 @@ Unbound RPZ (pop01, zone loaded in-memory via respip)
 ```
 netbird up (mobile01)
   │ OIDC flow → Zitadel (mgmt01) → Entra ID (aplab.be tenant)
-  │ [PLANNED] Gate 1: Entra ID Conditional Access evaluates
-  │   - MFA required
-  │   - Geo-block (Belgium only)
-  │   - Legacy auth blocked
-  │   - Sign-in risk (Entra ID Protection, A5 license)
+  │ Gate 1: Entra ID Conditional Access evaluates (✅ operational)
+  │   - CA Policy 1: MFA required ✅
+  │   - CA Policy 2: Geo-block (Belgium only) — Report-only
+  │   - CA Policy 3: Legacy auth blocked ✅
+  │   - CA Policy 4: Risk-based block ✅
+  │   - CA Policy 5: Compliant device required — Report-only
   │ OIDC token received
   │
+  │ Gate 2: Intune device compliance evaluates (✅ operational)
+  │   - OS version, Defender AV + firewall, real-time protection
+  │   - mobile01 enrolled as 2ITCSC1A-MOB-1, compliant
   │ WireGuard tunnel negotiation with pop01
-  │ [PLANNED] Gate 2: NetBird posture checks evaluate
-  │   - OS kernel ≥ 10.0.19041
-  │   - NetBird client ≥ minimum version
-  │   - MsMpEng.exe running (Windows Defender)
-  │   - Geo: Belgium
   │ WireGuard tunnel active, ACL policies applied
   ▼
 pop01 (wt0 interface, overlay IP 100.70.154.79)
-  BYOD traffic now flows through inspection pipeline (§5.1)
+  Client traffic now flows through inspection pipeline (§5.1)
 ```
 
 ---
 
 ## 6. The Four-Layer Inspection Pipeline
 
-All HTTP/HTTPS traffic from BYOD clients passes through four distinct inspection layers. The layers are **complementary**, not redundant — each inspects a domain the others cannot see:
+All HTTP/HTTPS traffic from managed clients passes through four distinct inspection layers. The layers are **complementary**, not redundant — each inspects a domain the others cannot see:
 
 | Layer | Component | Location | Inspects | Protocol |
 |-------|-----------|----------|----------|----------|
@@ -182,9 +189,13 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 | NetBird + Zitadel + Entra ID | [netbird.md](../components/netbird.md) | ZTNA transport layer | ✅ Operational |
 | Caddy | [caddy.md](../components/caddy.md) | WPAD server + reverse proxy | ✅ Operational |
 | GNS3 / Topology | [gns3.md](../components/gns3.md) | Virtualisation infrastructure | ✅ Operational |
-| VyOS | [vyos.md](../components/vyos.md) | SD-WAN / SASE Gateway (remote site) | ⚠️ Partial |
-| Entra ID CA + Posture Checks | [netbird.md](../components/netbird.md) | Context-aware access (Gates 1+2) | 🔲 Planned |
-| CASB (API layer) | — | Wazuh + Microsoft Graph API for app-level controls | 🔲 Planned (Phase 4) |
+| VyOS | [vyos.md](../components/vyos.md) | SASE Gateway — Zero Trust Branch model (Site-LAN) | ✅ Operational |
+| Identity Bridge | [identity-bridge.md](../components/identity-bridge.md) | NetBird overlay-IP → Entra ID group (SWG↔ZTNA coupling) | ✅ Operational |
+| NATS JetStream | [nats-jetstream.md](../components/nats-jetstream.md) | Central event bus — connects detection silos | ✅ Operational |
+| Control Daemon | [control-daemon.md](../components/control-daemon.md) | Threat scoring + real-time quarantine via NetBird API | ✅ Operational |
+| Wazuh | [wazuh.md](../components/wazuh.md) | SIEM — NATS forwarder + pop01 agent | ✅ Operational |
+| Entra ID CA + Intune | [ca-posture-hybrid.md](../decisions/ca-posture-hybrid.md) | Context-aware access (Gates 1+2) | ✅ Operational |
+| M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Layer 2 — API-mode enforcement | ✅ Operational |
 
 ---
 
@@ -192,15 +203,60 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 
 | Boundary | What it enforces | Where |
 |----------|-----------------|-------|
-| WireGuard tunnel establishment | Identity (OIDC) + device posture (planned) | pop01 wt0 |
+| WireGuard tunnel establishment | Identity (OIDC) + device posture (Intune compliance) | pop01 wt0 |
 | Squid ACL | Network-level allow/deny per subnet | pop01 Squid |
 | ICAP pipeline | Content allow/deny per transaction | pop01 + mgmt01 |
 | ICAP fail-open | `bypass=on` — uploads pass uninspected if Python DLP container is down | pop01 Squid → mgmt01 |
 | NetBird ACL policies | Which peer can reach which resource | NetBird management |
 | Unbound RPZ | DNS-level domain allow/deny | pop01 Unbound |
 | OPNsense pf | Stateful firewall (baseline) | pop01 |
-| SWG identity gap | Squid does not know *who* is browsing — no identity-based proxy policies; URL filtering is user-agnostic | pop01 Squid |
+| SWG identity layer | Squid queries Identity Bridge for persona group — identity-based filtering per user (Studenten/Docenten/Admins) | pop01 Squid → mgmt01 Identity Bridge |
 | DC-LAN egress | No SWG inspection — routed by OPNsense, not proxied | pop01 vtnet1 gateway |
+
+---
+
+## 9. Event-Driven Enforcement Layer
+
+All detection components publish structured events to a central NATS JetStream bus on mgmt01. Two consumers process these events independently:
+
+```
+Detection silos (producers)
+  ├── Suricata IDS (pop01)          → security.alert.ids
+  ├── Squid proxy (pop01)           → security.alert.proxy
+  ├── Python DLP (mgmt01)           → security.alert.dlp
+  ├── c-icap/ClamAV (pop01)         → security.alert.malware
+  ├── DNS-RPZ (pop01)               → security.alert.dns
+  └── Identity Bridge (mgmt01)      → identity.login / identity.group_change
+                    │
+                    ▼
+            NATS JetStream (mgmt01)
+                    │
+          ┌─────────┴─────────┐
+          ▼                   ▼
+    Control Daemon         Wazuh SIEM
+    (real-time)            (forensic)
+    - threat scoring       - custom rules (100500-100600)
+    - quarantine/restore   - M365 Active Response
+    - ENFORCE gate         - Discover dashboard
+```
+
+The dual-write architecture ensures detection events are available for both real-time response (control daemon) and forensic investigation (Wazuh) independently. Neither path depends on the other.
+
+---
+
+## 10. Gate Model
+
+Three gates enforce access control at different points in the connection lifecycle:
+
+| Gate | Technology | Timing | Status |
+|------|-----------|--------|--------|
+| Gate 1 — Identity | Entra ID Conditional Access (5 policies) | At authentication (OIDC login) | ✅ Operational |
+| Gate 2 — Device | Intune device compliance | At authentication + continuous (8h cycle) | ✅ Operational (Report-only until demo) |
+| Gate 3 — Content | Squid + ClamAV + Python DLP + Suricata + Unbound RPZ | Every HTTP/DNS request | ✅ Operational |
+
+Gates are complementary, not redundant. Gate 1 evaluates *who* the user is (MFA, sign-in risk, geo-location). Gate 2 evaluates *what* the device is (OS version, AV status, firewall). Gate 3 evaluates *what* is being transferred (malware, sensitive data, blocked domains). No single gate can substitute for the others.
+
+---
 
 **DC-LAN inspection gap:** dc01 uses pop01 as its default gateway (`10.0.0.1`) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does **not** pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not BYOD browsers.
 

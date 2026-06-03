@@ -27,7 +27,7 @@ User → NetBird Dashboard → Zitadel (OIDC issuer, self-hosted on mgmt01)
 
 NetBird's quickstart script installs Zitadel as the primary OIDC issuer. Entra ID is connected as an external IdP *to Zitadel*, not directly to NetBird. This is an architectural reality of the quickstart script, not a limitation — Zitadel adds a central user-management layer with roles and groups independent of Entra ID configuration.
 
-**Entra ID Conditional Access** evaluates at the Entra ID `/authorize` endpoint, targeted at the NetBird app registration (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`). Whether the OIDC redirect originates from Zitadel or directly from a NetBird client is irrelevant — the user authenticates directly with Entra ID, and CA fires for that app registration. See [Decision: CA posture hybrid](../decisions/ca-posture-hybrid.md) and [Component: Three-Gate Model](../decisions/ca-posture-hybrid.md).
+**Entra ID Conditional Access** evaluates at the Entra ID `/authorize` endpoint, targeted at the NetBird app registration `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`). Whether the OIDC redirect originates from Zitadel or directly from a NetBird client is irrelevant — the user authenticates directly with Entra ID, and CA fires for that app registration. See [Decision: CA posture hybrid](../decisions/ca-posture-hybrid.md) and [Component: Three-Gate Model](../decisions/ca-posture-hybrid.md).
 
 **WireGuard mesh vs per-app tunnels:** NetBird creates a full WireGuard mesh where ACL policies control which peers can communicate. This is architecturally equivalent to per-app Zero Trust tunnels (Zscaler ZPA): a peer with access to dc01 cannot reach mgmt01 without a separate ACL policy — resources are not visible, not just inaccessible.
 
@@ -91,7 +91,7 @@ Via Zitadel console at `https://netbird.sandbox.local/zitadel/ui/console`:
 
 ```
 Settings → Identity Providers → Add → Microsoft Azure AD
-Client ID:     cebe0d74-be9f-49ac-9f35-65f11586c1bb
+Client ID:     11803ee8-eb15-462c-a286-5415c17a29c6
 Tenant ID:     23e9bcdc-5cb9-4867-9310-76cc0b462ddc
 Client Secret: <from Entra ID app registration>
 ```
@@ -164,6 +164,34 @@ ClamAV/Python DLP ICAP traffic from pop01 to mgmt01 travels over the `192.168.12
 
 ---
 
+## JWT group sync
+
+The identity chain flows from Entra ID through Zitadel to NetBird:
+
+1. **Entra ID** persona groups (`2ITcsc1A-Studenten`, `2ITcsc1A-Docenten`, `2ITcsc1A-Admins`) → `cloud_displayname` optionalClaim in JWT
+2. **Zitadel Action 1** (External Auth): allowlist-map GUID → clean name (`Studenten`, `Docenten`, `Admins`) → writes to user metadata `sase_groups`
+3. **Zitadel Action 2** (Complement Token): reads metadata → `setClaim("groups", [...])` in JWT
+4. **NetBird JWT sync**: `groups` claim becomes user auto-groups → propagated to all peers of that user
+
+**Persona groups:** `Studenten`, `Docenten`, `Admins` (clean names; Entra names carry `2ITcsc1A-` prefix)
+
+**JWT allow groups field:** Must be left **empty**. A filled field with a non-matching value causes 401 lockout for all users — recovery requires direct SQLite access on the management container. See [Finding: NetBird JWT allow-groups lockout](../findings/netbird-jwt-allow-groups-lockout.md).
+
+**Service user:** `identity-bridge` with admin role for API access. Regular user PATs trigger issue #3127 (strips JWT-propagated auto-groups from all peers). See [Finding: NetBird issue #3127](../findings/netbird-issue-3127.md).
+
+**Group migration (V34):** All SASE-MobileUsers/SiteUsers/etc. replaced by persona groups + Core-Services.
+
+---
+
+## NATS integration
+
+NetBird is both a producer and a target for NATS-driven enforcement:
+
+- **Producer:** The [Identity Bridge](identity-bridge.md) (which depends on the NetBird Management API) publishes identity events to `identity.login` and `identity.group_change` when peer connections or group memberships change.
+- **Enforcement target:** The [Control Daemon](control-daemon.md) uses the NetBird Groups API to quarantine peers by removing them from policy-bearing persona groups (Studenten/Docenten/Admins). Under the deny-by-default model (Default All->All policy removed), a peer without group membership loses all connectivity.
+
+---
+
 ## Known issues / gotchas
 
 **`config.json` becomes 0 bytes after unclean shutdown** — FreeBSD UFS with soft updates can leave an empty file when the write buffer is not flushed before QEMU kill. NetBird will not start; wt0 interface does not exist; all overlay-dependent services break. Mitigation: `cp /var/db/netbird/config.json /var/db/netbird/config.json.bak` after each session. See [Finding: NetBird config zero bytes](../findings/netbird-config-zero-bytes.md).
@@ -189,4 +217,9 @@ ClamAV/Python DLP ICAP traffic from pop01 to mgmt01 travels over the `192.168.12
 - [Finding: NetBird primary nameserver](../findings/netbird-primary-nameserver.md)
 - [Finding: NetBird config zero bytes](../findings/netbird-config-zero-bytes.md)
 - [Runbook: ZTNA Overlay](../runbooks/02-ztna-overlay.md)
+- [Identity Bridge](identity-bridge.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)
+- [Wazuh](wazuh.md)
+- [Concept: Identity Flow](../concepts/identity-flow.md)
 - [Runbook: Access Policy](../runbooks/07-access-policy.md)

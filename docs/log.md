@@ -185,3 +185,89 @@ Append-only log of wiki changes.
 - `index.md` — Added Testing section (1 entry), new decision (SD-WAN descoped), two new findings
 
 **Source document ingested:** `SASE_PoC_Testrapport.md` (1 test report)
+
+---
+
+## 2026-06-03 — Major update: V28–V44 source ingest, new components, event-driven enforcement
+
+**Problem addressed:** The wiki was based on V18–V27 and Doc1–Doc7. Since then, 17 new verslagen (V28–V44) and 10 new implementation documents were produced, introducing: Identity Bridge, NATS JetStream event bus, Control Daemon, Wazuh SIEM, Zitadel Actions, Zero Trust Branch model, CASB three-layer architecture, and full Gate 1+2 implementation. The wiki needed a comprehensive update to reflect the current operational state.
+
+**Scope changes applied:**
+- BYOD → managed Windows devices (Intune-managed, Entra joined) per lector mandate R11 (April 21 2026)
+- SD-WAN descoped → Zero Trust Branch model with VyOS SASE Gateway
+- Gates 1+2 changed from planned to operational (5 CA policies, Intune compliance)
+- CASB expanded from partial inline to three-layer model (inline + API + real-time)
+
+**Files created (42 new pages):**
+
+### Components (10 files)
+- `components/identity-bridge.md` + `.nl.md` — FastAPI overlay-IP → Entra ID persona group mapping
+- `components/nats-jetstream.md` + `.nl.md` — Central event bus connecting detection silos
+- `components/control-daemon.md` + `.nl.md` — Threat scoring + quarantine via NetBird API
+- `components/wazuh.md` + `.nl.md` — SIEM with NATS forwarder + M365 Active Response
+- `components/zitadel.md` + `.nl.md` — OIDC IdP broker with two Zitadel Actions
+
+### Concepts (2 files)
+- `concepts/identity-flow.md` + `.nl.md` — Full identity chain: Entra ID → Zitadel → NetBird → Identity Bridge → Squid
+
+### Decisions (14 files)
+- `decisions/netbird-service-pat.md` + `.nl.md` — Service-user PAT for API auth
+- `decisions/nats-accounts-auth.md` + `.nl.md` — `accounts{}` model for JetStream
+- `decisions/groupsync-pad-b.md` + `.nl.md` — Zitadel strips tenant prefix
+- `decisions/casb-three-layers.md` + `.nl.md` — Three-layer CASB architecture
+- `decisions/managed-devices-scope.md` + `.nl.md` — BYOD → managed devices scope change
+- `decisions/zt-sdwan-branch.md` + `.nl.md` — Zero Trust Branch replaces IPsec SD-WAN
+- `decisions/control-daemon-scope.md` + `.nl.md` — Threat scoring scope decisions
+
+### Findings (16 files)
+- `findings/netbird-issue-3127.md` + `.nl.md`
+- `findings/squid-overlay-bind-race.md` + `.nl.md`
+- `findings/overlay-ip-instability.md` + `.nl.md`
+- `findings/nats-store-dir.md` + `.nl.md`
+- `findings/wazuh-cpu-glibc.md` + `.nl.md`
+- `findings/wazuh-dashboard-airgate.md` + `.nl.md`
+- `findings/netbird-jwt-allow-groups-lockout.md` + `.nl.md`
+- `findings/dc-lan-isolation-route-acl.md` + `.nl.md`
+
+### Testing (2 files)
+- `testing/attack-scenarios.md` + `.nl.md` — 22 demo validation scenarios by SASE pillar
+
+### Runbooks (8 files)
+- `runbooks/08-groupsync.md` + `.nl.md` — JWT group sync, Entra ID token config, Zitadel Actions
+- `runbooks/09-identity-bridge.md` + `.nl.md` — FastAPI deployment, Squid external_acl
+- `runbooks/10-nats-jetstream.md` + `.nl.md` — Event bus, producers, Control Daemon, Redis
+- `runbooks/11-wazuh.md` + `.nl.md` — SIEM stack, NATS forwarder, M365 Active Response
+
+**Files updated (30+ files):**
+
+### Architecture and overview
+- `overview/architecture.md` + `.nl.md` — Scope change, new components in mgmt01 plane, identity step in traffic flow, Gate 1+2 operational, new §9 (Event-driven enforcement layer), new §10 (Gate model)
+- `index.md` + `.nl.md` — Full catalog update with all 42 new pages, gate status table updated
+
+### Concept pages
+- `concepts/sase.md` + `.nl.md` — BYOD→managed, CASB three-layer model with status table
+- `concepts/zero-trust.md` + `.nl.md` — Gate 2 now Intune, all gates operational
+
+### Existing component pages (D1-D6)
+- `components/squid.md` + `.nl.md` — NATS integration section + Identity Bridge cross-links
+- `components/suricata.md` + `.nl.md` — NATS integration section (security.alert.ids)
+- `components/clamav-cicap.md` + `.nl.md` — NATS integration section (security.alert.malware)
+- `components/python-dlp.md` + `.nl.md` — NATS integration section (security.alert.dlp)
+- `components/ioc2rpz.md` + `.nl.md` — NATS integration section (security.alert.dns)
+- `components/netbird.md` + `.nl.md` — NATS integration + JWT group sync + app registration update
+- `components/vyos.md` + `.nl.md` — Full page replacement (stub → complete Zero Trust Branch)
+
+### Decision pages
+- `decisions/sdwan-descoped.md` + `.nl.md` — H1 updated, ZT-Branch section added
+- `decisions/ca-posture-hybrid.md` + `.nl.md` — Status → implemented, 5 policies documented
+- `decisions/zitadel-idp-broker.md` + `.nl.md` — Zitadel Actions implementation detail added
+
+### Other updates
+- `testing/acceptance-tests.md` + `.nl.md` — F3 partly proven, F10+F11 operational, T-A10–T-A13 added
+- `runbooks/index.md` + `.nl.md` — 4 new runbooks added, dependency graph updated
+- `tags.md` + `.nl.md` — 18 new tags added (6 component, 7 protocol/integration, 5 security concept)
+- `log.md` + `.nl.md` — This entry
+
+**Source documents ingested:** V28–V44 (17 verslagen), 10 implementation documents (Addenda E, G, GroupSync, H, I, J, CASB Architecture, ZTSDWAN Architecture, SDWAN Nulmeting, GroupSync Correcties, Correctienotitie CASB, Projectoverzicht Mei 2026, Sessieplanning Juni 2026)
+
+**Total new pages:** 42. **Total updated pages:** 30+.

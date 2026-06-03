@@ -38,3 +38,14 @@ This was an architectural reality of the quickstart script, not a deliberate cho
 - Zitadel uses nested `roles` JSON; NetBird expects a flat `groups` array — groups claim transformation may be needed in Zitadel
 - `docker compose up -d caddy` (not `restart`) is required when volume mounts change
 - CA policies must be app-specific (targeting the NetBird app registration only) because the `aplab.be` tenant is shared — tenant-wide policies would affect other projects and students
+
+## Implementation detail: groups-claim via two Zitadel Actions
+
+The groups-claim mechanism that powers the entire identity chain is implemented via two Zitadel Actions (v1):
+
+- **Action 1 (External Auth):** Receives the Entra ID token at login, maps GUID → clean name via allowlist (`2ITcsc1A-Studenten` → `Studenten`), writes to user metadata `sase_groups`
+- **Action 2 (Complement Token):** Reads `sase_groups` metadata at token issuance, injects `groups` claim into JWT via `setClaim`
+
+Both actions have `allowed-to-fail: true` — a deliberate decision. Fail-closed enforcement belongs in the policy layer (NetBird ACLs, Squid persona-ACLs), not in the authentication action. An action failure should degrade identity enrichment, not lock out all users.
+
+See: [Decision: GroupSync Pad B](../decisions/groupsync-pad-b.md)

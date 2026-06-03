@@ -27,7 +27,7 @@ Gebruiker → NetBird Dashboard → Zitadel (OIDC-uitgever, zelf-gehost op mgmt0
 
 Het quickstart-script van NetBird installeert Zitadel als primaire OIDC-uitgever. Entra ID is verbonden als externe IdP *aan Zitadel*, niet rechtstreeks aan NetBird. Dit is een architecturele realiteit van het quickstart-script, geen beperking — Zitadel voegt een centrale gebruikersbeheerlaag toe met rollen en groepen die onafhankelijk zijn van Entra ID-configuratie.
 
-**Entra ID Conditional Access** evalueert bij het Entra ID `/authorize`-eindpunt, gericht op de NetBird-app-registratie (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`). Of de OIDC-omleiding afkomstig is van Zitadel of rechtstreeks van een NetBird-client is irrelevant — de gebruiker authenticeert zich rechtstreeks bij Entra ID en CA wordt geactiveerd voor die app-registratie. Zie [Beslissing: CA-postuur hybride](../decisions/ca-posture-hybrid.md).
+**Entra ID Conditional Access** evalueert bij het Entra ID `/authorize`-eindpunt, gericht op de NetBird-app-registratie `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`). Of de OIDC-omleiding afkomstig is van Zitadel of rechtstreeks van een NetBird-client is irrelevant — de gebruiker authenticeert zich rechtstreeks bij Entra ID en CA wordt geactiveerd voor die app-registratie. Zie [Beslissing: CA-postuur hybride](../decisions/ca-posture-hybrid.md).
 
 **WireGuard-mesh vs. per-app-tunnels:** NetBird creëert een volledige WireGuard-mesh waarbij ACL-beleid bepaalt welke peers kunnen communiceren. Dit is architectureel equivalent aan per-app Zero Trust-tunnels (Zscaler ZPA): een peer met toegang tot dc01 kan mgmt01 niet bereiken zonder een apart ACL-beleid — resources zijn niet zichtbaar, niet alleen ontoegankelijk.
 
@@ -91,7 +91,7 @@ Via Zitadel-console op `https://netbird.sandbox.local/zitadel/ui/console`:
 
 ```
 Instellingen → Identity Providers → Toevoegen → Microsoft Azure AD
-Client ID:     cebe0d74-be9f-49ac-9f35-65f11586c1bb
+Client ID:     11803ee8-eb15-462c-a286-5415c17a29c6
 Tenant ID:     23e9bcdc-5cb9-4867-9310-76cc0b462ddc
 Client Secret: <uit Entra ID-app-registratie>
 ```
@@ -162,6 +162,34 @@ ClamAV/Python DLP ICAP-verkeer van pop01 naar mgmt01 loopt via het `192.168.122.
 
 ---
 
+## JWT-groepsynchronisatie
+
+De identiteitsketen loopt van Entra ID via Zitadel naar NetBird:
+
+1. **Entra ID** persona-groepen (`2ITcsc1A-Studenten`, `2ITcsc1A-Docenten`, `2ITcsc1A-Admins`) → `cloud_displayname` optionalClaim in JWT
+2. **Zitadel Action 1** (External Auth): allowlist-map GUID → clean naam (`Studenten`, `Docenten`, `Admins`) → schrijft naar user metadata `sase_groups`
+3. **Zitadel Action 2** (Complement Token): leest metadata → `setClaim("groups", [...])` in JWT
+4. **NetBird JWT sync**: `groups`-claim wordt user auto-groups → gepropageerd naar alle peers van die gebruiker
+
+**Persona-groepen:** `Studenten`, `Docenten`, `Admins` (clean namen; Entra-namen dragen `2ITcsc1A-`-prefix)
+
+**JWT allow-groups veld:** Moet **leeg** gelaten worden. Een gevuld veld met een niet-matchende waarde veroorzaakt 401-lockout voor alle gebruikers — herstel vereist directe SQLite-toegang op de management-container. Zie [Bevinding: NetBird JWT allow-groups lockout](../findings/netbird-jwt-allow-groups-lockout.md).
+
+**Service-user:** `identity-bridge` met admin-role voor API-toegang. Gewone user-PAT's triggeren issue #3127 (stript JWT-gepropageerde auto-groups van alle peers). Zie [Bevinding: NetBird issue #3127](../findings/netbird-issue-3127.md).
+
+**Groepsmigratie (V34):** Alle SASE-MobileUsers/SiteUsers/etc. vervangen door persona-groepen + Core-Services.
+
+---
+
+## NATS-integratie
+
+NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:
+
+- **Producer:** De [Identity Bridge](identity-bridge.md) (die afhankelijk is van de NetBird Management API) publiceert identiteitsgebeurtenissen naar `identity.login` en `identity.group_change` wanneer peerverbindingen of groepslidmaatschappen wijzigen.
+- **Handhavingsdoelwit:** De [Control Daemon](control-daemon.md) gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit beleidsdragende personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All->All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.
+
+---
+
 ## Bekende problemen / valkuilen
 
 **`config.json` wordt 0 bytes na onzuivere afsluiting** — FreeBSD UFS met soft updates kan een leeg bestand achterlaten wanneer de schrijfbuffer niet wordt geleegd vóór QEMU-kill. NetBird start niet; wt0-interface bestaat niet; alle overlay-afhankelijke services breken. Beperking: `cp /var/db/netbird/config.json /var/db/netbird/config.json.bak` na elke sessie. Zie [Bevinding: NetBird config nul bytes](../findings/netbird-config-zero-bytes.md).
@@ -184,3 +212,8 @@ ClamAV/Python DLP ICAP-verkeer van pop01 naar mgmt01 loopt via het `192.168.122.
 - [Beslissing: GNS3 vs. EVE-NG](../decisions/gns3-vs-eveng.md)
 - [Bevinding: NetBird primaire naamserver](../findings/netbird-primary-nameserver.md)
 - [Bevinding: NetBird config nul bytes](../findings/netbird-config-zero-bytes.md)
+- [Identity Bridge](identity-bridge.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)
+- [Wazuh](wazuh.md)
+- [Concept: Identity Flow](../concepts/identity-flow.md)

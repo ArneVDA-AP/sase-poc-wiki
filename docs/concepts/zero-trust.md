@@ -13,11 +13,11 @@ Traditional VPN grants network access — once authenticated, users can reach al
 
 | Gate | Timing | Technology | What it blocks |
 |------|--------|-----------|----------------|
-| **Gate 1** | Authentication (OIDC login) | Entra ID Conditional Access | Stolen credentials, anomalous sign-in risk, legacy clients, non-allowed geographies |
-| **Gate 2** | Tunnel establishment (WireGuard) | NetBird Posture Checks | Outdated OS, no antivirus, non-compliant NetBird client version |
+| **Gate 1** | Authentication (OIDC login) | Entra ID Conditional Access (5 policies) | Stolen credentials, anomalous sign-in risk, legacy clients, non-allowed geographies |
+| **Gate 2** | Authentication + continuous (8h) | Intune device compliance | Outdated OS, no antivirus, no firewall, non-compliant device state |
 | **Gate 3** | Every HTTP/DNS request | SWG pipeline (Squid + ClamAV + DLP + Unbound RPZ) | Malware, data exfiltration, blocked domains, known-bad IOCs |
 
-Gates 1 and 2 are architecturally designed and documented (Addendum E, April 2026) but not yet activated in the sandbox. Gate 3 is fully operational.
+All three gates are operational. Gates 1 and 2 were activated in V40 (CA policies) and V40 (Intune compliance). Some policies are in Report-only mode pending demo preparation (Session 11).
 
 **Why gates are complementary, not redundant:** Gate 1 (CA) can enforce MFA and sign-in risk — but cannot check device state on unmanaged BYOD without Intune enrollment. Gate 2 (posture) can verify OS version and AV status — but cannot evaluate stolen-credential risk or enforce MFA. Neither gate can substitute for the other. Gate 3 catches threats that bypass both.
 
@@ -39,7 +39,17 @@ Gates 1 and 2 are architecturally designed and documented (Addendum E, April 202
 - *Use Least Privilege* → NetBird ACL policies per resource group
 - *Assume Breach* → Gate 3: SWG pipeline + Suricata inspect all content in the data plane, regardless of who passed Gates 1 and 2
 
-**CA device compliance on unmanaged BYOD:** Entra ID CA can check device compliance (OS version, AV status, disk encryption) only for Intune-enrolled devices. BYOD students will not enroll personal laptops in MDM. NetBird posture checks fill this gap — they evaluate device state at WireGuard tunnel-build time without requiring MDM enrollment.
+**Managed devices scope:** Following a scope change (lector mandate, April 21 2026), the project targets managed Windows devices (Intune-managed, Entra joined) rather than BYOD. This enables Gate 2 to use Intune device compliance for attestation-based posture checks (OS version, Defender AV + firewall, real-time protection). NetBird posture checks remain as optional defense-in-depth.
+
+## Gate status
+
+| Gate | Technology | Status |
+|------|-----------|--------|
+| Gate 1 — Identity | Entra ID Conditional Access (5 policies) | ✅ Operational |
+| Gate 2 — Device | Intune device compliance | ✅ Operational (Report-only until demo) |
+| Gate 3 — Content | Squid + ClamAV + Python DLP + Suricata + Unbound RPZ | ✅ Operational |
+
+See: [Decision: CA + Posture hybrid](../decisions/ca-posture-hybrid.md)
 
 ## Sources
 

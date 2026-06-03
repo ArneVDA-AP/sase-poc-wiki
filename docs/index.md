@@ -5,7 +5,7 @@ tags: [sase, architecture]
 
 # Project Wiki
 
-This wiki documents the implementation of a SASE (Secure Access Service Edge) proof-of-concept for Atlascollege — a school with 4000+ BYOD students. The stack replaces a traditional perimeter model with identity-based, context-aware access control using open-source components: NetBird (ZTNA), Squid (SWG), ClamAV + Python DLP (ICAP inspection), Suricata (IDS), ioc2rpz + Unbound (DNS threat intelligence), and Entra ID (identity). All components run on a GNS3 topology hosted on Proxmox.
+This wiki documents the implementation of a SASE (Secure Access Service Edge) proof-of-concept for Atlascollege — a school with 4 000 users on managed Windows devices (Intune-managed, Entra joined). The stack replaces a traditional perimeter model with identity-based, context-aware access control using open-source components: NetBird (ZTNA), Squid (SWG), ClamAV + Python DLP (ICAP inspection), Suricata (IDS), ioc2rpz + Unbound (DNS threat intelligence), Entra ID (identity), NATS JetStream (event bus), Wazuh (SIEM), and a Python control daemon (real-time quarantine). All components run on a GNS3 topology hosted on Proxmox.
 
 ## Catalog
 
@@ -22,7 +22,12 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | [NetBird](components/netbird.md) | WireGuard ZTNA overlay — Zitadel + Entra ID IdP chain; ACL policies; DNS primary nameserver |
 | [Caddy](components/caddy.md) | WPAD PAC file server, NetBird TLS terminator, ioc2rpz GUI reverse proxy |
 | [GNS3](components/gns3.md) | Lab virtualization platform — nested QEMU/KVM on Proxmox; multi-user; GNS3 vs EVE-NG |
-| [VyOS](components/vyos.md) | SD-WAN gateway for remote site (site01); NAT for Site-LAN |
+| [VyOS](components/vyos.md) | SASE Gateway for remote site (site01); Zero Trust Branch model; NAT for Site-LAN |
+| [Identity Bridge](components/identity-bridge.md) | NetBird overlay-IP → Entra ID group (SWG↔ZTNA coupling) |
+| [NATS JetStream](components/nats-jetstream.md) | Central event bus — connects detection silos |
+| [Control Daemon](components/control-daemon.md) | Threat scoring + real-time quarantine via NetBird API |
+| [Wazuh](components/wazuh.md) | SIEM — NATS forwarder + pop01 agent + M365 Active Response |
+| [Zitadel](components/zitadel.md) | OIDC IdP broker — Entra ID → JWT group sync → NetBird |
 | **Concepts** | |
 | [SASE](concepts/sase.md) | Five SASE pillars; our open-source implementation; commercial equivalents |
 | [Zero Trust](concepts/zero-trust.md) | Three-gate model; never trust always verify; Gates 1–3 |
@@ -31,6 +36,7 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | [WPAD/PAC](concepts/wpad-pac.md) | Browser proxy auto-configuration; why transparent proxy fails on wt0 |
 | [RPZ](concepts/rpz.md) | DNS Response Policy Zones; zone transfer chain; NXDOMAIN enforcement |
 | [DLP](concepts/dlp.md) | Two-layer DLP; algorithmic validation vs pattern matching; upload vs download |
+| [Identity Flow](concepts/identity-flow.md) | Full identity chain: Entra ID → Zitadel → NetBird → Identity Bridge → Squid |
 | **Decisions** | |
 | [WPAD/PAC vs Transparent Proxy](decisions/wpad-vs-transparent-proxy.md) | Why explicit proxy — pf rdr does not work on wt0 |
 | [Two-Layer DLP](decisions/two-layer-dlp.md) | ClamAV (downloads) + Python DLP (uploads) — multipart parsing gap |
@@ -42,8 +48,16 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | [Zitadel as IdP broker](decisions/zitadel-idp-broker.md) | Quickstart installs Zitadel; Entra ID as external IdP; CA still fires |
 | [CA + Posture hybrid (Three-Gate Model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementary not substitutable; BYOD Intune gap |
 | [SD-WAN Descoped (F12, F13, F14)](decisions/sdwan-descoped.md) | IPsec + QoS + uCPE removed — site-to-site tunnels contradict Zero Trust; sitepc01 → NetBird enrollment |
+| [NetBird Service PAT](decisions/netbird-service-pat.md) | Service-user PAT for Identity Bridge API auth — avoids NetBird issue #3127 |
+| [NATS accounts auth](decisions/nats-accounts-auth.md) | `accounts{}` model required for JetStream API access |
+| [GroupSync Path B](decisions/groupsync-pad-b.md) | Zitadel strips `2ITcsc1A-` prefix — clean persona group names |
+| [CASB three layers](decisions/casb-three-layers.md) | Inline (Squid) + API (Wazuh) + Real-time (NATS+daemon) |
+| [Managed devices scope](decisions/managed-devices-scope.md) | BYOD → managed Windows devices (lector mandate R11) |
+| [ZT SD-WAN Branch](decisions/zt-sdwan-branch.md) | Zero Trust Branch replaces classic IPsec SD-WAN |
+| [Control Daemon scope](decisions/control-daemon-scope.md) | IDS correlation + proxy_block removed from threat scoring |
 | **Testing** | |
 | [Acceptance Tests (F1–F15)](testing/acceptance-tests.md) | Full F1–F15 status table, test commands, actual output, per-pillar coverage, planned tests |
+| [Attack & Bypass Scenarios](testing/attack-scenarios.md) | Demo validation scenarios by SASE pillar: ZTNA, SWG, CASB, FWaaS/IDS, DNS, NATS enforcement |
 | **Runbooks** | |
 | [Runbooks overview](runbooks/index.md) | Build order, dependency graph, step-by-step deployment guides |
 | [01 — Lab Environment](runbooks/01-lab-environment.md) | Proxmox VM, GNS3 Server, topology, IP addressing, snapshots |
@@ -53,6 +67,10 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | [05 — IDS](runbooks/05-ids.md) | Suricata on WAN+LAN, Hyperscan, 79,620+ rules |
 | [06 — DNS Threat Intel](runbooks/06-dns-threat-intel.md) | ioc2rpz, BIND TSIG, Unbound RPZ, 71,767 records |
 | [07 — Access Policy](runbooks/07-access-policy.md) | Conditional Access, posture checks, validation scenarios (planned) |
+| [08 — GroupSync](runbooks/08-groupsync.md) | JWT group sync, Entra ID token config, Zitadel Actions |
+| [09 — Identity Bridge](runbooks/09-identity-bridge.md) | FastAPI overlay-IP → persona group, Squid external_acl |
+| [10 — NATS JetStream](runbooks/10-nats-jetstream.md) | Event bus, producers, Control Daemon, Redis |
+| [11 — Wazuh](runbooks/11-wazuh.md) | SIEM stack, NATS forwarder, M365 Active Response |
 | **Findings** | |
 | [wt0 pf rdr limitation](findings/wt0-pf-rdr-limitation.md) | WireGuard Layer 3 — pf rdr cannot intercept on wt0 |
 | [pre-auth ssl-bump params](findings/pre-auth-ssl-bump-params.md) | Bare http_port without ssl-bump = no inspection on overlay listener |
@@ -70,6 +88,14 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | [Docker volume recreation](findings/docker-volume-recreation.md) | `docker compose restart` doesn't apply volume mount changes — use `up -d` |
 | [curl --ssl-no-revoke on Windows](findings/curl-ssl-no-revoke.md) | Schannel CRL check fails on SASE-PoC-CA — add `--ssl-no-revoke` to all proxy tests from Windows |
 | [Suricata connection pooling](findings/suricata-connection-pooling.md) | Squid reuses upstream TCP connections — one Suricata alert per SID per flow is correct, not suppression |
+| [NetBird issue #3127](findings/netbird-issue-3127.md) | Management API rejects peer-level group changes — service-user PAT as workaround |
+| [Squid overlay bind race](findings/squid-overlay-bind-race.md) | Squid overlay listener lost on restart — `commBind EADDRNOTAVAIL` race |
+| [Overlay IP instability](findings/overlay-ip-instability.md) | NetBird overlay IPs can change — Identity Bridge must handle stale cache |
+| [NATS store dir](findings/nats-store-dir.md) | JetStream store must be on persistent Docker volume |
+| [Wazuh CPU glibc](findings/wazuh-cpu-glibc.md) | CPU spike on startup due to glibc compatibility |
+| [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard hostname resolution issue on startup |
+| [NetBird JWT allow-groups lockout](findings/netbird-jwt-allow-groups-lockout.md) | Enabling JWT allow-groups can lock out all users if misconfigured |
+| [DC-LAN isolation route ACL](findings/dc-lan-isolation-route-acl.md) | NetBird Networks + ACL required for DC-LAN isolation |
 
 ---
 
@@ -79,7 +105,7 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 
 | Service | Address | Port |
 |---------|---------|------|
-| Squid proxy (BYOD) | `100.70.154.79` | 3128 |
+| Squid proxy | `100.70.154.79` | 3128 |
 | Unbound DNS | `100.70.154.79` | 53 |
 | BIND (TSIG secondary) | `127.0.0.1` | 53530 |
 | ioc2rpz | `192.168.122.23` | 53 |
@@ -103,6 +129,6 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 
 | Gate | Status | Technology |
 |------|--------|-----------|
-| Gate 1 — Identity | ⚠️ Planned | Entra ID Conditional Access (4 policies in Addendum E) |
-| Gate 2 — Device | ⚠️ Planned | NetBird Posture Checks (Addendum E) |
+| Gate 1 — Identity | ✅ Operational | Entra ID Conditional Access (5 policies) |
+| Gate 2 — Device | ✅ Operational | Intune device compliance (Report-only until demo) |
 | Gate 3 — Content | ✅ Operational | Squid + ClamAV + Python DLP + Unbound RPZ + Suricata |

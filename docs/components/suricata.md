@@ -136,6 +136,12 @@ Four detection categories confirmed after vtnet1 fix:
 
 ---
 
+## NATS integration
+
+Suricata publishes IDS alerts to the NATS event bus. A Python producer script on pop01 tails `eve.json` (Suricata's EVE JSON log) and publishes alert events to `security.alert.ids`. Events include: signature ID, signature name, severity, category, source/destination IP, interface (vtnet0/vtnet1). High-severity alerts (category C2, exploit-kit) can trigger immediate quarantine by the [Control Daemon](control-daemon.md) (<500ms).
+
+---
+
 ## Known issues / gotchas
 
 **vtnet1 `interface: default` generates zero events** — using `interface: default` in custom.yaml resolves to only the primary capture interface (vtnet0), not all interfaces. vtnet1 had a BPF device open but received no packets. Fix: explicit per-interface declarations. See [Finding: Suricata interface default bug](../findings/suricata-interface-default-bug.md).
@@ -159,4 +165,7 @@ Four detection categories confirmed after vtnet1 fix:
 - [Finding: Suricata interface default bug](../findings/suricata-interface-default-bug.md)
 - [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md)
 - [Finding: wt0 pf rdr limitation](../findings/wt0-pf-rdr-limitation.md)
+- [NATS JetStream](nats-jetstream.md)
+- [Control Daemon](control-daemon.md)
+- [Wazuh](wazuh.md)
 - [Runbook: IDS](../runbooks/05-ids.md)

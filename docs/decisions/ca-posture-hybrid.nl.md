@@ -5,7 +5,7 @@ tags: [decision, zero-trust, sase, network]
 
 # Beslissing: Entra ID CA + NetBird Posture Checks (Hybride drie-gate model)
 
-**Status:** Architectuur gevalideerd en gedocumenteerd (Addendum E, april 2026). Gates 1 en 2 nog niet geactiveerd in sandbox — gepland na evaluatie op 20 april.  
+**Status:** Geïmplementeerd (Gates 1+2 operationeel)  
 **Datum:** April 2026 (Verslag27, Doc7)
 
 ## Context
@@ -40,25 +40,26 @@ Hybride model: Entra ID Conditional Access als Gate 1 (authenticatietijdstip) + 
 
 De les: verifieer altijd wat een technologie daadwerkelijk kan doen op het doeltype apparaat (onbeheerde BYOD), niet op het ideale apparaat (Intune-ingeschreven bedrijfsapparaat). CA-apparaatconformiteitscontroles zijn structureel niet beschikbaar voor onbeheerde BYOD.
 
-## Geplande Gate 1-policies (Addendum E)
+## Geïmplementeerde Gate 1-policies
 
-Alle policies gericht op appregistratie `cebe0d74-be9f-49ac-9f35-65f11586c1bb` (niet tenant-breed — `aplab.be` is gedeeld):
+| Policy | Status |
+|--------|--------|
+| CA Policy 1 — MFA vereist | ✅ Actief |
+| CA Policy 2 — Geo-blokkering (alleen België) | Report-only: Success bewezen — → On bij Sessie 11 |
+| CA Policy 3 — Legacy-auth blokkering | ✅ Actief |
+| CA Policy 4 — Risico-gebaseerde blokkering | ✅ Actief |
+| CA Policy 5 — Conform apparaat vereist | Report-only: Success bewezen — → On bij Sessie 11 |
 
-| Policy | Mechanisme |
-|--------|-----------|
-| `SASE-PoC-MFA-Required` | MFA vereisen voor alle gebruikers |
-| `SASE-PoC-Geo-Block` | Toegang buiten benoemde locaties blokkeren (België, Nederland) |
-| `SASE-PoC-Block-Legacy-Auth` | Legacy-authenticatieprotocollen blokkeren |
-| `SASE-PoC-Sign-in-Risk` | Hoog aanmeldingsrisico blokkeren (Entra ID Protection) |
+Alle policies richten zich op ALLE resources (niet een specifieke app) — CA-policies gericht op een specifieke app vuren nooit bij NetBird/Zitadel OIDC-aanmeldingen omdat CA matcht op tokenresource (Microsoft Graph), niet op client-app. User-scoping via persona-groepen met admin1 als break-glass uitsluiting.
 
-## Geplande Gate 2-controles (Addendum E)
+## Geïmplementeerde Gate 2-controles
 
-| Controle | Drempel |
-|----------|---------|
-| `os_version_check` (Windows) | Kernel `10.0.19041` (Windows 10 2004 — eerste native WireGuard-kernelmodule) |
-| `nb_version_check` | Minimale NetBird-clientversie op moment van activering |
-| `process_check` | `C:\Program Files\Windows Defender\MsMpEng.exe` moet actief zijn |
-| `geo_location_check` | België (verdediging in de diepte — andere database dan Gate 1) |
+| Controle | Status |
+|----------|--------|
+| Intune-conformiteitsbeleid (OS-versie, Defender AV + firewall, real-time protection) | ✅ Actief |
+| mobile01 (`2ITCSC1A-MOB-1`) Entra joined + Intune enrolled + conform | ✅ Geverifieerd |
+
+BitLocker/TPM geschrapt — rubric vereist "device posture", niet encryptie. Drie posturecontroles: OS-versie, AV, firewall. Policy op Report-only tot demo-voorbereiding (Sessie 11).
 
 ## Gevolgen
 

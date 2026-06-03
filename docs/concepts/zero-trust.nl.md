@@ -13,11 +13,11 @@ Traditionele VPN verleent netwerktoegang — eenmaal geauthenticeerd kunnen gebr
 
 | Gate | Timing | Technologie | Wat het blokkeert |
 |------|--------|-------------|-------------------|
-| **Gate 1** | Authenticatie (OIDC-login) | Entra ID Conditional Access | Gestolen inloggegevens, afwijkend aanmeldingsrisico, legacy clients, niet-toegestane geografieën |
-| **Gate 2** | Tunnelestablishment (WireGuard) | NetBird Posture Checks | Verouderd OS, geen antivirus, niet-conforme NetBird-clientversie |
+| **Gate 1** | Authenticatie (OIDC-login) | Entra ID Conditional Access (5 policies) | Gestolen inloggegevens, afwijkend aanmeldingsrisico, legacy clients, niet-toegestane geografieën |
+| **Gate 2** | Authenticatie + continu (8u) | Intune-apparaatconformiteit | Verouderd OS, geen antivirus, geen firewall, niet-conform apparaat |
 | **Gate 3** | Elke HTTP/DNS-aanvraag | SWG-pipeline (Squid + ClamAV + DLP + Unbound RPZ) | Malware, data-exfiltratie, geblokkeerde domeinen, bekende kwaadaardige IOC's |
 
-Gates 1 en 2 zijn architecturaal ontworpen en gedocumenteerd (Addendum E, april 2026) maar nog niet geactiveerd in de sandbox. Gate 3 is volledig operationeel.
+Alle drie de gates zijn operationeel. Gates 1 en 2 zijn geactiveerd in V40 (CA-policies) en V40 (Intune-conformiteit). Sommige policies staan op Report-only in afwachting van demo-voorbereiding (Sessie 11).
 
 **Waarom gates aanvullend zijn, niet redundant:** Gate 1 (CA) kan MFA en aanmeldingsrisico afdwingen — maar kan apparaatstatus niet controleren op onbeheerde BYOD zonder Intune-inschrijving. Gate 2 (posture) kan OS-versie en AV-status verifiëren — maar kan gestolen-inloggegevenrisico niet evalueren of MFA afdwingen. Geen enkele gate kan de andere vervangen. Gate 3 vangt bedreigingen op die beide gates omzeilen.
 
@@ -38,7 +38,17 @@ Gates 1 en 2 zijn architecturaal ontworpen en gedocumenteerd (Addendum E, april 
 - *Use Least Privilege* → NetBird ACL-policies per resourcegroep
 - *Assume Breach* → Gate 3-pipeline + Suricata op LAN-segment
 
-**CA-apparaatconformiteit op onbeheerde BYOD:** Entra ID CA kan apparaatconformiteit (OS-versie, AV-status, schijfversleuteling) alleen controleren voor Intune-ingeschreven apparaten. BYOD-studenten schrijven persoonlijke laptops niet in bij MDM. NetBird posture checks vullen dit gat — ze evalueren apparaatstatus bij WireGuard-tunnelbouw zonder MDM-inschrijving te vereisen.
+**Beheerde apparaten scope:** Na een scopewijziging (lector-mandaat, 21 april 2026) richt het project zich op beheerde Windows-apparaten (Intune-beheerd, Entra joined) in plaats van BYOD. Dit maakt het mogelijk dat Gate 2 Intune-apparaatconformiteit gebruikt voor attestatie-gebaseerde posturecontroles (OS-versie, Defender AV + firewall, real-time protection). NetBird posture checks blijven als optionele verdediging in de diepte.
+
+## Gate-status
+
+| Gate | Technologie | Status |
+|------|-------------|--------|
+| Gate 1 — Identiteit | Entra ID Conditional Access (5 policies) | ✅ Operationeel |
+| Gate 2 — Apparaat | Intune-apparaatconformiteit | ✅ Operationeel (Report-only tot demo) |
+| Gate 3 — Inhoud | Squid + ClamAV + Python DLP + Suricata + Unbound RPZ | ✅ Operationeel |
+
+Zie: [Beslissing: CA + Posture hybride](../decisions/ca-posture-hybrid.md)
 
 ## Bronnen
 
