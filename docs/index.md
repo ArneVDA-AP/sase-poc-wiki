@@ -58,6 +58,7 @@ This wiki documents the implementation of a SASE (Secure Access Service Edge) pr
 | **Testing** | |
 | [Acceptance Tests (F1–F15)](testing/acceptance-tests.md) | Full F1–F15 status table, test commands, actual output, per-pillar coverage, planned tests |
 | [Attack & Bypass Scenarios](testing/attack-scenarios.md) | Demo validation scenarios by SASE pillar: ZTNA, SWG, CASB, FWaaS/IDS, DNS, NATS enforcement |
+| [Demo Script (per rubric)](testing/demo-script.md) | Interactive presentation script mapping each rubric criterion to test, proof, screencap, and voiceover |
 | **Runbooks** | |
 | [Runbooks overview](runbooks/index.md) | Build order, dependency graph, step-by-step deployment guides |
 | [01 — Lab Environment](runbooks/01-lab-environment.md) | Proxmox VM, GNS3 Server, topology, IP addressing, snapshots |

@@ -125,6 +125,7 @@ plugins:
             Three-Layer CASB: Drielaags CASB
             Control Daemon Scope: Control Daemon-scope
             Attack Scenarios: Aanvalsscenario's
+            Demo Script (per rubric): Demo-script (per rubric)
             08 — GroupSync: 08 — GroupSync
             09 — Identity Bridge: 09 — Identity Bridge
             10 — NATS JetStream: 10 — NATS JetStream
@@ -218,6 +219,7 @@ nav:
   - Testing:
     - Acceptance Tests (F1–F15): testing/acceptance-tests.md
     - Attack Scenarios: testing/attack-scenarios.md
+    - Demo Script (per rubric): testing/demo-script.md
   - Runbooks:
     - runbooks/index.md
     - 01 — Lab Environment: runbooks/01-lab-environment.md

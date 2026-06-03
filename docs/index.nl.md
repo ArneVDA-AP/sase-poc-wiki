@@ -83,6 +83,7 @@ Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge
 | **Testen** | |
 | [Acceptatietests (F1–F15)](testing/acceptance-tests.nl.md) | Volledige F1–F15-statustabel, testcommando's, werkelijke output, dekking per pijler, geplande tests |
 | [Aanvals- & bypass-scenario's](testing/attack-scenarios.nl.md) | Demovalidatie-scenario's per SASE-pijler: ZTNA, SWG, CASB, FWaaS/IDS, DNS, NATS-handhaving |
+| [Demo-script (per rubric)](testing/demo-script.nl.md) | Interactief presentatiescript dat elk rubric-criterium koppelt aan test, bewijs, screencap en voiceover |
 | **Runbooks** | |
 | [Runbook-overzicht](runbooks/index.md) | Bouwvolgorde, afhankelijkheidsgraph, stapsgewijze handleidingen |
 | [01 — Labomgeving](runbooks/01-lab-environment.md) | Proxmox VM, GNS3 Server, topologie, IP-adressering, snapshots |

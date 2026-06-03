@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SASE PoC — Demo- & testdocument per rubric-criterium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf4ed; --surface:#fffaf3; --panel:#f4ece4; --panel-2:#f7f1e9;
+  --border:#e6ddd2; --border-2:#dcd0c4;
+  --text:#575279; --subtle:#6e6a86; --muted:#9893a5; --dim:#b3acba;
+  --pine:#286983; --foam:#56949f; --iris:#907aa9; --gold:#b9821c; --rose:#d7827e; --love:#b4637a;
+  --ok:#4f8a5b; --ok-bg:#e7f0e4;
+  --pend:#b9821c; --pend-bg:#f6ecd3;
+  --info:#3d7a8a; --info-bg:#e2edf0;
+  --font-display:'Bricolage Grotesque',sans-serif;
+  --font-body:'Hanken Grotesk',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.62;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(ellipse 80% 50% at 50% -8%, rgba(40,105,131,.06), transparent 60%)}
+a{color:var(--pine);text-decoration:none}
+::selection{background:#dfd3e6}
+
+.shell{display:grid;grid-template-columns:260px 1fr;max-width:1480px;margin:0 auto}
+nav.side{position:sticky;top:0;height:100vh;overflow-y:auto;padding:28px 18px;border-right:1px solid var(--border);background:rgba(250,244,237,.82);backdrop-filter:blur(8px)}
+nav.side .brand{font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--text)}
+nav.side .brand b{color:var(--pine)}
+nav.side .sub{font-family:var(--font-mono);font-size:10.5px;color:var(--muted);margin:3px 0 22px}
+nav.side a{display:block;color:var(--subtle);font-size:13px;padding:7px 11px;border-radius:8px;transition:.15s}
+nav.side a:hover{color:var(--text);background:var(--panel)}
+nav.side a.head{font-family:var(--font-display);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:18px;pointer-events:none}
+nav.side a .n{font-family:var(--font-mono);color:var(--foam);font-size:11px;margin-right:9px}
+main{padding:46px 56px 120px;min-width:0}
+
+.hero{border:1px solid var(--border);border-radius:18px;background:linear-gradient(160deg,var(--surface),var(--panel-2));padding:34px 34px 28px;position:relative;overflow:hidden;margin-bottom:30px;box-shadow:0 1px 0 #fff inset,0 18px 40px -28px rgba(87,82,121,.4)}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(86,148,159,.18),transparent 70%)}
+.kicker{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--foam)}
+h1{font-family:var(--font-display);font-weight:700;font-size:34px;line-height:1.08;letter-spacing:-.02em;margin:10px 0 8px}
+.hero .lede{color:var(--subtle);max-width:74ch;font-size:14.5px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-top:18px}
+.legend span{display:flex;align-items:center;gap:6px}.legend i{width:10px;height:10px;border-radius:3px}
+
+section{margin-top:30px;scroll-margin-top:18px}
+h3.block{font-family:var(--font-display);font-weight:600;font-size:14px;letter-spacing:.02em;color:var(--pine);text-transform:uppercase;margin:22px 0 8px}
+
+.pillar-h{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:26px;margin-top:34px}
+.pillar-h .tag{font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--surface);background:var(--pine);border-radius:9px;padding:7px 13px;white-space:nowrap}
+.pillar-h h2{font-family:var(--font-display);font-weight:700;font-size:24px;letter-spacing:-.01em;flex:1;min-width:200px}
+.pillar-h .who{font-family:var(--font-mono);font-size:12px;color:var(--muted)}
+.pillar-h .who b{color:var(--pine)}
+.timer{font-family:var(--font-mono);display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border-2);border-radius:11px;padding:6px 8px 6px 12px}
+.timer .tnum{font-size:19px;font-weight:700;min-width:62px;text-align:center}
+.timer.warn .tnum{color:var(--gold)} .timer.over .tnum{color:var(--love)}
+.timer button{font-family:var(--font-mono);font-size:11px;background:var(--pine);color:#fff;border:0;border-radius:7px;padding:6px 9px;cursor:pointer;font-weight:700}
+.timer button.ghost{background:transparent;border:1px solid var(--border-2);color:var(--muted)}
+
+/* criterion card */
+.crit{border:1px solid var(--border);border-radius:14px;background:var(--surface);margin:14px 0;overflow:hidden;box-shadow:0 1px 0 #fff inset}
+.crit > .ch{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;padding:14px 18px 12px;border-bottom:1px solid var(--border);background:var(--panel-2)}
+.crit .cname{font-family:var(--font-display);font-weight:700;font-size:16px;flex:1;min-width:200px;line-height:1.25}
+.crit .target{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-top:3px;font-weight:400}
+.crit .body{padding:6px 18px 16px}
+.row{display:grid;grid-template-columns:96px 1fr;gap:14px;padding:11px 0;border-bottom:1px dashed var(--border)}
+.row:last-child{border-bottom:0}
+.row .lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding-top:3px}
+.row.test .lbl{color:var(--pine)} .row.proof .lbl{color:var(--iris)} .row.cap .lbl{color:var(--foam)} .row.vo .lbl{color:var(--rose)} .row.pre .lbl{color:var(--gold)}
+.row.pre .val{color:var(--text)}
+.greent{font-family:var(--font-mono);font-size:10.5px;color:var(--ok);background:var(--ok-bg);border-radius:6px;padding:3px 9px;align-self:flex-start}
+.todo-list{list-style:none;display:grid;gap:8px;margin:12px 0}
+.todo-list li{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:11px 15px;font-size:13.5px;color:var(--subtle)}
+.todo-list li b{color:var(--text)} .todo-list li code{font-family:var(--font-mono);font-size:12px;color:var(--foam)}
+.todo-list.docs li{border-left-color:var(--foam)}
+.row .val{font-size:13.5px;color:var(--subtle)} .row .val b{color:var(--text)}
+.row.proof .val{color:var(--text);font-weight:500}
+.row.vo .val{font-style:italic;color:var(--text)}
+.row.vo .val::before{content:"“"} .row.vo .val::after{content:"”"}
+
+.term{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);margin:6px 0 2px}
+.term .bar{display:flex;align-items:center;gap:9px;background:var(--panel);border-bottom:1px solid var(--border);padding:6px 12px}
+.term .dot{width:8px;height:8px;border-radius:50%;background:var(--rose);opacity:.6}
+.term .host{font-family:var(--font-mono);font-size:10.5px;color:var(--pine);font-weight:500}
+.term .host .meta{color:var(--muted);font-weight:400}
+.term .copy{margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--muted);background:transparent;border:1px solid var(--border-2);border-radius:5px;padding:2px 8px;cursor:pointer}
+.term .copy:hover{color:var(--pine);border-color:var(--foam)}
+.term pre{margin:0;padding:10px 13px;overflow-x:auto}
+.term code{font-family:var(--font-mono);font-size:12px;line-height:1.65;color:var(--text);white-space:pre}
+.term code .pr{color:var(--foam);font-weight:700;user-select:none} .term code .cm{color:var(--muted)}
+.out{font-family:var(--font-mono);font-size:11.5px;line-height:1.6;color:var(--subtle);background:var(--panel-2);border-left:2px solid var(--border-2);padding:9px 13px;white-space:pre-wrap;border-radius:0 6px 6px 0;margin:6px 0 2px}
+.out .hl{color:var(--ok)} .out .bad{color:var(--love)} .out .key{color:var(--pine)}
+
+.b{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap;align-self:flex-start}
+.b.ok{background:var(--ok-bg);color:var(--ok)}
+.b.pend{background:var(--pend-bg);color:var(--pend)}
+.b.info{background:var(--info-bg);color:var(--info)}
+.b.devfree{background:var(--info-bg);color:var(--info)}
+.b.devboth{background:#ece6f1;color:var(--iris)}
+.b.devmob{background:var(--pend-bg);color:var(--pend)}
+.b.devsite{background:#f5e3e4;color:var(--love)}
+
+.note{border:1px solid var(--border);border-left:3px solid var(--foam);background:var(--surface);border-radius:0 11px 11px 0;padding:13px 17px;margin:14px 0;font-size:13.5px;color:var(--subtle)}
+.note b{color:var(--foam)}
+.note.warn{border-left-color:var(--gold)} .note.warn b{color:var(--gold)}
+.check{list-style:none;display:grid;gap:9px;margin:12px 0}
+.check li{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;font-size:13.5px;color:var(--subtle)}
+.check li .box{width:18px;height:18px;border:1.5px solid var(--border-2);border-radius:6px;flex-shrink:0;margin-top:1px;display:grid;place-items:center;font-size:12px;color:#fff;transition:.15s}
+.check li.done .box{background:var(--pine);border-color:var(--pine)} .check li.done{color:var(--muted)} .check li.done .txt{text-decoration:line-through}
+.check li code{font-family:var(--font-mono);font-size:12px;color:var(--foam)}
+.reccols{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:12px 0}
+.recphase{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 15px}
+.recphase h5{font-family:var(--font-display);font-weight:600;font-size:13px;color:var(--pine);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.recphase h5 .step{font-family:var(--font-mono);font-size:11px;background:var(--pine);color:#fff;border-radius:6px;padding:2px 8px}
+.recphase .check{margin:0}.recphase .check li{padding:8px 11px;font-size:12.5px;border-radius:8px}
+@media(max-width:980px){.reccols{grid-template-columns:1fr}}
+.foot{margin-top:56px;padding-top:22px;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.menu-btn{display:none}
+@media(max-width:980px){
+  .shell{grid-template-columns:1fr}
+  nav.side{position:fixed;z-index:50;width:260px;transform:translateX(-110%);transition:.25s;box-shadow:0 0 50px rgba(87,82,121,.25)}
+  nav.side.open{transform:none}
+  main{padding:70px 20px 100px}
+  .menu-btn{display:flex;position:fixed;top:14px;left:14px;z-index:60;background:var(--pine);color:#fff;border:0;border-radius:10px;width:42px;height:42px;font-size:20px;align-items:center;justify-content:center}
+  .row{grid-template-columns:1fr;gap:3px}.row .lbl{padding-top:0}
+  h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+<button class="menu-btn" onclick="document.querySelector('nav.side').classList.toggle('open')">≡</button>
+<div class="shell">
+
+<nav class="side">
+  <div class="brand">SASE <b>PoC</b> · Demo &amp; tests</div>
+  <div class="sub">per rubric-criterium</div>
+  <a class="head">Overzicht</a>
+  <a href="#waar"><span class="n">◧</span>Waar draai je wat</a>
+  <a href="#strategie"><span class="n">⌕</span>Teststrategie &amp; resultaten</a>
+  <a class="head">Live demo · 5′ elk</a>
+  <a href="#swg"><span class="n">1</span>Secure Web Gateway</a>
+  <a href="#casb"><span class="n">2</span>CASB</a>
+  <a href="#ztna"><span class="n">3</span>ZTNA</a>
+  <a class="head">Documentatie / presentatie</a>
+  <a href="#sdwan"><span class="n">4</span>SD-WAN</a>
+  <a href="#alg"><span class="n">5</span>Algemene beoordeling</a>
+  <a class="head">Afdwing-stap</a>
+  <a href="#enforce"><span class="n">▸</span>Enforce-validatie</a>
+  <a href="#todo"><span class="n">☐</span>Voorbereiding &amp; docs</a>
+</nav>
+
+<main>
+  <div class="hero">
+    <div class="kicker">Eindpresentatie · live demo + presentatie</div>
+    <h1>Demo- &amp; testdocument per rubric-criterium</h1>
+    <p class="lede">Per rubric-punt: <b>wat je test</b>, <b>waarom die test dat punt bewijst</b>, <b>wat je screencapt</b> en <b>wat je zegt</b>. De volledige rubric is gedekt. Drie pijlers krijgen een live demo van 5 minuten; SD-WAN en de algemene beoordeling lopen via documentatie en de presentatie.</p>
+    <div class="legend">
+      <span><i style="background:var(--ok)"></i> live aantoonbaar</span>
+      <span><i style="background:var(--pend)"></i> beslissing bewezen, afdwinging is laatste stap</span>
+      <span><i style="background:var(--foam)"></i> documentatie / presentatie</span>
+    </div>
+  </div>
+
+  <!-- PREP -->
+  <!-- WAAR DRAAI JE WAT -->
+  <section id="waar">
+    <h3 class="block">◧ · Waar draai je wat — toestelvereiste (huidige setup)</h3>
+    <p style="color:var(--subtle);max-width:80ch">In de huidige opstelling zijn je enige client-toestellen <b>MOB-1</b> en <b>sitepc01</b> (beide Windows 11). Dit bepaalt waar elke test draait — niet wat een OS theoretisch kan. Veel lagen draaien server-side of op de nodes en hebben helemaal geen Windows-client nodig.</p>
+    <div class="legend">
+      <span><i style="background:var(--info)"></i> node / browser — geen W11-client</span>
+      <span><i style="background:var(--iris)"></i> MOB-1 of SITE01 — beide sandbox-enrolled</span>
+      <span><i style="background:var(--gold)"></i> enkel MOB-1 — compliant managed device</span>
+      <span><i style="background:var(--rose)"></i> SITE01 — VyOS/SD-WAN-pad</span>
+    </div>
+    <table>
+      <thead><tr><th>Test / groep</th><th>Toestel</th><th>Waarom</th></tr></thead>
+      <tbody>
+        <tr><td><b>DNS-filtering</b> (NXDOMAIN)</td><td><span class="b devfree">node / browser</span></td><td>resolver staat op pop01 (<code>drill @127.0.0.1</code>); geen client nodig</td></tr>
+        <tr><td><b>CASB Laag 2</b> — deellink → detectie → intrekken</td><td><span class="b devfree">node / browser</span></td><td>deellink in de M365-webUI; detectie + herstel volledig server-side op mgmt01</td></tr>
+        <tr><td><b>CASB Laag 3</b> — real-time scoring</td><td><span class="b devfree">node / browser</span></td><td>control-daemon op mgmt01; je kijkt de bus reageren</td></tr>
+        <tr><td><b>Bewijs &amp; transparantie</b> — Discover, bus, active-responses</td><td><span class="b devfree">node / browser</span></td><td>SIEM + server-side logs; browser + mgmt01</td></tr>
+        <tr><td><b>Architectuur · packet-flow · tools · troubleshooting · rapportering</b></td><td><span class="b devfree">node / browser</span></td><td>presentatie / documentatie</td></tr>
+        <tr><td><b>SWG inline</b> — URL-filter, SSL Bump, DNS-threat</td><td><span class="b devboth">MOB-1 of SITE01</span></td><td>SSL Bump (issuer O=SASE PoC) + RPZ bewezen op beide clients</td></tr>
+        <tr><td><b>SWG inline</b> — malware (EICAR) + DLP</td><td><span class="b devboth">MOB-1 of SITE01</span></td><td>nog niet gecaptured → <b>live vastleggen tijdens de opname</b></td></tr>
+        <tr><td><b>Inline CASB-block</b> (student → ChatGPT)</td><td><span class="b devmob">MOB-1 (student)</span></td><td>Squid persona-ACL; student-persona zit op MOB-1</td></tr>
+        <tr><td><b>ZTNA per-app-toegang</b> + no-exposure-bypass</td><td><span class="b devboth">MOB-1 of SITE01</span></td><td>beide zijn sandbox-NetBird enrolled peers</td></tr>
+        <tr><td><b>SWG bypass-set</b> (DoH / QUIC)</td><td><span class="b devboth">MOB-1 of SITE01</span></td><td>nog niet gecaptured → <b>live vastleggen tijdens de opname</b></td></tr>
+        <tr><td><b>Persona-contrast</b> (student vs docent)</td><td><span class="b devboth">MOB-1 (student) + SITE01 (docent)</span></td><td>beide enrolled — MOB-1 = Studenten, SITE01 = Docenten; check vooraf of de inline-blok enkel op Studenten scoped is voor de docent-toegelaten-kant</td></tr>
+        <tr><td><b>ZTNA identity &amp; context</b> — device-posture-component</td><td><span class="b devmob">enkel MOB-1</span></td><td>MOB-1 is de gevalideerde compliant device; SITE01 heeft Defender uit (AV-gap), dus niet de positieve compliant-demo</td></tr>
+        <tr><td><b>CA Policy 5 / non-compliant-enforce</b></td><td><span class="b devmob">enkel MOB-1</span></td><td>vereist een gevalideerd compliant beheerd toestel</td></tr>
+        <tr><td><b>Traffic routing</b> — forced proxy via MDM</td><td><span class="b devmob">enkel MOB-1</span></td><td>de "MDM-afgedwongen"-claim hangt aan MOB-1; SITE01 draait proxy via Firefox-PAC (niet MDM-forced)</td></tr>
+        <tr><td><b>SD-WAN endpoint-enforcement</b> (DSCP/firewall-CSP)</td><td><span class="b devmob">enkel MOB-1</span></td><td>managed-device-profielen via Intune</td></tr>
+        <tr><td><b>SD-WAN: QoS-onder-last · failover · split-tunnel</b></td><td><span class="b devsite">SITE01 · VyOS-pad</span></td><td>SITE01 zit op het Site-LAN achter VyOS (<code>sudo tc -s class show dev eth0</code>)</td></tr>
+      </tbody>
+    </table>
+    <div class="note tip"><b>Eindstaat</b> — SITE01 (sitepc01) is nu volledig sandbox-enrolled: NetBird als <b>docent1/Docenten</b> (overlay-<code>%SRC 100.70.64.80</code>), Entra-joined + Intune-enrolled, SASE-PoC-CA + Firefox-PAC. Bump, splice en DNS-RPZ zijn er bewezen. Je hebt dus <b>twee bruikbare clients</b>: MOB-1 (Studenten, de compliant managed device) en SITE01 (Docenten). Dat maakt het <b>persona-contrast</b> mogelijk. Twee dingen nog niet vastgelegd — <b>EICAR/DLP (#8) en QUIC/DoT-bypass (#9)</b>: die leg je live vast tijdens de opname. De device-bound compliant-tests blijven op MOB-1 (SITE01 heeft Defender uit).</div>
+  </section>
+
+  <!-- TESTSTRATEGIE & RESULTATEN -->
+  <section id="strategie">
+    <h3 class="block">⌕ · Teststrategie &amp; resultaten</h3>
+    <p style="color:var(--subtle);max-width:80ch">Hoe en waarom we testen, en wat het oplevert. De volledige test-per-criterium met verwacht bewijs staat per pijler hieronder; dit is de samenvattende strategie en de geconsolideerde stand.</p>
+
+    <h3 class="block" style="font-size:12px;color:var(--pine)">Aanpak</h3>
+    <ul class="todo-list docs">
+      <li><b>Eén test per rubric-criterium.</b> Elke eis is gekoppeld aan een concrete, herhaalbare test; de status per criterium fungeert als pass/fail.</li>
+      <li><b>Dát én waaróm.</b> Elke test toont niet alleen dat de control werkt, maar ook waarom verkeer geblokkeerd/toegestaan is — zichtbaar voor de gebruiker (blokpagina) én de beheerder (servicelog + SIEM). Dubbel bewijs, native + centraal.</li>
+      <li><b>Identity overal.</b> Elke beslissing draagt de gebruiker en groep uit Entra ID — in de proxy, de cloud-app-policy en de toegangspolicy. Geen anonieme IP-beslissingen.</li>
+      <li><b>Attack/bypass-simulatie per component.</b> Minstens één omzeilpoging per pijler die wordt gemitigeerd en aangetoond: ZTNA (niet-aangemeld → geen route), SWG (versleutelde DNS / QUIC / proxy verwijderen → teruggedwongen), CASB (direct IP → via SNI-inspectie alsnog herkend).</li>
+      <li><b>Iteratief gevalideerd.</b> Elke control is bij de bouw end-to-end getest; de demo reproduceert dat live, met de timer als discipline.</li>
+    </ul>
+
+    <h3 class="block" style="font-size:12px;color:var(--foam)">Geconsolideerde resultaten</h3>
+    <table>
+      <thead><tr><th>Pijler</th><th>Stand</th></tr></thead>
+      <tbody>
+        <tr><td><b>SWG / DNS</b></td><td>Kerncontrols gevalideerd: geforceerde proxy, identity-based filtering, TLS-decryptie (SSL Bump), threat-intel DNS-blocking. Malware (EICAR) + DLP + de versleutelde-DNS/QUIC-bypass worden live in de opname vastgelegd. <span class="b ok">grotendeels live</span></td></tr>
+        <tr><td><b>CASB</b></td><td>Drie lagen gevalideerd: inline cloud-app-block op identiteit, API-detectie van riskante deelacties met herstel-actie tot bevestiging, en real-time risico-scoring. Persona-contrast aantoonbaar over twee clients. <span class="b ok">gevalideerd</span> <span class="b pend">live intrekken = afdwing-stap</span></td></tr>
+        <tr><td><b>ZTNA</b></td><td>Per-app-toegang zonder netwerk-exposure, vier contextcomponenten (identiteit + locatie + device-posture + risico) in één sign-in, conditionele gelogde on-prem-toegang. Non-compliant-weigering is de afdwing-stap. <span class="b ok">gevalideerd</span> <span class="b pend">enforce = afdwing-stap</span></td></tr>
+        <tr><td><b>SD-WAN</b></td><td>QoS-onder-last (prioriteitsverkeer beschermd), failover-detectie (&lt; 30s), split-tunnel en DSCP op de wire gevalideerd. Geen apart demo-slot → presentatie/schema's. <span class="b ok">gevalideerd</span></td></tr>
+        <tr><td><b>Algemeen</b></td><td>Transparantie ("waarom geblokkeerd") en componenten-integratie via één event-bus zijn live aantoonbaar; architectuur, packet-flow en toolonderbouwing via presentatie en documentatie. <span class="b ok">live + docs</span></td></tr>
+      </tbody>
+    </table>
+    <div class="note tip"><b>Bypass-dekking</b> — elk van de drie demo-pijlers bevat minstens één aangetoonde omzeilpoging (zie het bypass-overzicht per criterium hieronder), conform de eis "minstens één attack/bypass-scenario per component".</div>
+  </section>
+
+  <!-- ===================== SWG ===================== -->
+  <div class="pillar-h" id="swg">
+    <span class="tag">1</span><h2>Secure Web Gateway</h2>
+    <span class="who">live demo · <b>Rayan</b></span>
+    <div class="timer" data-sec="300"><span class="tnum">5:00</span><button onclick="tStart(this)">▶</button><button class="ghost" onclick="tReset(this)">↺</button></div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Traffic routing — geen local breakout</div><div class="target">Uitstekend: volledig geforceerd via SWG</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Controleer dat de proxy centraal op het toestel is opgelegd, en probeer hem te omzeilen.
+        <div class="term"><div class="bar"><span class="dot"></span><span class="host">werkstation <span class="meta">· PowerShell</span></span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">PS&gt;</span> netsh winhttp show proxy</code></pre></div></div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">De proxy is beheerd opgelegd, niet vrijwillig — het verkeer kán niet rechtstreeks naar internet en verschijnt altijd in de proxylog. Dat is "volledig geforceerd", niet "meeste via proxy".</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De opgelegde proxy-instelling + één access.log-regel met het overlay-bron-IP.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">De proxy is centraal afgedwongen op het toestel — er is geen directe uitweg naar internet, al het webverkeer passeert verplicht de gateway.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Identity-based access</div><div class="target">Uitstekend: volledig geïntegreerd met Microsoft Entra ID</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Browse vanaf een studenten-account naar een geblokkeerde categorie en volg de proxylog.
+        <div class="term"><div class="bar"><span class="dot"></span><span class="host">gateway</span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">#</span> tail -f /var/log/squid/access.log</code></pre></div>
+        <div class="out"><span class="bad">TCP_DENIED/403</span> … GET http://…  <span class="key">GROUP=Studenten</span></div></div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">De filterbeslissing draagt de gebruiker en zijn groep uit Entra ID — niet een anoniem IP. Identiteit is een echte policy-dimensie.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De logregel met <code>GROUP=Studenten</code> naast de blokpagina.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Elke filterbeslissing is gekoppeld aan de gebruiker en zijn groep uit Entra ID — je ziet in de log exact wie het was.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">DNS filtering</div><div class="target">Uitstekend: threat intel, logging, policy-based</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Resolve een kwaadaardig testdomein; toon de blokkade en het event in de SIEM.
+        <div class="term"><div class="bar"><span class="dot"></span><span class="host">gateway</span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">#</span> drill testentry.rpz.urlhaus.abuse.ch @127.0.0.1   <span class="cm"># bevestigd RPZ-testdomein</span></code></pre></div>
+        <div class="out">status: <span class="bad">NXDOMAIN</span>  <span class="cm"># geblokkeerd via threat-intel-feed</span></div></div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">De blocklist is geen statische lijst maar leeft op externe threat-intelligence-feeds, met logging en policy — dat is de "geavanceerd"-tier, niet "basis DNS blocking".</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De NXDOMAIN-respons + het bijhorende event in Discover (<code>rule.id:100540</code>).</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Kwaadaardige domeinen worden geblokkeerd op basis van live threat-intelligence-feeds, en elke blokkade is terugvindbaar in de SIEM.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Malware inspectie (DPI)</div><div class="target">Uitstekend: DPI + TLS-decryptie + malware-detectie</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Open een HTTPS-site (controleer de certificaat-uitgever), download het EICAR-testbestand, en probeer een bestand met gevoelige data te uploaden.
+        <div class="term"><div class="bar"><span class="dot"></span><span class="host">werkstation</span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">PS&gt;</span> curl https://secure.eicar.org/eicar.com -o eicar.com</code></pre></div>
+        <div class="out"><span class="bad">VIRUS DETECTED</span> — download geblokkeerd · upload met PII → <span class="bad">geblokkeerd, reden=PII</span></div></div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Het certificaat is uitgegeven door de eigen gateway-CA → TLS wordt opengebroken (DPI mogelijk). Inkomende malware én uitgaande gevoelige data worden gepakt — de volledige Uitstekend-tier.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">Certificaat-uitgever = eigen CA + de malware-blokpagina + de DLP-logregel met reden.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">We breken TLS open en inspecteren de inhoud — zowel binnenkomende malware als uitgaande gevoelige data wordt tegengehouden, met een duidelijke reden.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Configuratie &amp; documentatie</div><div class="target">Uitstekend: zeer gedetailleerd, reproduceerbaar</div></div><span class="b info">docs</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de configuratie- en policy-documentatie en de repository.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Een externe technicus kan de opstelling reconstrueren op een propere omgeving — dat is de reproduceerbaarheids-eis op het hoogste niveau.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De repository-structuur + een config-fragment per component.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Alle configuratie en policies zijn gedocumenteerd en reproduceerbaar in de repository opgenomen.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Test &amp; validatie</div><div class="target">Uitstekend: malware-test + DNS-blocking-validatie</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de malware-blokkade én de DNS-blokkade, plus een bypass-poging (versleutelde DNS of QUIC) die alsnog gesloten wordt.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">De twee expliciet gevraagde scenario's (malware + DNS) zijn aantoonbaar getest, aangevuld met een omzeilpoging die faalt — meerdere scenario's, hoogste tier.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">Malware-blok + NXDOMAIN + één bypass-resultaat dat alsnog geblokkeerd wordt.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">We tonen meerdere scenario's: malware geblokkeerd, kwaadaardig domein geblokkeerd, en omzeilpogingen die alsnog sluiten.</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== CASB ===================== -->
+  <div class="pillar-h" id="casb">
+    <span class="tag">2</span><h2>Cloud Access Security Broker</h2>
+    <span class="who">live demo · <b>Marnix</b> + Gerben</span>
+    <div class="timer" data-sec="300"><span class="tnum">5:00</span><button onclick="tStart(this)">▶</button><button class="ghost" onclick="tReset(this)">↺</button></div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Blokkeren cloud apps</div><div class="target">Uitstekend: dynamische en context-based blokkering</div></div><span class="b ok">live</span> <span class="b pend">live intrekken = laatste stap</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val"><b>Inline:</b> student opent ChatGPT → geweigerd. <b>API:</b> maak een publieke "Anyone"-deellink → automatisch gedetecteerd → herstel-actie (intrekken via Graph) getriggerd. <b>Real-time:</b> een security-event verhoogt de risicoscore.
+        <div class="term"><div class="bar"><span class="dot"></span><span class="host">beheerhost</span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">$</span> docker logs -f o365-producer
+<span class="pr">$</span> docker exec single-node-wazuh.manager-1 tail -f /var/ossec/logs/active-responses.log</code></pre></div>
+        <div class="out">event → <span class="key">cloud-deellink (scope=Anyone)</span> · herstel → <span class="hl">intrekken (bewezen tot bevestiging)</span></div></div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Blokkering is niet één statische lijst maar context-afhankelijk: inline op identiteit, API op cloud-gedrag, real-time op risicoscore — exact de dynamische/context-based tier.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De ChatGPT-blokpagina + het detectie-event in Discover + de herstel-logregel.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Cloud-apps worden op drie niveaus beheerst: inline geweigerd op identiteit, riskante deelacties in de tenant automatisch gedetecteerd en hersteld, en risico real-time gescoord.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Integratie met identity</div><div class="target">Uitstekend: volledig geïntegreerd met Microsoft Entra ID</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon dat de inline-blokkade van de cloud-app de gebruikersgroep uit Entra ID in de log draagt.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">CASB-beslissingen zijn gekoppeld aan de Entra ID-gebruiker — student versus docent is een echte policy-dimensie, niet anoniem.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De access.log-regel met de groep naast de geblokkeerde cloud-app.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">De CASB-policy kent de gebruiker uit Entra ID — wie je bent bepaalt welke cloud-apps je mag.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Policy configuratie</div><div class="target">Uitstekend: geavanceerd (groepen, risico, device)</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de groep-gebaseerde toegangsregels (persona) + de risico-scoring van de controle-dienst (oplopende score binnen een tijdsvenster).
+        <div class="term"><div class="bar"><span class="dot"></span><span class="host">beheerhost</span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">$</span> docker logs -f control-daemon</code></pre></div>
+        <div class="out">score+=80 &gt; drempel · <span class="key">beslissing genomen</span></div></div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Policies combineren groep én risicoscore (en device via de managed-device-eis), niet losse statische regels — de geavanceerde tier.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De groep-ACL + de scorelog van de controle-dienst.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Policies zijn opgebouwd rond groepen en een risicoscore — gedrag verhoogt de score en triggert een beslissing.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Testresultaten</div><div class="target">Uitstekend: uitgebreide testcases + bypass-pogingen</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de inline-blok + de API-detectie + een bypass: probeer de app via een direct IP-adres → wordt via SNI-inspectie alsnog herkend en geblokkeerd.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Meerdere realistische testcases inclusief een actieve omzeilpoging zijn aantoonbaar — niet alleen het "happy path".</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De directe-IP-poging die alsnog geblokkeerd wordt.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">We testen ook de omzeiling: een directe IP-poging wordt via SNI-inspectie alsnog herkend en geblokkeerd.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Beperkingen &amp; analyse</div><div class="target">Uitstekend: kritische reflectie + verbetervoorstellen</div></div><span class="b info">presentatie</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Benoem de dekkingsgraad t.o.v. een volwaardige commerciële CASB en één concrete technische beperking (bepaalde deellink-signalen zijn niet betrouwbaar uitleesbaar), met een productie-aanbeveling.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Eerlijke, kritische reflectie mét verbetervoorstellen — exact de hoogste tier ("kritische reflectie + verbetervoorstellen").</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De reflectie-slide met dekkingsgraad + aanbeveling.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">We zijn eerlijk over de grenzen: dit dekt een deel van een volwaardige CASB, en sommige cloud-signalen zijn niet betrouwbaar — daarom onze concrete productie-aanbeveling.</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== ZTNA ===================== -->
+  <div class="pillar-h" id="ztna">
+    <span class="tag">3</span><h2>Zero Trust Network Access</h2>
+    <span class="who">live demo · <b>Arne</b></span>
+    <div class="timer" data-sec="300"><span class="tnum">5:00</span><button onclick="tStart(this)">▶</button><button class="ghost" onclick="tReset(this)">↺</button></div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Per-applicatie toegang</div><div class="target">Uitstekend: volledig zero trust (geen netwerk-exposure)</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Bereik een interne resource over de overlay (toegestaan per groep). Probeer dezelfde resource vanaf een niet-aangemeld toestel.
+        <div class="term"><div class="bar"><span class="dot"></span><span class="host">niet-aangemeld toestel</span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">PS&gt;</span> curl --connect-timeout 5 http://10.0.0.100</code></pre></div>
+        <div class="out"><span class="bad">connection timed out</span>  <span class="cm"># geen route — de app bestaat niet voor wie niet aangemeld is</span></div></div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Zonder aanmelding is er geen netwerkpad naar de applicatie — geen netwerk-exposure, de hoogste tier (niet "netwerk-based toegang").</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De geslaagde toegang vanaf het aangemelde toestel + de timeout vanaf het niet-aangemelde toestel.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Toegang is per resource en per groep; voor wie niet aangemeld is, bestaat de applicatie simpelweg niet op het netwerk.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Identity &amp; context awareness</div><div class="target">Uitstekend: identity + context (geoIP, device posture, malware-check)</div></div><span class="b ok">live</span> <span class="b pend">afdwinging = laatste stap</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Forceer een verse aanmelding (MFA-prompt) en open het aanmeldingslogboek in Entra ID → toon dat vier signalen samen geëvalueerd zijn: identiteit, locatie, device-compliance en risicoscore.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Toegang hangt niet alleen aan identiteit maar aan volledige context in één aanmelding — exact de Uitstekend-omschrijving (identity + geoIP + device posture + risk).</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De Conditional-Access-tab van de aanmelding met de vier geëvalueerde signalen.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Eén aanmelding evalueert vier dingen tegelijk: wie je bent, waar je bent, of je toestel gezond is, en je risicoscore.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Tunnel per applicatie</div><div class="target">Uitstekend: meerdere/dynamische per-app tunnels</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de toegangspolicies: elke resource loopt via een aparte policy, niet één brede tunnel voor alles.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Verkeer is per resource gesegmenteerd via aparte policies — geen "1 tunnel voor alles".</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De policy-lijst met aparte regels per resource/groep.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Elke resource heeft zijn eigen toegangspolicy — geen enkele brede tunnel die alles tegelijk ontsluit.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Toegang tot on-prem resources</div><div class="target">Uitstekend: veilig + conditioneel + gelogd</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Bereik de interne resource versleuteld over de overlay, onder de conditionele policy, en toon de verbinding in het log.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">On-prem toegang is versleuteld, voorwaardelijk én traceerbaar — de drie eisen van de hoogste tier samen.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De geslaagde verbinding + de bijhorende verbindingslog.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">On-prem resources zijn bereikbaar, maar enkel versleuteld, voorwaardelijk en volledig gelogd.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Test &amp; validatie</div><div class="target">Uitstekend: aanvallen gesimuleerd + logging geanalyseerd</div></div><span class="b ok">live</span> <span class="b pend">non-compliant-block = laatste stap</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">De bypass (niet-aangemeld → geen toegang) + een negatieve test: een niet-compliant toestel wordt geweigerd vóór de tunnel.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Aanvalspogingen zijn gesimuleerd en de logging is geanalyseerd — meer dan een basistest.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De geweigerde toegang + de bijhorende logregel.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">We simuleren de aanval: een niet-aangemeld of niet-compliant toestel krijgt geen toegang, en dat is terug te zien in de logs.</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== SD-WAN ===================== -->
+  <div class="pillar-h" id="sdwan">
+    <span class="tag">4</span><h2>SD-WAN</h2>
+    <span class="who">documentatie &amp; presentatie · geen live slot</span>
+  </div>
+  <div class="note warn"><b>Geen aparte demo-slot</b>, maar wél live bewijs — de VyOS-shaper, QoS-onder-last, failover-detectie en split-tunnel zijn op het Site-LAN achter VyOS (sitepc01) gevalideerd, los van sandbox-enrollment. Toon dit als korte capture/schema in de presentatie; er is geen apart 5-minuten-slot. De integratietests die wél enrollment vereisen, staan onderaan als openstaand.</div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Basis connectiviteit</div><div class="target">Uitstekend: volledig werkend met failover</div></div><span class="b ok">live (detectie)</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Site-gateway bereikbaar over de overlay. Failover-detectie: het health-check-script op VyOS detecteert een neergehaalde WAN-link als CRITICAL binnen 30s en herstelt naar OK.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">De link-monitoring werkt; failover is in dit single-WAN-lab eerlijk afgebakend tot <b>detectie + alerting</b> (geen dual-WAN-switch) — productie-architectuur staat ernaast gedocumenteerd.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">Het health-check-log: baseline OK → CRITICAL &lt; 30s → OK na herstel.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">De gateway monitort de WAN-link en detecteert een uitval binnen dertig seconden; in dit lab is dat detectie en alerting, geen automatische dual-WAN-omschakeling.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Routing / policies</div><div class="target">Uitstekend: slimme routing (latency, failover)</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Split-tunnel: vertrouwd cloud-verkeer kiest het directe pad (<code>Find-NetRoute</code> → Site-LAN-NIC, óók op een dual-NIC device). QoS-onder-last: twee gelijktijdige streams (prioriteit + bulk) → de shaper beschermt het prioriteitsverkeer.
+        <div class="term"><div class="bar"><span class="dot"></span><span class="host">VyOS site-gateway</span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">$</span> sudo tc -s class show dev eth0   <span class="cm"># 'show qos' niet beschikbaar op deze build</span></code></pre></div>
+        <div class="out">EF/prioriteit: +300 pkt · <span class="hl">0 drops · 0 overlimits</span>
+default/bulk: +17242 pkt · <span class="bad">26 drops · 17095 overlimits</span></div></div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Verkeer wordt op type gerouteerd (direct pad) én geprioriteerd onder congestie: prioriteitsverkeer volledig beschermd, bulk actief ingeperkt. Meer dan basis-routing.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De <code>tc</code>-tellers (0 drops op de prioriteitsklasse vs drops/overlimits op bulk) + de <code>Find-NetRoute</code>-uitvoer.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Vertrouwd cloud-verkeer krijgt een direct pad, en onder congestie beschermt de gateway het prioriteitsverkeer terwijl bulk wordt ingeperkt.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Integratie met SASE</div><div class="target">Uitstekend: duidelijke rol binnen SASE</div></div><span class="b info">docs</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon in het architectuurschema waar SD-WAN zit en wat ze levert: de afdwinging op het toestel (proxy, certificaat, firewall) die de rest van de stack mogelijk maakt.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">SD-WAN is geen losstaande laag maar levert het fundament voor de andere componenten — duidelijke rol binnen SASE.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De positie van SD-WAN in het totaalschema.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">SD-WAN levert de afdwinging op het toestel die de rest van de SASE-stack mogelijk maakt.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Configuratie</div><div class="target">Uitstekend: goed gedocumenteerd</div></div><span class="b info">docs</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de beheerprofielen waarmee proxy, certificaat, firewall en QoS centraal uitgerold worden.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">De configuratie is centraal, herhaalbaar en gedocumenteerd uitgerold.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De beheerprofielen + het interface-overzicht.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">De configuratie is via centrale beheerprofielen uitgerold en gedocumenteerd.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Test</div><div class="target">Uitstekend: meerdere scenario's getest</div></div><span class="b ok">deels live</span> <span class="b pend">#8/#9 live in opname</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Geleverd: QoS-onder-last (prioriteit beschermd), failover-detectie (&lt; 30s), split-tunnel op dual-NIC, DSCP op de wire, plus de site-integratietests op SITE01 (bump #1, allow-splice #2, DNS-threat #7). Nog te capturen: EICAR/DLP (#8) en QUIC/DoT-bypass (#9) — tijdens de opname.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Meerdere scenario's zijn aantoonbaar getest over beide paden (VyOS-shaper + de site-client door de SASE-stack). De laatste twee scenario's worden live in de demo vastgelegd.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De <code>tc</code>-tellers + het failover-log; en (live) de EICAR-blokpagina + de QUIC→TCP-fallback.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">De QoS-bescherming, failover-detectie en de site-client door de volledige stack zijn aangetoond; malware- en bypass-scenario's leggen we live vast.</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== ALGEMEEN ===================== -->
+  <div class="pillar-h" id="alg">
+    <span class="tag">5</span><h2>Algemene beoordeling</h2>
+    <span class="who">presentatie &amp; documentatie · transparantie live</span>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Transparantie — logging &amp; inzicht</div><div class="target">Uitstekend: duidelijke uitleg waarom verkeer geblokkeerd/toegestaan is</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon in elke demo naast de blokpagina de bijhorende SIEM-regel die de reden geeft (DNS-policy, CASB, malware).</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Zowel gebruiker (blokpagina) als beheerder (log + SIEM) ziet altijd waarom verkeer geblokkeerd of toegestaan is — exact de hoogste tier.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">Een blokpagina naast de bijhorende SIEM-regel in Discover.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Voor elke blokkade tonen we exact waarom — zichtbaar voor zowel de gebruiker als de beheerder.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Integratie componenten</div><div class="target">Uitstekend: volledig geïntegreerd</div></div><span class="b ok">live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon dat alle componenten hun events naar één centrale bus sturen en samen in de SIEM landen.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Geen losse silo's: alle componenten publiceren naar één bus → volledig geïntegreerd en uitbreidbaar.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">Events van meerdere bronnen die live op de bus binnenlopen.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Alle componenten praten via één centrale bus — dat maakt de integratie zichtbaar en uitbreidbaar.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Architectuur · Functioneel schema · Pakketflow</div><div class="target">Uitstekend: professioneel · volledige SASE-flow · stap-voor-stap</div></div><span class="b info">presentatie</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Loop het architectuurschema en de packet-flow stap voor stap door: DNS-check → proxy → TLS-decryptie → inspectie → policy-beslissing → doorsturen.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Een lezer begrijpt uit het schema alleen al welke component welk verkeer afhandelt en waar de beslissingen vallen.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">Het architectuurschema + het packet-flow-schema.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Dit is de volledige SASE-flow: stap voor stap zie je waar elk pakket langs gaat en waar de policy-beslissing valt.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Performantie-optimalisatie</div><div class="target">Uitstekend: actief geoptimaliseerd (routing, caching, tuning)</div></div><span class="b pend">deels live</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de QoS-prioritering, de proxy-caching en het directe pad voor vertrouwd verkeer.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Er zijn meerdere actieve optimalisaties, niet alleen een standaardopstelling.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De QoS-policy + de caching-instelling.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">We optimaliseren met QoS-prioritering, caching en directe paden voor vertrouwd verkeer.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Keuze open source tools · Troubleshooting · Rapportering</div><div class="target">Uitstekend: sterk onderbouwd · diepgaande analyse · professioneel</div></div><span class="b info">docs</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de toolverantwoording per component, de gedocumenteerde probleemanalyses en de volledige rapportering + repository.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Elke toolkeuze is onderbouwd, problemen zijn per geval diepgaand geanalyseerd, en de rapportering is professioneel en reproduceerbaar.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De toolverantwoordingsslide + een voorbeeld van een probleemanalyse.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Elke tool is bewust gekozen en onderbouwd, en problemen zijn diepgaand geanalyseerd en gedocumenteerd.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Samenwerking (teamwork)</div><div class="target">Uitstekend: proactieve samenwerking, kennisdeling, gezamenlijke probleemoplossing</div></div><span class="b info">methodologie</span></div>
+    <div class="body">
+      <div class="row test"><span class="lbl">Test</span><div class="val">Toon de taakverdeling: elk teamlid bouwde en demonstreert zijn component; de bypass- en evidence-laag loopt gezamenlijk.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Duidelijke ownership én gezamenlijke probleemoplossing — niet individueel zonder afstemming.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De rolverdeling per pijler.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Elk teamlid bouwde en demonstreert zijn eigen component, en we hebben de problemen samen opgelost.</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== ENFORCE-VALIDATIE ===================== -->
+  <div class="pillar-h" id="enforce">
+    <span class="tag">▸</span><h2>Enforce-validatie — sluit de laatste punten</h2>
+    <span class="who">laatste validatieronde · maakt de oranje punten groen</span>
+  </div>
+  <div class="note"><b>Doel</b> — de punten die nu op "beslissing bewezen, afdwinging is de laatste stap" staan, worden hier één keer écht afgedwongen, gescreencapt, en zijn daarna groen. Per test staat <b>Vooraf</b> de eenmalige toggle. De bredere voorbereiding (provisioning, documentatie) staat onderaan apart.</div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Non-compliant toestel geweigerd</div><div class="target">→ groent: ZTNA · Test &amp; validatie + ZTNA · Identity &amp; context (afgedwongen)</div></div><span class="greent">→ groen na uitvoer</span></div>
+    <div class="body">
+      <div class="row pre"><span class="lbl">Vooraf</span><div class="val">Zet de policy "vereis compliant toestel" van rapportage naar afdwingen; breng een testtoestel in non-compliant staat (bv. een vereiste gezondheidssignaal uitzetten).</div></div>
+      <div class="row test"><span class="lbl">Test</span><div class="val">Meld aan / vraag toegang vanaf het non-compliant toestel → geweigerd bij de aanmelding, vóór de tunnel.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Context wordt niet alleen geëvalueerd maar ook afgedwongen — een ongezond toestel komt er niet in. Tilt "Test &amp; validatie" naar "aanvallen gesimuleerd" en maakt de context-poort hard.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De geweigerde aanmelding in het logboek met de compliance-controle als reden (Failure).</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Een toestel dat niet voldoet aan de gezondheidseisen wordt geweigerd vóór de tunnel — de context wordt echt afgedwongen.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Riskante deellink automatisch ingetrokken</div><div class="target">→ groent: CASB · Blokkeren cloud apps (volledige dynamische tier)</div></div><span class="greent">→ groen na uitvoer</span></div>
+    <div class="body">
+      <div class="row pre"><span class="lbl">Vooraf</span><div class="val">Voorzie een cloud-bibliotheek met een echt testbestand; zet de herstel-actie van "enkel detecteren" naar "afdwingen"; bevestig de schrijfrechten voor de intrekking.</div></div>
+      <div class="row test"><span class="lbl">Test</span><div class="val">Maak een echte publieke "Anyone"-deellink → het systeem trekt de link automatisch in → de link werkt niet meer.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">De CASB herstelt actief in de cloud-tenant in plaats van enkel te detecteren — de volledige dynamische/context-based tier.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De deellink die automatisch verdwijnt + de bevestiging (HTTP 204) + de dode link bij hertest.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Een riskante deellink wordt automatisch ingetrokken, niet alleen gemeld.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Real-time quarantaine afgedwongen</div><div class="target">→ groent: CASB · Policy configuratie (risico) + de real-time dimensie</div></div><span class="greent">→ groen na uitvoer</span></div>
+    <div class="body">
+      <div class="row pre"><span class="lbl">Vooraf</span><div class="val">Zet de controle-dienst van proef-modus (dry-run) naar afdwingen.</div></div>
+      <div class="row test"><span class="lbl">Test</span><div class="val">Trigger een security-event dat de risicoscore over de drempel duwt → de gebruiker wordt automatisch uit de toegangsgroepen gehaald → verliest toegang.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Een te hoge risicoscore leidt tot een echte, real-time toegangsintrekking — dynamische, context-based enforcement, geen statische regel.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De gebruiker die toegang verliest + de actielog van de controle-dienst.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Bij een te hoge risicoscore wordt de gebruiker automatisch en in real time afgesloten.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">Docent-toegang — persona-matrix sluiten</div><div class="target">→ versterkt: CASB · Policy configuratie (groepen) + Integratie met identity</div></div><span class="greent">→ groen na uitvoer</span></div>
+    <div class="body">
+      <div class="row pre"><span class="lbl">Vooraf</span><div class="val">Voeg de docent-toegestaan-regel toe (spiegel van de studenten-blokkade).</div></div>
+      <div class="row test"><span class="lbl">Test</span><div class="val">Open dezelfde cloud-app vanuit een docent-account → toegestaan, terwijl student geblokkeerd blijft.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Zelfde app, andere uitkomst op basis van groep — context-based policy hard aangetoond, niet alleen de blokkade-zijde.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">Docent → toegestaan naast student → geblokkeerd, beide met identiteit in de log.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Student wordt geblokkeerd, docent toegelaten — dezelfde app, andere policy op basis van de groep.</div></div>
+    </div>
+  </div>
+
+  <div class="crit">
+    <div class="ch"><div><div class="cname">QoS op de lijn (SD-WAN-bewijs)</div><div class="target">groent: SD-WAN · Routing/policies + SD-WAN · Test</div></div><span class="b ok">✓ geleverd</span></div>
+    <div class="body">
+      <div class="row pre"><span class="lbl">Status</span><div class="val">Reeds geleverd — DSCP-markering bevestigd op de gateway-uitgang en QoS-onder-last gemeten (prioriteit 0 drops vs bulk drops/overlimits). Geen openstaande stap meer.</div></div>
+      <div class="row test"><span class="lbl">Test</span><div class="val"><code>sudo tc -s class show dev eth0</code> → de tellers tonen de markering + bescherming op de uitgaande interface.</div></div>
+      <div class="row proof"><span class="lbl">Bewijst</span><div class="val">De markering is niet alleen gezet maar blijft effectief op de wire — "slimme routing" hard aangetoond i.p.v. enkel geconfigureerd.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De <code>tc</code>-tellers met 0 drops op de prioriteitsklasse onder last.</div></div>
+      <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Prioriteitsverkeer behoudt zijn QoS-markering en blijft beschermd tot op de uitgaande lijn.</div></div>
+    </div>
+  </div>
+
+  <!-- ===================== TO-DO (niet-test) ===================== -->
+  <section id="todo">
+    <h3 class="block">☐ · Voorbereiding &amp; documentatie (geen demo-stappen)</h3>
+    <p style="color:var(--subtle);max-width:78ch">Dit is het werk dat géén demo/test/screencap is, maar wel nodig of scorend. De eenmalige toggles hierboven staan al per test; dit is de bredere voorbereiding.</p>
+
+    <h3 class="block" style="font-size:12px;color:var(--gold)">Eenmalige voorbereiding (mogelijk maken van de enforce-tests)</h3>
+    <ul class="todo-list">
+      <li><b>Cloud-doelwit provisionen</b> — een bibliotheek + echt testbestand zodat de live-intrekking een echt doel heeft; schrijfrechten voor de intrekking bevestigen.</li>
+      <li><b>Afdwing-schakelaars zetten</b> — compliant-toestel-policy → afdwingen · herstel-actie → afdwingen · controle-dienst → afdwingen. (Daarna terug naar veilig zetten buiten de demo.)</li>
+      <li><b>Non-compliant teststaat</b> klaarzetten op één toestel voor de negatieve ZTNA-test.</li>
+      <li><b>Geo-afdwinging</b> — optioneel; vereist een buitenlands IP om te tonen. Anders: de evaluatie in rapportage-modus tonen en eerlijk benoemen.</li>
+    </ul>
+
+    <h3 class="block" style="font-size:12px;color:var(--foam)">Documentatie / presentatie (scoort, geen live test)</h3>
+    <ul class="todo-list docs">
+      <li><b>Architectuurschema</b> afwerken — consistent, met de positie en rol van elke component en waar de policy-beslissingen vallen.</li>
+      <li><b>Volledig packet-flow-schema</b> — stap voor stap (DNS → proxy → TLS-decryptie → inspectie → policy → doorsturen), bruikbaar tijdens de presentatie.</li>
+      <li><b>Tool-onderbouwing</b> — per open-source-component een korte motivatie waarom die keuze.</li>
+      <li><b>Performantie-bewijs</b> — concrete cijfers/effect van caching, QoS en de directe paden.</li>
+      <li><b>Troubleshooting-analyses</b> bundelen tot een leesbaar geheel.</li>
+      <li><b>Reproduceerbaarheids-check</b> — laat een teamlid de opstelling van nul reconstrueren uit de documentatie en fix wat onduidelijk blijkt.</li>
+      <li><b>Demo-discipline</b> — elk slot minstens één keer end-to-end oefenen tegen de timer; de fallback-opname maken.</li>
+    </ul>
+  </section>
+
+  <div class="foot">SASE PoC · demo- &amp; testdocument per rubric-criterium · alle vijf pijlers + algemene beoordeling gedekt · oranje = beslissing bewezen, afdwinging is de laatste stap · Enforce-validatie maakt de oranje punten groen</div>
+</main>
+</div>
+
+<script>
+function cp(btn){
+  const code=btn.closest('.term').querySelector('code');
+  const txt=code.innerText.split('\n').filter(l=>!l.trim().startsWith('#')).join('\n').replace(/^(PS>|\$|#)\s?/gm,'').trim();
+  navigator.clipboard.writeText(txt).then(()=>{const o=btn.textContent;btn.textContent='gekopieerd ✓';btn.style.color='var(--ok)';setTimeout(()=>{btn.textContent=o;btn.style.color='';},1400);});
+}
+const timers=new WeakMap();
+function fmt(s){const m=Math.floor(Math.abs(s)/60),x=Math.abs(s%60);return (s<0?'-':'')+m+':'+String(x).padStart(2,'0');}
+function tStart(btn){
+  const box=btn.closest('.timer'),num=box.querySelector('.tnum');
+  if(timers.get(box)){clearInterval(timers.get(box));timers.set(box,null);btn.textContent='▶';return;}
+  let s=parseInt(box.dataset.sec,10); if(num.dataset.cur)s=parseInt(num.dataset.cur,10);
+  btn.textContent='⏸';
+  const id=setInterval(()=>{s--;num.dataset.cur=s;num.textContent=fmt(s);box.classList.toggle('warn',s<=60&&s>0);box.classList.toggle('over',s<=0);},1000);
+  timers.set(box,id);
+}
+function tReset(btn){
+  const box=btn.closest('.timer'),num=box.querySelector('.tnum'),play=box.querySelector('button');
+  if(timers.get(box)){clearInterval(timers.get(box));timers.set(box,null);}
+  num.dataset.cur='';num.textContent=fmt(parseInt(box.dataset.sec,10));box.classList.remove('warn','over');play.textContent='▶';
+}
+document.querySelectorAll('.check li').forEach(li=>li.addEventListener('click',()=>li.classList.toggle('done')));
+document.querySelectorAll('nav.side a[href^="#"]').forEach(a=>a.addEventListener('click',()=>document.querySelector('nav.side').classList.remove('open')));
+</script>
+</body>
+</html>
