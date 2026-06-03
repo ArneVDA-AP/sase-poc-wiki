@@ -18,7 +18,7 @@
         <link rel="prev" href="../gns3/">
       
       
-        <link rel="next" href="../../concepts/">
+        <link rel="next" href="../zitadel/">
       
       
         
@@ -33,7 +33,7 @@
     
     
       
-        <title>VyOS — SD-WAN-gateway (site01) - Security Project Wiki</title>
+        <title>VyOS — SASE-gateway (site01) - Security Project Wiki</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#vyos-sd-wan-gateway-site01" class="md-skip">
+        <a href="#vyos-sase-gateway-site01" class="md-skip">
           Ga naar inhoud
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              VyOS — SD-WAN-gateway (site01)
+              VyOS — SASE-gateway (site01)
             
           </span>
         </div>
@@ -576,6 +576,16 @@
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
     
     
     
@@ -935,13 +945,124 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bekende-status" class="md-nav__link">
+  <a href="#configuratie" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bekende status
+        Configuratie
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Configuratie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nat-masquerade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT masquerade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#statische-host-mapping-voor-netbird" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statische host-mapping voor NetBird
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscp-qos-gepland" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DSCP / QoS (gepland)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integratiepunten" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integratiepunten
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bekende-problemen-valkuilen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bekende problemen / valkuilen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bekende problemen / valkuilen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dns-bootstrap-voor-inschrijving-sitepc01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNS-bootstrap voor inschrijving sitepc01
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#icmp-misleidend-onder-allow-only-beleid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICMP misleidend onder ALLOW-only beleid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caddy-ca-certificaat-kip-en-ei-probleem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caddy CA-certificaat kip-en-ei-probleem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sd-wan-functies-uit-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SD-WAN-functies uit scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -965,6 +1086,146 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zitadel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zitadel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../identity-bridge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Identity Bridge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nats-jetstream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NATS JetStream
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../control-daemon/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Daemon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wazuh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -983,6 +1244,8 @@
       
         
           
+        
+      
         
       
         
@@ -1251,6 +1514,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/identity-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Identiteitsstroom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1269,6 +1560,20 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -1627,6 +1932,202 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/managed-devices-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Beheerde apparaten-scope
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/zt-sdwan-branch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero Trust Branch SD-WAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/netbird-service-pat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird Service PAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/nats-accounts-auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NATS Accounts-auth
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/groupsync-pad-b/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GroupSync Pad B
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/casb-three-layers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Drielaags CASB
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/control-daemon-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Daemon-scope
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1642,6 +2143,8 @@
   
     
     
+      
+        
       
         
       
@@ -1720,6 +2223,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/attack-scenarios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Aanvalsscenario's
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1738,6 +2269,14 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -2006,6 +2545,118 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/08-groupsync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 — GroupSync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/09-identity-bridge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    09 — Identity Bridge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/10-nats-jetstream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 — NATS JetStream
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/11-wazuh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 — Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2024,6 +2675,22 @@
       
         
           
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
         
       
         
@@ -2562,6 +3229,230 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-issue-3127/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird issue 3127
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/squid-overlay-bind-race/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squid overlay bind-race
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/overlay-ip-instability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overlay-IP-instabiliteit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/nats-store-dir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NATS store-dir
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/wazuh-cpu-glibc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wazuh CPU glibc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wazuh dashboard airgap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-jwt-allow-groups-lockout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird JWT allow-groups lockout
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/dc-lan-isolation-route-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DC LAN-isolatie route-ACL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2661,13 +3552,124 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bekende-status" class="md-nav__link">
+  <a href="#configuratie" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Bekende status
+        Configuratie
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Configuratie">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nat-masquerade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NAT masquerade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#statische-host-mapping-voor-netbird" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statische host-mapping voor NetBird
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dscp-qos-gepland" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DSCP / QoS (gepland)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#integratiepunten" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Integratiepunten
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bekende-problemen-valkuilen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bekende problemen / valkuilen
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bekende problemen / valkuilen">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dns-bootstrap-voor-inschrijving-sitepc01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNS-bootstrap voor inschrijving sitepc01
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#icmp-misleidend-onder-allow-only-beleid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ICMP misleidend onder ALLOW-only beleid
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caddy-ca-certificaat-kip-en-ei-probleem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caddy CA-certificaat kip-en-ei-probleem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sd-wan-functies-uit-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SD-WAN-functies uit scope
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2703,7 +3705,7 @@
       
       
       
-        <span class="md-tag">firewall</span>
+        <span class="md-tag">nat</span>
       
     
       
@@ -2720,43 +3722,102 @@
         <span class="md-tag">sase</span>
       
     
+      
+      
+      
+      
+        <span class="md-tag">sd-wan</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">zero-trust</span>
+      
+    
   </nav>
 
 
 
-<h1 id="vyos-sd-wan-gateway-site01">VyOS — SD-WAN-gateway (site01)<a class="headerlink" href="#vyos-sd-wan-gateway-site01" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> SASE-gateway voor de remote site — biedt WAN-connectiviteit en NAT voor het Site-LAN-segment, invulling gevend aan de SD-WAN-pijler van de SASE-stack. Equivalent aan een Zscaler Zero Trust Branch edge-appliance.<br />
-<strong>Status:</strong> ✅ Gedeployed — site01 operationeel op <code>192.168.122.33</code>. sitepc01 (clientnode op Site-LAN) heeft geen OS geïnstalleerd.<br />
+<h1 id="vyos-sase-gateway-site01">VyOS — SASE-gateway (site01)<a class="headerlink" href="#vyos-sase-gateway-site01" title="Permanent link">&para;</a></h1>
+<p><strong>Rol:</strong> SASE-gateway voor de remote site — biedt WAN-connectiviteit en NAT voor het Site-LAN, invulling gevend aan de SD-WAN-pijler via een Zero Trust Branch-model. Equivalent aan een Zscaler Zero Trust Branch edge-appliance.<br />
+<strong>Versie:</strong> VyOS 1.4 (rolling)<br />
+<strong>Status:</strong> ✅ Operationeel — site01 op <code>192.168.122.33</code>, sitepc01 (Tiny11) ingeschreven in sandbox<br />
 <strong>Configuratielocatie:</strong> <code>/etc/vyos/config.boot</code> op site01</p>
-<!-- TODO: insufficient source detail — VyOS-configuratiestappen zijn niet gedocumenteerd in de bronmaterialen, buiten topologie/adressering -->
-
 <hr />
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
-<p>VyOS draait als <code>site01</code> op het Switch-WAN-segment (<code>192.168.122.0/24</code>, eth0) met een tweede interface op Switch-Site (<code>172.16.10.0/24</code>, eth1 gateway <code>172.16.10.1</code>). Het biedt:</p>
-<ul>
-<li>WAN-connectiviteit voor het Site-LAN via NAT</li>
-<li>Routing voor sitepc01 (wanneer gedeployed) richting internet</li>
-</ul>
-<p>De site-branch wordt beschouwd als een niet-vertrouwde locatie — equivalent aan een café-netwerk. Alle beveiligingshandhaving vindt plaats op pop01, niet bij de site. sitepc01 zal een NetBird-client gebruiken voor identiteitsgebaseerde connectiviteit, identiek aan mobile01. VyOS biedt alleen de WAN-uplink — er wordt geen beveiligingsbeleid toegepast bij de branch.</p>
-<p><strong>SD-WAN-equivalent:</strong> Dit weerspiegelt de Zero Trust SD-WAN-architectuur van Zscaler waarbij de branch-appliance connectiviteit biedt terwijl de Zero Trust Exchange inspectie verzorgt. Er bestaan geen IPsec-tunnels tussen site01 en pop01 — sitepc01 bereikt resources uitsluitend via de NetBird WireGuard-overlay.</p>
-<p><strong>IP-adressering:</strong>
-- eth0 (WAN): <code>192.168.122.33</code> (gateway <code>192.168.122.1</code>)
-- eth1 (Site-LAN): <code>172.16.10.1/24</code>
-- Externe toegang via GNS3-host: SSH port-forward naar <code>10.158.10.67:7033</code></p>
-<p><strong>Hosts-vermelding voor NetBird:</strong> VyOS lost <code>netbird.sandbox.local</code> op via statische host-mapping:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>set system static-host-mapping host-name netbird.sandbox.local inet 192.168.122.23
-</code></pre></div></p>
+<p>VyOS draait als <code>site01</code> met twee interfaces: eth0 op het WAN-segment (<code>192.168.122.33</code>) en eth1 op het Site-LAN (<code>172.16.10.1/24</code>). De verantwoordelijkheden zijn bewust beperkt tot connectiviteit — het fungeert als NAT-gateway zodat apparaten op het Site-LAN het internet kunnen bereiken, maar het handhaaft zelf geen beveiligingsbeleid.</p>
+<p>De branch volgt een <strong>Zero Trust Branch-model</strong>: de gehele site wordt behandeld als een niet-vertrouwde locatie, niet anders dan een Wi-Fi-netwerk in een koffiebar. Er zijn geen IPsec-tunnels tussen site01 en pop01. In plaats daarvan draait sitepc01 een <a href="../netbird/">NetBird</a>-client en treedt toe tot de WireGuard-overlay met een identiteitsgebaseerde verbinding, exact hetzelfde pad volgend als elke mobiele gebruiker. Alle beveiligingsinspectie vindt plaats op de PoP, niet aan de branch-rand.</p>
+<p>Dit weerspiegelt de Zero Trust SD-WAN-architectuur van Zscaler, waarbij de branch-appliance ruwe connectiviteit biedt terwijl de Zero Trust Exchange (hier: de SWG-keten van pop01) inspectie en beleidshandhaving verzorgt.</p>
+<p><strong>IP-adressering:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Interface</th>
+<th>Netwerk</th>
+<th>Adres</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>eth0 (WAN)</td>
+<td>Switch-WAN <code>192.168.122.0/24</code></td>
+<td><code>192.168.122.33</code> (gw <code>192.168.122.1</code>)</td>
+</tr>
+<tr>
+<td>eth1 (Site-LAN)</td>
+<td>Switch-Site <code>172.16.10.0/24</code></td>
+<td><code>172.16.10.1</code></td>
+</tr>
+</tbody>
+</table>
+<p>Externe SSH-toegang is beschikbaar via een GNS3-host port-forward op <code>10.158.10.67:7033</code>.</p>
 <hr />
-<h2 id="bekende-status">Bekende status<a class="headerlink" href="#bekende-status" title="Permanent link">&para;</a></h2>
-<p>sitepc01 is bekabeld op Switch-Site (<code>172.16.10.50/24</code>) maar heeft geen OS geïnstalleerd. De VyOS-gateway en Site-LAN zijn topologisch compleet; de endpoint-node wacht op OS-installatie en NetBird-inschrijving.</p>
+<h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
+<h3 id="nat-masquerade">NAT masquerade<a class="headerlink" href="#nat-masquerade" title="Permanent link">&para;</a></h3>
+<p>Site-LAN-verkeer wordt via NAT door eth0 geleid zodat branch-apparaten het WAN kunnen bereiken:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>set nat source rule 10 outbound-interface name eth0
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>set nat source rule 10 source address 172.16.10.0/24
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>set nat source rule 10 translation address masquerade
+</code></pre></div>
+<h3 id="statische-host-mapping-voor-netbird">Statische host-mapping voor NetBird<a class="headerlink" href="#statische-host-mapping-voor-netbird" title="Permanent link">&para;</a></h3>
+<p>VyOS biedt een lokale DNS-override zodat branch-apparaten de NetBird-coördinatieserver kunnen resolven voordat de overlay actief is:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>set system static-host-mapping host-name netbird.sandbox.local inet 192.168.122.23
+</code></pre></div>
+<h3 id="dscp-qos-gepland">DSCP / QoS (gepland)<a class="headerlink" href="#dscp-qos-gepland" title="Permanent link">&para;</a></h3>
+<p>DSCP EF-markering voor Microsoft Teams-verkeer was gepland om de QoS-laag van SD-WAN te demonstreren, maar is nog niet geïmplementeerd. Klassieke IPsec- en geavanceerde QoS SD-WAN-functies zijn uit scope gehaald ten gunste van de Zero Trust Branch-aanpak; zie <a href="../../decisions/sdwan-descoped/">Beslissing: SD-WAN uit scope</a>.</p>
+<hr />
+<h2 id="integratiepunten">Integratiepunten<a class="headerlink" href="#integratiepunten" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Verkeerspad sitepc01:</strong> sitepc01 → NAT via site01 → NetBird-overlay → pop01 (SWG-inspectie). Dit is hetzelfde pad dat mobile01 volgt — er bestaat geen branch-specifieke tunnel.</li>
+<li><strong>Site-LAN-segment:</strong> <code>172.16.10.0/24</code>. sitepc01 zit op <code>172.16.10.50</code> met site01 als default gateway.</li>
+<li><strong>Geen directe WireGuard-tunnel</strong> tussen site01 en pop01. Alle beveiligingshandhaving is gecentraliseerd op de PoP.</li>
+<li><strong>Identiteit sitepc01:</strong> ingeschreven als <code>docent1</code> (Docenten-persona) — Entra ID joined en Intune enrolled (gedocumenteerd in V44).</li>
+<li><strong>NetBird-coördinatie:</strong> sitepc01 gebruikt de <a href="../netbird/">NetBird</a>-client om toe te treden tot de overlay, geauthenticeerd via Entra ID.</li>
+</ul>
+<hr />
+<h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
+<h3 id="dns-bootstrap-voor-inschrijving-sitepc01">DNS-bootstrap voor inschrijving sitepc01<a class="headerlink" href="#dns-bootstrap-voor-inschrijving-sitepc01" title="Permanent link">&para;</a></h3>
+<p>sitepc01 had een tijdelijke scaffold-NIC nodig (Ethernet 2 gericht op <code>8.8.8.8</code>) tijdens de initiële inschrijving, omdat <a href="../ioc2rpz/">Unbound</a> op pop01 DNS-verzoeken van niet-overlay IP-adressen blokkeert via de WAN ACL. Zonder de scaffold-NIC kan de machine Entra ID- of NetBird-eindpunten niet resolven om de inschrijving te voltooien.</p>
+<h3 id="icmp-misleidend-onder-allow-only-beleid">ICMP misleidend onder ALLOW-only beleid<a class="headerlink" href="#icmp-misleidend-onder-allow-only-beleid" title="Permanent link">&para;</a></h3>
+<p>Ping naar overlay-peers faalt by design wanneer het firewallbeleidsmodel ALLOW-only is (geen ICMP-regel). Gebruik in plaats daarvan poortgebaseerde connectiviteitstests:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">Test-NetConnection</span> <span class="n">-ComputerName</span> <span class="p">&lt;</span><span class="n">target</span><span class="p">&gt;</span> <span class="n">-Port</span> <span class="n">3128</span>
+</code></pre></div>
+<h3 id="caddy-ca-certificaat-kip-en-ei-probleem">Caddy CA-certificaat kip-en-ei-probleem<a class="headerlink" href="#caddy-ca-certificaat-kip-en-ei-probleem" title="Permanent link">&para;</a></h3>
+<p>Het interne CA-certificaat van Caddy moet op sitepc01 geïmporteerd worden voordat NetBird-inschrijving kan slagen, maar het certificaat kan niet via de overlay worden overgedragen omdat de overlay nog niet actief is. De workaround is het certificaat via de scaffold-NIC over te zetten voordat de overlay tot stand is gebracht.</p>
+<h3 id="sd-wan-functies-uit-scope">SD-WAN-functies uit scope<a class="headerlink" href="#sd-wan-functies-uit-scope" title="Permanent link">&para;</a></h3>
+<p>Klassieke SD-WAN-mogelijkheden zoals IPsec-tunnelling en QoS-markering zijn uit scope gehaald voor het project. De rationale is gedocumenteerd in <a href="../../decisions/sdwan-descoped/">Beslissing: SD-WAN uit scope</a> en vervangen door het Zero Trust Branch-model beschreven in <a href="../../decisions/zt-sdwan-branch/">Beslissing: ZT SD-WAN Branch</a>.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../overview/architecture/">Architectuuroverzicht</a></li>
-<li><a href="../gns3/">Component: GNS3</a></li>
 <li><a href="../netbird/">Component: NetBird</a></li>
+<li><a href="../gns3/">Component: GNS3</a></li>
 <li><a href="../../concepts/sase/">Concept: SASE</a></li>
-<li><a href="../../decisions/gns3-vs-eveng/">Beslissing: GNS3 vs EVE-NG</a></li>
+<li><a href="../../decisions/sdwan-descoped/">Beslissing: SD-WAN uit scope</a></li>
+<li><a href="../../decisions/zt-sdwan-branch/">Beslissing: ZT SD-WAN Branch</a></li>
+<li><a href="../../findings/dc-lan-isolation-route-acl/">Bevinding: DC-LAN-isolatie route ACL</a></li>
 </ul>
 
 
