@@ -96,7 +96,7 @@ Access via `https://ioc2rpz.sandbox.local` (proxied by Caddy). After first login
 - TSIG key: `tkey_rpz_transfer`
 - Notify: `192.168.122.13` (pop01)
 
-After "Publish", verify the zone log shows ~71 000+ indicators and "DNS Notify sent".
+After "Publish", verify the zone log shows ~35 900 indicators (≈71 800 rules) and "DNS Notify sent".
 
 **ioc2rpz.gui JavaScript bug:** The login form has a missing `e.preventDefault()` in the `signIn` function, causing the browser to submit natively while axios also posts — the native submit reloads the page, aborting the axios request. Apply the fix once after container start:
 
@@ -213,7 +213,7 @@ DNS RPZ block events are published to the NATS event bus via `security.alert.dns
 
 **ioc2rpz.gui JS login bug** — upstream bug in `io2auth.js`. Apply the sed fix after each container rebuild. See [Finding: ioc2rpz GUI JS bug](../findings/ioc2rpz-gui-js-bug.md).
 
-**DNS NOTIFY does not reach BIND** — ioc2rpz sends NOTIFY to `192.168.122.13:53` (Unbound port), not `53530` (BIND port). BIND discovers updates only at the next SOA poll (3600 s). Manual trigger: `rndc -p 953 retransfer threat-intel.rpz.sase`. In production, add a `pf rdr` rule redirecting port-53 NOTIFY from `192.168.122.23` to port 53530.
+**DNS NOTIFY does not reach BIND** — ioc2rpz sends NOTIFY to `192.168.122.13:53` (Unbound port), not `53530` (BIND port). BIND discovers updates only at the next SOA poll (3600 s). Manual trigger: `rndc retransfer threat-intel.rpz.sase`. In production, add a `pf rdr` rule redirecting port-53 NOTIFY from `192.168.122.23` to port 53530.
 
 **BIND zone directory uses `secondary/`, not `slave/`** — modern BIND (9.20+) uses the naming convention `secondary` instead of the legacy `slave`. Zone files are stored at `/usr/local/etc/namedb/secondary/threat-intel.rpz.sase.db`. Documentation referencing `/slave/` is outdated.
 

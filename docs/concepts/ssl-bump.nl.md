@@ -9,7 +9,7 @@ tags: [ssl-bump, tls, squid, icap, proxy, sase]
 
 ## Hoe het hier van toepassing is
 
-Zonder SSL Bump zien ClamAV en de Python DLP-server alleen een ondoorzichtige versleutelde stroom — nutteloos voor malwarescanning of DLP. SSL Bump maakt HTTPS-inspectie mogelijk: Squid ontsleutelt elke HTTPS-verbinding, geeft de leesbare body door aan de ICAP-inspectieketenm en herencrypteert dan richting de originele server.
+Zonder SSL Bump zien ClamAV en de Python DLP-server alleen een ondoorzichtige versleutelde stroom — nutteloos voor malwarescanning of DLP. SSL Bump maakt HTTPS-inspectie mogelijk: Squid ontsleutelt elke HTTPS-verbinding, geeft de leesbare body door aan de ICAP-inspectieketen en herencrypteert dan richting de originele server.
 
 De SSL Bump CA voor dit project is `SASE-PoC-CA`, een zelfondertekende root CA geïnstalleerd in de Windows-vertrouwensopslag op mobile01. Zonder dit certificaat verschijnt elke HTTPS-site als een niet-vertrouwde site in de browser.
 

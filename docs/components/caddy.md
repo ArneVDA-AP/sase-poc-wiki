@@ -15,7 +15,7 @@ tags: [caddy, network, sase, proxy, tls, wpad]
 
 Caddy on mgmt01 serves three distinct roles that happen to share the same process:
 
-**1. WPAD/PAC file server** — Caddy serves `/wpad.dat` at `http://wpad.sandbox.local` on mgmt01's overlay IP `100.70.135.241`. BYOD clients discover this URL automatically when their DNS search domain is `sandbox.local`: the browser queries `wpad.sandbox.local`, gets a response, fetches `/wpad.dat`, and executes the PAC file JavaScript to learn that all traffic should go to `PROXY 100.70.154.79:3128` (pop01 Squid). See [Concept: WPAD/PAC](../concepts/wpad-pac.md).
+**1. WPAD/PAC file server** — Caddy serves `/wpad.dat` at `http://wpad.sandbox.local` on mgmt01's overlay IP `100.70.135.241`. The browser fetches `wpad.sandbox.local/wpad.dat` and executes the PAC file JavaScript to learn that all traffic should go to `PROXY 100.70.154.79:3128` (pop01 Squid). In the PoC, mobile01 is pointed at this URL manually ("Use setup script") — WPAD auto-discovery does not trigger because NetBird sets the `sandbox.local` search domain on the `wt0` adapter only, not in the global suffix list. See [Concept: WPAD/PAC](../concepts/wpad-pac.md).
 
 **2. NetBird TLS terminator** — The NetBird quickstart script installs Caddy as the TLS-terminating reverse proxy for all NetBird and Zitadel services at `netbird.sandbox.local`. The TLS certificate is self-signed via Caddy's `tls internal` directive (Caddy's built-in local CA). Let's Encrypt cannot be used because `netbird.sandbox.local` is not publicly resolvable. See [Decision: Zitadel IdP broker](../decisions/zitadel-idp-broker.md).
 

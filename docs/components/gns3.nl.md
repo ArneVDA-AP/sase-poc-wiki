@@ -19,7 +19,7 @@ GNS3 draait als een systemd-service op een Ubuntu 24.04 VM (`poc-1a`) binnen Pro
 
 **Geneste virtualisatie:** GNS3 gebruikt QEMU/KVM voor VMs binnen de topologie. De Proxmox-host geeft CPU-virtualisatie-extensies (VMX/SVM) door naar de Ubuntu VM met `cpu type = host`. Verifieer met `egrep -c '(vmx|svm)' /proc/cpuinfo` — moet > 0 zijn.
 
-**libvirt als WAN-segment:** De NAT-node van GNS3 koppelt aan het standaardnetwerk van libvirt (`virbr0`, `192.168.122.0/24`). libvirt verwerkt NAT en internetrouting automatisch — geen handmatige iptables-regels nodig voor internettoegang van VMs.
+**libvirt als WAN-segment:** De NAT-node van GNS3 koppelt aan het standaardnetwerk van libvirt (`virbr0`, `192.168.122.0/24`). libvirt verwerkt NAT en internetrouting automatisch — geen handmatige iptables-regels nodig voor internettoegang van VMs. Dit vervangt de EVE-NG IP-forwarding- en NAT-stappen uit het handboek.
 
 ---
 
@@ -33,7 +33,7 @@ GNS3 draait als een systemd-service op een Ubuntu 24.04 VM (`poc-1a`) binnen Pro
 | mgmt01 | QEMU (QCOW2) | Ubuntu 24.04 | 16384 MB | 4 |
 | dc01 | QEMU (QCOW2) | Ubuntu 24.04 | 4096 MB | 2 |
 | site01 | QEMU (QCOW2) | VyOS | 1024 MB | 1 |
-| sitepc01 | QEMU (QCOW2) | Ubuntu 24.04 | 4096 MB | 2 |
+| sitepc01 | QEMU (QCOW2) | Tiny11 (Windows 11) | 4096 MB | 2 |
 
 pop01 vereist 8 GB RAM voor ClamAV + Suricata + Squid die gelijktijdig draaien (het handboek specificeert 4 GB — dit is onvoldoende).
 
@@ -47,10 +47,14 @@ Switch-WAN   ──── site01 eth0       (site01 WAN-interface)
 Switch-LAN   ──── pop01  vtnet1     (pop01 LAN → DC-LAN)
 Switch-LAN   ──── dc01   ens3       (dc01 DC-LAN)
 Switch-Site  ──── site01 eth1       (site01 Site-LAN)
-Switch-Site  ──── sitepc01 ens3     (sitepc01 Site-LAN)
+Switch-Site  ──── sitepc01 Ethernet (sitepc01 Site-LAN)
 ```
 
-mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het verbindt direct via zijn eigen netwerkadapter en simuleert een echte BYOD-gebruiker buiten de GNS3-topologie.
+```
+NAT-Internet ──── mobile01 NIC1     (aparte TAP — simulatie van extern netwerk)
+```
+
+mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het verbindt direct via zijn eigen netwerkadapter en simuleert een echte BYOD-gebruiker buiten de GNS3-topologie. Het bereikt de SASE-stack uitsluitend via de NetBird WireGuard-tunnel.
 
 ### IP-adressering
 
@@ -67,15 +71,15 @@ mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het v
 | Segment | CIDR | Gateway | Nodes |
 |---------|------|---------|-------|
 | DC-LAN | `10.0.0.0/24` | `10.0.0.1` (pop01 vtnet1) | dc01: `10.0.0.100` |
-| Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.50` (geen OS) |
+| Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.10` |
 
 **NetBird-overlay (100.64.0.0/10):**
 
-| Node | Overlay-IP |
-|------|-----------|
-| pop01 | `100.70.154.79` |
-| mgmt01 | `100.70.135.241` |
-| mobile01 | `100.70.95.98` |
+| Node | Overlay-IP | Rol |
+|------|-----------|-----|
+| pop01 | `100.70.154.79` | Data plane, exit node, DNS-primary |
+| mgmt01 | `100.70.135.241` | Management plane, WPAD-server |
+| mobile01 | `100.70.95.98` | BYOD-client |
 
 ### Port-forwards voor externe toegang
 
@@ -90,7 +94,14 @@ iptables -t nat -A PREROUTING -p tcp --dport 7033 -j DNAT --to 192.168.122.33:22
 iptables -I FORWARD 1 -d 192.168.122.0/24 -j ACCEPT
 ```
 
-De GNS3-host draait ook nginx SNI-stream-passthrough op poort 443, routeert `netbird.sandbox.local` naar `192.168.122.23:443`.
+De GNS3-host draait ook nginx SNI-stream-passthrough op poort 443, routeert op basis van hostnaam:
+
+| SNI-hostnaam | Doel |
+|-------------|------|
+| `netbird.sandbox.local` | `192.168.122.23:443` (sandbox mgmt01) |
+| `netbird.sase.local` | `192.168.122.20:443` (teamproject mgmt01) |
+
+Twee SNI-entries vermijden poortconflicten tussen de sandbox- en de teamprojectstack die op dezelfde GNS3-host draaien.
 
 ---
 
@@ -107,22 +118,25 @@ Huidige snapshots:
 | Naam | Inhoud |
 |------|--------|
 | `Fase2-ZTNA-Complete` | Volledige ZTNA-stack operationeel (NetBird, Zitadel, Entra ID-federatie) |
+| `Fase3-Security-Complete` | Gepland — na Zeek/RITA-uitrol |
 
 ---
 
 ## Bekende problemen / valkuilen
 
-**"Stop Node" = QEMU SIGKILL → bestandssysteemcorruptie op OPNsense** — de stopknop van GNS3 stuurt SIGKILL direct naar QEMU. OPNsense draait op FreeBSD UFS met soft updates, dat asynchroon schrijft. Een abrupte kill kan een inconsistente bestandssysteemstatus of verloren configuratie veroorzaken. Sluit OPNsense altijd correct af:
+**"Stop Node" = QEMU SIGKILL → bestandssysteemcorruptie op OPNsense** — de stopknop van GNS3 stuurt SIGKILL direct naar QEMU. OPNsense draait op FreeBSD UFS met soft updates, dat asynchroon schrijft. Een abrupte kill kan een inconsistente bestandssysteemstatus of verloren configuratie veroorzaken. Sluit OPNsense altijd correct af voordat je de GNS3-node stopt:
 ```bash
+# Vanuit OPNsense-console of SSH:
 shutdown -h now
+# Wacht tot de node stopt in GNS3, ga dan verder
 ```
-Oplossing: voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01.
+Mitigatie: voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01 — FreeBSD draait dan automatisch fsck bij de volgende boot na een onregelmatige afsluiting.
 
 **iptables FORWARD-volgorde** — libvirt plaatst zijn eigen REJECT-regels in de FORWARD-keten. Regels toegevoegd met `-A FORWARD` komen na die REJECT-regels terecht en matchen nooit. Gebruik altijd `-I FORWARD 1` voor ACCEPT-regels. Zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
 
-**ubridge learning bridge beperkt verkeerzichtbaarheid** — Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort — niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet.
+**ubridge learning bridge beperkt verkeerzichtbaarheid** — Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort — niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet. Dit heeft impact op elke toekomstige Zeek/RITA-uitrol: valideer met `tcpdump -i ens3 -n host 8.8.8.8` op mgmt01 vóór uitrol.
 
-**sitepc01 heeft geen OS geïnstalleerd** — de node bestaat in de topologie en is bekabeld naar Switch-Site, maar Ubuntu 24.04 is niet geïnstalleerd. Hij is niet operationeel actief.
+**sitepc01 draait nu Tiny11 (Windows 11)** — aanvankelijk aangemaakt als een lege node (geen OS), werd het later geïmporteerd als een Tiny11-image en ingeschreven in de NetBird-overlay als `docent1` (Entra ID joined + Intune enrolled). Het is operationeel actief.
 
 ---
 
@@ -133,3 +147,4 @@ Oplossing: voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01.
 - [Component: VyOS](vyos.md)
 - [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md)
 - [Beslissing: GNS3 vs EVE-NG](../decisions/gns3-vs-eveng.md)
+- [Runbook: Labomgeving](../runbooks/01-lab-environment.md)

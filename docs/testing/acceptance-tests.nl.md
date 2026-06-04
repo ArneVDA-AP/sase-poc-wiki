@@ -18,18 +18,18 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **F1** | ZTNA-tunnelverbinding | ZTNA | ✅ Gevalideerd |
 | **F2** | Entra ID SSO | ZTNA | ✅ Gevalideerd |
 | **F3** | Posturecontrole | ZTNA | ⏳ Deels bewezen — CA-beleid actief, Intune-enrolled (Report-only) |
-| **F4** | Datacentertoegang via ZTNA | ZTNA | ✅ Gevalideerd |
+| **F4** | Datacentertoegang via ZTNA | ZTNA | ✅ Gevalideerd (bij opbouw, mei 2026) — DC-LAN-over-overlay-pad sindsdien verwijderd in V34, uitgesteld |
 | **F5** | URL-filtering | SWG | ✅ Gevalideerd |
 | **F6** | SSL-Bump-inspectie | SWG | ✅ Gevalideerd |
 | **F7** | Malwaredetectie (ClamAV) | SWG | ✅ Gevalideerd |
-| **F8** | Firewall-segmentatie | FWaaS | ✅ Gevalideerd (indirect — ZTNA ACL-handhaving) |
+| **F8** | Firewall-segmentatie | FWaaS | ✅ Gevalideerd — DC-LAN-isolatie blijft gelden (niet-ingeschreven = geen route); positief ACL-pad verwijderd in V34 |
 | **F9** | Suricata-alertgeneratie | FWaaS | ✅ Gevalideerd (uitgebreid voorbij oorspronkelijke definitie) |
 | **F10** | Centrale logaggregatie (SIEM) | SIEM | ✅ Operationeel — Wazuh + NATS-forwarder + pop01-agent |
 | **F11** | CASB-alert en herstel | CASB | ✅ Functioneel — Wazuh + M365 Management Activity API + Active Response |
 | **F12** | IPsec-tunnelverbinding | SD-WAN | ✖ N.v.t. — architectuurbeslissing (zie [SD-WAN Geschrapt](../decisions/sdwan-descoped.md)) |
-| **F13** | QoS-verkeersclassificatie | SD-WAN | ✖ N.v.t. — architectuurbeslissing |
+| **F13** | QoS-verkeersclassificatie | SD-WAN | ✖ N.v.t. als klassieke-IPsec-test — QoS is in plaats daarvan geïmplementeerd + gevalideerd onder het ZT-Branch-model (V43 Test #5; zie [ZT SD-WAN Branch](../decisions/zt-sdwan-branch.md)) |
 | **F14** | Datacentertoegang via SD-WAN | SD-WAN | ✖ N.v.t. — architectuurbeslissing |
-| **F15** | Volledige SASE-validatie | Integratie | ✅ Gedeeltelijk — stappen 1–6 gevalideerd, stappen 7–8 N.v.t. (SD-WAN), stap 9 operationeel (SIEM via Wazuh) |
+| **F15** | Volledige SASE-validatie | Integratie | ✅ Gedeeltelijk — stappen 1–6 + 8 gevalideerd, stap 7 N.v.t. (klassiek IPsec SD-WAN), stap 9 operationeel (SIEM via Wazuh) |
 
 ### Aanvullende gevalideerde tests (buiten F1–F15)
 
@@ -59,7 +59,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **SWG** | F5, F6, F7, T-A1, T-A2, T-A3, T-A4–A6 | — | — |
 | **FWaaS** | F8, F9, F10, T-A7, T-A8, T-A9 | — | — |
 | **CASB** | F11, T-A10, T-A11, T-A12, T-A13 | — | — |
-| **SD-WAN** | — | — | F12, F13, F14 |
+| **SD-WAN** | QoS + failover-detectie (ZT-Branch, V43 Test #5/#6) | — | F12, F13, F14 (klassiek IPsec) |
 
 ---
 
@@ -100,7 +100,7 @@ Testprocedure:
 1. `netbird down` op mobile01
 2. `netbird up` → browser stuurt door naar `https://netbird.sandbox.local` → Zitadel → `login.microsoftonline.com`
 3. Authenticeer als `2ITCSC1A-mobile_user1@aplab.be`
-4. Tunnel wordt actief; peer verschijnt in dashboard, automatisch toegewezen aan groep `SASE-MobileUsers` via setup key auto-group
+4. Tunnel wordt actief; peer verschijnt in dashboard, toegewezen aan zijn persona-groep (`Studenten`/`Docenten`/`Admins`) via de Entra ID-groepsclaim in het OIDC-token — de groep materialiseert in NetBird bij de eerste verbinding (Pad B stript de `2ITCSC1A-`-prefix naar de interne groepsnaam)
 
 Zie [NetBird](../components/netbird.md), [Beslissing: Zitadel als IdP-broker](../decisions/zitadel-idp-broker.md).
 
@@ -123,7 +123,7 @@ Zie [NetBird](../components/netbird.md), [Beslissing: Zitadel als IdP-broker](..
 Ingeschreven apparaten:
 
 - **mobile01** — ingeschreven als `2ITCSC1A-MOB-1`, conform
-- **sitepc01** — ingeschreven als `docent1`, Entra joined + Intune-ingeschreven
+- **sitepc01** — ingeschreven in NetBird als `docent1` (Docenten); afzonderlijk Entra joined + Intune-ingeschreven via `student1` (het enige Intune-gelicentieerde sandbox-account)
 
 Twee beleidsregels blijven in report-only-modus (geo-blokkering, conform apparaat) tot de demo om lockout tijdens testen te vermijden.
 
@@ -135,16 +135,16 @@ Zie [Beslissing: CA + Posture hybride](../decisions/ca-posture-hybrid.md).
 
 ### F4 — Datacentertoegang via ZTNA
 
-DC-LAN (10.0.0.0/24) is alleen bereikbaar via het NetBird Networks-mechanisme. Een host die niet is ingeschreven bij NetBird heeft geen route naar dit subnet, ongeacht IP-connectiviteit.
+**✅ Gevalideerd bij opbouw (mei 2026); het pad is nadien verwijderd in V34.** Op het moment van validatie was DC-LAN (10.0.0.0/24) bereikbaar via het NetBird Networks-mechanisme: een host die niet bij NetBird was ingeschreven had geen route naar dit subnet, ongeacht IP-connectiviteit, terwijl een ingeschreven peer met het ACL-beleid `Datacenter Access` het wél kon bereiken.
 
 ```powershell
-# mobile01 (PowerShell)
+# mobile01 (PowerShell) — zoals getest in mei 2026
 Test-NetConnection 10.0.0.100 -Port 80
 ```
 
-Verwacht: `InterfaceAlias: wt0`, `TcpTestSucceeded: True`. Valideert het ACL-beleid `Datacenter Access` en de Networks-routeringsconfiguratie.
+Op het moment van validatie: `InterfaceAlias: wt0`, `TcpTestSucceeded: True`, wat het ACL-beleid `Datacenter Access` en de Networks-routeringsconfiguratie uitoefende.
 
-Zie [NetBird](../components/netbird.md).
+**Huidige toestand:** Het `Internal-DC` Network en het `Datacenter Access`-beleid zijn verwijderd in de V34-personamigratie — site-to-site-achtige resourcetoegang is in strijd met het Zero-Trust per-resource-model. DC-LAN-over-overlay is uitgesteld en kan hervat worden in de Cosmos-sessie. Zie [runbook 02](../runbooks/02-ztna-overlay.md) en [NetBird](../components/netbird.md).
 
 ---
 
@@ -213,14 +213,14 @@ Zie [ClamAV/c-icap](../components/clamav-cicap.md).
 
 ### F8 — Firewall-segmentatie
 
-DC-LAN-isolatie wordt afgedwongen op de overlay-laag — alleen NetBird-ingeschreven peers met het ACL-beleid `Datacenter Access` kunnen dc01 bereiken.
+**✅ Gevalideerd.** De kern-segmentatie-eigenschap — een niet-ingeschreven apparaat heeft geen route naar DC-LAN (10.0.0.0/24) — geldt onafhankelijk van enig overlay-toegangspad en blijft vandaag waar.
 
-Gevalideerd door contrast:
+Gevalideerd door contrast (mei 2026, toen het positieve pad nog bestond):
 
-- mobile01 **zonder** NetBird: `ping 10.0.0.100` → Bestemming onbereikbaar (geen route)
-- mobile01 **met** NetBird + beleid: `Test-NetConnection 10.0.0.100 -Port 80` → `TcpTestSucceeded: True` via `wt0`
+- mobile01 **zonder** NetBird: `ping 10.0.0.100` → Bestemming onbereikbaar (geen route) — *nog steeds waar*
+- mobile01 **met** NetBird + het `Datacenter Access`-beleid: `Test-NetConnection 10.0.0.100 -Port 80` → `TcpTestSucceeded: True` via `wt0` — *positief pad verwijderd in V34*
 
-**Architectuurnoot:** DC-LAN gebruikt NetBird Networks (niet Network Routes). Toegang vereist zowel overlay-inschrijving als expliciet groepslidmaatschap in `SASE-InternalResources`.
+**Architectuurnoot:** DC-LAN gebruikte NetBird Networks (niet Network Routes). Het positieve pad vereiste zowel overlay-inschrijving als lidmaatschap van de groep `SASE-InternalResources`; zowel het `Internal-DC` Network als die groep zijn verwijderd in de V34-personamigratie (zie [runbook 02](../runbooks/02-ztna-overlay.md)). De negatieve isolatie-eigenschap — niet-ingeschreven = geen route — blijft ongewijzigd.
 
 Zie [NetBird](../components/netbird.md).
 
@@ -408,8 +408,8 @@ Wazuh is geïmplementeerd met M365 Management Activity API-integratie en Active 
 
 - **Inline-laag:** Squid + ICAP (operationeel)
 - **API-laag:** Wazuh + M365 Management Activity API
-- **Aangepaste regels:** SID 100200/100201 voor SharePoint `SharingSet` + `Anyone`/`External`-detectie
-- **Actieve respons:** `sharepoint_remediate.sh`
+- **Aangepaste regels:** basisregel `100600` (`producer=o365`), met `100601` (`AnonymousLinkCreated`), `100602` (`SharingLinkCreated` + scope `Anyone`), `100603` (`SharingSet` + guest)
+- **Actieve respons:** `sharepoint_remediate.sh` (regels 100601/100602), `guest_remediate.sh` (regel 100603) — achter de ENFORCE-poort, standaard detect-only (live revoke nog niet actief)
 
 Graph API-tenantmachtigingen bevestigd op 1 april 2026 (beheerdertoestemming verleend op `aplab.be`).
 
@@ -424,12 +424,12 @@ Graph API-tenantmachtigingen bevestigd op 1 april 2026 (beheerdertoestemming ver
 | 3 | Bezoekt geblokkeerde site → Geblokkeerd | ✅ Gevalideerd (F5) |
 | 4 | Downloadt EICAR → Geblokkeerd | ✅ Gevalideerd (F7) |
 | 5 | Bezoekt testmyids.com → Alert in IDS | ✅ Gevalideerd (F9-1) |
-| 6 | Opent datacentersite → Geslaagd | ✅ Gevalideerd (F4) |
-| 7 | Sitegebruiker pingt datacenter via tunnel | ✖ N.v.t. — sitepc01 heeft geen OS, IPsec geschrapt |
-| 8 | QoS-markering zichtbaar op VyOS | ✖ N.v.t. — QoS-architectuurbeslissing |
+| 6 | Opent datacentersite → Geslaagd | ✅ Gevalideerd bij opbouw (F4); DC-LAN-over-overlay-pad verwijderd in V34, uitgesteld |
+| 7 | Sitegebruiker pingt datacenter via tunnel | ✖ N.v.t. — klassieke IPsec site-to-site geschrapt; de ZT-Branch gebruikt in plaats daarvan per-apparaat NetBird-inschrijving |
+| 8 | QoS-markering zichtbaar op VyOS | ✅ Gevalideerd — DSCP-markering zichtbaar via `tc` op VyOS eth0 (V43 Test #5: EF geclassificeerd, 0 drops onder last) |
 | 9 | Managementdashboard toont alle services UP | ✅ Operationeel (Wazuh SIEM geïmplementeerd) |
 
-7 van 9 F15-stappen gevalideerd. De 2 resterende zijn architectureel N.v.t. (SD-WAN).
+Stappen 1–5, 8 en 9 weerspiegelen de huidige stack. Stap 6 is gevalideerd bij opbouw (F4), maar het DC-LAN-over-overlay-pad is verwijderd in V34 (uitgesteld). Stap 7 is architectureel N.v.t. — klassiek IPsec SD-WAN, vervangen door het ZT-Branch-model.
 
 ---
 

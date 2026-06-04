@@ -25,7 +25,7 @@ Het handboek specificeerde transparante proxy via `pf rdr`.
 
 WPAD/PAC expliciete proxy, waarbij het PAC-bestand wordt geserveerd door Caddy op mgmt01 via `http://wpad.sandbox.local/wpad.dat`.
 
-De transparante proxyoptie was geen levensvatbaar alternatief — het is technisch onmogelijk op de `wt0`-interface. WireGuard is een Laag 3 gerouteerde interface; `pf rdr` werkt op inkomende frames en ziet geen verkeer dat via `wt0` wordt doorgestuurd. Bevestigd via `tcpdump -i wt0 -n 'tcp'` die 0 pakketten toont (Verslag17; OPNsense GitHub issue #3857, gesloten als "not planned").
+De transparante proxyoptie was geen levensvatbaar alternatief — het is technisch onmogelijk op de `wt0`-interface. WireGuard is een Laag 3 gerouteerde interface; `pf rdr` werkt op inkomende frames en ziet geen verkeer dat via `wt0` wordt doorgestuurd. Bevestigd via `tcpdump -i wt0 -n 'tcp'` die 0 pakketten toont (Verslag17, Bevinding 17.10/17.11; OPNsense GitHub issue #3857, gesloten als "not planned").
 
 WPAD/PAC is ook het architecturaal correcte patroon voor een SASE-stack: het commerciële equivalent (Zscaler Client Connector) distribueert proxyconfiguratie naar de browser op precies dezelfde manier.
 

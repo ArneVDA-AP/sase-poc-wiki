@@ -171,15 +171,13 @@ nslookup wpad.sandbox.local
 
 ---
 
-## Stap 7: ACL-beleidsregels aanmaken voor WPAD-bereikbaarheid
+## Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
 
-Als je het standaard alles-naar-alles-beleid hebt vervangen in Runbook 02, controleer of deze beleidsregels bestaan:
+Onder het V34-personamodel (zie [Component: NetBird](../components/netbird.nl.md)) draagt één allow-beleid alle connectiviteit: **`Personas-to-Core-Services`** — bronnen `Studenten`/`Docenten`/`Admins` → bestemming `Core-Services` (pop01 + mgmt01), protocol TCP 3128. Dit laat elke BYOD-persona-peer de pop01 Squid-proxy bereiken.
 
-- **Admin-Infrastructure** — beheerders kunnen beheerinfra bereiken (al aangemaakt)
-- **Mobile-to-Services** — BYOD-clients kunnen mgmt01 WPAD + pop01-proxy bereiken (al aangemaakt)
-- **Datacenter Access** — voeg `SASE-Admins` toe als bron zodat mgmt01 pop01 Unbound voor DNS kan bereiken
+> **Verouderd:** eerdere builds gebruikten aparte `Admin-Infrastructure`-, `Mobile-to-Services`- en `Datacenter Access`-beleidsregels op `SASE-*`-groepen. Die beleidsregels en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.
 
-Zonder de DNS ACL toont `netbird status` op mgmt01 "Nameservers: 0/1 Available".
+**DNS-bereikbaarheidsvalkuil:** een peer die de pop01-naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft, toont `Nameservers: 0/1 Available` in `netbird status`. Zorg dat de groep van de peer een ACL-pad naar `Core-Services` (pop01 Unbound) heeft.
 
 ---
 

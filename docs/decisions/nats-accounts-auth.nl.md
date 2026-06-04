@@ -10,7 +10,7 @@ tags: [decision, nats, jetstream, authentication]
 
 ## Context
 
-NATS vereist een authenticatiemodel om de toegang tot JetStream-streams en -consumers te beveiligen. Identity Bridge en Control Daemon publiceren en subscriben beide op JetStream-subjects, waarvoor `$JS.API.>`-toegang nodig is voor het aanmaken van streams, het beheren van consumers en het bevestigen van berichten. Er bestaan twee authenticatiemodellen in NATS: het eenvoudigere `authorization{}`-blok (single-account) en het meer capabele `accounts{}`-blok (multi-account met expliciete permissietoekenningen).
+NATS vereist een authenticatiemodel om de toegang tot JetStream-streams en -consumers te beveiligen. De Control Daemon en de NATS→Wazuh-forwarder consumeren uit JetStream, waarvoor `$JS.API.>`-toegang nodig is voor consumerbeheer en het bevestigen van berichten, terwijl producers (de detectiecomponenten en de Identity Bridge) enkel naar hun eigen subjects plus `_INBOX.>` publiceren. Er bestaan twee authenticatiemodellen in NATS: het eenvoudigere `authorization{}`-blok (single-account) en het meer capabele `accounts{}`-blok (multi-account met expliciete permissietoekenningen).
 
 ## Overwogen opties
 

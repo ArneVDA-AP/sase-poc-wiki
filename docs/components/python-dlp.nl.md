@@ -108,6 +108,14 @@ De Python DLP ICAP-server publiceert upload-inspectiegebeurtenissen naar `securi
 
 **Algoritmische validators hebben drempelwaarden** — één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas drempelwaarden aan in `dlp_server.py` op basis van de gebruikssituatie.
 
+**Code review — 10 problemen geïdentificeerd, 3 kritieke fixes toegepast:**
+- **OOM-risico:** De oorspronkelijke code had geen body-groottelimiet — een grote upload kon het containergeheugen uitputten. Fix: uploads > 10 MB worden doorgelaten (fail-open) zonder scanning.
+- **Log-injectie:** De `X-Client-IP`-headerwaarde werd zonder sanering rechtstreeks naar de loguitvoer geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
+- **Geen uitzonderingsafhandeling:** Uitzonderingen in `dlpscan_REQMOD` zouden de handler laten crashen zonder respons naar Squid. Fix: scanuitzonderingen resulteren in fail-open (aanvraag passeert).
+- **PyPDF2 → pypdf:** PyPDF2 is end-of-life (niet langer onderhouden). Vervangen door `pypdf`, de actieve fork.
+
+**Docker-daemon-autostart vereist** — `restart: unless-stopped` in `docker-compose.yml` herstart de container alleen als de Docker-daemon draait. Bij een herstart van mgmt01 moet de Docker-daemon ook ingeschakeld zijn voor autostart (`systemctl enable docker`). Zonder dit start de DLP-container niet na een herstart.
+
 ---
 
 ## Gerelateerd
@@ -121,3 +129,4 @@ De Python DLP ICAP-server publiceert upload-inspectiegebeurtenissen naar `securi
 - [Bevinding: pyicap collections-bug](../findings/pyicap-collections-bug.md)
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)
+- [Runbook: Malware & DLP-pipeline](../runbooks/04-malware-dlp.md)

@@ -6,7 +6,7 @@ tags: [decision, suricata, network, opnsense]
 # Beslissing: Suricata op WAN + LAN (niet wt0)
 
 **Status:** Geïmplementeerd  
-**Datum:** Maart/april 2026 (Verslag22–23)
+**Datum:** Maart 2026 (Verslag22–23)
 
 ## Context
 

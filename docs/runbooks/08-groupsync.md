@@ -25,12 +25,10 @@ tags: [runbook, identity, entra-id, zitadel, netbird, groupsync]
 In the Azure portal, navigate to the app registration (`11803ee8-eb15-462c-a286-5415c17a29c6`):
 
 1. Go to **Token configuration** in the left menu
-2. Click **Add optional claim**
-3. Select token type: **ID**
-4. Check `cloud_displayname`
-5. Save
+2. Open the **Manifest** editor and attach `cloud_displayname` to the groups claim (configured in Step 2): under `optionalClaims` add `"additionalProperties": ["cloud_displayname"]` to the `groups` entry, and set `"groupMembershipClaims": "ApplicationGroup"`
+3. Save the manifest
 
-This ensures the user's display name (which includes the class prefix) is included in the ID token sent to Zitadel.
+> **Gotcha: `cloud_displayname` is not selectable in the Token Configuration UI** — it must be added by editing the manifest directly. It makes the `groups` claim emit each group's *display name* (e.g. `2ITCSC1A-Studenten`) instead of its ObjectID GUID — the hard precondition for Path B, since Zitadel's allowlist matches on the display-name string and cannot match a GUID. Requires Azure AD Premium (aplab.be has A5/P2) and cloud-only security groups.
 
 ---
 
@@ -54,11 +52,11 @@ Navigate to **Enterprise Applications** → find the corresponding Enterprise Ap
 1. Go to **Users and groups** → **Add user/group**
 2. Assign these 3 security groups:
 
-| Security Group | Maps to persona | Purpose |
-|----------------|-----------------|---------|
-| SASE-MobileUsers | Studenten | BYOD mobile users with restricted access |
-| SASE-SiteUsers | Docenten | Site users with standard access |
-| SASE-Admins | Admins | Full administrative access |
+| Entra ID security group | NetBird group (Path B) | Purpose |
+|-------------------------|------------------------|---------|
+| `2ITCSC1A-Studenten` | `Studenten` | Student persona — proxy access via Core-Services |
+| `2ITCSC1A-Docenten` | `Docenten` | Teacher persona — proxy access via Core-Services |
+| `2ITCSC1A-Admins` | `Admins` | Admin persona — full administrative access |
 
 3. Confirm all 3 groups appear in the assignment list
 
@@ -87,9 +85,9 @@ In the Zitadel admin console on mgmt01, navigate to **Actions**:
 
 This action:
 
-- Reads the `cloud_displayname` claim from the Entra ID token
-- Strips the `2ITcsc1A-` class prefix from the display name
-- Maps GUIDs from the groups claim to clean group names (Studenten, Docenten, Admins)
+- Reads the group display names from the Entra ID token's `groups` claim (present as names, not GUIDs, because `cloud_displayname` is enabled — Step 1)
+- Maps each display name to its clean persona name via a hardcoded allowlist (`2ITCSC1A-Studenten` → `Studenten`, `2ITCSC1A-Docenten` → `Docenten`, `2ITCSC1A-Admins` → `Admins`); a group not in the allowlist is dropped (fail-closed)
+- Writes the matched clean names to the user metadata key `sase_groups` (comma-joined)
 
 ### Action 2 — Complement Token
 
@@ -98,7 +96,7 @@ This action:
 
 This action:
 
-- Calls `setClaim('groups', [...])` to inject the resolved group names into the Zitadel-issued JWT
+- Reads `sase_groups` from the user's metadata and calls `setClaim('groups', [...])` to inject those clean names into the Zitadel-issued JWT
 - NetBird reads this `groups` claim to assign users to persona groups
 
 > **Gotcha: Both actions must have `allowed-to-fail: true`.** If an action fails (e.g., Entra ID doesn't return the expected claim for a user), authentication should still succeed — the user just won't have persona groups assigned. See [Decision: GroupSync PAD B](../decisions/groupsync-pad-b.md).

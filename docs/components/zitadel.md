@@ -20,7 +20,7 @@ NetBird client
   → Zitadel (OIDC issuer on mgmt01)
     → Entra ID (aplab.be tenant, external IdP)
       → Microsoft login page
-    ← OIDC token with groups (GUIDs) + cloud_displayname
+    ← OIDC token: groups claim = display-name strings (via cloud_displayname)
   ← JWT with clean groups claim
 → NetBird Management reads groups from JWT
 ```
@@ -35,24 +35,21 @@ Two custom Actions form the critical bridge between Entra ID's raw claims and th
 
 ### Action 1 — External Authentication (Pre-creation hook)
 
-When a user logs in via Entra ID for the first time, the Entra ID token carries two relevant claims:
+When a user logs in via Entra ID for the first time, the Entra ID token's `groups` claim carries the user's group memberships. Because `cloud_displayname` is attached to the `groups` claim in the app manifest (see [Runbook 08](../runbooks/08-groupsync.md)), the claim emits each group's **display-name string** (e.g. `2ITCSC1A-Studenten`) rather than its ObjectID GUID (e.g. `e5f8a2b3-...`).
 
-- `groups` — an array of GUIDs (e.g., `e5f8a2b3-...`) identifying Azure AD group membership
-- `cloud_displayname` — an optional claim carrying the human-readable group name with the tenant team prefix (e.g., `2ITcsc1A-Studenten`)
+Action 1 (`mapEntraGroupsToMetadata`) resolves the clean internal names with an **allowlist** keyed on those display-name strings:
 
-Action 1 performs the GUID-to-name mapping by:
+1. Read the `groups` claim (display-name strings)
+2. Look each name up in a hardcoded allowlist — `2ITCSC1A-Studenten` → `Studenten`, `2ITCSC1A-Docenten` → `Docenten`, `2ITCSC1A-Admins` → `Admins` (this is [GroupSync Path B](../decisions/groupsync-pad-b.md))
+3. Write the matched clean names to the user metadata key `sase_groups` (comma-joined)
 
-1. Reading `cloud_displayname` from the Entra ID token
-2. Stripping the `2ITcsc1A-` prefix (this is [GroupSync Path B](../decisions/groupsync-pad-b.md))
-3. Setting the internal group name to the clean version: `Studenten`, `Docenten`, `Admins`
-
-This mapping step is necessary because NetBird cannot interpret GUIDs — it needs human-readable group names to create auto-groups.
+The lookup is keyed on the **name string**, which is why `cloud_displayname` is a hard precondition — a raw GUID cannot be allowlisted to `Studenten`. The allowlist is deliberately **fail-closed**: a group not in the map is silently dropped rather than passed through (stricter than a blind prefix-strip). The clean names keep downstream NetBird ACLs and Squid policies readable.
 
 ### Action 2 — Complement Token
 
 Adds the `groups` claim to the JWT token that Zitadel issues to NetBird. Without this action, the JWT contains authentication information but no group membership, and NetBird never sees which persona group the user belongs to.
 
-The action calls `setClaim('groups', [...])` to inject the mapped group names into the outgoing JWT. NetBird's JWT group sync then reads this claim and creates or assigns auto-groups accordingly.
+The action reads `sase_groups` from the user's metadata and calls `setClaim('groups', [...])` to inject those clean names into the outgoing JWT. NetBird's JWT group sync then reads this claim and creates or assigns auto-groups accordingly.
 
 ### Fail-open design
 
@@ -76,7 +73,7 @@ This replaced the shared registration `cebe0d74-be9f-49ac-9f35-65f11586c1bb` whi
 
 ### Token Configuration (Entra ID side)
 
-The `cloud_displayname` optional claim must be explicitly configured in the Entra ID app registration under Token Configuration. Without it, Action 1 has no human-readable group name to work with and the GUID-to-name mapping fails silently (due to `allowed-to-fail: true`).
+The `cloud_displayname` property must be attached to the `groups` claim in the Entra ID app registration manifest — it is not selectable in the Token Configuration UI and must be added by editing the manifest directly (see [Runbook 08](../runbooks/08-groupsync.md)). Without it, the `groups` claim falls back to GUIDs, Action 1's allowlist has no name string to match (a GUID is never in the allowlist), and group resolution fails silently (due to `allowed-to-fail: true`).
 
 ---
 
@@ -95,9 +92,9 @@ The `cloud_displayname` optional claim must be explicitly configured in the Entr
 
 **No stdout/console logging in Actions** — Zitadel Actions have no debugging output mechanism. There is no way to log intermediate values or trace execution within an action script. The only verification method is examining JWT claims in NetBird after a successful login, making iterative development slow and error-prone.
 
-**GitHub #5399: JWT group sync with embedded Dex** — JWT group sync does not work out-of-the-box when using the embedded Dex + Zitadel combination. The `AUTH_SUPPORTED_SCOPES` environment variable is missing required scopes. This requires manual patching of the NetBird Docker Compose configuration.
+**GitHub #5399 (embedded-Dex scope drop) — does not apply to this stack** — Upstream #5399 reports that on NetBird builds using *embedded Dex* + Zitadel, JWT group sync fails out-of-the-box because `AUTH_SUPPORTED_SCOPES` is missing the groups scope. This sandbox runs the **older multi-container NetBird stack with no Dex container** (Management v0.67.0 validates Zitadel's token directly — Verslag30), so the action-injected `groups` claim flows through without any scope fix. The scope-drop variant of #5399 is therefore not applicable here; no Docker Compose patching is needed for group sync. (The separate "filled JWT allow-groups → 401 lockout" hazard, sometimes also tracked under #5399, still applies — see below and [NetBird](netbird.md).)
 
-**`cloud_displayname` dependency** — If the Entra ID Token Configuration does not include `cloud_displayname` as an optional claim, Action 1 silently fails. The user authenticates successfully but without group mapping. Because `allowed-to-fail: true` suppresses the error, this failure mode is invisible without checking JWT claims downstream.
+**`cloud_displayname` dependency** — If `cloud_displayname` is not attached to the `groups` claim in the app manifest, the claim carries GUIDs instead of names and Action 1's allowlist matches nothing, silently dropping every group. The user authenticates successfully but without group resolution. Because `allowed-to-fail: true` suppresses the error, this failure mode is invisible without checking JWT claims downstream.
 
 **Action execution is opaque** — There is no dashboard view showing action execution history or failure counts. Debugging requires end-to-end testing: log in as a test user, then inspect the resulting JWT in NetBird to verify group claims are present and correctly mapped.
 

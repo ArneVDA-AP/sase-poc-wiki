@@ -13,10 +13,10 @@ In een commercieel SASE-product (Zscaler, Netskope) stuurt de agent identiteitsh
 
 ```
 Entra ID (aplab.be)
-  | OIDC-token met groups claim (GUID's) + cloud_displayname optional claim
+  | OIDC-token: groups claim stuurt weergavenamen uit (2ITCSC1A-Studenten) via cloud_displayname
   v
 Zitadel (mgmt01 Docker)
-  | Action 1: GUID -> clean naam (verwijdert 2ITcsc1A-prefix)
+  | Action 1: allowlist-mapt weergavenaam -> schone naam (2ITCSC1A-Studenten -> Studenten)
   | Action 2: setClaim('groups', [...]) in JWT
   v
 NetBird Management (mgmt01 Docker)
@@ -35,19 +35,20 @@ Per-request identiteitsgebaseerde filtering
   (bijv. Studenten geblokkeerd voor ChatGPT; Docenten toegestaan)
 ```
 
-Elke hop transformeert de identiteitsrepresentatie: GUID's worden clean namen, clean namen worden JWT-claims, JWT-claims worden auto-groups, auto-groups worden gecachte IP-naar-groep-mappings, en gecachte mappings worden ACL-beslissingen. Een fout op eender welke hop verbreekt de keten — maar het fail-open ontwerp zorgt ervoor dat een gebroken identiteitsketen nooit authenticatie blokkeert, alleen de toegang beperkt tot het meest restrictieve standaardbeleid.
+Elke hop transformeert de identiteitsrepresentatie: geprefixte weergavenamen worden schone namen, schone namen worden JWT-claims, JWT-claims worden auto-groups, auto-groups worden gecachte IP-naar-groep-mappings, en gecachte mappings worden ACL-beslissingen. Een fout op eender welke hop verbreekt de keten — maar het fail-open ontwerp zorgt ervoor dat een gebroken identiteitsketen nooit authenticatie blokkeert, alleen de toegang beperkt tot het meest restrictieve standaardbeleid.
 
-## GroupSync Path B
+## GroupSync: sync-mechanisme en Pad B
 
-De Entra ID `groups`-claim bevat GUID's die betekenisloos zijn voor NetBird. Er bestaan twee paden om deze naar bruikbare groepsnamen te converteren:
+**Sync-mechanisme — JWT group sync.** NetBird Community Edition kan de IdP Sync- (Graph API-polling) of SCIM-provisioning-mechanismen niet gebruiken — beide vereisen een NetBird Cloud- of Commercial License. Het enige mechanisme dat in CE beschikbaar is, is **JWT group sync**: NetBird leest de `groups`-claim uit het ID-token bij elke gebruikerslogin en maakt/wijst dienovereenkomstig auto-groups toe. De inherente beperking is dat groepslidmaatschap alleen bij login wordt bijgewerkt — er is geen achtergrondsynchronisatie. Als een gebruiker aan een nieuwe Entra ID-groep wordt toegevoegd, is de wijziging pas zichtbaar in de stack bij het volgende OIDC-authenticatie-event van die gebruiker.
 
-**Path A — IdP Sync via API:** NetBird pollt Microsoft Graph API rechtstreeks om groepslidmaatschappen op te lossen. Dit vereist een commerciele NetBird-licentie en is niet beschikbaar in de Community Edition die in deze PoC wordt gebruikt.
+**Prefixafhandeling — Pad B (geïmplementeerd).** Entra ID-groepsnamen dragen een verplicht `2ITCSC1A-`-teamprefix (bijv. `2ITCSC1A-Studenten`). Omdat `cloud_displayname` aan de groups claim is gekoppeld (zie [Runbook 08](../runbooks/08-groupsync.md)), stuurt de claim de *weergavenaam-string* van elke groep uit in plaats van zijn ObjectID-GUID. Er werden twee paden overwogen:
 
-**Path B — JWT group sync (geimplementeerd):** Zitadel Action 1 leest de `cloud_displayname` optional claim uit het Entra ID-token. Deze claim draagt de leesbare groepsnaam met het tenant-teamprefix (`2ITcsc1A-Studenten`). De action verwijdert het prefix en produceert clean namen (`Studenten`, `Docenten`, `Admins`). Action 2 injecteert deze clean namen vervolgens in de JWT die aan NetBird wordt uitgegeven.
+- **Pad A — prefix overal meenemen:** de volledige naam `2ITCSC1A-Studenten` propageert ongewijzigd naar NetBird, de Identity Bridge ACL en Addendum J's `NETBIRD_POLICY_GROUPS`. Traceerbaar maar verbose, en het prefix cascadeert door elke downstream-config.
+- **Pad B — Zitadel strijkt het prefix weg (geïmplementeerd):** Action 1 allowlist-mapt de naamstring `2ITCSC1A-Studenten` → `Studenten` voordat NetBird die ziet; Action 2 injecteert de schone namen (`Studenten`, `Docenten`, `Admins`) in de JWT. Interne configs blijven leesbaar en Addendum J's bestaande `Studenten,Docenten,Admins` klopt al.
 
-Path B heeft een fundamentele beperking: groepslidmaatschap wordt alleen bijgewerkt wanneer de gebruiker inlogt. Er is geen achtergrondsynchronisatie. Als een gebruiker aan een nieuwe Entra ID-groep wordt toegevoegd, is de wijziging pas zichtbaar in de stack bij het volgende OIDC-authenticatie-event van die gebruiker.
+De harde voorwaarde voor Pad B is dat `cloud_displayname` werkt — een GUID staat niet in de allowlist en kan niet naar `Studenten` resolven. Die voorwaarde is geverifieerd, en Pad B is bevestigd werkend voor alle drie persona's.
 
-Zie [Beslissing: GroupSync Path B](../decisions/groupsync-pad-b.md).
+Zie [Beslissing: GroupSync Pad B](../decisions/groupsync-pad-b.md).
 
 ## Propagatievertraging
 
@@ -55,7 +56,7 @@ Wijzigingen in Entra ID-groepslidmaatschap hebben tijd nodig om door de volledig
 
 | Hop | Vertraging | Trigger |
 |-----|------------|---------|
-| Entra ID -> Zitadel | Volgende gebruikerslogin | Geen achtergrondsync (Path B-beperking) |
+| Entra ID -> Zitadel | Volgende gebruikerslogin | Geen achtergrondsync (JWT group sync-beperking) |
 | Zitadel -> NetBird | Zelfde login-event | JWT group sync is synchroon |
 | NetBird -> Identity Bridge | Maximaal 30s | Polling-interval |
 | Identity Bridge -> Squid | Volgend verzoek | external_acl TTL (30s cache, 10s negatief) |
@@ -74,7 +75,7 @@ Dit is bewust: Gate 3 (SWG-pijplijn — inhoudsinspectie, malwarescanning, DLP) 
 
 ## Waar het in de stack voorkomt
 
-- **[Zitadel](../components/zitadel.md)** — OIDC-broker, Action 1 (GUID-naar-naam-mapping) en Action 2 (JWT group injection)
+- **[Zitadel](../components/zitadel.md)** — OIDC-broker, Action 1 (allowlist-mapt de groeps-weergavenaam-string naar de schone naam) en Action 2 (JWT group injection)
 - **[NetBird](../components/netbird.md)** — JWT group sync leest de `groups`-claim en maakt auto_groups per persona aan
 - **[Identity Bridge](../components/identity-bridge.md)** — pollt NetBird API, bouwt overlay IP-naar-groep-cache, bedient Squid-lookups
 - **[Squid](../components/squid.md)** — external_acl bevraagt Identity Bridge per verzoek, dwingt persona-gebaseerd filterbeleid af
@@ -84,7 +85,7 @@ Dit is bewust: Gate 3 (SWG-pijplijn — inhoudsinspectie, malwarescanning, DLP) 
 
 **Identiteit vs authenticatie:** Authenticatie (bewijzen wie je bent) vindt eenmalig plaats tijdens de OIDC-loginstroom via Zitadel en Entra ID. Identiteitspropagatie (dat bewijs door de stack transporteren zodat downstream-systemen toegangsbeslissingen kunnen nemen) vindt continu plaats via de polling- en cachingketen. Een gebruiker kan geauthenticeerd zijn zonder dat de identiteit gepropageerd is — dit is de fail-open toestand.
 
-**Path A vs Path B:** Path A (IdP Sync) pollt Graph API rechtstreeks en werkt groepslidmaatschap op de achtergrond bij — het werkt zelfs wanneer gebruikers niet actief inloggen. Path B (JWT group sync) is afhankelijk van het OIDC-token dat bij het inloggen wordt uitgegeven — groepswijzigingen propageren pas wanneer de gebruiker opnieuw authenticeert. Deze PoC gebruikt Path B omdat dit beschikbaar is in NetBird Community Edition.
+**JWT group sync vs IdP Sync:** IdP Sync (en SCIM) pollen of pushen groepslidmaatschap op de achtergrond — ze werken bij zelfs wanneer gebruikers niet actief inloggen — maar beide vereisen een NetBird Cloud- of Commercial License, dus geen van beide is beschikbaar in de hier gebruikte Community Edition. JWT group sync, het enige in CE beschikbare mechanisme, is afhankelijk van het OIDC-token dat bij het inloggen wordt uitgegeven, dus groepswijzigingen propageren pas wanneer de gebruiker opnieuw authenticeert. Daarnaast verwijst **Pad A vs Pad B** naar prefixafhandeling *binnen* JWT group sync (Pad B strijkt het `2ITCSC1A-`-prefix weg — zie boven), niet naar de keuze van sync-mechanisme.
 
 **Fail-open vs fail-closed:** De identiteitsketen faalt open by design. Dit contrasteert met de inhoudsinspectieketen (Gate 3), waar ClamAV-scanning niet wordt omzeild wanneer de service uitvalt. De rationale: identiteitscontroles bepalen *welk* beleid van toepassing is, terwijl inhoudsinspectie baseline beveiliging biedt voor *al het* verkeer ongeacht identiteit.
 

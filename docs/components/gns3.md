@@ -33,7 +33,7 @@ GNS3 runs as a systemd service on an Ubuntu 24.04 VM (`poc-1a`) inside Proxmox. 
 | mgmt01 | QEMU (QCOW2) | Ubuntu 24.04 | 16384 MB | 4 |
 | dc01 | QEMU (QCOW2) | Ubuntu 24.04 | 4096 MB | 2 |
 | site01 | QEMU (QCOW2) | VyOS | 1024 MB | 1 |
-| sitepc01 | QEMU (QCOW2) | Ubuntu 24.04 | 4096 MB | 2 |
+| sitepc01 | QEMU (QCOW2) | Tiny11 (Windows 11) | 4096 MB | 2 |
 
 pop01 requires 8 GB RAM for ClamAV + Suricata + Squid running concurrently (handbook specifies 4 GB — this is insufficient).
 
@@ -47,7 +47,7 @@ Switch-WAN   ──── site01 eth0       (site01 WAN interface)
 Switch-LAN   ──── pop01  vtnet1     (pop01 LAN → DC-LAN)
 Switch-LAN   ──── dc01   ens3       (dc01 DC-LAN)
 Switch-Site  ──── site01 eth1       (site01 Site-LAN)
-Switch-Site  ──── sitepc01 ens3     (sitepc01 Site-LAN)
+Switch-Site  ──── sitepc01 Ethernet (sitepc01 Site-LAN)
 ```
 
 ```
@@ -71,7 +71,7 @@ mobile01 is a VMware VM on a team member's laptop — not a GNS3 node. It connec
 | Segment | CIDR | Gateway | Nodes |
 |---------|------|---------|-------|
 | DC-LAN | `10.0.0.0/24` | `10.0.0.1` (pop01 vtnet1) | dc01: `10.0.0.100` |
-| Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.50` (no OS) |
+| Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.10` |
 
 **NetBird overlay (100.64.0.0/10):**
 
@@ -136,7 +136,7 @@ Mitigation: add `fsck_y_enable="YES"` to `/etc/rc.conf` on pop01 — FreeBSD the
 
 **ubridge learning bridge limits traffic visibility** — Switch-WAN uses ubridge, a learning L2 bridge. After MAC learning, unicast frames only go to the correct port — not flooded. Mgmt01 in promiscuous mode on ens3 does not see pop01's traffic to the internet. This impacts any future Zeek/RITA deployment: validate with `tcpdump -i ens3 -n host 8.8.8.8` on mgmt01 before deploying.
 
-**sitepc01 has no OS installed** — the node exists in the topology and is cabled to Switch-Site, but Ubuntu 24.04 has not been installed. It is not operationally active.
+**sitepc01 now runs Tiny11 (Windows 11)** — initially created as an empty node (no OS), it was later imported as a Tiny11 image and enrolled in the NetBird overlay as `docent1` (Entra ID joined + Intune enrolled). It is operationally active.
 
 ---
 

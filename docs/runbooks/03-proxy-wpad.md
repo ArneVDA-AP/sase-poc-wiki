@@ -171,15 +171,13 @@ nslookup wpad.sandbox.local
 
 ---
 
-## Step 7: Create ACL policies for WPAD reachability
+## Step 7: Verify the ACL policy for proxy/DNS reachability
 
-If you replaced the default all-to-all policy in Runbook 02, verify these policies exist:
+Under the V34 persona model (see [Component: NetBird](../components/netbird.md)) a single allow-policy carries all connectivity: **`Personas-to-Core-Services`** — sources `Studenten`/`Docenten`/`Admins` → destination `Core-Services` (pop01 + mgmt01), protocol TCP 3128. This lets every BYOD persona peer reach the pop01 Squid proxy.
 
-- **Admin-Infrastructure** — admins can reach admin infra (already created)
-- **Mobile-to-Services** — BYOD clients can reach mgmt01 WPAD + pop01 proxy (already created)
-- **Datacenter Access** — add `SASE-Admins` as source so mgmt01 can reach pop01 Unbound for DNS
+> **Superseded:** earlier builds used separate `Admin-Infrastructure`, `Mobile-to-Services`, and `Datacenter Access` policies on `SASE-*` groups. Those policies and groups were removed in the V34 migration — do not recreate them.
 
-Without the DNS ACL, `netbird status` on mgmt01 shows "Nameservers: 0/1 Available".
+**DNS reachability gotcha:** a peer that receives the pop01 nameserver config but has no ACL path to it shows `Nameservers: 0/1 Available` in `netbird status`. Ensure the peer's group has an ACL path to `Core-Services` (pop01 Unbound).
 
 ---
 

@@ -37,7 +37,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 |---|----------|--------------------|-----------|--------------|
 | C1 | Student surft naar ChatGPT | Geblokkeerd (Studenten-beleid) | CASB L1 | `curl.exe -x ... https://chatgpt.com` als student |
 | C2 | Docent surft naar ChatGPT | Toegestaan (Docenten-beleid) | CASB L1 | Zelfde URL als docentidentiteit |
-| C3 | SharePoint anonieme deellink | Wazuh Active Response trekt link in | CASB L2 | Anonieme deellink aanmaken in SharePoint |
+| C3 | SharePoint anonieme deellink | Gedetecteerd (regel 100601); Active Response trekt link in achter de ENFORCE-poort (standaard detect-only, live revoke nog niet actief) | CASB L2 | Anonieme deellink aanmaken in SharePoint |
 
 ### FWaaS / IDS -- Netwerkdetectie
 
@@ -60,7 +60,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
-| F1 | IDS-alert met hoge ernst | Control daemon plaatst peer in quarantaine (<500 ms) | CASB L3 | Suricata C2-alert triggeren |
+| F1 | Malware-event met hoge ernst | Control daemon plaatst peer in quarantaine (binnen enkele seconden) | CASB L3 | c-icap RESPMOD-malwaredetectie triggeren |
 | F2 | Meerdere medium-alerts (scoreopbouw) | Dreigingsscore stijgt, overschrijdt drempel, triggert quarantaine | CASB L3 | Opeenvolgende alerts van dezelfde client |
 | F3 | Scoreverval na quarantaine | Peer hersteld naar personagroep na vervalperiode | CASB L3 | Wachten op sliding-window-verval |
 
@@ -77,7 +77,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 ## Gerelateerd
 
 - [Acceptatietests (F1--F15)](acceptance-tests.nl.md)
-- [Architectuur](../overview/architecture.md)
-- [Concept: Zero Trust](../concepts/zero-trust.md)
+- [Architectuur](../overview/architecture.nl.md)
+- [Concept: Zero Trust](../concepts/zero-trust.nl.md)
 - [Finding: curl --ssl-no-revoke](../findings/curl-ssl-no-revoke.nl.md)
 - [Finding: Suricata connection pooling](../findings/suricata-connection-pooling.nl.md)

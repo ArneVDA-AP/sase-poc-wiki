@@ -5,12 +5,12 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 
 # Runbook: Toegangsbeleid
 
-**Bron:** `raw/Doc7_ZTNA_Context_Aware.md`
-**Node(s):** Entra ID (`aplab.be`-tenant) + NetBird Dashboard
+**Bron:** `raw/Verslag40.md` (implementatie, 2 juni 2026); `raw/Doc7_ZTNA_Context_Aware.md` + Addendum E.2 (ontwerpintentie)
+**Node(s):** Entra ID (`aplab.be`-tenant) + Intune + NetBird Dashboard
 **Vereisten:** Alle voorgaande runbooks afgerond (volledige SASE-stack operationeel)
-**Status:** Gevalideerd — 5 CA-beleidsregels geïmplementeerd (3 actief, 2 report-only), Intune-apparaatnaleving operationeel. Gate 3 volledig operationeel.
+**Status:** Geïmplementeerd (Verslag40) — Gate 1: 5 CA-beleidsregels (3 Aan, 2 Report-only); Gate 2: Intune-apparaatnaleving operationeel; Gate 3 volledig operationeel.
 
-> **Gate 1 is gevalideerd.** Vijf Conditional Access-beleidsregels zijn geïmplementeerd: MFA Required (actief), Geo-Block alleen België (report-only), Block Legacy Auth (actief), Risk-Based Block (actief), Compliant Device Required (report-only). Twee beleidsregels blijven in report-only-modus tot de demo. Gate 2 (NetBird-posturecontroles) is architectuurgereed. Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.
+> **Gates 1 en 2 zijn geïmplementeerd (Verslag40).** Gate 1 = vijf Conditional Access-beleidsregels: MFA Required (Aan), Block Legacy Auth (Aan), Risk-Based Block (Aan), Geo-Block alleen België (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). De twee Report-only-beleidsregels blijven zo tot de demo-voorbereiding (Sessie 11). Gate 2 = Intune-apparaatnaleving (`2ITCSC1A-SASE-Windows-Compliance`), attestatie-gebaseerd — dit is de uitgerolde apparaat-gate, **niet** NetBird-posturecontroles (die een optionele, niet-uitgerolde defense-in-depth-laag blijven). Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.
 
 ---
 
@@ -19,10 +19,12 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 - [ ] Entra ID-tenant (`aplab.be`) toegankelijk
 - [ ] A5-licentie actief (bevestigd 1 april 2026) — bevat Entra ID P1 + P2
 - [ ] Rechten als Conditional Access-beheerder of Globale beheerder
-- [ ] NetBird-app-registratie (`cebe0d74-...`) aanwezig in Entra ID
+- [ ] NetBird-app-registratie `2ITCSC1A-Netbird-Sandbox` (App ID `11803ee8-eb15-462c-a286-5415c17a29c6`) aanwezig in Entra ID — alleen voor NetBird-inloggen, **niet** een CA-doel (zie valkuil in Stap 1)
 - [ ] NetBird-inloggen via Microsoft werkt (Runbook 02, Stap 8)
-- [ ] Testaccount beschikbaar: `arne.vda.2itcsc1a@aplab.be`
+- [ ] Persona-beveiligingsgroepen aanwezig: `2ITCSC1A-Studenten`, `2ITCSC1A-Docenten`, `2ITCSC1A-Admins`
+- [ ] Testaccounts (single-persona): een studenten-lid (bijv. `Student_1@aplab.be`, A5-gelicenseerd zodat Intune van toepassing is), een docenten-lid, en `2itcsc1a_admin1` (admins / break-glass)
 - [ ] **MFA geregistreerd voor testaccount** (via `https://aka.ms/mfasetup`)
+- [ ] mobile01 Entra-joined + Intune-enrolled (verschijnt in Intune als `2ITCSC1A-MOB-1`)
 - [ ] NetBird-versie op mobile01 genoteerd: `netbird version`
 - [ ] NetBird Dashboard toegankelijk: `https://netbird.sandbox.local`
 
@@ -30,22 +32,24 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 
 ---
 
-## [GEVALIDEERD] Stap 1: Entra ID Conditional Access-beleidsregels aanmaken
+## [GEÏMPLEMENTEERD] Stap 1: Entra ID Conditional Access-beleidsregels aanmaken (Gate 1)
 
 Navigeer naar: `https://entra.microsoft.com → Protection → Conditional Access → Policies → New policy`
 
-### Beleid 1 — SASE-PoC-MFA-Required
+> **Valkuil: target All resources, NIET de NetBird-app.** App-getargete CA-beleidsregels vuren nooit bij NetBird/Zitadel OIDC-aanmeldingen. CA matcht op de *resource* van het token — een OIDC-login vraagt Microsoft Graph (`00000003-0000-0000-c000-000000000000`) op, niet de NetBird-app-registratie — dus een beleid gescoped op "Apps selecteren → NetBird" toont **Not Applied** bij elke NetBird-login (Verslag40, B40.4). Alle vijf beleidsregels targeten daarom **All resources** en beperken de blast radius via **user-scoping** (persona-groepen als include) in plaats van app-scoping — de inverse van Addendum E's strategie.
+>
+> **Geen resource-exclusions.** Vanaf 15 juni 2026 handhaaft Microsoft All-resources-beleidsregels die resource-*exclusions* dragen óók bij OIDC-only-aanmeldingen; vóór die datum worden zulke beleidsregels niet gehandhaafd bij OIDC-only-aanmeldingen (een bypass). All-resources *zonder* exclusions wordt aan beide kanten van die datum consistent gehandhaafd, dus elk beleid gebruikt All resources zonder resource-exclusion (B40.5). Blast-radius-controle gebeurt uitsluitend via user-scoping: include de persona-groepen (`2ITCSC1A-Studenten`, `2ITCSC1A-Docenten`, `2ITCSC1A-Admins`), exclude `2itcsc1a_admin1` als break-glass op elk beleid. Omdat `2itcsc1a_admin1` het enige lid is van de admins-persona en overal is uitgesloten, valt de admins-persona feitelijk onder geen enkel CA-beleid (B40.6 — bewust geaccepteerd voor nu).
+
+### Beleid 1 — 2ITCSC1A-SASE-PoC-MFA-Required
 
 ```
-Naam: SASE-PoC-MFA-Required
+Naam: 2ITCSC1A-SASE-PoC-MFA-Required
 
 Toewijzingen:
-  Gebruikers: Alle gebruikers
-  Uitsluiten: (optioneel) break-glass beheerdersaccount
+  Gebruikers: Include 2ITCSC1A-Studenten + 2ITCSC1A-Docenten + 2ITCSC1A-Admins
+  Uitsluiten: 2itcsc1a_admin1 (break-glass)
 
-  Doelbronnen:
-    Cloud-apps → Apps selecteren → "NetBird SASE PoC"
-    (Client-ID: cebe0d74-be9f-49ac-9f35-65f11586c1bb)
+  Doelbronnen: All resources (geen app-targeting, geen resource-exclusions)
 
   Voorwaarden:
     Client-apps → Configureren: Ja
@@ -55,48 +59,48 @@ Toewijzingen:
 Toegangscontroles:
   Verlenen: Meervoudige verificatie vereisen
 
-Beleid inschakelen: Alleen rapporteren (eerste test) → dan Aan
+Beleid inschakelen: Aan
 ```
 
-### Beleid 2 — SASE-PoC-Geo-Block
+### Beleid 2 — 2ITCSC1A-SASE-PoC-Geo-Block
 
 Maak eerst een Benoemde locatie aan:
 
 ```
 Protection → Conditional Access → Named locations → + Countries location
-Naam: SASE-PoC-Allowed-Countries
+Naam: 2ITCSC1A-SASE-PoC-Allowed-Countries
 aangevinkt: België
-aangevinkt: Nederland (optioneel — voor pendeldende studenten)
+aangevinkt: Nederland (optioneel — voor pendelende studenten)
 ```
 
 Maak dan het beleid aan:
 
 ```
-Naam: SASE-PoC-Geo-Block
+Naam: 2ITCSC1A-SASE-PoC-Geo-Block
 
 Toewijzingen:
-  Gebruikers: Alle gebruikers
-  Doelbronnen: Apps selecteren → "NetBird SASE PoC"
+  Gebruikers: Include persona-groepen / Uitsluiten 2itcsc1a_admin1
+  Doelbronnen: All resources
 
   Voorwaarden:
     Locaties → Configureren: Ja
       Opnemen: Elke locatie
-      Uitsluiten: SASE-PoC-Allowed-Countries
+      Uitsluiten: 2ITCSC1A-SASE-PoC-Allowed-Countries
 
 Toegangscontroles:
   Verlenen: Toegang blokkeren
 
-Beleid inschakelen: Aan
+Beleid inschakelen: Report-only (→ Aan bij Sessie 11)
 ```
 
-### Beleid 3 — SASE-PoC-Block-Legacy-Auth
+### Beleid 3 — 2ITCSC1A-SASE-PoC-Block-Legacy-Auth
 
 ```
-Naam: SASE-PoC-Block-Legacy-Auth
+Naam: 2ITCSC1A-SASE-PoC-Block-Legacy-Auth
 
 Toewijzingen:
-  Gebruikers: Alle gebruikers
-  Doelbronnen: Apps selecteren → "NetBird SASE PoC"
+  Gebruikers: Include persona-groepen / Uitsluiten 2itcsc1a_admin1
+  Doelbronnen: All resources
 
   Voorwaarden:
     Client-apps → Configureren: Ja
@@ -110,14 +114,14 @@ Toegangscontroles:
 Beleid inschakelen: Aan
 ```
 
-### Beleid 4 — SASE-PoC-Risk-Block (vereist A5/P2)
+### Beleid 4 — 2ITCSC1A-SASE-PoC-Risk-Block (vereist A5/P2)
 
 ```
-Naam: SASE-PoC-Risk-Block
+Naam: 2ITCSC1A-SASE-PoC-Risk-Block
 
 Toewijzingen:
-  Gebruikers: Alle gebruikers
-  Doelbronnen: Apps selecteren → "NetBird SASE PoC"
+  Gebruikers: Include persona-groepen / Uitsluiten 2itcsc1a_admin1
+  Doelbronnen: All resources
 
   Voorwaarden:
     Aanmeldingsrisico → Configureren: Ja
@@ -131,16 +135,85 @@ Toegangscontroles:
 Beleid inschakelen: Aan
 ```
 
+### Beleid 5 — 2ITCSC1A-SASE-Require-Compliant-Device
+
+Dit beleid verbindt Gate 1 met Gate 2: het vereist dat het apparaat door Intune als conform is gemarkeerd (Stap 2). Let op: deze naam heeft **geen** "PoC"-segment.
+
+```
+Naam: 2ITCSC1A-SASE-Require-Compliant-Device
+
+Toewijzingen:
+  Gebruikers: Include 2ITCSC1A-Studenten / Uitsluiten 2itcsc1a_admin1
+    (studenten-only — docent1/admin1 zijn bewust ongelicenseerd, dus studenten-only
+     scopen voorkomt een lockout — B40.20)
+  Doelbronnen: All resources
+
+  Voorwaarden:
+    Apparaatplatforms → Configureren: Ja → Windows
+
+Toegangscontroles:
+  Verlenen: Apparaat moet als conform zijn gemarkeerd
+
+Beleid inschakelen: Report-only (→ Aan bij Sessie 11) — gaf "Report-only: Success" bij een conforme mobile01-login
+```
+
 **Controlepunt Gate 1:**
 
-- [ ] Alle 4 beleidsregels richten zich op de NetBird-app-registratie
-- [ ] MFA-registratie voltooid voor testaccount
+- [ ] Alle 5 beleidsregels targeten **All resources** (geen app-targeting, geen resource-exclusions)
+- [ ] Elk beleid include de persona-groepen en exclude `2itcsc1a_admin1`
+- [ ] MFA-registratie voltooid voor het testaccount
 - [ ] Test aanmelden op mobile01: MFA-prompt verschijnt
-- [ ] Entra ID → Protection → Aanmeldingslogboeken → Conditional Access-tab: beleidsregels tonen "Geslaagd"
+- [ ] Entra ID → Protection → Aanmeldingslogboeken → Conditional Access-tab toont `Resource: Microsoft Graph — Matched` en beleidsregels als "Success" / "Report-only: Success"
 
 ---
 
-## [GEPLAND] Stap 2: NetBird Posture Check aanmaken
+## [GEÏMPLEMENTEERD] Stap 2: Het Intune-apparaatnalevingsbeleid aanmaken (Gate 2)
+
+Gate 2 is **Intune-apparaatnaleving**, niet NetBird-posture. Omdat de in-scope apparaten beheerd zijn (Entra-joined + Intune-enrolled), attesteert Intune de werkelijke apparaatstatus via de beheeragent — postuur dat de eindgebruiker niet kan spoofen. Beleid 5 (Stap 1) consumeert deze attestatie op authenticatietijdstip.
+
+Navigeer naar: `https://intune.microsoft.com → Devices → Compliance → Policies → Create policy → Windows 10 and later`
+
+```
+Naam: 2ITCSC1A-SASE-Windows-Compliance
+Platform: Windows 10 and later
+
+Nalevingsinstellingen:
+  Microsoft Defender Antimalware:                                  Require
+  Defender Antivirus:                                             Require
+  Defender Antispyware:                                           Require
+  Defender Antimalware security intelligence up-to-date:          Require
+  Real-time protection:                                          Require
+  Firewall:                                                      Require
+  Minimum OS-versie:                                             10.0.22000.0
+  BitLocker / Secure Boot / Code integrity / TPM / encryptie:    Not configured
+
+Acties bij non-compliance:
+  Apparaat als non-compliant markeren: Onmiddellijk (0 dagen respijt)
+
+Toewijzing:
+  Included groep: 2ITCSC1A-Studenten (gebruikersgroep)
+```
+
+Drie effectieve controles blijven over na het schrappen van de encryptie/boot-instellingen: **OS-versie, antivirus, firewall** (B40.14 — de rubric vraagt "device posture", niet encryptie).
+
+> **Valkuil: een getargete gebruiker zonder Intune-licentie toont "Not applicable", niet "Non-compliant".** In Verslag40 rapporteerde het beleid `Total 0 / Not applicable` totdat de teststudent een A5-licentie kreeg (die Intune Plan 1 omvat). `docent1`/`admin1` werden bewust ongelicenseerd gelaten, wat de reden is dat Beleid 5 studenten-only is gescoped (B40.20).
+>
+> **Valkuil: een verlopen MDM-sessie blokkeert de evaluatie, en een reboot lost dit niet op.** Na het licentiëren bleven `Device status → Total 0` en `Last contacted` bevroren, zelfs na een reboot — de MDM-sessie was verlopen, dus het apparaat kon niet authenticeren op het policy-evaluatiekanaal. Een verse gebruikersaanmelding (geen reboot) herstelde de evaluatie; mobile01 rapporteerde toen **Compliant** (B40.20).
+>
+> **Valkuil: de Microsoft control plane moet SSL-Bump omzeilen.** Intune-apparaatregistratie en de conform-apparaatcontrole mislukken als Squid Microsoft-endpoints bumpt. Zorg dat `*.microsoftonline.com` en `enterpriseregistration.windows.net` op de Squid splice/no-bump-lijst staan (Runbook 03, B40.9/40.10).
+
+**Controlepunt Gate 2:**
+
+- [ ] `2ITCSC1A-SASE-Windows-Compliance` aangemaakt en toegewezen aan `2ITCSC1A-Studenten`
+- [ ] Teststudent heeft een A5-licentie (Intune)
+- [ ] Intune → Devices → mobile01 (`2ITCSC1A-MOB-1`) toont **Compliant**
+- [ ] Een NetBird-login door die student toont `2ITCSC1A-SASE-Require-Compliant-Device → Report-only: Success` in de CA-aanmeldingstab
+
+---
+
+## [OPTIONEEL — NIET UITGEROLD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)
+
+> **Niet uitgerold.** Met beheerde apparaten dekt Intune-naleving (Stap 2) het apparaatpostuur al via attestatie. De NetBird-posturecontrole hieronder is een *optionele* defense-in-depth-laag — onafhankelijke timing (tunnel-bouw) en mechanisme (client-side controle). Het werd **niet** uitgerold in de sandbox; de stappen blijven als ontwerpreferentie.
 
 NetBird Dashboard → Access Control → Posture Checks → Create Posture Check
 
@@ -182,33 +255,33 @@ Dit is defense-in-depth naast de CA-geoblokkering (verschillende GeoIP-databases
 
 ---
 
-## [GEPLAND] Stap 3: Posturecontrole koppelen aan ACL-beleidsregels
+## [OPTIONEEL — NIET UITGEROLD] Stap 4: Posturecontrole koppelen aan ACL-beleidsregels
 
 ```
 NetBird Dashboard → Access Control → Policies
-→ Selecteer elk relevant beleid (Mobile-to-Services, Datacenter Access)
+→ Selecteer het relevante beleid (Personas-to-Core-Services)
 → Tab: Posture Checks
 → Browse Checks → selecteer "SASE-PoC-Compliance"
 → Add Posture Checks
 → Save Changes
 ```
 
-Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat BYOD-clients gebruiken.
+Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat de persona-peers gebruiken.
 
-**Controlepunt Gate 2:**
+**Controlepunt (optionele NetBird-posture):**
 
 - [ ] Posturecontrole "SASE-PoC-Compliance" aangemaakt met alle 4 controles
-- [ ] Gekoppeld aan Mobile-to-Services en Datacenter Access-beleidsregels
+- [ ] Gekoppeld aan het Personas-to-Core-Services-beleid
 - [ ] mobile01 verbindt: `netbird status` → Connected
 - [ ] Dashboard → Peers → mobile01 → Posture Checks toont "Passed"
 
 ---
 
-## [GEPLAND] Stap 4: Validatiescenario's
+## Stap 5: Validatiescenario's
 
 ### Scenario 1 — Positieve test: conform apparaat, juiste locatie [GEVALIDEERD]
 
-> **Status:** Gevalideerd. 5 CA-beleidsregels geïmplementeerd (3 actief, 2 report-only). MFA-handhaving, blokkering van verouderde authenticatie en risicogebaseerde blokkering zijn actief. Geo-blokkering en conform-apparaat-beleid staan in report-only-modus tot de demo.
+> **Status:** Gevalideerd (Verslag40). 5 CA-beleidsregels geïmplementeerd (3 Aan, 2 Report-only). MFA, blokkering van verouderde authenticatie en risicogebaseerde blokkering zijn Aan. Geo-Block en Require-Compliant-Device staan op Report-only tot Sessie 11 — beide bewezen al "Report-only: Success".
 
 | Stap | Actie | Verwacht |
 |------|-------|---------|
@@ -217,36 +290,39 @@ Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat BYOD-c
 | 3 | Inloggen + MFA | MFA-prompt, inloggen geslaagd |
 | 4 | Wacht op tunnel | `netbird status` → Connected |
 | 5 | `ping 100.70.154.79` | Antwoord ontvangen |
-| 6 | Controleer aanmeldingslog | CA-beleidsregels: "Geslaagd" |
+| 6 | Controleer CA-aanmeldingslog | `Resource: Microsoft Graph — Matched`; MFA → Success; Require-Compliant-Device → Report-only: Success; Geo-Block/Legacy-Auth/Risk-Block → Not Applied |
 
 ### Scenario 2 — Negatieve test Gate 1: geoblokkering
 
+> Geo-Block staat op Report-only tot Sessie 11, dus het aanmeldingslog registreert wat er *zou* gebeuren (`Report-only: Failure`); een echte weigering treedt pas op zodra het beleid op Aan wordt gezet.
+
 | Stap | Actie | Verwacht |
 |------|-------|---------|
-| 1 | Verwijder België uit SASE-PoC-Allowed-Countries | Beleid blokkeert nu school-IP |
+| 1 | Verwijder België uit `2ITCSC1A-SASE-PoC-Allowed-Countries` | Bron-IP niet langer in toegestane locaties |
 | 2 | `netbird down && netbird up` | Inlogpagina opent |
-| 3 | Inloggen | "Toegang geweigerd" — CA blokkeert |
-| 4 | `netbird status` | Niet verbonden |
-| 5 | Aanmeldingslog | SASE-PoC-Geo-Block → "Mislukt" |
-| 6 | **Herstel:** voeg België terug toe | Volgende inlogpoging geslaagd |
+| 3 | Inloggen | Report-only: inloggen slaagt nog steeds (zou geweigerd worden indien Aan) |
+| 4 | Aanmeldingslog | `2ITCSC1A-SASE-PoC-Geo-Block` → "Report-only: Failure" (→ "Failure"/Block indien Aan) |
+| 5 | **Herstel:** voeg België terug toe | Geo-Block keert terug naar "Not applied" |
 
-### Scenario 3 — Negatieve test Gate 2: OS-versie
-
-| Stap | Actie | Verwacht |
-|------|-------|---------|
-| 1 | Wijzig posturecontrole: Windows min kernel `10.0.99999` | Onmogelijk hoge versie |
-| 2 | `netbird down && netbird up` | Gate 1 slaagt (inloggen OK) |
-| 3 | `netbird status` | Geverifieerd maar routes niet beschikbaar |
-| 4 | **Herstel:** stel kernel terug in op `10.0.19041` | Verbinding hersteld |
-
-### Scenario 4 — Negatieve test Gate 2: procescontrole
+### Scenario 3 — Negatieve test Gate 2: OS-versie (Intune)
 
 | Stap | Actie | Verwacht |
 |------|-------|---------|
-| 1 | Stop Defender: `Set-MpPreference -DisableRealtimeMonitoring $true` (als beheerder) | MsMpEng.exe stopt |
-| 2 | `netbird down && netbird up` | Gate 1 slaagt |
-| 3 | `netbird status` | Routes niet beschikbaar |
-| 4 | **Herstel:** `Set-MpPreference -DisableRealtimeMonitoring $false` | AV herstart, posture slaagt |
+| 1 | Intune → `2ITCSC1A-SASE-Windows-Compliance` → Minimum OS-versie `10.0.99999.0` | Onmogelijk hoge versie |
+| 2 | Forceer een sync op mobile01 (Company Portal / `Instellingen → Accounts → Toegang tot werk → Sync`) | Apparaat opnieuw geëvalueerd |
+| 3 | Intune → Devices → mobile01 | **Non-compliant** |
+| 4 | `netbird down && netbird up`; controleer CA-aanmeldingslog | `2ITCSC1A-SASE-Require-Compliant-Device` → "Report-only: Failure" (→ Block indien Aan) |
+| 5 | **Herstel:** stel Minimum OS terug op `10.0.22000.0` + sync | Apparaat keert terug naar Compliant |
+
+### Scenario 4 — Negatieve test Gate 2: antivirus / real-time protection (Intune)
+
+| Stap | Actie | Verwacht |
+|------|-------|---------|
+| 1 | Schakel Defender real-time protection uit: `Set-MpPreference -DisableRealtimeMonitoring $true` (als beheerder) | RTP uit |
+| 2 | Forceer een Intune-sync op mobile01 | Apparaat opnieuw geëvalueerd |
+| 3 | Intune → Devices → mobile01 | **Non-compliant** (Real-time protection = Require) |
+| 4 | `netbird up`; controleer CA-aanmeldingslog | `2ITCSC1A-SASE-Require-Compliant-Device` → "Report-only: Failure" |
+| 5 | **Herstel:** `Set-MpPreference -DisableRealtimeMonitoring $false` + sync | Weer Compliant |
 
 > Opmerking: Manipulatiebeveiliging moet mogelijk eerst worden uitgeschakeld: Instellingen → Windows-beveiliging → Virus- en bedreigingsbeveiliging → Manipulatiebeveiliging: Uit. Schakel direct na de test opnieuw in.
 
@@ -255,29 +331,29 @@ Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat BYOD-c
 | Stap | Gate | Actie | Verwacht |
 |------|------|-------|---------|
 | 1 | — | `netbird up` | Inlogpagina opent |
-| 2 | Gate 1 | Inloggen + MFA | Token ontvangen |
-| 3 | Gate 2 | NetBird evalueert posture | OS OK, AV draait, geo OK → tunnel actief |
+| 2 | Gate 1 | Inloggen + MFA | Token ontvangen; MFA → Success |
+| 3 | Gate 2 | Intune-naleving geattesteerd bij login (Beleid 5) | Apparaat Compliant → "Report-only: Success" |
 | 4 | Gate 3 | Surfen naar `https://google.com` | SSL Bump: certificaat van SASE-PoC-CA |
 | 5 | Gate 3 | EICAR-testbestand downloaden | ClamAV blokkeert |
 | 6 | Gate 3 | Surfen naar RPZ-geblokkeerd domein | DNS NXDOMAIN |
-| 7 | — | Aanmeldingslog | CA-beleidsregels: "Geslaagd" |
-| 8 | — | Dashboard → peer-info | Posturecontrole: "Passed" |
+| 7 | — | CA-aanmeldingslog | `Resource: Microsoft Graph — Matched`; gehandhaafde beleidsregels "Success" |
+| 8 | — | Intune → Devices → mobile01 | Compliant |
 
 ---
 
 ## Eerlijke beperkingen
 
-| Beperking | Waarom | Productieoplossing |
+| Beperking | Waarom | Status / mitigatie |
 |-----------|--------|--------------------|
-| Procescontrole is te omzeilen | Binair op juist pad ≠ werkende AV | Defender for Endpoint-attestatie (TPM) |
-| Geen schijfversleutelingscontrole | NetBird process_check kan dit niet controleren | Intune-nalevingsbeleid (vereist MDM) |
-| Geen AV-definitieversiecontrole | Procescontrole verifieert alleen dat het proces draait | Intune/Defender health attestation |
-| CA-apparaatnaleving niet beschikbaar | Onbeheerde BYOD, geen Intune-inschrijving | Intune-inschrijving (onrealistisch voor 4000 BYOD) |
-| Posture evalueert bij tunnelinstelling, niet continu | Geen realtime sessieevaluatie | NetBird periodieke herevaluatie; CAE voor productie |
-| GeoIP niet 100% nauwkeurig | IP-geolocatiedatabases bevatten fouten | Gemitigeerd door combinatie van CA-geoblokkering (Gate 1) met NetBird geocontrole (Gate 2) — verschillende GeoIP-databases |
-| C2-beaconing via WireGuard-tunnel | Een gecompromitteerd apparaat kan de WireGuard-tunnel (poort 51820) als C2-beaconingkanaal gebruiken — buiten Squid's zichtbereik | Gate 2 (posture) + eindpuntdetectie; Suricata ziet WireGuard als versleuteld UDP |
+| Twee beleidsregels op Report-only | Geo-Block en Require-Compliant-Device staan bewust op Report-only tot Sessie 11 | Op Aan zetten bij demo-voorbereiding; beide bewezen al "Report-only: Success" (B40.23) |
+| Admins-persona onder geen enkel CA-beleid | `2itcsc1a_admin1` is het enige admins-lid en is de break-glass-uitsluiting op elk beleid (B40.6) | Voeg een tweede admin-account toe om de admins-persona onder CA te brengen |
+| docent1/admin1 niet gedekt door Beleid 5 | Bewust ongelicenseerd gelaten; Beleid 5 is studenten-only gescoped om een lockout te voorkomen (B40.20) | Licenseer docenten/admins voor Intune om Gate 2 naar die persona's uit te breiden |
+| Geen Continuous Access Evaluation (CAE) | Gate 2 herevalueert bij authenticatie en op Intune's periodieke cyclus, niet continu per sessie | Schakel CAE in voor near-real-time intrekking |
+| GeoIP niet 100% nauwkeurig | IP-geolocatiedatabases bevatten fouten | Alleen Geo-Block (Gate 1, CA); de optionele NetBird-geocontrole (andere DB) is niet uitgerold |
+| C2-beaconing via WireGuard-tunnel | Een gecompromitteerd apparaat kan de WireGuard-tunnel (UDP 51820) als C2-beaconingkanaal gebruiken — buiten Squid's zichtbereik | Eindpuntdetectie + Suricata (ziet WireGuard als versleuteld UDP) |
+| NetBird-posture niet uitgerold | Intune-attestatie dekt apparaatpostuur niet-spoofbaar; de client-side `process_check` is spoofbaar (een dummy-binary op het pad voldoet) | Rol NetBird-posture (Stappen 3-4) alleen uit als onbeheerde/BYOD-apparaten opnieuw in scope komen |
 
-> **Dekkingsschatting:** De PoC implementeert ~60-70% van de contextbewuste toegangscontrole die commerciële SASE-oplossingen (Zscaler ZPA, Netskope Private Access) bieden. De voornaamste hiaten zijn eindpuntattestatie (TPM-gebaseerd, niet procesgebaseerd) en Continuous Access Evaluation (CAE).
+> **Dekkingsopmerking:** Met Intune-attestatie uitgerold als Gate 2 is het grootste hiaat in het BYOD-tijdperk-plan — eindpuntattestatie die procesgebaseerd en spoofbaar was — gedicht: Intune rapporteert de werkelijke apparaatstatus niet-spoofbaar. De voornaamste resterende hiaten ten opzichte van commerciële SASE (Zscaler ZPA, Netskope Private Access) zijn Continuous Access Evaluation (CAE) en per-sessie continu postuur in plaats van evaluatie bij authenticatie.
 
 Zie [Concept: Zero Trust](../concepts/zero-trust.nl.md) voor de volledige analyse van het drie-gates-model.
 

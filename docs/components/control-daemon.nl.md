@@ -31,7 +31,7 @@ De control daemon is de real-time handhavingsmotor. Het abonneert zich op `secur
 
 | Interface | Richting | Details |
 |-----------|----------|---------|
-| NATS JetStream | Inkomend (consumer) | Durable consumer op `security.alert.>` + `identity.>` |
+| NATS JetStream | Inkomend (consumer) | Durable + DeliverPolicy.NEW consumer op `security.alert.>` (overleeft restarts, geen herafspelen van historische events); ephemeral + DeliverPolicy.ALL consumer op `identity.>` (herbouwt de in-memory identity-map bij elke start) |
 | NetBird Management API | Uitgaand | Groups API GET/PUT voor quarantaine/dequarantaine |
 | Redis | Bidirectioneel | Threat scores, sessiestatus, groepsbackup |
 

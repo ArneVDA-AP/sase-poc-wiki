@@ -37,7 +37,7 @@ These scenarios validate each SASE pillar by attempting attacks or policy bypass
 |---|----------|-----------------|-----------|--------------|
 | C1 | Student browses ChatGPT | Blocked (Studenten policy) | CASB L1 | `curl.exe -x ... https://chatgpt.com` as student |
 | C2 | Teacher browses ChatGPT | Allowed (Docenten policy) | CASB L1 | Same URL as teacher identity |
-| C3 | SharePoint anonymous share | Wazuh Active Response revokes link | CASB L2 | Create anonymous sharing link in SharePoint |
+| C3 | SharePoint anonymous share | Detected (rule 100601); Active Response revokes link behind the ENFORCE gate (detect-only by default, live revoke pending) | CASB L2 | Create anonymous sharing link in SharePoint |
 
 ### FWaaS / IDS -- Network Detection
 
@@ -60,7 +60,7 @@ These scenarios validate each SASE pillar by attempting attacks or policy bypass
 
 | # | Scenario | Expected result | Validates | Test command |
 |---|----------|-----------------|-----------|--------------|
-| F1 | High-severity IDS alert | Control daemon quarantines peer (<500 ms) | CASB L3 | Trigger Suricata C2 alert |
+| F1 | High-severity malware event | Control daemon quarantines peer (within seconds) | CASB L3 | Trigger c-icap RESPMOD malware detection |
 | F2 | Multiple medium alerts (score accumulation) | Threat score rises, crosses threshold, triggers quarantine | CASB L3 | Sequential alerts from same client |
 | F3 | Score decay after quarantine | Peer restored to persona group after decay period | CASB L3 | Wait for sliding-window decay |
 

@@ -61,6 +61,7 @@ StructuredDataDetection yes
 StructuredMinCreditCardCount 3
 StructuredMinSSNCount 3
 StructuredSSNFormatNormal yes
+StructuredSSNFormatStripped no
 StructuredCCOnly no
 ```
 
@@ -135,13 +136,22 @@ ClamAV/c-icap-detectiegebeurtenissen worden gepubliceerd naar de NATS event bus 
 
 **`database.clamav.net` retourneert 403 bij directe HTTP-verzoeken** — het CDN vereist de freshclam-useragent. Een 403 van de server bevestigt dat TCP/TLS correct werkt; het is geen firewallprobleem.
 
-**Opstaartwaarschuwingen van c-icap zijn cosmetisch** — berichten zoals `WARNING: Can not check the used c-icap release to build service virus_scan.so` hebben alleen betrekking op verificatie van de buildversie, niet op de runtimefunctionaliteit.
+**Opstartwaarschuwingen van c-icap zijn cosmetisch** — berichten zoals `WARNING: Can not check the used c-icap release to build service virus_scan.so` hebben alleen betrekking op verificatie van de buildversie, niet op de runtimefunctionaliteit.
 
 **c-icap-logpad is niet voor de hand liggend** — logs staan in `/var/log/cicap/cicap_JJJJMMDD.log`, niet in `/var/log/c-icap/server.log`.
 
 **YARA-regels valideren niet algoritmisch** — `DLP_IBAN_Pattern` herkent het formaat maar voert geen mod-97-controlesomvalidatie uit. `DLP_BSN_Candidate` herkent 9-cijferige clusters maar voert geen 11-proef uit. Valse positieven zijn mogelijk. De [Python DLP-server](python-dlp.md) op het uploadpad voert wel algoritmische validatie uit.
 
 **`--ssl-no-revoke` vereist voor curl.exe-tests** — curl.exe op Windows gebruikt de schannel TLS-stack, die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen intrekkingseindpunt, waardoor dit mislukt. Voeg `--ssl-no-revoke` toe aan alle CLI-testopdrachten.
+
+**Handleiding gebruikt `/squid_clamav` als ICAP-servicepad** — oudere handleidingversies specificeren `icap://localhost:1344/squid_clamav`. Het correcte servicepad op de c-icap-installatie van OPNsense is `/virus_scan`. Het handleidingpad gebruiken geeft ICAP 404.
+
+**YARA-persistentie na OPNsense-firmware-updates** — YARA-bestanden in `/var/db/clamav/` overleven OPNsense-updates zolang ze niet in door updates beheerde mappen staan. Controleer na een firmware-update of `dlp_custom.yar` nog aanwezig is en `clamdscan --reload` zonder fout voltooit.
+
+**ClamAV/ICAP-bereikbeperkingen** — ClamAV kan alleen verkeer inspecteren dat via Squid stroomt. Het volgende verkeer wordt NIET geïnspecteerd:
+- Sites op de SSL Bump no-bump-lijst (bijv. `.microsoft.com`) — versleutelde bytes passeren zonder decryptie
+- Clients die geen WPAD/PAC gebruiken of de proxyinstelling hebben uitgeschakeld — hun verkeer omzeilt Squid volledig
+- Niet-HTTP-protocollen (SSH, SMB, DNS naar externe servers) — afgehandeld door Suricata, niet ClamAV
 
 ---
 
@@ -156,3 +166,4 @@ ClamAV/c-icap-detectiegebeurtenissen worden gepubliceerd naar de NATS event bus 
 - [Beslissing: Twee-laags DLP](../decisions/two-layer-dlp.md)
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)
+- [Runbook: Malware & DLP-pipeline](../runbooks/04-malware-dlp.md)

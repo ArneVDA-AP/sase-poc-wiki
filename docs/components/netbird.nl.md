@@ -104,36 +104,38 @@ Voeg de door Zitadel gegenereerde omleidings-URI toe aan de Entra ID-app-registr
 
 | Groep | Leden | Doel |
 |-------|-------|------|
-| `SASE-Admins` | pop01, mgmt01 | Administratieve SSH/HTTPS-toegang |
-| `SASE-MobileUsers` | mobile01 | BYOD-clients |
-| `SASE-Services` | pop01, mgmt01 | Service-eindpunten (proxy, WPAD, DNS) |
-| `SASE-InternalResources` | (resourcegroep voor netwerk) | DC-LAN-resources |
+| `Core-Services` | pop01, mgmt01 | Infrastructuurpeers (proxy, DNS, WPAD, ICAP) |
+| `Studenten` | student-persona-peers | Studentclients (JWT auto-groep) |
+| `Docenten` | docent-persona-peers | Docentclients (JWT auto-groep) |
+| `Admins` | admin-persona-peers | Administratieve gebruikers (JWT auto-groep) |
+| `All` | elke peer | NetBird ingebouwde auto-groep |
 
-**Volgorde van beleidsaanmaak is cruciaal:** Maak alle beleidsregels aan vóór het verwijderen van het standaard alles-naar-alles-beleid. Het verwijderen van de standaard zonder vervangers verbreekt onmiddellijk alle peer-communicatie.
+Alleen `Core-Services` wordt handmatig aangemaakt. De persona-groepen (`Studenten`/`Docenten`/`Admins`) worden **niet** in het dashboard aangemaakt — een JWT-groep materialiseert pas als NetBird-groep wanneer een peer met die `groups`-claim voor het eerst verbindt; inschrijving *is* de groepssynchronisatie (geen aparte stap).
+
+> **Groepsmigratie (V34, mei 2026).** De oorspronkelijke Fase-2-build gebruikte `SASE-Admins`, `SASE-MobileUsers`, `SASE-Services` en `SASE-InternalResources`. Een diagnose toonde dat **alle** NetBird ACL-connectiviteit op de `SASE-*`-groepen hing, terwijl de persona-groepen **nul** beleid droegen — quarantaine-per-groep (een peer uit zijn persona-groep verwijderen) zou dus een no-op zijn geweest. De migratie verplaatste alle connectiviteit naar het persona-model + `Core-Services` en verwijderde elke `SASE-*`-groep en -beleid. Het persona-model hieronder is de huidige staat; het `SASE-*`-model is verouderd.
+
+**Volgorde van beleidsaanmaak (deny-by-default):** Het standaard All→All-beleid is verwijderd, dus peers zonder beleid hebben geen connectiviteit. Maak het vervangende beleid aan *vóór* het verwijderen van de standaard, om te voorkomen dat alle peer-communicatie wegvalt.
 
 ### ACL-beleid
 
-**Beleid 1 — Admin-Infrastructuur:** Bronnen: `SASE-Admins` → Bestemmingen: `SASE-Admins`, Protocol: Alles
+**`Personas-to-Core-Services`:** Bronnen: `Studenten`, `Docenten`, `Admins` → Bestemming: `Core-Services`, Protocol: **alleen TCP 3128**.
 
-**Beleid 2 — Mobiel-naar-Services:** Bronnen: `SASE-MobileUsers` → Bestemmingen: `SASE-Services`, Protocol: Alles  
-Dit staat mobile01 toe pop01-proxy (`100.70.154.79:3128`) en mgmt01 WPAD (`100.70.135.241:80`) te bereiken.
-
-**Beleid 3 — Datacentertoegang:** Bronnen: `SASE-MobileUsers` → Bestemmingen: `SASE-InternalResources`, Protocol: Alles
+Dit ene beleid is de volledige allow-list onder deny-by-default. Het laat elke persona-peer de pop01 Squid-proxy (`100.70.154.79:3128`) bereiken; al het webverkeer loopt vervolgens door de SWG-pijplijn, waar de differentiatie per persona in Squid gebeurt (niet in NetBird-ACL's). WPAD-poorten (`:80`/`:443` op mgmt01) zijn **bewust weggelaten** — het PAC-bestand is leeg en clients gebruiken een handmatige proxy-instelling, dus WPAD-bereikbaarheid is niet nodig (V34.13). Quarantaine werkt omdat het verwijderen van een peer uit zijn persona-groep zijn enige pad naar `Core-Services` wegneemt.
 
 ### Exit-knooppunt en DC-LAN-routering
 
 **Exit-knooppunt (internetverkeer)** — via Netwerkroutes:
 ```
-Netwerk: 0.0.0.0/0, Routeerpeer: pop01, Groepen: SASE-MobileUsers
+Netwerk: 0.0.0.0/0, Routeerpeer: pop01, Distributiegroepen: Studenten, Docenten, Admins
 ```
 
-**DC-LAN (10.0.0.0/8)** — via Netwerken (ACL-bewust, niet Netwerkroutes):
-```
-Netwerknaam: Internal-DC
-Resource: DC-LAN, Type: IP-bereik, Bereik: 10.0.0.0/8, Groep: SASE-InternalResources
-```
+Het exit-knooppunt blijft bestaan zodat BYOD-persona-verkeer via pop01 naar buiten gaat. Het exit-knooppunt van NetBird is **alles-of-niets** — het kan geen bestemmingsbereiken selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, duwt een Intune-Remediation (`2ITCSC1A-Route-Remediation`) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.
 
-Netwerkroutes omzeilen ACL-beleid standaard. Netwerken vereisen groepkoppeling by design. DC-LAN moet Netwerken gebruiken voor zero-trust-correctheid; exit-knooppunt moet Netwerkroutes gebruiken (NetBird-documentatiebeperking voor 0.0.0.0/0).
+**DC-LAN (10.0.0.0/8) over de overlay — uitgesteld.** Het oorspronkelijke `Internal-DC`-netwerk (ACL-bewust) en zijn `Datacenter-Access`-beleid zijn **verwijderd in de V34-migratie**; er is geen actief DC-LAN-over-overlay-pad in de huidige sandbox. Het opnieuw introduceren van datacenterbereikbaarheid is uitgesteld tot de geplande Cosmos-app-gateway-sessie. De ontwerpredenering hieronder blijft behouden voor wanneer dat werk wordt hervat.
+
+> **Netwerken vs. Netwerkroutes (ontwerpredenering, voor het uitgestelde DC-LAN-werk):** Netwerkroutes omzeilen ACL-beleid standaard. Netwerken vereisen groepkoppeling by design. DC-LAN zou Netwerken moeten gebruiken voor zero-trust-correctheid; het exit-knooppunt moet Netwerkroutes gebruiken (NetBird-beperking voor 0.0.0.0/0).
+
+**Distributiegroepen vs. ACL-beleid:** Deze dienen verschillende doelen — de distributiegroep bepaalt *welke peers de DNS-/netwerkconfiguratie ontvangen*, terwijl het ACL-beleid bepaalt *of het verkeer daadwerkelijk stroomt*. Als een peer in de distributiegroep zit maar geen ACL-beleid heeft dat verkeer toestaat, ontvangt hij de config maar kan hij de resource niet bereiken. Symptoom: `netbird status` toont `Nameservers: 0/1 Available` op een peer die de naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft.
 
 ### DNS-configuratie
 
@@ -166,18 +168,16 @@ ClamAV/Python DLP ICAP-verkeer van pop01 naar mgmt01 loopt via het `192.168.122.
 
 De identiteitsketen loopt van Entra ID via Zitadel naar NetBird:
 
-1. **Entra ID** persona-groepen (`2ITcsc1A-Studenten`, `2ITcsc1A-Docenten`, `2ITcsc1A-Admins`) → `cloud_displayname` optionalClaim in JWT
-2. **Zitadel Action 1** (External Auth): allowlist-map GUID → clean naam (`Studenten`, `Docenten`, `Admins`) → schrijft naar user metadata `sase_groups`
+1. **Entra ID** persona-groepen (`2ITCSC1A-Studenten`, `2ITCSC1A-Docenten`, `2ITCSC1A-Admins`) → `cloud_displayname` optionalClaim in JWT
+2. **Zitadel Action 1** (External Auth): allowlist-map weergavenaam → clean naam (`Studenten`, `Docenten`, `Admins`) → schrijft naar user metadata `sase_groups`
 3. **Zitadel Action 2** (Complement Token): leest metadata → `setClaim("groups", [...])` in JWT
 4. **NetBird JWT sync**: `groups`-claim wordt user auto-groups → gepropageerd naar alle peers van die gebruiker
 
-**Persona-groepen:** `Studenten`, `Docenten`, `Admins` (clean namen; Entra-namen dragen `2ITcsc1A-`-prefix)
+**Persona-groepen:** `Studenten`, `Docenten`, `Admins` (clean namen; Entra-namen dragen `2ITCSC1A-`-prefix)
 
 **JWT allow-groups veld:** Moet **leeg** gelaten worden. Een gevuld veld met een niet-matchende waarde veroorzaakt 401-lockout voor alle gebruikers — herstel vereist directe SQLite-toegang op de management-container. Zie [Bevinding: NetBird JWT allow-groups lockout](../findings/netbird-jwt-allow-groups-lockout.md).
 
 **Service-user:** `identity-bridge` met admin-role voor API-toegang. Gewone user-PAT's triggeren issue #3127 (stript JWT-gepropageerde auto-groups van alle peers). Zie [Bevinding: NetBird issue #3127](../findings/netbird-issue-3127.md).
-
-**Groepsmigratie (V34):** Alle SASE-MobileUsers/SiteUsers/etc. vervangen door persona-groepen + Core-Services.
 
 ---
 
@@ -185,7 +185,7 @@ De identiteitsketen loopt van Entra ID via Zitadel naar NetBird:
 
 NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:
 
-- **Producer:** De [Identity Bridge](identity-bridge.md) (die afhankelijk is van de NetBird Management API) publiceert identiteitsgebeurtenissen naar `identity.login` en `identity.group_change` wanneer peerverbindingen of groepslidmaatschappen wijzigen.
+- **Producer:** De [Identity Bridge](identity-bridge.md) (die afhankelijk is van de NetBird Management API) publiceert identiteitsgebeurtenissen naar `identity.peer.connected`, `identity.peer.disconnected` en `identity.multi_persona` (zero-trust-anomalie) wanneer peers verbinden, verbreken of in meer dan één personagroep verschijnen.
 - **Handhavingsdoelwit:** De [Control Daemon](control-daemon.md) gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit beleidsdragende personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All->All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.
 
 ---
@@ -200,6 +200,8 @@ NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:
 
 **Zitadel-groepenclaim-mismatch** — Zitadel gebruikt geneste `roles` JSON; NetBird verwacht een platte `groups`-array. Als groepen niet propageren naar NetBird, controleer dan het Zitadel-actiescript voor groepenclaim-transformatie. Zie NetBird Zitadel-documentatie.
 
+**`process_check` platformbeperkingen** — de `process_check`-postuurcontrole van NetBird is niet beschikbaar op iOS/Android. Bij het configureren van `os_version_check` geldt: als er voor een bepaald OS geen pad is opgegeven, wordt dat OS **standaard geblokkeerd** (niet toegestaan). Dit is een beveiligingspositieve standaard, maar kan onbedoeld hele platformen buitensluiten. Merk op dat procescontroles spoofbaar zijn — een dummy-binary op het verwachte pad voldoet aan de controle zonder dat de beveiligingssoftware daadwerkelijk draait.
+
 ---
 
 ## Gerelateerd
@@ -212,8 +214,10 @@ NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:
 - [Beslissing: GNS3 vs. EVE-NG](../decisions/gns3-vs-eveng.md)
 - [Bevinding: NetBird primaire naamserver](../findings/netbird-primary-nameserver.md)
 - [Bevinding: NetBird config nul bytes](../findings/netbird-config-zero-bytes.md)
+- [Runbook: ZTNA-overlay](../runbooks/02-ztna-overlay.md)
 - [Identity Bridge](identity-bridge.md)
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)
 - [Wazuh](wazuh.md)
 - [Concept: Identity Flow](../concepts/identity-flow.md)
+- [Runbook: Toegangsbeleid](../runbooks/07-access-policy.md)

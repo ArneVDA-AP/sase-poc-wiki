@@ -99,7 +99,7 @@ Verbind de GNS3 GUI vanaf je laptop: `Edit → Preferences → Server → Remote
 | Ubuntu 24.04 | QEMU (QCOW2) | `mgmt01` |
 | Ubuntu 24.04 | QEMU (QCOW2) | `dc01` |
 | VyOS | QEMU (QCOW2) | `site01` |
-| Ubuntu 24.04 | QEMU (QCOW2) | `sitepc01` |
+| Tiny11 (Windows 11) | QEMU (QCOW2) | `sitepc01` |
 
 `mobile01` (Windows 11) draait als VMware VM op de laptop van een teamlid — het is **geen** GNS3-node. Het maakt uitsluitend verbinding via de NetBird WireGuard-tunnel.
 
@@ -113,7 +113,7 @@ Switch-WAN   ──── site01 eth0       (WAN-interface)
 Switch-LAN   ──── pop01  vtnet1     (LAN naar DC-LAN)
 Switch-LAN   ──── dc01   ens3       (DC-LAN)
 Switch-Site  ──── site01 eth1       (Site-LAN)
-Switch-Site  ──── sitepc01 ens3     (Site-LAN)
+Switch-Site  ──── sitepc01 Ethernet (Site-LAN)
 ```
 
 **Verificatie:** Alle nodes verschijnen op het canvas met de juiste bekabeling. Klik met rechts → Start elke node; controleer consoletoegang.
@@ -130,7 +130,7 @@ Klik met rechts op elke node → Configure → General settings:
 | mgmt01 (Ubuntu) | 16384 MB | 4 | 1 | Docker-stack |
 | dc01 (Ubuntu) | 4096 MB | 2 | 1 | Datacentersimulatie |
 | site01 (VyOS) | 1024 MB | 1 | 2 (eth0, eth1) | SD-WAN-gateway |
-| sitepc01 (Ubuntu) | 4096 MB | 2 | 1 | Nog geen OS geïnstalleerd |
+| sitepc01 (Tiny11) | 4096 MB | 2 | 1 | Tiny11 / Windows 11 — overlay-ingeschreven (docent1) |
 
 > **Valkuil: pop01 heeft 8 GB nodig, niet 4 GB.** Het handboek schrijft 4 GB voor, maar ClamAV (~1,2 GB) + Suricata (~760 MB + 4 GB Hyperscan-compilatiepiek) + Squid (~400 MB) gelijktijdig overschrijden 6 GB. Bij 4 GB beëindigt de OOM-killer van FreeBSD processen zonder logboekregels te schrijven.
 > Zie [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.nl.md) voor geheugenanalyse.
@@ -152,7 +152,7 @@ Klik met rechts op elke node → Configure → General settings:
 | Segment | CIDR | Gateway | Nodes |
 |---------|------|---------|-------|
 | DC-LAN | `10.0.0.0/24` | `10.0.0.1` (pop01 vtnet1) | dc01: `10.0.0.100` |
-| Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.50` |
+| Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.10` |
 
 **Poortdoorsturing op GNS3-host** (`10.158.10.67`):
 

@@ -271,3 +271,75 @@ Append-only log of wiki changes.
 **Source documents ingested:** V28–V44 (17 verslagen), 10 implementation documents (Addenda E, G, GroupSync, H, I, J, CASB Architecture, ZTSDWAN Architecture, SDWAN Nulmeting, GroupSync Correcties, Correctienotitie CASB, Projectoverzicht Mei 2026, Sessieplanning Juni 2026)
 
 **Total new pages:** 42. **Total updated pages:** 30+.
+
+---
+
+## 2026-06-04 — Raw → Wiki one-directional consistency audit (full pass)
+
+**Goal:** Bring every wiki page into agreement with the raw sources in one direction only —
+`raw/` is the single source of truth; only the wiki was changed. Both languages corrected and
+EN↔NL divergence treated as a defect. Scope = correctness only (no editorial trimming, no
+renames/moves/slug changes).
+
+**Authority model applied:** verslag-confirmed state = ground truth; a later verslag supersedes an
+earlier one; correction notes override their parent plan doc but a verslag still wins; addenda /
+architecture docs / Doc1–7 = pre-implementation intent (rationale + gap-fill only). This inverts the
+rule the wiki was originally built under (see CLAUDE.md fix below), which is why the largest drift
+class was pages that had followed a plan/addendum where a verslag later diverged.
+
+**Domains audited (all 12 + cross-cutting Phase E):** DNS-Threat-Intel · SWG/Proxy · Malware+DLP ·
+IDS · Lab/Virtualization · ZTNA-Overlay · Context-Aware/CA · GroupSync · Identity-Bridge/Control-Daemon ·
+NATS/JetStream · CASB+Wazuh · ZT-SD-WAN · Phase E (overview/architecture, concepts, index, tags,
+section indexes, testing/*).
+
+**Findings by class (~88 distinct findings across 86 logical pages × EN+NL):**
+- **factual (~28)** — wrong app-reg GUID (`cebe0d74…`→`11803ee8…`), Identity-Bridge poll target
+  (`HTTPS overlay`→`http://management:80`), NATS version (`2.14`→`2.14.1-alpine`), Suricata/DNS
+  date drift (April→March 2026), Control-Daemon date (May→June), group-name casing
+  (`2ITcsc1A-`→`2ITCSC1A-` across 4 pages), VyOS version (`1.4 rolling`→`rolling 2026.02.16`),
+  sitepc01 Site-LAN IP (`172.16.10.50`→`172.16.10.10`), and more.
+- **stale-superseded (~13)** — NetBird groups/ACL (SASE-* → persona model + single
+  `Personas-to-Core-Services` policy, V34); CA posture (NetBird posture → Intune compliance Gate 2,
+  V40); sitepc01 (`no OS` → Tiny11 operational, V43/V44); runbook-07/08/09 group tables.
+- **status-drift (~10)** — Wazuh CASB live-revoke (working → detect-only HTTP-204 stub, live pending);
+  VyOS QoS+failover (planned/descoped → implemented, V43); GroupSync #5399 Dex gotcha (live → not
+  applicable, V30.17); acceptance-tests F4/F8 (see below).
+- **inconsistency / EN↔NL divergence (~20)** — dominant NL pattern was dropped content (NL pages
+  missing blocks the EN had); plus one self-contradiction (`concepts/identity-flow` mislabelled the
+  JWT-vs-IdP-Sync *mechanism* as "Path A/B", which raw reserves for prefix handling).
+- **ungrounded-and-wrong (~10)** — `components/identity-bridge` invented `/member`, `children-max=5`,
+  `identity.login`/`identity.group_change`; `findings/wazuh-dashboard-airgate` invented an
+  `api.wazuh.com` URL + "perpetual spinner"; `-p 953` on `rndc` (×4 DNS pages); `control.quarantine`
+  NATS subject.
+- **link (~7)** — missing Related-runbook links added while editing. Final link audit across all
+  172 files (1,259 internal `.md` links) = **0 broken**.
+
+**Key resolutions (authority model in action):**
+- **GroupSync Pad A/B:** Pad B shipped (V31/V34) and is a **fail-closed allowlist that maps the
+  Entra display-name STRING → clean NetBird name** (`2ITCSC1A-Studenten`→`Studenten`), unmatched
+  groups silently dropped — net effect strips the prefix but is stricter than a blind strip. Entra
+  security-group casing is **all-caps `2ITCSC1A-`** (V34/V40 verslagen supersede the correction
+  note's lowercase `2ITcsc1A-`). Corrected the original wiki's "GUID-keyed" error AND an intermediate
+  "generic prefix-strip" over-correction.
+- **Quarantine breaks active flow = TESTED, reframed honestly:** V35.14 dry-run on `docent1` —
+  EICAR scored 80/80, peer quarantined **within seconds** (persona groups stripped → deny-by-default),
+  connectivity lost, restored on un-quarantine. Presented as tested with timing **"within seconds"**
+  (not "milliseconds") and WITHOUT the unsupported "page died mid-load" claim. ENFORCE=false until
+  Session 11.
+- **CASB demo SID:** `100201` → **`100601`** (`AnonymousLinkCreated`, V39 sandbox base 100600 family).
+  The seed's `100500/100501` are the Marnix-team bus rules, not the sandbox CASB rules.
+- **Acceptance-tests F4/F8 (Datacenter Access / Firewall Segmentation):** reframed as
+  **Validated-then-removed** — kept the ✅ build-time result, added current-state framing that the
+  DC-LAN-over-overlay path (`Internal-DC` Network + `Datacenter Access` policy) was removed in the V34
+  persona migration and deferred; F8's negative isolation half remains valid. Applied to F4, F8, and
+  F15 step 6 + tally, EN+NL.
+
+**CLAUDE.md authority rule fixed:** the project instruction "the implementatiedocument wins over the
+verslag for current state" was inverted to the corrected model — **verslag-confirmed state is ground
+truth; addenda / implementatiedocumenten / plan-documenten are pre-implementation intent and never
+override a verslag for current state.** This is the root cause of the systematic drift this audit
+corrected.
+
+**Files changed:** wiki pages across all domains (EN+NL) per the per-domain tables in
+`.agent-memory/audit-tracker.md`; `CLAUDE.md` (authority rule); `log.md` + `log.nl.md` (this entry).
+No `raw/` files were modified. No renames, moves, slug or frontmatter changes.

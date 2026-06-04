@@ -99,9 +99,15 @@ Deploy Python-based event producers on pop01. Each producer tails a log file and
 
 ### Producer: DNS RPZ
 
-- Unbound Python module integration
+- Tails the resolver log (`/var/log/resolver/latest.log`), filtering on `rpz: applied`
 - Publishes to subject: `security.alert.dns`
 - Extracts: queried domain, RPZ action (NXDOMAIN/redirect), feed source
+
+### Producer: ClamAV malware
+
+- Tails the c-icap log (`/var/log/cicap/latest.log`)
+- Publishes to subject: `security.alert.malware` (routes `YARA.DLP*` signatures to `security.alert.dlp` instead)
+- Extracts: virus signature, client IP, URL
 
 Verify each producer is publishing:
 
@@ -126,8 +132,9 @@ nats sub "security.alert.>"
 
 - Integrated into the Identity Bridge service ([Runbook 09](09-identity-bridge.md))
 - Publishes to subjects:
-  - `identity.login` — when a new peer connects
-  - `identity.group_change` — when a peer's persona group changes
+  - `identity.peer.connected` — when a peer connects to the overlay
+  - `identity.peer.disconnected` — when a peer disconnects
+  - `identity.multi_persona` — when a peer is observed in more than one persona group (zero-trust anomaly)
 
 ---
 
@@ -136,7 +143,9 @@ nats sub "security.alert.>"
 The Control Daemon is the central event processor that consumes security events and takes automated response actions.
 
 1. Deploy as a Docker container on mgmt01
-2. Configure subscriptions: `security.alert.*` (wildcard)
+2. Configure subscriptions:
+   - `security.alert.>` — durable consumer, `DeliverPolicy.NEW` (survives restart, no replay of historical events)
+   - `identity.>` — ephemeral consumer, `DeliverPolicy.ALL` (rebuilds the in-memory identity map on each start)
 3. Configure Redis connection for threat score storage
 
 **Threat scoring:**
@@ -179,9 +188,10 @@ If the score exceeds the quarantine threshold, verify that the peer is removed f
 - [ ] Suricata producer publishing to `security.alert.ids`
 - [ ] Squid producer publishing to `security.alert.proxy`
 - [ ] DNS RPZ producer publishing to `security.alert.dns`
+- [ ] ClamAV malware producer publishing to `security.alert.malware` (routing `YARA.DLP*` to `security.alert.dlp`)
 - [ ] DLP producer publishing to `security.alert.dlp`
-- [ ] Identity Bridge publishing to `identity.login` / `identity.group_change`
-- [ ] Control Daemon consuming `security.alert.*` and scoring in Redis
+- [ ] Identity Bridge publishing to `identity.peer.connected` / `identity.peer.disconnected` / `identity.multi_persona`
+- [ ] Control Daemon consuming `security.alert.>` and scoring in Redis
 - [ ] Quarantine action functional (peer removed from group on threshold breach)
 
 ---

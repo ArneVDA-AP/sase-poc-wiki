@@ -37,7 +37,7 @@ Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird
 - **F12, F13, F14** zijn als N.v.t. gemarkeerd in alle acceptatietestmatrices. Dit is een expliciete architectuurbeslissing, geen implementatieleemte.
 - **F15-stappen 7–8** zijn N.v.t. om dezelfde reden (stap 7 vereist sitepc01 met NetBird; stap 8 vereist QoS op VyOS).
 - **VyOS** blijft in de topologie, maar de configuratie is minimaal — alleen WAN-connectiviteit en NAT. Zie [VyOS](../components/vyos.md).
-- **sitepc01** datacentertoegang is gepland via NetBird-inschrijving (nog niet uitgevoerd per april 2026).
+- **sitepc01** bereikt het datacenter via individuele NetBird-inschrijving — bevestigd ingeschreven en operationeel in Verslag43/Verslag44, niet via een site-to-site-tunnel.
 - De architectuur sluit direct aan op het "Zero Trust SD-WAN"-model van Zscaler: vestigingen behandeld als niet-vertrouwde netwerken (zoals cafés), elk apparaat authenticeert individueel, geen site-to-site-tunnels.
 
 ## Wat er daadwerkelijk gebouwd is

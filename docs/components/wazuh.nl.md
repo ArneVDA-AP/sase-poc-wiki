@@ -13,9 +13,9 @@ tags: [wazuh, siem, nats, docker, wazuh-siem]
 
 Wazuh voorziet in forensische logging en API-mode CASB-handhaving. Het werkt op een dual-write-architectuur: detectiecomponenten schrijven naar logbestanden (Wazuh-agent leest deze uit) EN publiceren naar NATS (control daemon consumeert) onafhankelijk van elkaar. Geen van beide paden is afhankelijk van het andere.
 
-De NATS→Wazuh forwarder is een aparte Docker-container die `security.alert.>` events van de NATS-bus consumeert en ze als JSON-logregels naar de Wazuh manager-socket schrijft. Aangepaste Wazuh-regels parseren, classificeren en indexeren deze events vervolgens.
+De NATS→Wazuh forwarder is een aparte Docker-container — een durable PULL-consumer (DeliverPolicy.NEW, AckPolicy.EXPLICIT) — die `security.alert.>` events van de NATS-bus consumeert en ze als NDJSON naar het gedeelde `wazuh_nats_ingest`-volume schrijft (`/ingest/security_alerts.json`). De Wazuh manager tailt dat bestand via een `<localfile><log_format>json</log_format></localfile>`-blok; aangepaste Wazuh-regels parseren, classificeren en indexeren de events vervolgens. (Rechtstreeks naar de manager-socket schrijven en naar de Wazuh-API posten zijn beide geëvalueerd en verworpen — de localfile-JSON-tail is het werkende ingestiepad.)
 
-Voor CASB Laag 2 publiceert de M365 Activity API-producer SharePoint/OneDrive-auditevents naar NATS. Wazuh-regelfamilie 100600 detecteert beleidsovertredingen (anonieme shares, externe shares). Active Response-scripts trekken deellinks in via de Microsoft Graph API.
+Voor CASB Laag 2 pollt de `o365_producer` de Office 365 Management Activity API en publiceert SharePoint-auditevents naar NATS (`security.alert.casb`). De Wazuh-regelfamilie 100600 detecteert beleidsovertredingen (anonieme link-aanmaak, anyone-scope deellinks, gast-sharing). Active Response-scripts (`sharepoint_remediate.sh`, `guest_remediate.sh`) trekken deellinks in via de Microsoft Graph API, achter een ENFORCE-gate die standaard op detect-only staat. De revoke-keten is bewezen tot HTTP-204 via een offline stub; live intrekking tegen een echt OneDrive-bestand wacht op provisioning van een testaccount (een externe Microsoft-afhankelijkheid).
 
 ## Configuratie
 
@@ -31,15 +31,15 @@ Voor CASB Laag 2 publiceert de M365 Activity API-producer SharePoint/OneDrive-au
 
 | Interface | Richting | Details |
 |-----------|----------|---------|
-| NATS→Wazuh forwarder | Inkomend | Consumeert `security.alert.>`, schrijft naar manager-socket |
+| NATS→Wazuh forwarder | Inkomend | Durable PULL-consumer van `security.alert.>`; schrijft NDJSON naar gedeeld `wazuh_nats_ingest`-volume (manager tailt het via `<localfile>`) |
 | pop01 Wazuh-agent | Inkomend | Agent ID 001, host-feeds |
-| M365 Activity API | Inkomend (via o365_producer) | SharePoint/OneDrive-auditevents → NATS → forwarder |
-| Microsoft Graph API | Uitgaand (Active Response) | Deellinks intrekken (HTTP DELETE → 204) |
+| M365 Activity API | Inkomend (via o365_producer) | SharePoint-auditevents → `security.alert.casb` → NATS → forwarder |
+| Microsoft Graph API | Uitgaand (Active Response) | Deellinks intrekken (HTTP DELETE → 204); achter ENFORCE-gate (detect-only standaard); live revoke wacht op OneDrive-provisioning |
 
 ## Bekende problemen / valkuilen
 
 - **glibc x86-64-v2-vereiste:** Wazuh indexer vereist Haswell+ CPU-features. Het standaard QEMU `kvm64` CPU-model crasht. Oplossing: stel het QEMU CPU-model in op `host` in de GNS3-node-instellingen. Zie [Bevinding: Wazuh CPU glibc](../findings/wazuh-cpu-glibc.md).
-- **Dashboard air-gate:** App-sectie onbereikbaar — API-verbindingscontrole probeert externe Wazuh-updateservers te bereiken, faalt in air-gapped sandbox. Discover werkt prima. Zie [Bevinding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
+- **Dashboard air-gate:** De dashboard-app (Security-Events-module, Agents-tab) wordt geblokkeerd doordat de internet-afhankelijke `version/check` van de manager HTTP 500 retourneert in de air-gapped sandbox, wat cascadeert naar een "Status: Offline"-bepaling. De manager-API zelf is gezond (authenticate/info/stats geven alle 200). Discover werkt volledig. Zie [Bevinding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
 - **jq-afhankelijkheid:** Active Response-scripts vereisen jq. Geinstalleerd via `install_deps.sh` entrypoint (V39).
 
 ## Gerelateerd

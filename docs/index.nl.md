@@ -52,10 +52,10 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [GNS3 vs EVE-NG](decisions/gns3-vs-eveng.md) | Multi-gebruikersvereiste; QCOW2-formaat; EVE-NG single-session beperking |
 | [Zitadel als IdP-broker](decisions/zitadel-idp-broker.md) | Quickstart installeert Zitadel; Entra ID als externe IdP; CA viert nog steeds |
 | [CA + Posture hybride (Drie-gate model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementair niet uitwisselbaar |
-| [SD-WAN geschrapt (F12, F13, F14)](decisions/sdwan-descoped.md) | IPsec + QoS + uCPE verwijderd — site-to-site tunnels in strijd met Zero Trust; sitepc01 → NetBird-inschrijving |
+| [SD-WAN geschrapt (F12, F13, F14)](decisions/sdwan-descoped.md) | Klassiek IPsec + uCPE verwijderd (site-to-site tunnels in strijd met Zero Trust); QoS + failover heringevoerd onder het ZT-Branch-model; sitepc01 → NetBird-inschrijving |
 | [NetBird Service PAT](decisions/netbird-service-pat.md) | Service-user PAT voor Identity Bridge API-auth — vermijdt NetBird issue #3127 |
 | [NATS accounts auth](decisions/nats-accounts-auth.md) | `accounts{}`-model vereist voor JetStream API-toegang |
-| [GroupSync Pad B](decisions/groupsync-pad-b.md) | Zitadel verwijdert `2ITcsc1A-`-prefix — schone persona-groepnamen |
+| [GroupSync Pad B](decisions/groupsync-pad-b.md) | Zitadel verwijdert `2ITCSC1A-`-prefix — schone persona-groepnamen |
 | [CASB drie lagen](decisions/casb-three-layers.md) | Inline (Squid) + API (Wazuh) + Real-time (NATS+daemon) |
 | [Beheerde apparaten scope](decisions/managed-devices-scope.md) | BYOD → beheerde Windows-apparaten (lectoraatmandaat R11) |
 | [ZT SD-WAN Branch](decisions/zt-sdwan-branch.md) | Zero Trust Branch vervangt klassieke IPsec SD-WAN |

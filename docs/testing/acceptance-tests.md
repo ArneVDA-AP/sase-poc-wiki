@@ -18,18 +18,18 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **F1** | ZTNA Tunnel Connectivity | ZTNA | ✅ Validated |
 | **F2** | Entra ID SSO | ZTNA | ✅ Validated |
 | **F3** | Posture Check | ZTNA | ⏳ Partly proven — CA policies active, Intune enrolled (Report-only) |
-| **F4** | Datacenter Access via ZTNA | ZTNA | ✅ Validated |
+| **F4** | Datacenter Access via ZTNA | ZTNA | ✅ Validated (build-time, May 2026) — DC-LAN-over-overlay path since removed in V34, deferred |
 | **F5** | URL Filtering | SWG | ✅ Validated |
 | **F6** | SSL Bump Inspection | SWG | ✅ Validated |
 | **F7** | Malware Detection (ClamAV) | SWG | ✅ Validated |
-| **F8** | Firewall Segmentation | FWaaS | ✅ Validated (indirect — ZTNA ACL enforcement) |
+| **F8** | Firewall Segmentation | FWaaS | ✅ Validated — DC-LAN isolation holds (unenrolled = no route); positive ACL path removed in V34 |
 | **F9** | Suricata Alert Generation | FWaaS | ✅ Validated (extended beyond original definition) |
 | **F10** | Central Log Aggregation (SIEM) | SIEM | ✅ Operational — Wazuh + NATS forwarder + pop01 agent |
 | **F11** | CASB Alert and Remediation | CASB | ✅ Functional — Wazuh + M365 Management Activity API + Active Response |
 | **F12** | IPsec Tunnel Connectivity | SD-WAN | ✖ N/A — architectural decision (see [SD-WAN Descoped](../decisions/sdwan-descoped.md)) |
-| **F13** | QoS Traffic Classification | SD-WAN | ✖ N/A — architectural decision |
+| **F13** | QoS Traffic Classification | SD-WAN | ✖ N/A as a classic-IPsec test — QoS is instead implemented + validated under the ZT-Branch model (V43 Test #5; see [ZT SD-WAN Branch](../decisions/zt-sdwan-branch.md)) |
 | **F14** | Datacenter Access via SD-WAN | SD-WAN | ✖ N/A — architectural decision |
-| **F15** | Full-Stack SASE Validation | Integration | ✅ Partial — steps 1–6 validated, steps 7–8 N/A (SD-WAN), step 9 operational (SIEM via Wazuh) |
+| **F15** | Full-Stack SASE Validation | Integration | ✅ Partial — steps 1–6 + 8 validated, step 7 N/A (classic IPsec SD-WAN), step 9 operational (SIEM via Wazuh) |
 
 ### Additional validated tests (outside F1–F15)
 
@@ -59,7 +59,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **SWG** | F5, F6, F7, T-A1, T-A2, T-A3, T-A4–A6 | — | — |
 | **FWaaS** | F8, F9, F10, T-A7, T-A8, T-A9 | — | — |
 | **CASB** | F11, T-A10, T-A11, T-A12, T-A13 | — | — |
-| **SD-WAN** | — | — | F12, F13, F14 |
+| **SD-WAN** | QoS + failover detection (ZT-Branch, V43 Test #5/#6) | — | F12, F13, F14 (classic IPsec) |
 
 ---
 
@@ -100,7 +100,7 @@ Test procedure:
 1. `netbird down` on mobile01
 2. `netbird up` → browser redirects to `https://netbird.sandbox.local` → Zitadel → `login.microsoftonline.com`
 3. Authenticate as `2ITCSC1A-mobile_user1@aplab.be`
-4. Tunnel becomes active; peer appears in Dashboard, auto-assigned to `SASE-MobileUsers` group via setup key auto-group
+4. Tunnel becomes active; peer appears in Dashboard, assigned to its persona group (`Studenten`/`Docenten`/`Admins`) via the Entra ID group claim in the OIDC token — the group materializes in NetBird on first connect (Pad B strips the `2ITCSC1A-` prefix to the internal group name)
 
 See [NetBird](../components/netbird.md), [Decision: Zitadel as IdP broker](../decisions/zitadel-idp-broker.md).
 
@@ -123,7 +123,7 @@ See [NetBird](../components/netbird.md), [Decision: Zitadel as IdP broker](../de
 Enrolled devices:
 
 - **mobile01** — enrolled as `2ITCSC1A-MOB-1`, compliant
-- **sitepc01** — enrolled as `docent1`, Entra joined + Intune enrolled
+- **sitepc01** — enrolled in NetBird as `docent1` (Docenten); separately Entra joined + Intune enrolled via `student1` (the only Intune-licensed sandbox account)
 
 Two policies remain in report-only mode (geo-block, compliant device) until the demo to avoid lockout during testing.
 
@@ -135,16 +135,16 @@ See [Decision: CA + Posture hybrid](../decisions/ca-posture-hybrid.md).
 
 ### F4 — Datacenter Access via ZTNA
 
-DC-LAN (10.0.0.0/24) is only reachable through the NetBird Networks mechanism. A host not enrolled in NetBird has no route to this subnet regardless of IP connectivity.
+**✅ Validated at build-time (May 2026); the path was subsequently removed in V34.** At the time of validation, DC-LAN (10.0.0.0/24) was reachable through the NetBird Networks mechanism: a host not enrolled in NetBird had no route to this subnet regardless of IP connectivity, while an enrolled peer holding the `Datacenter Access` ACL policy could reach it.
 
 ```powershell
-# mobile01 (PowerShell)
+# mobile01 (PowerShell) — as tested in May 2026
 Test-NetConnection 10.0.0.100 -Port 80
 ```
 
-Expected: `InterfaceAlias: wt0`, `TcpTestSucceeded: True`. Validates the `Datacenter Access` ACL policy and the Networks routing configuration.
+At validation time: `InterfaceAlias: wt0`, `TcpTestSucceeded: True`, exercising the `Datacenter Access` ACL policy and the Networks routing configuration.
 
-See [NetBird](../components/netbird.md).
+**Current state:** The `Internal-DC` Network and the `Datacenter Access` policy were removed in the V34 persona migration — site-to-site-style resource access contradicts the Zero-Trust per-resource model. DC-LAN-over-overlay is deferred and may resume in the Cosmos session. See [runbook 02](../runbooks/02-ztna-overlay.md) and [NetBird](../components/netbird.md).
 
 ---
 
@@ -213,14 +213,14 @@ See [ClamAV/c-icap](../components/clamav-cicap.md).
 
 ### F8 — Firewall Segmentation
 
-DC-LAN isolation is enforced at the overlay layer — only NetBird-enrolled peers with the `Datacenter Access` ACL policy can reach dc01.
+**✅ Validated.** The core segmentation property — an unenrolled device has no route to DC-LAN (10.0.0.0/24) — holds independently of any overlay access path and remains true today.
 
-Validated by contrast:
+Validated by contrast (May 2026, while the positive path still existed):
 
-- mobile01 **without** NetBird: `ping 10.0.0.100` → Destination unreachable (no route)
-- mobile01 **with** NetBird + policy: `Test-NetConnection 10.0.0.100 -Port 80` → `TcpTestSucceeded: True` via `wt0`
+- mobile01 **without** NetBird: `ping 10.0.0.100` → Destination unreachable (no route) — *still true*
+- mobile01 **with** NetBird + the `Datacenter Access` policy: `Test-NetConnection 10.0.0.100 -Port 80` → `TcpTestSucceeded: True` via `wt0` — *positive path removed in V34*
 
-**Architectural note:** DC-LAN uses NetBird Networks (not Network Routes). Access requires both overlay enrollment and explicit group membership in `SASE-InternalResources`.
+**Architectural note:** DC-LAN used NetBird Networks (not Network Routes). The positive path required overlay enrollment plus membership in the `SASE-InternalResources` group; both the `Internal-DC` Network and that group were removed in the V34 persona migration (see [runbook 02](../runbooks/02-ztna-overlay.md)). The negative isolation property — unenrolled = no route — is unaffected.
 
 See [NetBird](../components/netbird.md).
 
@@ -408,8 +408,8 @@ Wazuh is deployed with M365 Management Activity API integration and Active Respo
 
 - **Inline layer:** Squid + ICAP (operational)
 - **API layer:** Wazuh + M365 Management Activity API
-- **Custom rules:** SID 100200/100201 for SharePoint `SharingSet` + `Anyone`/`External` detection
-- **Active Response:** `sharepoint_remediate.sh`
+- **Custom rules:** base rule `100600` (`producer=o365`), with `100601` (`AnonymousLinkCreated`), `100602` (`SharingLinkCreated` + scope `Anyone`), `100603` (`SharingSet` + guest)
+- **Active Response:** `sharepoint_remediate.sh` (rules 100601/100602), `guest_remediate.sh` (rule 100603) — behind the ENFORCE gate, detect-only by default (live revoke pending)
 
 Graph API tenant permissions confirmed 1 April 2026 (admin consent granted on `aplab.be`).
 
@@ -424,12 +424,12 @@ Graph API tenant permissions confirmed 1 April 2026 (admin consent granted on `a
 | 3 | Visits blocked site → Blocked | ✅ Validated (F5) |
 | 4 | Downloads EICAR → Blocked | ✅ Validated (F7) |
 | 5 | Visits testmyids.com → Alert in IDS | ✅ Validated (F9-1) |
-| 6 | Opens datacenter site → Success | ✅ Validated (F4) |
-| 7 | Site user pings datacenter via tunnel | ✖ N/A — sitepc01 has no OS, IPsec descoped |
-| 8 | QoS marking visible on VyOS | ✖ N/A — QoS architectural decision |
+| 6 | Opens datacenter site → Success | ✅ Validated at build-time (F4); DC-LAN-over-overlay path removed in V34, deferred |
+| 7 | Site user pings datacenter via tunnel | ✖ N/A — classic IPsec site-to-site descoped; the ZT-Branch uses per-device NetBird enrollment instead |
+| 8 | QoS marking visible on VyOS | ✅ Validated — DSCP marking visible via `tc` on VyOS eth0 (V43 Test #5: EF classified, 0 drops under load) |
 | 9 | Management dashboard shows all services UP | ✅ Operational (Wazuh SIEM deployed) |
 
-7 of 9 F15 steps validated. The 2 remaining are architectural N/A (SD-WAN).
+Steps 1–5, 8, and 9 reflect the current stack. Step 6 was validated at build-time (F4) but its DC-LAN-over-overlay path was removed in V34 (deferred). Step 7 is architectural N/A — classic IPsec SD-WAN, replaced by the ZT-Branch model.
 
 ---
 

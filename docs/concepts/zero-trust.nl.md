@@ -19,7 +19,7 @@ Traditionele VPN verleent netwerktoegang — eenmaal geauthenticeerd kunnen gebr
 
 Alle drie de gates zijn operationeel. Gates 1 en 2 zijn geactiveerd in V40 (CA-policies) en V40 (Intune-conformiteit). Sommige policies staan op Report-only in afwachting van demo-voorbereiding (Sessie 11).
 
-**Waarom gates aanvullend zijn, niet redundant:** Gate 1 (CA) kan MFA en aanmeldingsrisico afdwingen — maar kan apparaatstatus niet controleren op onbeheerde BYOD zonder Intune-inschrijving. Gate 2 (posture) kan OS-versie en AV-status verifiëren — maar kan gestolen-inloggegevenrisico niet evalueren of MFA afdwingen. Geen enkele gate kan de andere vervangen. Gate 3 vangt bedreigingen op die beide gates omzeilen.
+**Waarom gates aanvullend zijn, niet redundant:** Gate 1 (CA) dwingt MFA af en evalueert aanmeldingsrisico — maar identiteit alleen zegt niets over de beveiligingsstatus van het apparaat. Gate 2 (Intune-conformiteit) attesteert OS-versie, antivirus en firewall — maar kan gestolen-inloggegevenrisico niet evalueren of MFA afdwingen. Geen enkele gate kan de andere vervangen. Gate 3 vangt bedreigingen in de inhoud op die beide gates omzeilen.
 
 ## Waar het in de stack voorkomt
 
@@ -33,10 +33,11 @@ Alle drie de gates zijn operationeel. Gates 1 en 2 zijn geactiveerd in V40 (CA-p
 
 **Zero Trust vs VPN:** VPN geeft netwerktoegang; Zero Trust geeft resourcetoegang. NetBird implementeert dit via WireGuard-mesh + ACL-policies — elke resource heeft zijn eigen expliciet beleid, en peers die geen beleid hebben kunnen niet eens routeren naar die resource.
 
-**Zero Trust-principes (Microsoft-framework):**
-- *Verify Explicitly* → Gate 1 (identiteit) + Gate 2 (apparaat)
+**Zero Trust-principes (Microsoft-framework) — expliciete gate-mapping:**
+- *Verify Explicitly (identiteit)* → Gate 1: Entra ID CA evalueert wie de gebruiker is (MFA, aanmeldingsrisico, geolocatie)
+- *Verify Explicitly (apparaat)* → Gate 2: Intune-apparaatconformiteit attesteert wat het apparaat is (OS-versie, Defender AV, firewall); NetBird posture checks blijven optionele defense-in-depth
 - *Use Least Privilege* → NetBird ACL-policies per resourcegroep
-- *Assume Breach* → Gate 3-pipeline + Suricata op LAN-segment
+- *Assume Breach* → Gate 3: SWG-pipeline + Suricata inspecteren alle inhoud in de data plane, ongeacht wie Gates 1 en 2 heeft gepasseerd
 
 **Beheerde apparaten scope:** Na een scopewijziging (lector-mandaat, 21 april 2026) richt het project zich op beheerde Windows-apparaten (Intune-beheerd, Entra joined) in plaats van BYOD. Dit maakt het mogelijk dat Gate 2 Intune-apparaatconformiteit gebruikt voor attestatie-gebaseerde posturecontroles (OS-versie, Defender AV + firewall, real-time protection). NetBird posture checks blijven als optionele verdediging in de diepte.
 

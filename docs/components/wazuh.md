@@ -13,9 +13,9 @@ tags: [wazuh, siem, nats, docker, wazuh-siem]
 
 Wazuh provides forensic logging and API-mode CASB enforcement. It operates on a dual-write architecture: detection components write to logfiles (Wazuh agent picks up) AND publish to NATS (control daemon consumes) independently. Neither path depends on the other.
 
-The NATS→Wazuh forwarder is a separate Docker container that consumes `security.alert.>` events from the NATS bus and writes them to the Wazuh manager socket as JSON log entries. Custom Wazuh rules then parse, classify, and index these events.
+The NATS→Wazuh forwarder is a separate Docker container — a durable PULL consumer (DeliverPolicy.NEW, AckPolicy.EXPLICIT) — that consumes `security.alert.>` events from the NATS bus and writes them as NDJSON to the shared `wazuh_nats_ingest` volume (`/ingest/security_alerts.json`). The Wazuh manager tails that file via a `<localfile><log_format>json</log_format></localfile>` block; custom Wazuh rules then parse, classify, and index the events. (Writing to the manager socket and posting to the Wazuh API were both evaluated and rejected — the localfile JSON tail is the working ingest path.)
 
-For CASB Layer 2, the M365 Activity API producer publishes SharePoint/OneDrive audit events to NATS. Wazuh rule 100600-family detects policy violations (anonymous shares, external shares). Active Response scripts revoke sharing links via Microsoft Graph API.
+For CASB Layer 2, the `o365_producer` polls the Office 365 Management Activity API and publishes SharePoint audit events to NATS (`security.alert.casb`). The Wazuh rule 100600-family detects policy violations (anonymous link creation, anyone-scope sharing links, guest sharing). Active Response scripts (`sharepoint_remediate.sh`, `guest_remediate.sh`) revoke sharing links via the Microsoft Graph API, behind an ENFORCE gate that defaults to detect-only. The revoke chain is proven to HTTP-204 via an offline stub; live revocation against a real OneDrive file is pending test-account provisioning (an external Microsoft dependency).
 
 ## Configuration
 
@@ -31,15 +31,15 @@ For CASB Layer 2, the M365 Activity API producer publishes SharePoint/OneDrive a
 
 | Interface | Direction | Details |
 |-----------|-----------|---------|
-| NATS→Wazuh forwarder | Inbound | Consumes `security.alert.>`, writes to manager socket |
+| NATS→Wazuh forwarder | Inbound | Durable PULL consumer of `security.alert.>`; writes NDJSON to shared `wazuh_nats_ingest` volume (manager tails it via `<localfile>`) |
 | pop01 Wazuh agent | Inbound | Agent ID 001, host feeds |
-| M365 Activity API | Inbound (via o365_producer) | SharePoint/OneDrive audit events → NATS → forwarder |
-| Microsoft Graph API | Outbound (Active Response) | Revoke sharing links (HTTP DELETE → 204) |
+| M365 Activity API | Inbound (via o365_producer) | SharePoint audit events → `security.alert.casb` → NATS → forwarder |
+| Microsoft Graph API | Outbound (Active Response) | Revoke sharing links (HTTP DELETE → 204); behind ENFORCE gate (detect-only default); live revoke pending OneDrive provisioning |
 
 ## Known issues / gotchas
 
 - **glibc x86-64-v2 requirement:** Wazuh indexer requires Haswell+ CPU features. Standard QEMU `kvm64` CPU model crashes. Fix: set QEMU CPU model to `host` in GNS3 node settings. See [Finding: Wazuh CPU glibc](../findings/wazuh-cpu-glibc.md).
-- **Dashboard air-gate:** App section unreachable — API connection check tries external Wazuh update servers, fails in air-gapped sandbox. Discover works fine. See [Finding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
+- **Dashboard air-gate:** The dashboard app (Security-Events module, Agents tab) is gated because the manager's internet-dependent `version/check` returns HTTP 500 in the air-gapped sandbox, cascading to a "Status: Offline" determination. The manager API itself is healthy (authenticate/info/stats all return 200). Discover works fully. See [Finding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
 - **jq dependency:** Active Response scripts require jq. Installed via `install_deps.sh` entrypoint (V39).
 
 ## Related

@@ -21,7 +21,7 @@ Suricata draait in PCAP-opnamemodus op pop01 en leest ruwe frames van BPF-appara
 
 **Waarom niet wt0 (NetBird):** WireGuard is een Layer 3 VPN. Verkeer dat via wt0 wordt gerouteerd verschijnt vanuit het perspectief van BPF niet als inkomende frames op die interface. `tcpdump` op wt0 met een TCP-filter toont 0 paketten. Suricata op wt0 zou niets zien. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
 
-**IDS-modus, niet IPS:** Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge) — virtio-NIC's in QEMU hebben geen van deze. Divert IPS vereist expliciete `pf divert-to`-firewallregels die niet zijn geconfigureerd. De drop/alert-beleidstabel is geconfigureerd en gereed voor IPS-activering op fysieke hardware. Zie [Beslissing: IDS vs. IPS](../decisions/ids-vs-ips.md) en [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
+**IDS-modus, niet IPS:** Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge) — virtio-NIC's in QEMU hebben geen van deze. Zelfs `sysctl dev.netmap.admode=2` (geëmuleerde Netmap-modus) loste dit niet op — geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete `pf divert-to`-firewallregels (`pfctl -s rules | grep divert` retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert-beleidstabel is geconfigureerd en gereed voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie [Beslissing: IDS vs. IPS](../decisions/ids-vs-ips.md) en [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
 
 **RAM-vereiste:** Suricata + ClamAV + Squid gelijktijdig uitvoeren vereist **minimaal 8 GB RAM** op pop01. Hyperscan-patrooncompilatie van ET Open-regels piekt op ~4 GB RSS. Bij 6 GB beëindigt de OOM-killer services stilzwijgend zonder loguitvoer.
 
@@ -130,7 +130,7 @@ Vier detectiecategorieën bevestigd na vtnet1-correctie:
 
 | Component | Richting | Wat |
 |-----------|----------|-----|
-| [Squid](squid.md) | parallel | Suricata op vtnet0 ziet de upstreamverbindingen van Squid — opnieuw versleuteld HTTPS; TLS-metadata zichtbaar |
+| [Squid](squid.md) | parallel | Suricata op vtnet0 ziet de upstreamverbindingen van Squid — opnieuw versleuteld HTTPS; TLS-metadata zichtbaar; XFF-headers onthullen het oorspronkelijke BYOD-client-IP (SID 2031071 toonde `100.70.95.98` van mobile01) |
 | [NetBird](netbird.md) | HOME_NET-afhankelijkheid | `100.64.0.0/10` moet in HOME_NET staan voor correcte regelevaluatie |
 | [ioc2rpz/RPZ](ioc2rpz.md) | aanvullend | Abuse.ch URLhaus in Suricata-handtekeningen en RPZ-feeds overlappen in bron; Suricata detecteert verbindingen, RPZ voorkomt DNS-resolutie |
 
@@ -168,3 +168,4 @@ Suricata publiceert IDS-alerts naar de NATS event bus. Een Python-producerscript
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)
 - [Wazuh](wazuh.md)
+- [Runbook: IDS](../runbooks/05-ids.md)

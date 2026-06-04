@@ -6,7 +6,7 @@ tags: [decision, suricata, network, opnsense]
 # Decision: IDS Mode vs IPS Mode for Suricata
 
 **Status:** Implemented (IDS mode)  
-**Date:** April 2026 (Verslag23)
+**Date:** March 2026 (Verslag23)
 
 ## Context
 

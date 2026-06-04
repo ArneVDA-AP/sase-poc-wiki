@@ -17,7 +17,7 @@ Traditional SD-WAN (IPsec site-to-site tunnels, uCPE, QoS) was initially part of
 | Option | Pro | Con |
 |--------|-----|-----|
 | **Classic IPsec-based SD-WAN** | Traditional approach; site-to-site tunnel provides transparent subnet access; well-understood QoS models | Grants implicit subnet-level access based on network location — contradicts Zero Trust. Duplicates the ZTNA overlay. F12-F14 test framework measures the wrong paradigm |
-| **Zero Trust Branch (NetBird overlay + VyOS QoS)** | Per-device authentication; no implicit subnet trust; aligns with Zscaler/Netskope ZT-SD-WAN model; VyOS provides QoS via DSCP without IPsec | VyOS QoS is applied at the site gateway, not end-to-end; failover detection depends on NetBird relay infrastructure |
+| **Zero Trust Branch (NetBird overlay + VyOS QoS)** | Per-device authentication; no implicit subnet trust; aligns with Zscaler/Netskope ZT-SD-WAN model; VyOS provides QoS via DSCP without IPsec | VyOS QoS is applied at the site gateway, not end-to-end; failover is detection-and-alerting only (single-WAN lab), not an automatic dual-WAN switch |
 
 ## Decision
 
@@ -28,7 +28,7 @@ Zero Trust Branch model: VyOS site01 operates as the SASE Gateway on Site-LAN (1
 The ZT-Branch implementation was validated through two dedicated tests:
 
 - **Test #5 (QoS under load, V43):** DSCP EF traffic: 300/300 packets, 0 drops. Bulk traffic under same load: 26 drops + 17,000+ overlimits. Demonstrates effective traffic prioritization without IPsec tunnels.
-- **Test #6 (Failover detection, V43):** CRITICAL-level failover detection in under 30 seconds. Validates that the NetBird overlay provides sufficient resilience for branch connectivity.
+- **Test #6 (Failover detection, V43):** a VyOS health-check script pinging pop01, the internet gateway, and `8.8.8.8` produced a CRITICAL detection within 30 seconds when pop01's interface was taken down, with recovery logged once it returned. This is honest single-WAN framing — detection and alerting, not an automatic dual-WAN switch.
 
 Spoor-1-contract acceptance criteria B1-B4 are fully closed based on these results.
 

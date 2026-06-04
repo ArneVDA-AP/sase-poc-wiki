@@ -6,7 +6,7 @@ tags: [decision, ioc2rpz, dns, rpz, network]
 # Beslissing: ioc2rpz vs Unbound native RPZ
 
 **Status:** Geïmplementeerd  
-**Datum:** April 2026 (Verslag24)
+**Datum:** Maart 2026 (Verslag24)
 
 ## Context
 

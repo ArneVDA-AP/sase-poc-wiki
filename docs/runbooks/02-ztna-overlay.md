@@ -17,8 +17,8 @@ tags: [runbook, netbird, zitadel, entra-id, wireguard, ztna]
 - [ ] Lab environment fully operational (Runbook 01)
 - [ ] Entra ID tenant (`aplab.be`) accessible
 - [ ] A5 Educational license active
-- [ ] App registration created in Entra ID:
-  - Client ID: `cebe0d74-be9f-49ac-9f35-65f11586c1bb`
+- [ ] App registration created in Entra ID (`2ITCSC1A-Netbird-Sandbox`):
+  - Client ID: `11803ee8-eb15-462c-a286-5415c17a29c6`
   - Tenant ID: `23e9bcdc-5cb9-4867-9310-76cc0b462ddc`
 - [ ] mgmt01 has Docker installed and running
 
@@ -30,9 +30,11 @@ Create the app registration in Entra ID before deploying NetBird:
 
 ```
 Entra ID → App Registrations → New Registration
-  Name: NetBird SASE PoC
+  Name: 2ITCSC1A-Netbird-Sandbox
   Supported account types: Accounts in this organizational directory only
 ```
+
+> **App-registration switch (V30).** An earlier iteration reused a shared registration (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`) across the sandbox and the team project, creating hidden coupling. The sandbox now uses its own `2ITCSC1A-Netbird-Sandbox` registration (`11803ee8-eb15-462c-a286-5415c17a29c6`) — the current value used throughout this runbook.
 
 Note the Client ID and Tenant ID. The redirect URI will be added later (after NetBird deployment, Step 8).
 
@@ -171,7 +173,7 @@ Navigate to the Zitadel console:
 ```
 https://netbird.sandbox.local/zitadel/ui/console
 → Settings → Identity Providers → Add → Microsoft Azure AD
-→ Client ID: cebe0d74-be9f-49ac-9f35-65f11586c1bb
+→ Client ID: 11803ee8-eb15-462c-a286-5415c17a29c6
 → Client Secret: <from Entra ID app registration>
 → Tenant ID: 23e9bcdc-5cb9-4867-9310-76cc0b462ddc
 ```
@@ -202,6 +204,8 @@ Recovery: if `config.json` is 0 bytes, restore from backup and restart NetBird.
 ---
 
 ## Step 10: Create groups in NetBird Dashboard
+
+> **⚠️ Superseded by the V34 persona migration (May 2026).** Steps 10–13 below document the *original* Fase-2 build using `SASE-*` groups and three ACL policies. That model was replaced: a diagnosis found all connectivity hung on the `SASE-*` groups while the identity-synced persona groups (`Studenten`/`Docenten`/`Admins`) carried no policies, so group-based quarantine was a no-op. The current state is a `Core-Services` group (pop01, mgmt01) plus one `Personas-to-Core-Services` ACL policy (persona groups → `Core-Services`, **TCP 3128 only**), and the `Internal-DC` Network + `Datacenter-Access` policy were removed (DC-LAN-over-overlay deferred to the planned Cosmos session). **For the current build, follow the group/policy model in [Component: NetBird](../components/netbird.md); persona groups are created by identity sync, not by hand ([Runbook 08: GroupSync](08-groupsync.md)).** The steps below are retained as historical/evolution reference.
 
 NetBird Dashboard → Peers → create groups:
 
@@ -318,13 +322,16 @@ Match domains:      (LEAVE EMPTY)
 netbird status
 # Expected: Connected, X/Y peers, routes active
 
-# Datacenter reachable
-Test-NetConnection 10.0.0.100 -Port 80
+# Proxy reachable (current-state path: persona → Core-Services, TCP 3128)
+Test-NetConnection 100.70.154.79 -Port 3128
 # Expected: TcpTestSucceeded: True
 
 # Internet via exit node
 Test-NetConnection 8.8.8.8
 # Expected: PingSucceeded: True
+
+# (DC-LAN reachability — Test-NetConnection 10.0.0.100 -Port 80 — applies only
+#  to the superseded Step 13 build; DC-LAN-over-overlay is deferred, see Step 10 note.)
 ```
 
 ---
@@ -337,9 +344,11 @@ Test-NetConnection 8.8.8.8
 - [ ] NetBird Dashboard accessible, peers visible (green = online)
 - [ ] `netbird status` on mobile01 shows "Connected"
 - [ ] Ping between overlay IPs: `100.70.154.79`, `100.70.135.241`, `100.70.95.98`
-- [ ] DC-LAN reachable from mobile01 (`10.0.0.100`)
+- [ ] pop01 proxy reachable from mobile01 (`100.70.154.79:3128`)
 - [ ] Internet reachable from mobile01 via exit node
 - [ ] `config.json` backup created on pop01
+
+> DC-LAN reachability (`10.0.0.100`) is **not** part of current-state validation — the `Internal-DC` Network was removed in the V34 migration (see Step 10 note).
 
 ---
 

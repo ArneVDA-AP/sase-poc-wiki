@@ -13,10 +13,10 @@ In a commercial SASE product (Zscaler, Netskope), the agent sends identity heade
 
 ```
 Entra ID (aplab.be)
-  | OIDC token with groups claim (GUIDs) + cloud_displayname optional claim
+  | OIDC token: groups claim emits display names (2ITCSC1A-Studenten) via cloud_displayname
   v
 Zitadel (mgmt01 Docker)
-  | Action 1: GUID -> clean name (strips 2ITcsc1A- prefix)
+  | Action 1: allowlist-maps display name -> clean name (2ITCSC1A-Studenten -> Studenten)
   | Action 2: setClaim('groups', [...]) into JWT
   v
 NetBird Management (mgmt01 Docker)
@@ -35,17 +35,18 @@ Per-request identity-based filtering
   (e.g., Studenten blocked from ChatGPT; Docenten allowed)
 ```
 
-Each hop transforms the identity representation: GUIDs become clean names, clean names become JWT claims, JWT claims become auto-groups, auto-groups become cached IP-to-group mappings, and cached mappings become ACL decisions. A failure at any hop breaks the chain — but the fail-open design ensures that broken identity never blocks authentication, only restricts access to the most restrictive default policy.
+Each hop transforms the identity representation: prefixed display names become clean names, clean names become JWT claims, JWT claims become auto-groups, auto-groups become cached IP-to-group mappings, and cached mappings become ACL decisions. A failure at any hop breaks the chain — but the fail-open design ensures that broken identity never blocks authentication, only restricts access to the most restrictive default policy.
 
-## GroupSync Path B
+## GroupSync: sync mechanism and Path B
 
-The Entra ID `groups` claim contains GUIDs that are meaningless to NetBird. Two paths exist for converting these to usable group names:
+**Sync mechanism — JWT group sync.** NetBird Community Edition cannot use the IdP Sync (Graph API polling) or SCIM provisioning mechanisms — both require a NetBird Cloud or Commercial License. The only mechanism available in CE is **JWT group sync**: NetBird reads the `groups` claim from the ID token on each user login and creates/assigns auto-groups accordingly. Its inherent limitation is that group membership only updates at login — there is no background sync. If a user is added to a new Entra ID group, the change is not visible in the stack until that user's next OIDC authentication event.
 
-**Path A — IdP Sync via API:** NetBird polls Microsoft Graph API directly to resolve group memberships. This requires a commercial NetBird license and is not available in the Community Edition used in this PoC.
+**Prefix handling — Path B (implemented).** Entra ID group names carry a mandatory `2ITCSC1A-` team prefix (e.g. `2ITCSC1A-Studenten`). Because `cloud_displayname` is attached to the groups claim (see [Runbook 08](../runbooks/08-groupsync.md)), the claim emits each group's *display-name string* rather than its ObjectID GUID. Two paths were considered:
 
-**Path B — JWT group sync (implemented):** Zitadel Action 1 reads the `cloud_displayname` optional claim from the Entra ID token. This claim carries the human-readable group name with the tenant team prefix (`2ITcsc1A-Studenten`). The action strips the prefix, producing clean names (`Studenten`, `Docenten`, `Admins`). Action 2 then injects these clean names into the JWT issued to NetBird.
+- **Path A — carry the prefix everywhere:** the full name `2ITCSC1A-Studenten` propagates unchanged to NetBird, the Identity Bridge ACL, and Addendum J's `NETBIRD_POLICY_GROUPS`. Traceable but verbose, and the prefix cascades through every downstream config.
+- **Path B — Zitadel strips the prefix (implemented):** Action 1 allowlist-maps the name string `2ITCSC1A-Studenten` → `Studenten` before NetBird sees it; Action 2 injects the clean names (`Studenten`, `Docenten`, `Admins`) into the JWT. Internal configs stay readable and Addendum J's existing `Studenten,Docenten,Admins` is already correct.
 
-Path B has a fundamental limitation: group membership only updates when the user logs in. There is no background sync. If a user is added to a new Entra ID group, the change is not visible in the stack until that user's next OIDC authentication event.
+Path B's hard precondition is that `cloud_displayname` works — a GUID is not in the allowlist and cannot resolve to `Studenten`. That precondition was verified, and Path B is confirmed working for all three personas.
 
 See [Decision: GroupSync Path B](../decisions/groupsync-pad-b.md).
 
@@ -55,7 +56,7 @@ Changes in Entra ID group membership take time to propagate through the full cha
 
 | Hop | Delay | Trigger |
 |-----|-------|---------|
-| Entra ID -> Zitadel | Next user login | No background sync (Path B limitation) |
+| Entra ID -> Zitadel | Next user login | No background sync (JWT group sync limitation) |
 | Zitadel -> NetBird | Same login event | JWT group sync is synchronous |
 | NetBird -> Identity Bridge | Up to 30s | Polling interval |
 | Identity Bridge -> Squid | Next request | external_acl TTL (30s cache, 10s negative) |
@@ -74,7 +75,7 @@ This is deliberate: Gate 3 (SWG pipeline — content inspection, malware scannin
 
 ## Where it appears in the stack
 
-- **[Zitadel](../components/zitadel.md)** — OIDC broker, Action 1 (GUID-to-name mapping) and Action 2 (JWT group injection)
+- **[Zitadel](../components/zitadel.md)** — OIDC broker, Action 1 (allowlist-maps the group display-name string to the clean name) and Action 2 (JWT group injection)
 - **[NetBird](../components/netbird.md)** — JWT group sync reads the `groups` claim and creates auto_groups per persona
 - **[Identity Bridge](../components/identity-bridge.md)** — polls NetBird API, builds overlay IP-to-group cache, serves Squid lookups
 - **[Squid](../components/squid.md)** — external_acl queries Identity Bridge per request, enforces persona-based filtering policies
@@ -84,7 +85,7 @@ This is deliberate: Gate 3 (SWG pipeline — content inspection, malware scannin
 
 **Identity vs authentication:** Authentication (proving who you are) happens once during the OIDC login flow through Zitadel and Entra ID. Identity propagation (carrying that proof through the stack so downstream systems can make access decisions) happens continuously through the polling and caching chain. A user can be authenticated without having their identity propagated — this is the fail-open state.
 
-**Path A vs Path B:** Path A (IdP Sync) polls Graph API directly and updates group membership in the background — it works even when users are not actively logging in. Path B (JWT group sync) relies on the OIDC token issued at login time — group changes only propagate when the user re-authenticates. This PoC uses Path B because it is available in NetBird Community Edition.
+**JWT group sync vs IdP Sync:** IdP Sync (and SCIM) poll or push group membership in the background — they update even when users are not actively logging in — but both require a NetBird Cloud or Commercial License, so neither is available in the Community Edition used here. JWT group sync, the only CE-available mechanism, relies on the OIDC token issued at login time, so group changes only propagate when the user re-authenticates. Separately, **Path A vs Path B** refers to prefix handling *within* JWT group sync (Path B strips the `2ITCSC1A-` prefix — see above), not to the choice of sync mechanism.
 
 **Fail-open vs fail-closed:** The identity chain fails open by design. This contrasts with the content inspection chain (Gate 3), where ClamAV scanning is not bypassed when the service is down. The rationale: identity controls determine *which* policies apply, while content inspection provides baseline security for *all* traffic regardless of identity.
 

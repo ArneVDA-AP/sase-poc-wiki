@@ -52,10 +52,10 @@ decision point. Opens full-width in a new tab.
 | [GNS3 vs EVE-NG](decisions/gns3-vs-eveng.md) | Multi-user requirement; QCOW2 format; EVE-NG single-session limitation |
 | [Zitadel as IdP broker](decisions/zitadel-idp-broker.md) | Quickstart installs Zitadel; Entra ID as external IdP; CA still fires |
 | [CA + Posture hybrid (Three-Gate Model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementary not substitutable; BYOD Intune gap |
-| [SD-WAN Descoped (F12, F13, F14)](decisions/sdwan-descoped.md) | IPsec + QoS + uCPE removed — site-to-site tunnels contradict Zero Trust; sitepc01 → NetBird enrollment |
+| [SD-WAN Descoped (F12, F13, F14)](decisions/sdwan-descoped.md) | Classic IPsec + uCPE removed (site-to-site tunnels contradict Zero Trust); QoS + failover reimplemented under the ZT-Branch model; sitepc01 → NetBird enrollment |
 | [NetBird Service PAT](decisions/netbird-service-pat.md) | Service-user PAT for Identity Bridge API auth — avoids NetBird issue #3127 |
 | [NATS accounts auth](decisions/nats-accounts-auth.md) | `accounts{}` model required for JetStream API access |
-| [GroupSync Path B](decisions/groupsync-pad-b.md) | Zitadel strips `2ITcsc1A-` prefix — clean persona group names |
+| [GroupSync Path B](decisions/groupsync-pad-b.md) | Zitadel strips `2ITCSC1A-` prefix — clean persona group names |
 | [CASB three layers](decisions/casb-three-layers.md) | Inline (Squid) + API (Wazuh) + Real-time (NATS+daemon) |
 | [Managed devices scope](decisions/managed-devices-scope.md) | BYOD → managed Windows devices (lector mandate R11) |
 | [ZT SD-WAN Branch](decisions/zt-sdwan-branch.md) | Zero Trust Branch replaces classic IPsec SD-WAN |

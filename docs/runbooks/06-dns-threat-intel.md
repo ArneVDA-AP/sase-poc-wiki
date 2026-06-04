@@ -335,7 +335,7 @@ drill @127.0.0.1 google.com
 ## Known open points
 
 - **ioc2rpz GUI JS fix is non-persistent** — re-apply after container rebuilds
-- **DNS NOTIFY doesn't reach BIND directly** — ioc2rpz sends NOTIFY to port 53, BIND listens on 53530. Feeds update on the 3600s poll interval. Manual trigger: `rndc -p 953 retransfer threat-intel.rpz.sase`
+- **DNS NOTIFY doesn't reach BIND directly** — ioc2rpz sends NOTIFY to port 53, BIND listens on 53530. Feeds update on the 3600s poll interval. Manual trigger: `rndc retransfer threat-intel.rpz.sase`
 
 ---
 

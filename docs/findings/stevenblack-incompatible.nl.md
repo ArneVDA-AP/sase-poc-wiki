@@ -18,7 +18,7 @@ StevenBlack is een `hosts`-bestand: vermeldingen in het formaat `0.0.0.0 ads.exa
 
 ## Oplossing / workaround
 
-Gebruik UT1 Toulouse (`dsi.ut-capitole.fr/blacklists`) in plaats daarvan. UT1 is de de-facto standaard voor op Squid gebaseerde categoriefiitering en wordt native ondersteund door OPNsense. Het distribueert tar.gz-archieven in Squid ACL-formaat met categorieën (gokken, malware, phishing, adult) die rechtstreeks aansluiten op de ACL-interface van OPNsense.
+Gebruik UT1 Toulouse (`dsi.ut-capitole.fr/blacklists`) in plaats daarvan. UT1 is de de-facto standaard voor op Squid gebaseerde categoriefiltering en wordt native ondersteund door OPNsense. Het distribueert tar.gz-archieven in Squid ACL-formaat met categorieën (gambling, malware, phishing, adult) die rechtstreeks aansluiten op de ACL-interface van OPNsense.
 
 ## Lessen
 

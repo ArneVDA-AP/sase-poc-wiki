@@ -48,9 +48,10 @@ Bouw en start de Docker-container op mgmt01:
 # Controleer of container actief is
 docker ps | grep identity-bridge
 
-# Test het lookup-endpoint direct
-curl http://192.168.122.23:<port>/lookup?ip=<bekend-peer-ip>
-# Verwacht: JSON-antwoord met personagroepnaam
+# Test het lookup-endpoint direct (de X-Bridge-Secret-header is vereist — een kale
+# aanvraag retourneert HTTP 401, fail-secure)
+curl -H "X-Bridge-Secret: <secret>" "http://192.168.122.23:<port>/lookup?ip=<bekend-peer-ip>"
+# Verwacht: JSON met het volledige groepslidmaatschap van de peer (status/user/groups/os)
 ```
 
 De Identity Bridge pollt de NetBird API elke 30 seconden en cachet de IP-naar-groep-mapping in het geheugen. Het eerste antwoord kan tot 30 seconden duren na opstarten terwijl de initiële poll wordt voltooid.
@@ -113,7 +114,7 @@ curl -x http://100.70.154.79:3128 https://chatgpt.com
 # Verwacht: 200 OK (toegestaan voor docenten)
 ```
 
-> **Opmerking:** Om verschillende persona's te testen, moet je inloggen als gebruikers die tot verschillende Entra ID-beveiligingsgroepen behoren (SASE-MobileUsers vs SASE-SiteUsers).
+> **Opmerking:** Om verschillende persona's te testen, moet je inloggen als gebruikers die tot verschillende Entra ID-beveiligingsgroepen behoren (`2ITCSC1A-Studenten` vs `2ITCSC1A-Docenten` vs `2ITCSC1A-Admins`), die GroupSync mapt naar de interne NetBird-personagroepen Studenten/Docenten/Admins.
 
 ---
 

@@ -17,7 +17,7 @@ Traditioneel SD-WAN (IPsec site-to-site-tunnels, uCPE, QoS) maakte aanvankelijk 
 | Optie | Voor | Tegen |
 |-------|------|-------|
 | **Klassiek IPsec-gebaseerd SD-WAN** | Traditionele aanpak; site-to-site-tunnel biedt transparante subnettoegang; goed begrepen QoS-modellen | Verleent impliciete subnetniveau-toegang op basis van netwerklocatie — in strijd met Zero Trust. Dupliceert de ZTNA-overlay. F12-F14 testkader meet het verkeerde paradigma |
-| **Zero Trust Branch (NetBird-overlay + VyOS QoS)** | Per-apparaat authenticatie; geen impliciet subnetvertrouwen; sluit aan op Zscaler/Netskope ZT-SD-WAN-model; VyOS biedt QoS via DSCP zonder IPsec | VyOS QoS wordt toegepast op de site-gateway, niet end-to-end; failover-detectie is afhankelijk van NetBird relay-infrastructuur |
+| **Zero Trust Branch (NetBird-overlay + VyOS QoS)** | Per-apparaat authenticatie; geen impliciet subnetvertrouwen; sluit aan op Zscaler/Netskope ZT-SD-WAN-model; VyOS biedt QoS via DSCP zonder IPsec | VyOS QoS wordt toegepast op de site-gateway, niet end-to-end; failover is enkel detectie-en-alerting (single-WAN-lab), geen automatische dual-WAN-omschakeling |
 
 ## Beslissing
 
@@ -28,7 +28,7 @@ Zero Trust Branch-model: VyOS site01 fungeert als SASE-gateway op Site-LAN (172.
 De ZT-Branch-implementatie is gevalideerd door twee specifieke tests:
 
 - **Test #5 (QoS onder last, V43):** DSCP EF-verkeer: 300/300 pakketten, 0 drops. Bulkverkeer onder dezelfde last: 26 drops + 17.000+ overlimits. Demonstreert effectieve verkeerspriorisering zonder IPsec-tunnels.
-- **Test #6 (Failover-detectie, V43):** CRITICAL-niveau failover-detectie in minder dan 30 seconden. Valideert dat de NetBird-overlay voldoende veerkracht biedt voor branch-connectiviteit.
+- **Test #6 (Failover-detectie, V43):** een VyOS-health-check-script dat pop01, de internet-gateway en `8.8.8.8` pingt, produceerde een CRITICAL-detectie binnen 30 seconden toen pop01's interface werd neergehaald, met herstel gelogd zodra die terugkwam. Dit is eerlijke single-WAN-framing — detectie en alerting, geen automatische dual-WAN-omschakeling.
 
 Spoor-1-contract acceptatiecriteria B1-B4 zijn volledig gesloten op basis van deze resultaten.
 

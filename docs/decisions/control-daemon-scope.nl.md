@@ -6,7 +6,7 @@ tags: [decision, control-daemon, ids, nats]
 # Beslissing: IDS-correlatiebranch verwijderd uit Control Daemon
 
 **Status:** Geïmplementeerd  
-**Datum:** Mei 2026 (Verslag35)
+**Datum:** Juni 2026 (Verslag35)
 
 ## Context
 

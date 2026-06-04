@@ -17,8 +17,8 @@ tags: [runbook, netbird, zitadel, entra-id, wireguard, ztna]
 - [ ] Labomgeving volledig operationeel (Runbook 01)
 - [ ] Entra ID-tenant (`aplab.be`) toegankelijk
 - [ ] A5 Educational-licentie actief
-- [ ] App-registratie aangemaakt in Entra ID:
-  - Client-ID: `cebe0d74-be9f-49ac-9f35-65f11586c1bb`
+- [ ] App-registratie aangemaakt in Entra ID (`2ITCSC1A-Netbird-Sandbox`):
+  - Client-ID: `11803ee8-eb15-462c-a286-5415c17a29c6`
   - Tenant-ID: `23e9bcdc-5cb9-4867-9310-76cc0b462ddc`
 - [ ] mgmt01 heeft Docker geïnstalleerd en draaiend
 
@@ -30,9 +30,11 @@ Maak de app-registratie aan in Entra ID vóór het uitrollen van NetBird:
 
 ```
 Entra ID → App Registrations → New Registration
-  Naam: NetBird SASE PoC
+  Naam: 2ITCSC1A-Netbird-Sandbox
   Ondersteunde accounttypen: Accounts in this organizational directory only
 ```
+
+> **App-registratiewissel (V30).** Een eerdere iteratie hergebruikte een gedeelde registratie (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`) over de sandbox en het teamproject, wat verborgen koppeling veroorzaakte. De sandbox gebruikt nu zijn eigen `2ITCSC1A-Netbird-Sandbox`-registratie (`11803ee8-eb15-462c-a286-5415c17a29c6`) — de huidige waarde die in deze runbook wordt gebruikt.
 
 Noteer de Client-ID en Tenant-ID. De redirect-URI wordt later toegevoegd (na NetBird-deployment, Stap 8).
 
@@ -171,7 +173,7 @@ Navigeer naar de Zitadel-console:
 ```
 https://netbird.sandbox.local/zitadel/ui/console
 → Settings → Identity Providers → Add → Microsoft Azure AD
-→ Client ID: cebe0d74-be9f-49ac-9f35-65f11586c1bb
+→ Client ID: 11803ee8-eb15-462c-a286-5415c17a29c6
 → Client Secret: <vanuit Entra ID app-registratie>
 → Tenant ID: 23e9bcdc-5cb9-4867-9310-76cc0b462ddc
 ```
@@ -202,6 +204,8 @@ Herstel: als `config.json` 0 bytes is, herstel vanuit de back-up en herstart Net
 ---
 
 ## Stap 10: Groepen aanmaken in NetBird Dashboard
+
+> **⚠️ Verouderd door de V34-personamigratie (mei 2026).** Stappen 10–13 hieronder documenteren de *oorspronkelijke* Fase-2-build met `SASE-*`-groepen en drie ACL-beleidsregels. Dat model is vervangen: een diagnose toonde dat alle connectiviteit op de `SASE-*`-groepen hing, terwijl de identiteit-gesynchroniseerde persona-groepen (`Studenten`/`Docenten`/`Admins`) geen beleid droegen, waardoor groep-gebaseerde quarantaine een no-op was. De huidige staat is een `Core-Services`-groep (pop01, mgmt01) plus één `Personas-to-Core-Services`-ACL-beleid (persona-groepen → `Core-Services`, **alleen TCP 3128**), en het `Internal-DC`-netwerk + `Datacenter-Access`-beleid zijn verwijderd (DC-LAN-over-overlay uitgesteld tot de geplande Cosmos-sessie). **Volg voor de huidige build het groep-/beleidmodel in [Component: NetBird](../components/netbird.nl.md); persona-groepen worden aangemaakt door identiteitssynchronisatie, niet handmatig ([Runbook 08: GroupSync](08-groupsync.nl.md)).** De onderstaande stappen blijven behouden als historische/evolutiereferentie.
 
 NetBird Dashboard → Peers → maak groepen aan:
 
@@ -318,13 +322,16 @@ Match-domeinen:      (LEEG LATEN)
 netbird status
 # Verwacht: Connected, X/Y peers, routes active
 
-# Datacenter bereikbaar
-Test-NetConnection 10.0.0.100 -Port 80
+# Proxy bereikbaar (huidige-staat-pad: persona → Core-Services, TCP 3128)
+Test-NetConnection 100.70.154.79 -Port 3128
 # Verwacht: TcpTestSucceeded: True
 
 # Internet via exit node
 Test-NetConnection 8.8.8.8
 # Verwacht: PingSucceeded: True
+
+# (DC-LAN-bereikbaarheid — Test-NetConnection 10.0.0.100 -Port 80 — geldt alleen
+#  voor de verouderde Stap 13-build; DC-LAN-over-overlay is uitgesteld, zie Stap 10-notitie.)
 ```
 
 ---
@@ -337,9 +344,11 @@ Test-NetConnection 8.8.8.8
 - [ ] NetBird Dashboard toegankelijk, peers zichtbaar (groen = online)
 - [ ] `netbird status` op mobile01 toont "Connected"
 - [ ] Ping tussen overlay-IP's: `100.70.154.79`, `100.70.135.241`, `100.70.95.98`
-- [ ] DC-LAN bereikbaar vanuit mobile01 (`10.0.0.100`)
+- [ ] pop01-proxy bereikbaar vanuit mobile01 (`100.70.154.79:3128`)
 - [ ] Internet bereikbaar vanuit mobile01 via exit node
 - [ ] `config.json` back-up aangemaakt op pop01
+
+> DC-LAN-bereikbaarheid (`10.0.0.100`) maakt **geen** deel uit van huidige-staat-validatie — het `Internal-DC`-netwerk is verwijderd in de V34-migratie (zie Stap 10-notitie).
 
 ---
 

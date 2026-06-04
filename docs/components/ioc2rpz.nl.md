@@ -80,7 +80,7 @@ Vervang het meegeleverde SSL-certificaat (verlopen juli 2022) door een nieuw zel
 
 Toegang via `https://ioc2rpz.sandbox.local` (door Caddy geproxied). Na de eerste aanmelding configureren:
 
-**Server:** Publiek IP `192.168.122.23`, NS `ns1.ioc2rpz.local`
+**Server:** Publiek IP `192.168.122.23`, NS `ns1.ioc2rpz.local`, ACL: `127.0.0.1, 172.20.0.2` (GUI-container), `172.20.0.1`
 
 **TSIG-sleutels:**
 - `tkey_mgmt_1` — beheersleutel, hmac-md5
@@ -96,7 +96,7 @@ Toegang via `https://ioc2rpz.sandbox.local` (door Caddy geproxied). Na de eerste
 - TSIG-sleutel: `tkey_rpz_transfer`
 - Notify: `192.168.122.13` (pop01)
 
-Controleer na "Publiceren" of het zonelog ~71.000+ indicatoren toont en "DNS Notify sent".
+Controleer na "Publiceren" of het zonelog ~35.900 indicatoren (≈71.800 regels) toont en "DNS Notify sent".
 
 **ioc2rpz.gui JavaScript-bug:** Het aanmeldformulier mist een `e.preventDefault()` in de `signIn`-functie, waardoor de browser native indient terwijl axios ook post — de native inzending herlaadt de pagina en breekt het axios-verzoek af. Pas de correctie eenmalig toe na containerstart:
 

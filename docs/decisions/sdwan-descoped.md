@@ -37,7 +37,7 @@ Site users (sitepc01) will access the datacenter via individual NetBird enrollme
 - **F12, F13, F14** are marked N/A in all acceptance test matrices. This is an explicit architectural decision, not an implementation gap.
 - **F15 steps 7–8** are N/A for the same reason (step 7 requires sitepc01 with NetBird; step 8 requires QoS on VyOS).
 - **VyOS** remains in the topology but its configuration is minimal — WAN connectivity and NAT only. See [VyOS](../components/vyos.md).
-- **sitepc01** datacenter access is planned via NetBird enrollment (not yet executed as of April 2026).
+- **sitepc01** reaches the datacenter via individual NetBird enrollment — confirmed enrolled and operational in Verslag43/Verslag44, not via a site-to-site tunnel.
 - The architecture directly aligns with Zscaler's "Zero Trust SD-WAN" model: branches treated as untrusted networks (like cafés), every device authenticates individually, no site-to-site tunnels.
 
 ## What was actually built

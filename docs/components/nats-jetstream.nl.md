@@ -6,7 +6,7 @@ tags: [nats, jetstream, event-bus, docker, nats-jetstream]
 # NATS JetStream
 
 **Rol:** Centrale event bus op mgmt01 die geisoleerde detectiesilo's (Suricata, Squid, DLP, ClamAV, DNS-RPZ, Identity Bridge) verbindt tot een samenhangend, reactief systeem.  
-**Versie:** NATS 2.14.1 (`nats:2.14-alpine` — empirisch geverifieerd; Addendum J vermeldde 2.12.6, verouderd)  
+**Versie:** NATS 2.14.1 (`nats:2.14.1-alpine` — empirisch geverifieerd; Addendum J vermeldde 2.12.6, verouderd)  
 **Configuratielocatie:** mgmt01 Docker, secrets via env-interpolatie (geen plaintext in gecommitte configuratie)
 
 ## Hoe het werkt in deze stack
@@ -34,9 +34,10 @@ De dual-write-architectuur garandeert dat geen van beide paden afhankelijk is va
 | `security.alert.dlp` | Python DLP (mgmt01) | Control Daemon, Wazuh forwarder |
 | `security.alert.malware` | c-icap/ClamAV (pop01) | Control Daemon, Wazuh forwarder |
 | `security.alert.dns` | DNS-RPZ producer (pop01) | Wazuh forwarder |
-| `identity.login` | Identity Bridge (mgmt01) | Control Daemon |
-| `identity.group_change` | Identity Bridge (mgmt01) | Control Daemon |
-| `control.quarantine` | Control Daemon (mgmt01) | — (intern) |
+| `security.alert.casb` | o365-producer (mgmt01) | Wazuh forwarder |
+| `identity.peer.connected` | Identity Bridge (mgmt01) | Control Daemon |
+| `identity.peer.disconnected` | Identity Bridge (mgmt01) | Control Daemon |
+| `identity.multi_persona` | Identity Bridge (mgmt01) | Control Daemon (zero-trust-anomalie; SIEM-regel gepland) |
 
 ## Integratiepunten
 
@@ -44,8 +45,8 @@ De dual-write-architectuur garandeert dat geen van beide paden afhankelijk is va
 |-----------|----------|---------|
 | Detectieproducers (pop01) | Inkomend | TCP 4222 via management-LAN |
 | Detectieproducers (mgmt01) | Inkomend | Docker `sase-internal` netwerk |
-| Control Daemon | Uitgaand (consumer) | Durable consumer op `security.alert.>` + `identity.>` |
-| Wazuh Forwarder | Uitgaand (consumer) | Durable consumer op `security.alert.>`, schrijft naar Wazuh manager-socket |
+| Control Daemon | Uitgaand (consumer) | Durable + DeliverPolicy.NEW consumer op `security.alert.>` (overleeft herstart, geen replay van historische events); ephemeral + DeliverPolicy.ALL consumer op `identity.>` (herbouwt de in-memory identiteitsmap bij elke start) |
+| Wazuh Forwarder | Uitgaand (consumer) | Durable PULL consumer (DeliverPolicy.NEW, AckPolicy.EXPLICIT) op `security.alert.>`; schrijft NDJSON naar het gedeelde `wazuh_nats_ingest`-volume dat de Wazuh-manager tailt (localfile) |
 
 ## Bekende problemen / valkuilen
 

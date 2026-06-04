@@ -19,7 +19,7 @@ Traditional VPN grants network access — once authenticated, users can reach al
 
 All three gates are operational. Gates 1 and 2 were activated in V40 (CA policies) and V40 (Intune compliance). Some policies are in Report-only mode pending demo preparation (Session 11).
 
-**Why gates are complementary, not redundant:** Gate 1 (CA) can enforce MFA and sign-in risk — but cannot check device state on unmanaged BYOD without Intune enrollment. Gate 2 (posture) can verify OS version and AV status — but cannot evaluate stolen-credential risk or enforce MFA. Neither gate can substitute for the other. Gate 3 catches threats that bypass both.
+**Why gates are complementary, not redundant:** Gate 1 (CA) enforces MFA and evaluates sign-in risk — but identity alone says nothing about the device's security state. Gate 2 (Intune compliance) attests OS version, antivirus, and firewall — but cannot evaluate stolen-credential risk or enforce MFA. Neither gate can substitute for the other. Gate 3 catches threats in the content that bypass both.
 
 ## Where it appears in the stack
 
@@ -35,7 +35,7 @@ All three gates are operational. Gates 1 and 2 were activated in V40 (CA policie
 
 **Zero Trust principles (Microsoft framework) — explicit gate mapping:**
 - *Verify Explicitly (identity)* → Gate 1: Entra ID CA evaluates who the user is (MFA, sign-in risk, geolocation)
-- *Verify Explicitly (device)* → Gate 2: NetBird posture checks evaluate what the device is (OS version, AV, client version)
+- *Verify Explicitly (device)* → Gate 2: Intune device compliance attests what the device is (OS version, Defender AV, firewall); NetBird posture checks remain optional defense-in-depth
 - *Use Least Privilege* → NetBird ACL policies per resource group
 - *Assume Breach* → Gate 3: SWG pipeline + Suricata inspect all content in the data plane, regardless of who passed Gates 1 and 2
 

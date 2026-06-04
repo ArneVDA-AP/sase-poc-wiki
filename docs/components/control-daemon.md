@@ -31,7 +31,7 @@ The control daemon is the real-time enforcement engine. It subscribes to `securi
 
 | Interface | Direction | Details |
 |-----------|-----------|---------|
-| NATS JetStream | Inbound (consumer) | Durable consumer on `security.alert.>` + `identity.>` |
+| NATS JetStream | Inbound (consumer) | Durable + DeliverPolicy.NEW consumer on `security.alert.>` (survives restarts, no replay of historical events); ephemeral + DeliverPolicy.ALL consumer on `identity.>` (rebuilds the in-memory identity map on every start) |
 | NetBird Management API | Outbound | Groups API GET/PUT for quarantine/unquarantine |
 | Redis | Bidirectional | Threat scores, session state, group backup |
 

@@ -39,7 +39,9 @@ Met expliciete proxymodus kan Squid ook HTTPS verwerken via `CONNECT`-tunnel (en
 
 **WPAD dekt alleen browser-HTTP/HTTPS** — applicaties die de systeemproxyinstelling niet lezen (veel niet-browserapps, commandoregeltools) omzeilen Squid volledig. Suricata's netwerklaaginspectie op vtnet0 compenseert gedeeltelijk door afwijkingen in directe verbindingen te detecteren.
 
-**mobile01 is handmatig geconfigureerd** — Windows-instellingen → Proxy → "InstallatieScript gebruiken" → URL: `http://wpad.sandbox.local/wpad.dat`. In een productieomgeving zou dit worden gedistribueerd via Groepsbeleid of MDM.
+**WPAD-autodiscovery werkt niet met NetBird NRPT** — NetBird stelt het zoekdomein `sandbox.local` in via NRPT (Name Resolution Policy Table) op uitsluitend de `wt0`-adapter, niet globaal. `Get-DnsClientGlobalSetting` op mobile01 toont een lege `SuffixSearchList`. Omdat Windows de globale suffixlijst gebruikt voor WPAD-autodiscovery, wordt autodiscovery niet geactiveerd voor het zoekdomein op adapterniveau van NetBird.
+
+**mobile01 is handmatig geconfigureerd** — Windows-instellingen → Proxy → "InstallatieScript gebruiken" → URL: `http://wpad.sandbox.local/wpad.dat`. In een productie-uitrol bij Atlascollege zou WPAD worden gedistribueerd via **DHCP-optie 252**, die de PAC-URL rechtstreeks naar clients pusht zonder DNS-afhankelijkheid of gebruikersactie. Alternatieven zijn Groepsbeleid of Intune MDM-beleid.
 
 ## Bronnen
 

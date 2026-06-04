@@ -112,3 +112,76 @@ Toevoeg-alleen log van wiki-wijzigingen.
 **Verwerkte brondocumenten:** V28–V44 (17 verslagen), 10 implementatiedocumenten.
 
 **Totaal nieuwe pagina's:** 42. **Totaal bijgewerkte pagina's:** 30+.
+
+---
+
+## 2026-06-04 — Raw → Wiki eenrichtings-consistentieaudit (volledige doorloop)
+
+**Doel:** Elke wikipagina in één richting gelijkstellen aan de bronnen in `raw/` — `raw/` is de
+enige bron van waarheid; enkel de wiki is gewijzigd. Beide talen gecorrigeerd en EN↔NL-divergentie
+als defect behandeld. Scope = enkel correctheid (geen redactionele inkorting, geen
+hernoemingen/verplaatsingen/slug-wijzigingen).
+
+**Toegepast gezagsmodel:** verslag-bevestigde toestand = grondwaarheid; een later verslag vervangt
+een eerder; correctienotities overschrijven hun bovenliggend plandocument maar een verslag wint nog
+steeds; addenda / architectuurdocumenten / Doc1–7 = intentie vóór implementatie (enkel rationale +
+gatenvulling). Dit keert de regel om waaronder de wiki oorspronkelijk werd gebouwd (zie CLAUDE.md-fix
+hieronder), wat verklaart waarom de grootste driftklasse pagina's waren die een plan/addendum hadden
+gevolgd waar een verslag later van afweek.
+
+**Geauditeerde domeinen (alle 12 + overkoepelende Fase E):** DNS-Threat-Intel · SWG/Proxy ·
+Malware+DLP · IDS · Lab/Virtualisatie · ZTNA-Overlay · Context-Aware/CA · GroupSync ·
+Identity-Bridge/Control-Daemon · NATS/JetStream · CASB+Wazuh · ZT-SD-WAN · Fase E
+(overview/architecture, concepten, index, tags, sectie-indexen, testing/*).
+
+**Bevindingen per klasse (~88 afzonderlijke bevindingen over 86 logische pagina's × EN+NL):**
+- **feitelijk (~28)** — verkeerde app-reg-GUID (`cebe0d74…`→`11803ee8…`), Identity-Bridge poll-doel
+  (`HTTPS overlay`→`http://management:80`), NATS-versie (`2.14`→`2.14.1-alpine`), datumdrift Suricata/DNS
+  (april→maart 2026), Control-Daemon-datum (mei→juni), hoofdletters groepsnaam
+  (`2ITcsc1A-`→`2ITCSC1A-` over 4 pagina's), VyOS-versie (`1.4 rolling`→`rolling 2026.02.16`),
+  sitepc01 Site-LAN-IP (`172.16.10.50`→`172.16.10.10`), e.a.
+- **verouderd-vervangen (~13)** — NetBird-groepen/ACL (SASE-* → personamodel + één
+  `Personas-to-Core-Services`-beleid, V34); CA-posture (NetBird-posture → Intune-conformiteit Gate 2,
+  V40); sitepc01 (`geen OS` → Tiny11 operationeel, V43/V44); groepstabellen runbook-07/08/09.
+- **status-drift (~10)** — Wazuh CASB live-revoke (werkend → detect-only HTTP-204-stub, live in
+  afwachting); VyOS QoS+failover (gepland/geschrapt → geïmplementeerd, V43); GroupSync #5399 Dex-gotcha
+  (live → niet van toepassing, V30.17); acceptatietests F4/F8 (zie onder).
+- **inconsistentie / EN↔NL-divergentie (~20)** — dominant NL-patroon was weggevallen inhoud (NL-pagina's
+  misten blokken die EN wel had); plus één zelfcontradictie (`concepts/identity-flow` benoemde de
+  mechanismekeuze JWT-vs-IdP-Sync foutief als "Pad A/B", wat raw voorbehoudt voor prefixafhandeling).
+- **ongegrond-en-fout (~10)** — `components/identity-bridge` verzon `/member`, `children-max=5`,
+  `identity.login`/`identity.group_change`; `findings/wazuh-dashboard-airgate` verzon een
+  `api.wazuh.com`-URL + "eeuwige spinner"; `-p 953` op `rndc` (×4 DNS-pagina's); NATS-subject
+  `control.quarantine`.
+- **link (~7)** — ontbrekende Related-runbook-links toegevoegd tijdens het bewerken. Finale linkaudit
+  over alle 172 bestanden (1.259 interne `.md`-links) = **0 gebroken**.
+
+**Belangrijkste resoluties (gezagsmodel in actie):**
+- **GroupSync Pad A/B:** Pad B is verscheept (V31/V34) en is een **fail-closed allowlist die de
+  Entra-weergavenaam-STRING → schone NetBird-naam mapt** (`2ITCSC1A-Studenten`→`Studenten`),
+  niet-gematchte groepen worden stil gedropt — netto-effect strips de prefix maar strikter dan een
+  blinde strip. Entra-beveiligingsgroep-hoofdletters zijn **all-caps `2ITCSC1A-`** (verslagen V34/V40
+  vervangen de kleine letters `2ITcsc1A-` uit de correctienotitie). De oorspronkelijke "GUID-gesleutelde"
+  fout van de wiki ÉN een tussentijdse "generieke prefix-strip"-overcorrectie gecorrigeerd.
+- **Quarantaine breekt actieve flow = GETEST, eerlijk geherkaderd:** V35.14 dry-run op `docent1` —
+  EICAR scoorde 80/80, peer in quarantaine **binnen enkele seconden** (persona-groepen gestript →
+  deny-by-default), connectiviteit verloren, hersteld bij un-quarantine. Voorgesteld als getest met
+  timing **"binnen enkele seconden"** (niet "milliseconden") en ZONDER de niet-onderbouwde claim "pagina
+  stierf mid-load". ENFORCE=false tot Sessie 11.
+- **CASB-demo-SID:** `100201` → **`100601`** (`AnonymousLinkCreated`, V39 sandbox-basisfamilie 100600).
+  De `100500/100501` uit het seed zijn de bus-regels van het Marnix-team, niet de sandbox-CASB-regels.
+- **Acceptatietests F4/F8 (Datacenter Access / Firewall-segmentatie):** geherkaderd als
+  **gevalideerd-daarna-verwijderd** — het ✅ resultaat bij opbouw behouden, met huidige-toestand-kadering
+  dat het DC-LAN-over-overlay-pad (`Internal-DC` Network + `Datacenter Access`-beleid) verwijderd is in de
+  V34-personamigratie en uitgesteld; de negatieve-isolatiehelft van F8 blijft geldig. Toegepast op F4, F8
+  en F15 stap 6 + telling, EN+NL.
+
+**CLAUDE.md-gezagsregel gecorrigeerd:** de projectinstructie "het implementatiedocument wint van het
+verslag voor de huidige toestand" is omgekeerd naar het gecorrigeerde model — **verslag-bevestigde
+toestand is grondwaarheid; addenda / implementatiedocumenten / plandocumenten zijn intentie vóór
+implementatie en overschrijven nooit een verslag voor de huidige toestand.** Dit is de grondoorzaak van
+de systematische drift die deze audit corrigeerde.
+
+**Gewijzigde bestanden:** wikipagina's over alle domeinen (EN+NL) volgens de per-domein-tabellen in
+`.agent-memory/audit-tracker.md`; `CLAUDE.md` (gezagsregel); `log.md` + `log.nl.md` (deze entry).
+Geen `raw/`-bestanden gewijzigd. Geen hernoemingen, verplaatsingen, slug- of frontmatter-wijzigingen.

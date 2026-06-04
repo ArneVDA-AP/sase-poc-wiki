@@ -6,7 +6,7 @@ tags: [decision, suricata, network, opnsense]
 # Beslissing: IDS-modus vs IPS-modus voor Suricata
 
 **Status:** Geïmplementeerd (IDS-modus)  
-**Datum:** April 2026 (Verslag23)
+**Datum:** Maart 2026 (Verslag23)
 
 ## Context
 
@@ -28,7 +28,7 @@ OPNsense biedt twee IPS-activeringsroutes: Netmap (native kernel bypass) en Dive
 
 IDS-modus (PCAP), met de drop/alert-beleidstabel geconfigureerd en klaar voor IPS-activering bij implementatie op fysieke hardware.
 
-Netmap IPS werd getest en bevestigd niet-functioneel op virtio-NIC's. Wanneer Netmap IPS werd geactiveerd: Suricata rapporteerde 0 verwerkte pakketten en alle eerdere alertactiviteit stopte. Terugkeren naar PCAP IDS herstelde de normale werking. (Verslag23)
+Netmap IPS werd getest en bevestigd niet-functioneel op virtio-NIC's. Wanneer Netmap IPS werd geactiveerd: Suricata rapporteerde 0 verwerkte pakketten en alle eerdere alertactiviteit stopte. Terugkeren naar PCAP IDS herstelde de normale werking. (Verslag23, Bevinding 23.3/23.4/23.5)
 
 De gedifferentieerde beleidstabel (drop vs. alert per categorie) is geconfigureerd in OPNsense. Op fysieke hardware met ondersteunde NIC's vereist overschakelen naar IPS-modus alleen het inschakelen van de IPS-schakelaar — de policies zijn al correct.
 

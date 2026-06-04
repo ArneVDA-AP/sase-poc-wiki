@@ -10,7 +10,7 @@ tags: [finding, ioc2rpz, workaround]
 
 ## Wat er gebeurde
 
-Inloggen op de ioc2rpz-GUI op `https://ioc2rpz.sandbox.local` mislukte stilzwijgend — de pagina leek het inlogverzoek even te verwerken, laadde vervolgens opnieuw zonder authenticatie. Er werd geen foutmelding getoond.
+Inloggen op de ioc2rpz-GUI op `https://ioc2rpz.sandbox.local` mislukte met de melding "Unknown error!!!" in de browser — de pagina leek het inlogverzoek even te verwerken en laadde vervolgens opnieuw zonder authenticatie.
 
 ## Oorzaak
 

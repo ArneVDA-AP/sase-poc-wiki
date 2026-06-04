@@ -99,9 +99,15 @@ Deploy Python-gebaseerde event producers op pop01. Elke producer tailt een logbe
 
 ### Producer: DNS RPZ
 
-- Unbound Python-module-integratie
+- Tailt het resolver-log (`/var/log/resolver/latest.log`), filtert op `rpz: applied`
 - Publiceert naar subject: `security.alert.dns`
 - Extraheert: opgevraagd domein, RPZ-actie (NXDOMAIN/redirect), feedbron
+
+### Producer: ClamAV malware
+
+- Tailt het c-icap-log (`/var/log/cicap/latest.log`)
+- Publiceert naar subject: `security.alert.malware` (routeert `YARA.DLP*`-signatures in plaats daarvan naar `security.alert.dlp`)
+- Extraheert: virussignature, client-IP, URL
 
 Controleer of elke producer publiceert:
 
@@ -126,8 +132,9 @@ nats sub "security.alert.>"
 
 - Geïntegreerd in de Identity Bridge-service ([Runbook 09](09-identity-bridge.nl.md))
 - Publiceert naar subjects:
-  - `identity.login` — wanneer een nieuwe peer verbindt
-  - `identity.group_change` — wanneer de personagroep van een peer wijzigt
+  - `identity.peer.connected` — wanneer een peer verbindt met de overlay
+  - `identity.peer.disconnected` — wanneer een peer de verbinding verbreekt
+  - `identity.multi_persona` — wanneer een peer in meer dan één personagroep wordt waargenomen (zero-trust-anomalie)
 
 ---
 
@@ -136,7 +143,9 @@ nats sub "security.alert.>"
 De Control Daemon is de centrale eventprocessor die beveiligingsevents consumeert en geautomatiseerde responsacties onderneemt.
 
 1. Deploy als Docker-container op mgmt01
-2. Configureer abonnementen: `security.alert.*` (wildcard)
+2. Configureer abonnementen:
+   - `security.alert.>` — durable consumer, `DeliverPolicy.NEW` (overleeft herstart, geen replay van historische events)
+   - `identity.>` — ephemeral consumer, `DeliverPolicy.ALL` (herbouwt de in-memory identiteitsmap bij elke start)
 3. Configureer Redis-verbinding voor threat score-opslag
 
 **Threat scoring:**
@@ -179,9 +188,10 @@ Als de score de quarantainedrempel overschrijdt, verifieer dat de peer is verwij
 - [ ] Suricata-producer publiceert naar `security.alert.ids`
 - [ ] Squid-producer publiceert naar `security.alert.proxy`
 - [ ] DNS RPZ-producer publiceert naar `security.alert.dns`
+- [ ] ClamAV-malware-producer publiceert naar `security.alert.malware` (routeert `YARA.DLP*` naar `security.alert.dlp`)
 - [ ] DLP-producer publiceert naar `security.alert.dlp`
-- [ ] Identity Bridge publiceert naar `identity.login` / `identity.group_change`
-- [ ] Control Daemon consumeert `security.alert.*` en scoort in Redis
+- [ ] Identity Bridge publiceert naar `identity.peer.connected` / `identity.peer.disconnected` / `identity.multi_persona`
+- [ ] Control Daemon consumeert `security.alert.>` en scoort in Redis
 - [ ] Quarantaine-actie functioneel (peer verwijderd uit groep bij drempeloverschrijding)
 
 ---

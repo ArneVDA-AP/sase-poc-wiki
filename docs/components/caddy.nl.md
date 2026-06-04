@@ -15,7 +15,7 @@ tags: [caddy, network, sase, proxy, tls, wpad]
 
 Caddy op mgmt01 vervult drie afzonderlijke rollen die toevallig hetzelfde proces delen:
 
-**1. WPAD/PAC-bestandsserver** — Caddy levert `/wpad.dat` op `http://wpad.sandbox.local` via de overlay-IP `100.70.135.241` van mgmt01. BYOD-clients ontdekken deze URL automatisch wanneer hun DNS-zoekdomein `sandbox.local` is: de browser vraagt `wpad.sandbox.local`, krijgt een antwoord, haalt `/wpad.dat` op en voert het PAC-bestand JavaScript uit om te ontdekken dat al het verkeer naar `PROXY 100.70.154.79:3128` (pop01 Squid) moet. Zie [Concept: WPAD/PAC](../concepts/wpad-pac.md).
+**1. WPAD/PAC-bestandsserver** — Caddy levert `/wpad.dat` op `http://wpad.sandbox.local` via de overlay-IP `100.70.135.241` van mgmt01. De browser haalt `wpad.sandbox.local/wpad.dat` op en voert het PAC-bestand JavaScript uit om te ontdekken dat al het verkeer naar `PROXY 100.70.154.79:3128` (pop01 Squid) moet. In de PoC wordt mobile01 handmatig op deze URL gericht ("Installatiescript gebruiken") — WPAD-autodiscovery wordt niet geactiveerd omdat NetBird het zoekdomein `sandbox.local` alleen op de `wt0`-adapter instelt, niet in de globale suffixlijst. Zie [Concept: WPAD/PAC](../concepts/wpad-pac.md).
 
 **2. NetBird TLS-terminator** — Het quickstart-script van NetBird installeert Caddy als de TLS-terminerende reverse proxy voor alle NetBird- en Zitadel-services op `netbird.sandbox.local`. Het TLS-certificaat is zelfondertekend via de `tls internal`-directive van Caddy (de ingebouwde lokale CA van Caddy). Let's Encrypt kan niet worden gebruikt omdat `netbird.sandbox.local` niet publiek oplosbaar is. Zie [Beslissing: Zitadel IdP-broker](../decisions/zitadel-idp-broker.md).
 
@@ -140,3 +140,5 @@ docker compose up -d caddy   # past nieuwe mounts toe
 - [Component: ioc2rpz](ioc2rpz.md)
 - [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md)
 - [Beslissing: Zitadel als IdP-broker](../decisions/zitadel-idp-broker.md)
+- [Runbook: ZTNA Overlay](../runbooks/02-ztna-overlay.md)
+- [Runbook: Proxy & WPAD](../runbooks/03-proxy-wpad.md)

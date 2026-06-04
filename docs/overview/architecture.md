@@ -44,7 +44,7 @@ All nodes except mobile01 run inside GNS3 on a Proxmox-hosted Ubuntu VM. See [GN
 |---------|------|---------|-----------------|
 | **WAN / management** | `192.168.122.0/24` | GNS3 libvirt NAT; underlay for all inter-node traffic; GNS3 host internet | pop01, mgmt01, site01 (all via vtnet0/ens3) |
 | **DC-LAN** | `10.0.0.0/24` | Internal datacenter segment — simulates on-premise resources | pop01 (vtnet1 = gateway `.1`), dc01 (`.100`) |
-| **Site-LAN** | `172.16.10.0/24` | Remote site segment | site01 (eth1 = gateway `.1`), sitepc01 (`.50`, no OS) |
+| **Site-LAN** | `172.16.10.0/24` | Remote site segment | site01 (eth1 = gateway `.1`), sitepc01 (`.10`, Windows 11) |
 | **NetBird Overlay** | `100.64.0.0/10` (WireGuard mesh) | Encrypted overlay — client transport for all SASE traffic | pop01, mgmt01, mobile01 |
 
 mobile01 is **not** on the WAN segment. It connects exclusively via the NetBird WireGuard overlay, simulating a genuine remote user with no direct path to the internal network.
@@ -195,7 +195,7 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 | Control Daemon | [control-daemon.md](../components/control-daemon.md) | Threat scoring + real-time quarantine via NetBird API | ✅ Operational |
 | Wazuh | [wazuh.md](../components/wazuh.md) | SIEM — NATS forwarder + pop01 agent | ✅ Operational |
 | Entra ID CA + Intune | [ca-posture-hybrid.md](../decisions/ca-posture-hybrid.md) | Context-aware access (Gates 1+2) | ✅ Operational |
-| M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Layer 2 — API-mode enforcement | ✅ Operational |
+| M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Layer 2 — Office 365 Management Activity API detection | ✅ Detection operational; AR enforcement detect-only (live revoke pending) |
 
 ---
 
@@ -226,7 +226,8 @@ Detection silos (producers)
   ├── Python DLP (mgmt01)           → security.alert.dlp
   ├── c-icap/ClamAV (pop01)         → security.alert.malware
   ├── DNS-RPZ (pop01)               → security.alert.dns
-  └── Identity Bridge (mgmt01)      → identity.login / identity.group_change
+  ├── O365 producer (mgmt01)        → security.alert.casb
+  └── Identity Bridge (mgmt01)      → identity.peer.connected / .peer.disconnected / .multi_persona
                     │
                     ▼
             NATS JetStream (mgmt01)

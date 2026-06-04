@@ -20,7 +20,7 @@ NetBird-client
   -> Zitadel (OIDC-uitgever op mgmt01)
     -> Entra ID (aplab.be-tenant, externe IdP)
       -> Microsoft-inlogpagina
-    <- OIDC-token met groups (GUID's) + cloud_displayname
+    <- OIDC-token: groups claim = weergavenaam-strings (via cloud_displayname)
   <- JWT met clean groups claim
 -> NetBird Management leest groups uit JWT
 ```
@@ -35,24 +35,21 @@ Twee aangepaste Actions vormen de kritieke brug tussen de ruwe claims van Entra 
 
 ### Action 1 — External Authentication (Pre-creation hook)
 
-Wanneer een gebruiker voor het eerst via Entra ID inlogt, bevat het Entra ID-token twee relevante claims:
+Wanneer een gebruiker voor het eerst via Entra ID inlogt, draagt de `groups`-claim van het Entra ID-token de groepslidmaatschappen van de gebruiker. Omdat `cloud_displayname` in het app-manifest aan de `groups`-claim is gekoppeld (zie [Runbook 08](../runbooks/08-groupsync.md)), stuurt de claim de **weergavenaam-string** van elke groep uit (bijv. `2ITCSC1A-Studenten`) in plaats van zijn ObjectID-GUID (bijv. `e5f8a2b3-...`).
 
-- `groups` — een array van GUID's (bijv. `e5f8a2b3-...`) die Azure AD-groepslidmaatschap identificeren
-- `cloud_displayname` — een optional claim met de leesbare groepsnaam inclusief het tenant-teamprefix (bijv. `2ITcsc1A-Studenten`)
+Action 1 (`mapEntraGroupsToMetadata`) produceert de schone interne namen via een **allowlist** gekeyd op die weergavenaam-strings:
 
-Action 1 voert de GUID-naar-naam-mapping uit door:
+1. Lees de `groups`-claim (weergavenaam-strings)
+2. Zoek elke naam op in een hardgecodeerde allowlist — `2ITCSC1A-Studenten` → `Studenten`, `2ITCSC1A-Docenten` → `Docenten`, `2ITCSC1A-Admins` → `Admins` (dit is [GroupSync Path B](../decisions/groupsync-pad-b.md))
+3. Schrijf de overeenkomende schone namen naar de gebruikersmetadata-sleutel `sase_groups` (komma-gescheiden)
 
-1. `cloud_displayname` uit het Entra ID-token te lezen
-2. Het `2ITcsc1A-`-prefix te verwijderen (dit is [GroupSync Path B](../decisions/groupsync-pad-b.md))
-3. De interne groepsnaam in te stellen op de clean versie: `Studenten`, `Docenten`, `Admins`
-
-Deze mappingstap is noodzakelijk omdat NetBird GUID's niet kan interpreteren — het heeft leesbare groepsnamen nodig om auto-groups aan te maken.
+De lookup is gekeyd op de **naamstring**, en daarom is `cloud_displayname` een harde voorwaarde — een ruwe GUID kan niet ge-allowlist worden naar `Studenten`. De allowlist is bewust **fail-closed**: een groep die niet in de map staat wordt stilzwijgend weggelaten in plaats van doorgegeven (strikter dan een blinde prefix-strip). De schone namen houden downstream NetBird-ACL's en Squid-policies leesbaar.
 
 ### Action 2 — Complement Token
 
 Voegt de `groups`-claim toe aan het JWT-token dat Zitadel aan NetBird uitgeeft. Zonder deze action bevat de JWT wel authenticatie-informatie maar geen groepslidmaatschap, en ziet NetBird nooit tot welke persona-groep de gebruiker behoort.
 
-De action roept `setClaim('groups', [...])` aan om de gemapte groepsnamen in de uitgaande JWT te injecteren. De JWT group sync van NetBird leest vervolgens deze claim en maakt of wijst auto-groups dienovereenkomstig toe.
+De action leest `sase_groups` uit de metadata van de gebruiker en roept `setClaim('groups', [...])` aan om die schone namen in de uitgaande JWT te injecteren. De JWT group sync van NetBird leest vervolgens deze claim en maakt of wijst auto-groups dienovereenkomstig toe.
 
 ### Fail-open ontwerp
 
@@ -76,7 +73,7 @@ Deze vervangt de gedeelde registratie `cebe0d74-be9f-49ac-9f35-65f11586c1bb` die
 
 ### Token Configuration (Entra ID-zijde)
 
-De `cloud_displayname` optional claim moet expliciet geconfigureerd worden in de Entra ID-app-registratie onder Token Configuration. Zonder deze claim heeft Action 1 geen leesbare groepsnaam om mee te werken en faalt de GUID-naar-naam-mapping stilzwijgend (vanwege `allowed-to-fail: true`).
+De `cloud_displayname`-eigenschap moet in het manifest van de Entra ID-app-registratie aan de `groups`-claim gekoppeld worden — het is niet selecteerbaar in de Token Configuration UI en moet worden toegevoegd door het manifest rechtstreeks te bewerken (zie [Runbook 08](../runbooks/08-groupsync.md)). Zonder deze koppeling valt de `groups`-claim terug op GUID's, heeft Action 1's allowlist geen naamstring om op te matchen (een GUID staat nooit in de allowlist), en faalt groepsresolutie stilzwijgend (vanwege `allowed-to-fail: true`).
 
 ---
 
@@ -95,9 +92,9 @@ De `cloud_displayname` optional claim moet expliciet geconfigureerd worden in de
 
 **Geen stdout/console-logging in Actions** — Zitadel Actions hebben geen mechanisme voor debug-uitvoer. Er is geen mogelijkheid om tussenliggende waarden te loggen of uitvoering te traceren binnen een action-script. De enige verificatiemethode is het onderzoeken van JWT-claims in NetBird na een geslaagde login, wat iteratieve ontwikkeling traag en foutgevoelig maakt.
 
-**GitHub #5399: JWT group sync met embedded Dex** — JWT group sync werkt niet out-of-the-box bij gebruik van de embedded Dex + Zitadel-combinatie. De `AUTH_SUPPORTED_SCOPES`-omgevingsvariabele mist vereiste scopes. Dit vereist handmatige aanpassing van de NetBird Docker Compose-configuratie.
+**GitHub #5399 (embedded-Dex scope-drop) — niet van toepassing op deze stack** — Upstream #5399 meldt dat op NetBird-builds met *embedded Dex* + Zitadel de JWT group sync niet out-of-the-box werkt omdat `AUTH_SUPPORTED_SCOPES` de groups-scope mist. Deze sandbox draait de **oudere multi-container NetBird-stack zonder Dex-container** (Management v0.67.0 valideert Zitadel's token rechtstreeks — Verslag30), dus de door de action geïnjecteerde `groups`-claim stroomt zonder scope-fix door. De scope-drop-variant van #5399 is hier dus niet van toepassing; er is geen Docker Compose-aanpassing nodig voor group sync. (Het aparte gevaar "gevuld JWT allow-groups → 401-lockout", soms ook onder #5399 bijgehouden, geldt nog steeds — zie hieronder en [NetBird](netbird.nl.md).)
 
-**`cloud_displayname`-afhankelijkheid** — Als de Entra ID Token Configuration geen `cloud_displayname` als optional claim bevat, faalt Action 1 stilzwijgend. De gebruiker authenticeert succesvol maar zonder groepsmapping. Omdat `allowed-to-fail: true` de fout onderdrukt, is deze faalwijze onzichtbaar zonder downstream JWT-claims te controleren.
+**`cloud_displayname`-afhankelijkheid** — Als `cloud_displayname` niet in het app-manifest aan de `groups`-claim is gekoppeld, draagt de claim GUID's in plaats van namen en matcht Action 1's allowlist niets, waardoor elke groep stilzwijgend wordt weggelaten. De gebruiker authenticeert succesvol maar zonder groepsresolutie. Omdat `allowed-to-fail: true` de fout onderdrukt, is deze faalwijze onzichtbaar zonder downstream JWT-claims te controleren.
 
 **Action-uitvoering is ondoorzichtig** — Er is geen dashboard-weergave die de uitvoeringsgeschiedenis of foutaantallen van actions toont. Debugging vereist end-to-end testen: inloggen als testgebruiker en vervolgens de resulterende JWT in NetBird inspecteren om te verifieren dat group claims aanwezig en correct gemapt zijn.
 

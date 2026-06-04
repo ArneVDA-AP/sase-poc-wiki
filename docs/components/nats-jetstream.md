@@ -6,7 +6,7 @@ tags: [nats, jetstream, event-bus, docker, nats-jetstream]
 # NATS JetStream
 
 **Role:** Central event bus on mgmt01 connecting isolated detection silos (Suricata, Squid, DLP, ClamAV, DNS-RPZ, Identity Bridge) into a coherent, reactive system.  
-**Version:** NATS 2.14.1 (`nats:2.14-alpine` — empirically verified; Addendum J listed 2.12.6, outdated)  
+**Version:** NATS 2.14.1 (`nats:2.14.1-alpine` — empirically verified; Addendum J listed 2.12.6, outdated)  
 **Config location:** mgmt01 Docker, secrets via env interpolation (no plaintext in committed config)
 
 ## How it works in this stack
@@ -34,9 +34,10 @@ The dual-write architecture ensures neither path depends on the other. A Wazuh o
 | `security.alert.dlp` | Python DLP (mgmt01) | Control Daemon, Wazuh forwarder |
 | `security.alert.malware` | c-icap/ClamAV (pop01) | Control Daemon, Wazuh forwarder |
 | `security.alert.dns` | DNS-RPZ producer (pop01) | Wazuh forwarder |
-| `identity.login` | Identity Bridge (mgmt01) | Control Daemon |
-| `identity.group_change` | Identity Bridge (mgmt01) | Control Daemon |
-| `control.quarantine` | Control Daemon (mgmt01) | — (internal) |
+| `security.alert.casb` | o365 producer (mgmt01) | Wazuh forwarder |
+| `identity.peer.connected` | Identity Bridge (mgmt01) | Control Daemon |
+| `identity.peer.disconnected` | Identity Bridge (mgmt01) | Control Daemon |
+| `identity.multi_persona` | Identity Bridge (mgmt01) | Control Daemon (zero-trust anomaly; SIEM rule planned) |
 
 ## Integration points
 
@@ -44,8 +45,8 @@ The dual-write architecture ensures neither path depends on the other. A Wazuh o
 |-----------|-----------|---------|
 | Detection producers (pop01) | Inbound | TCP 4222 via management LAN |
 | Detection producers (mgmt01) | Inbound | Docker `sase-internal` network |
-| Control Daemon | Outbound (consumer) | Durable consumer on `security.alert.>` + `identity.>` |
-| Wazuh Forwarder | Outbound (consumer) | Durable consumer on `security.alert.>`, writes to Wazuh manager socket |
+| Control Daemon | Outbound (consumer) | Durable + DeliverPolicy.NEW consumer on `security.alert.>` (survives restart, no replay of historical events); ephemeral + DeliverPolicy.ALL consumer on `identity.>` (rebuilds the in-memory identity map each start) |
+| Wazuh Forwarder | Outbound (consumer) | Durable PULL consumer (DeliverPolicy.NEW, AckPolicy.EXPLICIT) on `security.alert.>`; writes NDJSON to the shared `wazuh_nats_ingest` volume tailed by the Wazuh manager (localfile) |
 
 ## Known issues / gotchas
 

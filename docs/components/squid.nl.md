@@ -23,7 +23,7 @@ De keuze voor expliciete modus is niet optioneel — transparante proxy via `pf 
 
 **URL-filtering:** Twee blokkeerlijstmechanismen worden uitgevoerd vóór elke `allow`-regel (eerste overeenkomst wint):
 1. Handmatige blokkeerlijst: `gambling.com`, `.bet365.com`, `.pokerstars.com`
-2. UT1 Toulouse Remote ACL (`dsi.ut-capitole.fr/blacklists`) — categorieën: adult, malware, phishing, gokken
+2. UT1 Toulouse Remote ACL (`dsi.ut-capitole.fr/blacklists`) — categorieën: adult, malware, phishing, gambling
 
 **ICAP-orkestratie:** Squid stuurt verkeer naar twee ICAP-services:
 - REQMOD → Python DLP-server op `mgmt01:1345` (POST/PUT/PATCH-uploads)
@@ -105,6 +105,12 @@ Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `ext
 
 **StevenBlack-hostsformaat is incompatibel** — OPNsense Remote ACL's verwachten een tar.gz-archief in Squid ACL-formaat, geen hostsbestand. Gebruik UT1 Toulouse in plaats daarvan. Zie [Bevinding: StevenBlack incompatibel](../findings/stevenblack-incompatible.md).
 
+**`--management-url` is verplicht voor zelf-gehoste NetBird** — bij het installeren van de NetBird-agent op pop01 moet de `--management-url`-vlag naar de zelf-gehoste managementserver wijzen. Zonder deze valt de client terug op het NetBird-cloud-managementeindpunt en treedt hij nooit toe tot de sandbox-overlay.
+
+**OPNsense-GUI kan Squid niet aan `wt0` binden** — de `wt0`-interface heeft `IPv4 Configuration Type: None` omdat het IP door WireGuard wordt beheerd, niet door de DHCP/statische stack van OPNsense. De Squid-GUI-dropdown toont alleen interfaces met door OPNsense beheerde IP's. Daarom is het pre-auth include-bestand nodig voor de overlay-listener.
+
+**Handboek-NAT-regel (poort 443 → 3129) is irrelevant** — het handboek beschrijft een NAT-regel voor poort 443 → 3129. Dit is alleen nodig voor transparante proxymodus, waarbij de firewall uitgaand verkeer onderschept. In expliciete proxymodus stuurt de client een `CONNECT`-verzoek rechtstreeks naar Squid op poort 3128. Er is geen DNAT vereist.
+
 ---
 
 ## Gerelateerd
@@ -124,3 +130,4 @@ Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `ext
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)
 - [Concept: Identity Flow](../concepts/identity-flow.md)
+- [Runbook: Proxy & WPAD](../runbooks/03-proxy-wpad.md)

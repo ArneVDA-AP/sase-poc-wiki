@@ -99,7 +99,7 @@ Connect the GNS3 GUI from your laptop: `Edit → Preferences → Server → Remo
 | Ubuntu 24.04 | QEMU (QCOW2) | `mgmt01` |
 | Ubuntu 24.04 | QEMU (QCOW2) | `dc01` |
 | VyOS | QEMU (QCOW2) | `site01` |
-| Ubuntu 24.04 | QEMU (QCOW2) | `sitepc01` |
+| Tiny11 (Windows 11) | QEMU (QCOW2) | `sitepc01` |
 
 `mobile01` (Windows 11) runs as a VMware VM on a team member's laptop — it is **not** a GNS3 node. It connects exclusively via the NetBird WireGuard tunnel.
 
@@ -113,7 +113,7 @@ Switch-WAN   ──── site01 eth0       (WAN interface)
 Switch-LAN   ──── pop01  vtnet1     (LAN to DC-LAN)
 Switch-LAN   ──── dc01   ens3       (DC-LAN)
 Switch-Site  ──── site01 eth1       (Site-LAN)
-Switch-Site  ──── sitepc01 ens3     (Site-LAN)
+Switch-Site  ──── sitepc01 Ethernet (Site-LAN)
 ```
 
 **Verify:** All nodes appear on the canvas with correct cabling. Right-click → Start each node; verify console access.
@@ -130,7 +130,7 @@ Right-click each node → Configure → General settings:
 | mgmt01 (Ubuntu) | 16384 MB | 4 | 1 | Docker stack |
 | dc01 (Ubuntu) | 4096 MB | 2 | 1 | Datacenter simulation |
 | site01 (VyOS) | 1024 MB | 1 | 2 (eth0, eth1) | SD-WAN gateway |
-| sitepc01 (Ubuntu) | 4096 MB | 2 | 1 | No OS installed yet |
+| sitepc01 (Tiny11) | 4096 MB | 2 | 1 | Tiny11 / Windows 11 — overlay-enrolled (docent1) |
 
 > **Gotcha: pop01 needs 8 GB, not 4 GB.** The handbook specifies 4 GB, but ClamAV (~1.2 GB) + Suricata (~760 MB + 4 GB Hyperscan compilation peak) + Squid (~400 MB) running concurrently exceed 6 GB. At 4 GB, FreeBSD's OOM-killer silently terminates processes without log entries.
 > See [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md) for memory analysis.
@@ -152,7 +152,7 @@ Right-click each node → Configure → General settings:
 | Segment | CIDR | Gateway | Nodes |
 |---------|------|---------|-------|
 | DC-LAN | `10.0.0.0/24` | `10.0.0.1` (pop01 vtnet1) | dc01: `10.0.0.100` |
-| Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.50` |
+| Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.10` |
 
 **Port forwards on GNS3 host** (`10.158.10.67`):
 

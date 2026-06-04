@@ -6,7 +6,7 @@ tags: [decision, dns, network, ioc2rpz]
 # Beslissing: BIND als TSIG-tussenstap
 
 **Status:** Geïmplementeerd  
-**Datum:** April 2026 (Verslag25)
+**Datum:** Maart 2026 (Verslag25)
 
 ## Context
 

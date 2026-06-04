@@ -15,14 +15,14 @@ The Identity Bridge closes the gap between the ZTNA transport layer (NetBird) an
 
 The bridge polls the NetBird Management API (`/api/peers` + `/api/users`) every 30 seconds via a service-user PAT with admin role. It builds an in-memory cache mapping overlay IPs to persona groups. Squid queries this cache via `external_acl_type` for every HTTP request, using the client's overlay IP (`%SRC`) as the lookup key.
 
-The response flow: Squid sends `<IP> <group>` → helper queries `GET /member?ip=<overlay_ip>` → Identity Bridge returns `OK user=<email>` or `ERR` → Squid's persona-ACL fires or falls through.
+The response flow: Squid sends `<IP> <group>` → helper queries `GET /lookup?ip=<overlay_ip>` (with the `X-Bridge-Secret` header) → Identity Bridge returns the peer's full group membership → the helper answers `OK user=<email>` if the requested group matches, else `ERR` → Squid's persona-ACL fires or falls through. The bridge itself does not select a persona; persona resolution happens in Squid's `http_access` order (V31).
 
 ## Configuration
 
 - **Service user:** `identity-bridge` with admin role — regular user PATs trigger issue #3127 (stripped JWT-propagated auto-groups from all peers at every poll)
-- **Cache TTL:** 30s (Squid `external_acl_type ttl=30 negative_ttl=10 children-max=5`)
-- **Endpoint:** `GET /member?ip=<overlay_ip>` — returns persona group or ERR
-- **Health:** `GET /health`
+- **Cache TTL:** 30s (Squid `external_acl_type ttl=30 negative_ttl=10 concurrency=0`)
+- **Endpoint:** `GET /lookup?ip=<overlay_ip>` — requires the `X-Bridge-Secret` header (env `LOOKUP_SECRET`; fail-secure: an empty secret rejects every request). Returns the peer's full group membership (`status`/`user`/`groups`/`os`) or ERR
+- **Health:** `GET /health` — open, no auth, leaks no identity
 - **Only connected peers** are cached — disconnected peers fail open to GUI-generated rules
 - **Fail-open design:** When unreachable, no identity-based ACLs match, traffic falls through to non-identity URL filtering. All other security layers remain active.
 
@@ -30,9 +30,9 @@ The response flow: Squid sends `<IP> <group>` → helper queries `GET /member?ip
 
 | Interface | Direction | Protocol | Details |
 |-----------|-----------|----------|---------|
-| NetBird Management API | Outbound (poll) | HTTPS (overlay 100.x.x.x) | `/api/peers` + `/api/users`, PAT auth |
+| NetBird Management API | Outbound (poll) | HTTP (NetBird Docker network) | `/api/peers` + `/api/users` via `management:80`, service-PAT auth |
 | Squid external_acl | Inbound (per request) | HTTP (management LAN) | `192.168.122.23:8088` |
-| NATS JetStream | Outbound (publish) | NATS (sase-internal Docker network) | `identity.login`, `identity.group_change` subjects |
+| NATS JetStream | Outbound (publish) | NATS (sase-internal Docker network) | `identity.peer.connected`, `identity.peer.disconnected`, `identity.multi_persona` subjects |
 
 ## Known issues / gotchas
 
