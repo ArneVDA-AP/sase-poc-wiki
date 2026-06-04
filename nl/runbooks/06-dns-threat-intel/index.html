@@ -3993,7 +3993,7 @@ Zie <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primai
 <h2 id="bekende-openstaande-punten">Bekende openstaande punten<a class="headerlink" href="#bekende-openstaande-punten" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ioc2rpz GUI JS-fix is niet persistent</strong> — opnieuw toepassen na containerrebuilds</li>
-<li><strong>DNS NOTIFY bereikt BIND niet direct</strong> — ioc2rpz stuurt NOTIFY naar poort 53, BIND luistert op 53530. Feeds worden bijgewerkt op het poll-interval van 3600s. Handmatige trigger: <code>rndc -p 953 retransfer threat-intel.rpz.sase</code></li>
+<li><strong>DNS NOTIFY bereikt BIND niet direct</strong> — ioc2rpz stuurt NOTIFY naar poort 53, BIND luistert op 53530. Feeds worden bijgewerkt op het poll-interval van 3600s. Handmatige trigger: <code>rndc retransfer threat-intel.rpz.sase</code></li>
 </ul>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>

@@ -3567,23 +3567,29 @@
 <p><strong>Component:</strong> <a href="../../components/wazuh/">Wazuh</a><br />
 <strong>Ernst:</strong> Valkuil (bekende beperking)</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>De Wazuh Dashboard Apps-sectie is onbereikbaar. Het klikken op de "API"-sectie triggert een verbindingscontrole naar externe Wazuh-updateservers, die faalt in de air-gapped sandbox-omgeving. De UI toont een eindeloze laadspinner zonder foutmelding of time-outindicatie.</p>
+<p>De app-modules van het Wazuh Dashboard (Security Events, de Agents-tab) zijn gegate: in plaats van te laden meldt het dashboard de manager als <strong>"Status: Offline"</strong> met <strong>"Updates status: Error checking updates"</strong> en herleidt het hard naar de server-APIs-pagina (API-configuratie). De <strong>Discover</strong>-interface daarentegen werkt volledig.</p>
+<p>Dit is misleidend, want de manager-API is in werkelijkheid gezond — <code>authenticate</code>, <code>info</code> en <code>stats</code> geven alle HTTP 200. Het "Offline"-oordeel is een vals-negatief dat door één falende controle wordt geproduceerd, niet door een onbereikbare manager.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>Het dashboard voert een versie/UUID-gezondheidscontrole uit tegen Wazuh's externe API (<code>https://api.wazuh.com/...</code>) als onderdeel van de Apps-sectie-initialisatie. Deze controle vereist internettoegang. In de air-gapped labomgeving hangt het verzoek voor onbepaalde tijd, waardoor de volledige Apps-sectie niet kan laden.</p>
+<p>Twee internet-afhankelijke controles falen in de air-gapped sandbox en cascaderen tot de offline-bepaling:</p>
+<ol>
+<li>Op de manager retourneert <code>GET /manager/version/check</code> <strong>HTTP 500</strong>. Dit endpoint voert een internet-afhankelijke update-/CTI-controle uit; zonder uitgaand internet in de sandbox geeft het een fout in plaats van een versie terug.</li>
+<li>De <code>POST /api/check-api</code> van het dashboard retourneert vervolgens <strong>HTTP 500 — "Could not obtain manager UUID"</strong>. Het dashboard interpreteert deze fout als een offline manager, zet "Status: Offline" / "Updates status: Error checking updates", en gate't de app-modules achter de herleiding naar de API-configuratie.</li>
+</ol>
+<p>De gate is dus <strong>geen</strong> DNS-/hostnaamresolutieprobleem en geen eindeloze hang — het is een snelle 500 van een internet-afhankelijke gezondheidscontrole die als "manager offline" wordt geïnterpreteerd.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
-<p>Gebruik de <strong>Discover</strong>-interface (directe OpenSearch-query) als primaire analysetool. Discover biedt volledige mogelijkheden voor het zoeken, filteren en visualiseren van events — voldoende voor alle PoC-behoeften:</p>
+<p>Er is geen definitieve fix toegepast; de gate wordt aanvaard als een bekende air-gap-beperking. Gebruik <strong>Discover</strong> als primaire analyse-interface — het bevraagt de indexer rechtstreeks en wordt niet beïnvloed door de versie-/UUID-controle van de manager:</p>
 <ul>
 <li>Navigeer naar Discover in de Wazuh Dashboard-zijbalk</li>
 <li>Selecteer het <code>wazuh-alerts-*</code> index pattern</li>
-<li>Gebruik KQL- of Lucene-querysyntax voor filtering</li>
+<li>Gebruik KQL- of Lucene-querysyntax voor filtering (bijv. <code>rule.groups:"sase"</code>)</li>
 <li>Maak opgeslagen zoekopdrachten en visualisaties aan indien nodig</li>
 </ul>
-<p>De Apps-sectiefuncties (Agents-overzicht, SCA, Vulnerability Detection-dashboards) zijn niet beschikbaar, maar de onderliggende data is volledig toegankelijk via Discover.</p>
+<p>Kandidaat-fixpaden (te herbekijken met Gerben, nog niet gevalideerd): schakel de update-/CTI-controle uit aan de managerzijde (zijn <code>api.yaml</code>) of de overeenkomstige dashboard-plugininstelling zodat <code>check-api</code> niet langer afhangt van de versiecontrole, en pas toe met <code>wazuh-control restart</code> (nooit <code>docker restart</code> — bind-mounts worden in-place overschreven). Zie <a href="../../components/wazuh/">Component: Wazuh</a>.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Air-gapped deployments van Wazuh moeten verwachten dat de Apps-sectie niet functioneel is — plan analyseworkflows rond Discover vanaf het begin</li>
-<li>Discover is de primaire analyse-interface en wordt niet beïnvloed door de externe API-afhankelijkheid</li>
-<li>Deze beperking heeft geen invloed op dataverzameling, agent-enrollment of alerting — alleen de dashboard-gemakslaag</li>
+<li>Een "Offline"-oordeel in de dashboard-app is geen bewijs dat de manager down is — bevestig rechtstreeks met de manager-API (<code>authenticate</code>/<code>info</code>/<code>stats</code> die 200 geven) voordat je connectiviteit gaat onderzoeken.</li>
+<li>Verwacht in air-gapped Wazuh-deployments dat de app-modules worden gegate door de internet-afhankelijke update-/versiecontrole; plan analyseworkflows vanaf het begin rond Discover.</li>
+<li>De beperking treft enkel de dashboard-gemakslaag — dataverzameling, agent-enrollment, regelverwerking en alerting zijn onaangetast.</li>
 </ul>
 
 

@@ -2388,10 +2388,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-7-acl-beleidsregels-aanmaken-voor-wpad-bereikbaarheid" class="md-nav__link">
+  <a href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 7: ACL-beleidsregels aanmaken voor WPAD-bereikbaarheid
+        Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
       
     </span>
   </a>
@@ -3658,10 +3658,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-7-acl-beleidsregels-aanmaken-voor-wpad-bereikbaarheid" class="md-nav__link">
+  <a href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 7: ACL-beleidsregels aanmaken voor WPAD-bereikbaarheid
+        Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
       
     </span>
   </a>
@@ -3912,14 +3912,12 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c"># Moet resolven naar 100.70.135.241</span>
 </code></pre></div>
 <hr />
-<h2 id="stap-7-acl-beleidsregels-aanmaken-voor-wpad-bereikbaarheid">Stap 7: ACL-beleidsregels aanmaken voor WPAD-bereikbaarheid<a class="headerlink" href="#stap-7-acl-beleidsregels-aanmaken-voor-wpad-bereikbaarheid" title="Permanent link">&para;</a></h2>
-<p>Als je het standaard alles-naar-alles-beleid hebt vervangen in Runbook 02, controleer of deze beleidsregels bestaan:</p>
-<ul>
-<li><strong>Admin-Infrastructure</strong> — beheerders kunnen beheerinfra bereiken (al aangemaakt)</li>
-<li><strong>Mobile-to-Services</strong> — BYOD-clients kunnen mgmt01 WPAD + pop01-proxy bereiken (al aangemaakt)</li>
-<li><strong>Datacenter Access</strong> — voeg <code>SASE-Admins</code> toe als bron zodat mgmt01 pop01 Unbound voor DNS kan bereiken</li>
-</ul>
-<p>Zonder de DNS ACL toont <code>netbird status</code> op mgmt01 "Nameservers: 0/1 Available".</p>
+<h2 id="stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren">Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren<a class="headerlink" href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" title="Permanent link">&para;</a></h2>
+<p>Onder het V34-personamodel (zie <a href="../../components/netbird/">Component: NetBird</a>) draagt één allow-beleid alle connectiviteit: <strong><code>Personas-to-Core-Services</code></strong> — bronnen <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → bestemming <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. Dit laat elke BYOD-persona-peer de pop01 Squid-proxy bereiken.</p>
+<blockquote>
+<p><strong>Verouderd:</strong> eerdere builds gebruikten aparte <code>Admin-Infrastructure</code>-, <code>Mobile-to-Services</code>- en <code>Datacenter Access</code>-beleidsregels op <code>SASE-*</code>-groepen. Die beleidsregels en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.</p>
+</blockquote>
+<p><strong>DNS-bereikbaarheidsvalkuil:</strong> een peer die de pop01-naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft, toont <code>Nameservers: 0/1 Available</code> in <code>netbird status</code>. Zorg dat de groep van de peer een ACL-pad naar <code>Core-Services</code> (pop01 Unbound) heeft.</p>
 <hr />
 <h2 id="stap-8-windows-proxy-configureren-op-mobile01">Stap 8: Windows-proxy configureren op mobile01<a class="headerlink" href="#stap-8-windows-proxy-configureren-op-mobile01" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Windows Instellingen → Netwerk en internet → Proxy:

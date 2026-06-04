@@ -3608,12 +3608,16 @@
 
 
 <h1 id="decision-entra-id-ca-netbird-posture-checks-hybrid-three-gate-model">Decision: Entra ID CA + NetBird Posture Checks (Hybrid Three-Gate Model)<a class="headerlink" href="#decision-entra-id-ca-netbird-posture-checks-hybrid-three-gate-model" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Implemented (Gates 1+2 operational)<br />
-<strong>Date:</strong> April 2026 (Verslag27, Doc7)</p>
+<p><strong>Status:</strong> Implemented — Gate 1 (Entra ID CA, 5 policies) + Gate 2 (Intune device compliance) live since Verslag40 (2 June 2026); Gate 3 (SWG) operational. NetBird posture checks remain an optional, unimplemented defense-in-depth extension.<br />
+<strong>Date:</strong> Architecture April 2026 (Addendum E.2); implemented 2 June 2026 (Verslag40)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>The initial architecture (Verslag18, Bevinding 17.7) stated that "Entra ID Conditional Access replaces NetBird posture checks." This was incorrect. Verslag27 identified and corrected the error after a detailed analysis of what each technology actually does on unmanaged BYOD.</p>
-<p>The question: how do you verify both <em>identity</em> and <em>device state</em> for BYOD students who will not enroll their personal laptops in Intune MDM?</p>
+<p>The question this decision answers: how do you verify both <em>identity</em> and <em>device state</em> before granting network access?</p>
+<p>An early position (Verslag18, Bevinding 17.7) — "Entra ID Conditional Access replaces NetBird posture checks" — was first revisited in Verslag27 under the assumption of <em>unmanaged BYOD</em>. On unmanaged devices CA cannot check device compliance (that requires Intune enrollment), so NetBird posture checks were proposed as a complementary device-state gate (Doc7, Addendum E.1).</p>
+<p>That premise then changed. A scope correction established that the in-scope devices are <strong>managed, Intune-enrolled Windows devices</strong>, not unmanaged BYOD (Addendum E.2; see <a href="../managed-devices-scope/">Decision: Managed Windows Devices Scope</a>). With managed devices, CA <em>can</em> evaluate device state — through Intune compliance attestation. So <strong>Intune compliance became the primary device-posture mechanism (Gate 2)</strong>, and NetBird posture checks were demoted to an <strong>optional defense-in-depth extension</strong> that was never deployed in the sandbox. Verslag40 (2 June 2026) implemented this managed-device model.</p>
 <h2 id="options-considered">Options considered<a class="headerlink" href="#options-considered" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>The first three rows are the <strong>BYOD-era analysis</strong> (Addendum E.1 / Doc7). They are retained as decision history; their shared premise — unmanaged BYOD — was superseded by the managed-device scope correction (last row).</p>
+</blockquote>
 <table>
 <thead>
 <tr>
@@ -3626,33 +3630,43 @@
 <tr>
 <td><strong>CA only</strong></td>
 <td>Single control point; Microsoft-managed</td>
-<td>CA device compliance checks require Intune enrollment — not available for unmanaged BYOD. CA can enforce MFA and sign-in risk, but not OS version or AV status</td>
+<td>On <em>unmanaged</em> BYOD, CA device compliance is unavailable (needs Intune). CA can enforce MFA and sign-in risk, but not OS version or AV status</td>
 </tr>
 <tr>
-<td><strong>Posture checks only</strong></td>
+<td><strong>NetBird posture only</strong></td>
 <td>Device state without MDM</td>
-<td>Posture checks evaluate at tunnel-build time — after any CA check would have fired. Cannot evaluate stolen credential risk, enforce MFA, or detect anomalous sign-in</td>
+<td>Evaluates at tunnel-build time only. Cannot evaluate stolen-credential risk, enforce MFA, or detect anomalous sign-in. Process check is spoofable</td>
 </tr>
 <tr>
-<td><strong>Hybrid (CA + posture)</strong></td>
+<td><strong>CA + NetBird posture (BYOD-era plan)</strong></td>
 <td>Each covers what the other cannot</td>
-<td>Two systems to maintain; both marked PLANNED in sandbox</td>
+<td><strong>Premise superseded.</strong> Assumed unmanaged BYOD; once devices were managed, Intune compliance replaced NetBird posture as the device gate</td>
+</tr>
+<tr>
+<td><strong>CA + Intune compliance (managed-device — implemented)</strong></td>
+<td>Attestation-based device posture at authentication-time; not spoofable by the end user; same control plane as identity</td>
+<td>Limited to Intune-enrolled Windows devices</td>
 </tr>
 </tbody>
 </table>
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<p>Hybrid model: Entra ID Conditional Access as Gate 1 (authentication-time) + NetBird Posture Checks as Gate 2 (tunnel-build time). Both are complementary, not substitutable.</p>
-<p><strong>What CA (Gate 1) covers that posture cannot:</strong>
+<p>Managed-device <strong>three-gate model</strong> (Verslag40):</p>
+<ul>
+<li><strong>Gate 1 — Identity:</strong> Entra ID Conditional Access (5 policies, authentication-time)</li>
+<li><strong>Gate 2 — Device:</strong> Intune device compliance (attestation-based posture, evaluated at authentication via CA Policy 5 and on Intune's periodic cycle)</li>
+<li><strong>Gate 3 — Content:</strong> SWG pipeline (Squid SSL-Bump + ClamAV + DLP + Unbound RPZ, every request)</li>
+</ul>
+<p>NetBird posture checks remain <em>available</em> as an optional, independent defense-in-depth layer (different timing — tunnel-build — and mechanism — client-side check), but were <strong>not deployed</strong>: with managed devices, Intune compliance already covers the rubric's device-posture requirement through attestation rather than a spoofable process check.</p>
+<p><strong>What CA (Gate 1) covers:</strong>
 - MFA enforcement
-- Sign-in risk evaluation (leaked credentials, impossible travel, anomalous login patterns via Entra ID Protection — available because <code>aplab.be</code> has A5 license which includes P2)
+- Sign-in risk evaluation (leaked credentials, impossible travel, anomalous login patterns via Entra ID Protection — available because <code>aplab.be</code> has an A5 license which includes P2)
 - Named locations (geo-blocking)
 - Legacy authentication blocking</p>
-<p><strong>What posture (Gate 2) covers that CA cannot:</strong>
-- OS version verification (no Intune enrollment required)
-- AV process verification (<code>C:\Program Files\Windows Defender\MsMpEng.exe</code>)
-- NetBird client version enforcement
-- Geo-check as defense-in-depth (different GeoIP database from CA)</p>
-<p>The lesson: always verify what a technology can actually do on the target device type (unmanaged BYOD), not on the ideal device (Intune-enrolled corporate device). CA device compliance checks are structurally unavailable for unmanaged BYOD.</p>
+<p><strong>What Intune compliance (Gate 2) covers:</strong>
+- OS version (attestation-based, minimum <code>10.0.22000.0</code>)
+- Defender antivirus active + security intelligence up-to-date + real-time protection
+- Windows Defender Firewall active</p>
+<p>Because Intune reports actual device state through the management agent (attestation), Gate 2 is <strong>not spoofable by the end user</strong> — the key advantage over the NetBird <code>process_check</code> it replaced, which only verifies that a binary exists at a path.</p>
 <h2 id="implemented-gate-1-policies">Implemented Gate 1 policies<a class="headerlink" href="#implemented-gate-1-policies" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3707,10 +3721,11 @@
 <p>BitLocker/TPM dropped — rubric requires "device posture", not encryption. Three posture checks: OS version, AV, firewall. Policy on Report-only until demo preparation (Session 11).</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Gate 3 (SWG pipeline) is the only gate currently operational in the sandbox — it provides content-level protection regardless of identity/device</li>
+<li>Gate 1 (Entra ID CA) and Gate 2 (Intune compliance) are both live as of Verslag40: four CA policies enforcing (MFA, legacy-auth block, risk-block) plus Policy 5 (compliant device) and Geo-Block held at Report-only until Session 11. Gate 3 (SWG pipeline) operates independently of identity/device on every request — so all three gates are operational, not just Gate 3</li>
 <li>Activation of Gate 1 requires MFA pre-registration for test accounts before enabling policies (unregistered MFA produces a loop that blocks even the verification session)</li>
-<li>OS version check uses kernel version, not marketing version — <code>10.0.19041</code> corresponds to Windows 10 2004 (May 2020 Update), the first version with native WireGuard kernel module support</li>
-<li><code>process_check</code> for AV is a baseline compliance check — it does not verify AV definitions are current or that real-time scanning is active; full endpoint protection is Gate 3 (ClamAV)</li>
+<li>The admins persona falls under no CA policy — <code>2itcsc1a_admin1</code> is its sole member and is the break-glass exclude on every policy, so it is deliberately ungoverned to prevent lockout</li>
+<li>Intune Gate 2 depends on the Microsoft control plane being reachable un-bumped: <code>*.microsoftonline.com</code> and <code>enterpriseregistration.windows.net</code> are on the Squid splice/no-bump list, otherwise device registration and the compliant-device check (Policy 5) break</li>
+<li><strong>Optional NetBird posture layer (not deployed):</strong> had NetBird posture checks been used as the device gate, the OS check would read the kernel version (<code>10.0.19041</code> = Windows 10 2004, the first with the native WireGuard kernel module) and the AV check would be a <code>process_check</code> that only verifies a binary exists at a path — spoofable, and blind to whether definitions are current or real-time scanning is active. Intune attestation (Gate 2, minimum OS <code>10.0.22000.0</code>) supersedes this; deep content/endpoint protection is Gate 3 (ClamAV)</li>
 </ul>
 <p>See also: <a href="../../components/netbird/">Component: NetBird</a>, <a href="../../concepts/zero-trust/">Concept: Zero Trust</a></p>
 

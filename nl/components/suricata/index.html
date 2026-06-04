@@ -3760,7 +3760,7 @@
 <p><strong>Wat vtnet0 (WAN) ziet:</strong> De opnieuw versleutelde upstream HTTPS-verbindingen van Squid, DNS-query's van de resolver van pop01, overig direct TCP/UDP-verkeer dat de proxy omzeilt. Suricata extraheert TLS-metadata (SNI, JA3/JA4-vingerafdrukken), HTTP-headers in platte tekst (van niet-HTTPS-stromen), DNS-query/response-gegevens en vergelijkt met C2/botnet IP- en domeinhandtekeningen.</p>
 <p><strong>Wat vtnet1 (LAN) ziet:</strong> Al het interne DC-LAN-verkeer van dc01 — onversleuteld, alle protocollen. Dit detecteert bedreigingen op het interne segment (laterale beweging, verkenning, software-update-afwijkingen van dc01).</p>
 <p><strong>Waarom niet wt0 (NetBird):</strong> WireGuard is een Layer 3 VPN. Verkeer dat via wt0 wordt gerouteerd verschijnt vanuit het perspectief van BPF niet als inkomende frames op die interface. <code>tcpdump</code> op wt0 met een TCP-filter toont 0 paketten. Suricata op wt0 zou niets zien. Zie <a href="../../findings/wt0-pf-rdr-limitation/">Bevinding: wt0 pf rdr-beperking</a> en <a href="../../decisions/suricata-wan-lan/">Beslissing: Suricata WAN+LAN</a>.</p>
-<p><strong>IDS-modus, niet IPS:</strong> Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge) — virtio-NIC's in QEMU hebben geen van deze. Divert IPS vereist expliciete <code>pf divert-to</code>-firewallregels die niet zijn geconfigureerd. De drop/alert-beleidstabel is geconfigureerd en gereed voor IPS-activering op fysieke hardware. Zie <a href="../../decisions/ids-vs-ips/">Beslissing: IDS vs. IPS</a> en <a href="../../findings/suricata-netmap-virtio/">Bevinding: Suricata Netmap/virtio</a>.</p>
+<p><strong>IDS-modus, niet IPS:</strong> Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge) — virtio-NIC's in QEMU hebben geen van deze. Zelfs <code>sysctl dev.netmap.admode=2</code> (geëmuleerde Netmap-modus) loste dit niet op — geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete <code>pf divert-to</code>-firewallregels (<code>pfctl -s rules | grep divert</code> retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert-beleidstabel is geconfigureerd en gereed voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie <a href="../../decisions/ids-vs-ips/">Beslissing: IDS vs. IPS</a> en <a href="../../findings/suricata-netmap-virtio/">Bevinding: Suricata Netmap/virtio</a>.</p>
 <p><strong>RAM-vereiste:</strong> Suricata + ClamAV + Squid gelijktijdig uitvoeren vereist <strong>minimaal 8 GB RAM</strong> op pop01. Hyperscan-patrooncompilatie van ET Open-regels piekt op ~4 GB RSS. Bij 6 GB beëindigt de OOM-killer services stilzwijgend zonder loguitvoer.</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
@@ -3916,7 +3916,7 @@
 <tr>
 <td><a href="../squid/">Squid</a></td>
 <td>parallel</td>
-<td>Suricata op vtnet0 ziet de upstreamverbindingen van Squid — opnieuw versleuteld HTTPS; TLS-metadata zichtbaar</td>
+<td>Suricata op vtnet0 ziet de upstreamverbindingen van Squid — opnieuw versleuteld HTTPS; TLS-metadata zichtbaar; XFF-headers onthullen het oorspronkelijke BYOD-client-IP (SID 2031071 toonde <code>100.70.95.98</code> van mobile01)</td>
 </tr>
 <tr>
 <td><a href="../netbird/">NetBird</a></td>
@@ -3953,6 +3953,7 @@
 <li><a href="../nats-jetstream/">NATS JetStream</a></li>
 <li><a href="../control-daemon/">Control Daemon</a></li>
 <li><a href="../wazuh/">Wazuh</a></li>
+<li><a href="../../runbooks/05-ids/">Runbook: IDS</a></li>
 </ul>
 
 

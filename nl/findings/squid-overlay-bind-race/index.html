@@ -3567,23 +3567,27 @@
 <p><strong>Component:</strong> <a href="../../components/squid/">Squid</a>, <a href="../../components/netbird/">NetBird</a><br />
 <strong>Ernst:</strong> Valkuil</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>Squid probeert de overlay-listener te binden op <code>100.x.x.x</code> voordat NetBird wt0 het overlay-IP heeft toegewezen. Het resultaat is errno 49 (EADDRNOTAVAIL). Squid faalt stilzwijgend — er wordt geen overlay-listener aangemaakt, maar het proces blijft draaien. Van buitenaf lijkt Squid gezond maar is het onbereikbaar op het overlay-netwerk.</p>
-<p>Dit werd veroorzaakt door reboots, failover-tests (V43 <code>ifconfig vtnet0 down/up</code>) en GUI-regen-scenario's.</p>
+<p>Squid kan zijn overlay-listener op <code>100.70.154.79:3128</code> niet binden wanneer het start vóórdat NetBird's <code>wt0</code>-interface het overlay-IP heeft toegewezen. <code>sockstat -4 -l | grep ':3128'</code> toont dan alleen de LAN-listener <code>10.0.0.1:3128</code> — de overlay-listener ontbreekt. Het Squid-proces blijft draaien (de bind-failure is niet-fataal), dus van buitenaf lijkt Squid gezond maar is het onbereikbaar op het overlay: clients zien <code>curl 000</code> / <code>TcpTestSucceeded=False</code> met een lege access.log.</p>
+<p>Drie triggers zijn gedocumenteerd: een pop01-reboot (V37.4), een Squid-herstart na een GUI-config/CA-regen (V31.7), en de V43-failover-simulatie (<code>ifconfig vtnet0 down/up</code> op pop01) (V44.6).</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p>Race condition in de opstartvolgorde: Squid start voordat NetBird klaar is met de tunnelonderhandeling. De wt0-interface en het bijbehorende overlay-IP zijn nog niet beschikbaar op het moment dat Squid probeert te binden. FreeBSD rc.d-volgorde dwingt geen afhankelijkheid af op een volledig opgezette NetBird-overlay.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
-<p>Introduceer een opstartvertraging of expliciete rc.d-afhankelijkheidsvolgorde op pop01. Het starten van Squid moet worden geblokkeerd totdat de wt0-interface aanwezig is en een toegewezen IP-adres heeft.</p>
-<p>Een eenvoudige controle vóór het starten van Squid:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Wacht tot wt0 een IP heeft voordat Squid start</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">until</span><span class="w"> </span>ifconfig<span class="w"> </span>wt0<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;inet 100\.&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span>sleep<span class="w"> </span><span class="m">1</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="k">done</span>
+<p>Operationeel herstel — zodra <code>wt0</code> up is, bindt een Squid-herstart alsnog:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sockstat<span class="w"> </span>-4<span class="w"> </span>-l<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;:3128&#39;</span><span class="w">   </span><span class="c1"># overlay-listener afwezig?</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>configctl<span class="w"> </span>proxy<span class="w"> </span>restart<span class="w">          </span><span class="c1"># NIET &#39;reload&#39; — dat commando bestaat niet op OPNsense (V37.4 / V44.6)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># na afloop: zowel 10.0.0.1:3128 ALS 100.70.154.79:3128 aanwezig</span>
+</code></pre></div>
+<p>Een permanente fix — het starten van Squid blokkeren totdat <code>wt0</code> een toegewezen IP heeft, via een rc.d-afhankelijkheid of een wt0-up-hook/watchdog — is <strong>voorgestelde hardening maar blijft een open punt</strong> (V31/V37/V44 open punt 5). Tot dat geïmplementeerd is: controleer de overlay-listener na elke reboot, failover-test of GUI-regen en herstart Squid als die ontbreekt. De gate zou er zo uitzien:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># voorgesteld (nog niet geïmplementeerd): wacht tot wt0 een IP heeft voordat Squid start</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">until</span><span class="w"> </span>ifconfig<span class="w"> </span>wt0<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;inet 100\.&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>sleep<span class="w"> </span><span class="m">1</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="k">done</span>
 </code></pre></div>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Elke service die bindt aan een NetBird overlay-IP moet rekening houden met het feit dat de interface nog niet klaar kan zijn — dit is een structureel probleem, geen eenmalige race</li>
-<li>Squid herprobeert geen mislukte binds na opstart; een mislukte bind is permanent totdat het proces wordt herstart</li>
-<li>De fout is stilzwijgend: Squid logt geen fout voor een bind-failure op een niet-bestaande interface, wat diagnose bemoeilijkt zonder expliciet de listenerstatus te controleren</li>
+<li>Squid herprobeert geen mislukte binds na opstart; een mislukte bind is permanent totdat het proces wordt herstart (<code>configctl proxy restart</code>)</li>
+<li>De fout is alleen stilzwijgend op proxy-niveau — Squid blijft draaien en access.log blijft leeg — maar de bind-fout <strong>staat wél</strong> in <code>cache.log</code>: <code>commBind Cannot bind socket FD … to 100.70.154.79:3128: (49) Can't assign requested address</code>. Diagnosticeer via <code>sockstat</code> (overlay-listener afwezig) of die cache.log-regel, niet via access.log</li>
 </ul>
 
 

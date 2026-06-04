@@ -3572,9 +3572,9 @@
 
 <h1 id="decision-groupsync-path-b-zitadel-strips-entra-id-prefix">Decision: GroupSync Path B — Zitadel Strips Entra ID Prefix<a class="headerlink" href="#decision-groupsync-path-b-zitadel-strips-entra-id-prefix" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Implemented<br />
-<strong>Date:</strong> May 2026 (Verslag30)</p>
+<strong>Date:</strong> May 2026 (Verslag30–34; Path B confirmed for all three personas in Verslag34)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>Entra ID group names carry a mandatory <code>2ITcsc1A-</code> prefix imposed by a lector mandate (the tenant is shared across multiple student projects). For example, the group for students appears as <code>2ITcsc1A-Studenten</code> in Entra ID. This prefix must be handled somewhere in the synchronization pipeline because NetBird access policies and Squid ACLs operate on group names — policies referencing <code>2ITcsc1A-Studenten</code> instead of <code>Studenten</code> are harder to read, harder to maintain, and propagate the prefix through every downstream component (Identity Bridge, NATS subjects, Squid external ACL responses).</p>
+<p>Entra ID group names carry a mandatory <code>2ITCSC1A-</code> prefix imposed by a lector mandate (the tenant is shared across multiple student projects). For example, the group for students appears as <code>2ITCSC1A-Studenten</code> in Entra ID. This prefix must be handled somewhere in the synchronization pipeline because NetBird access policies and Squid ACLs operate on group names — policies referencing <code>2ITCSC1A-Studenten</code> instead of <code>Studenten</code> are harder to read, harder to maintain, and propagate the prefix through every downstream component (Identity Bridge, NATS subjects, Squid external ACL responses).</p>
 <h2 id="options-considered">Options considered<a class="headerlink" href="#options-considered" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3588,25 +3588,24 @@
 <tr>
 <td><strong>Path A: Carry prefix everywhere</strong></td>
 <td>No transformation logic needed; names are 1:1 with Entra ID</td>
-<td>Every policy, ACL, and NATS subject must use the full prefixed name (<code>2ITcsc1A-Studenten</code>). Reduces readability. Prefix leaks into Identity Bridge mapping, NATS subject hierarchy, and Squid ACL output</td>
+<td>Every policy, ACL, and NATS subject must use the full prefixed name (<code>2ITCSC1A-Studenten</code>). Reduces readability. Prefix leaks into Identity Bridge mapping, NATS subject hierarchy, and Squid ACL output</td>
 </tr>
 <tr>
 <td><strong>Path B: Zitadel strips prefix</strong></td>
 <td>Clean internal names (<code>Studenten</code>). Policies and ACLs are readable. No prefix propagation through the stack</td>
-<td>Requires a Zitadel Action to map Entra ID GUID to clean name. Mismatch between Zitadel output and NetBird JWT sync could cause lockout</td>
+<td>Requires the existing Zitadel Action to allowlist-map the group display-name string to the clean name. Hard precondition: <code>cloud_displayname</code> must work, so the JWT claim carries the name <code>2ITCSC1A-Studenten</code> rather than an ObjectID GUID (a GUID is not in the allowlist and cannot be mapped to <code>Studenten</code>). A mismatch between the mapped name and what NetBird/Squid expect causes a lockout</td>
 </tr>
 </tbody>
 </table>
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<p>Path B — a Zitadel Action maps the Entra ID group GUID to a clean internal name, stripping the <code>2ITcsc1A-</code> prefix. The prefix exists only in Entra ID; all downstream components (Zitadel claims, NetBird JWT auto-groups, Identity Bridge, NATS subjects, Squid ACLs) use the clean name.</p>
-<p>The primary reason is policy readability: when a NetBird ACL or Squid rule references <code>Studenten</code>, it is immediately clear what group is being controlled. With <code>2ITcsc1A-Studenten</code>, every reader must mentally strip the prefix to understand the policy intent.</p>
+<p>Path B — the Zitadel Action already in the OIDC chain maps the group's display-name string to the clean internal name (<code>2ITCSC1A-Studenten</code> → <code>Studenten</code>) via a hardcoded <strong>allowlist</strong>, dropping any group not in the allowlist (fail-closed). The net effect is that the <code>2ITCSC1A-</code> prefix never reaches NetBird. This depends on <code>cloud_displayname</code> being enabled in the Entra app manifest so the <code>groups</code> claim emits the display name rather than the GUID; that precondition was verified, and Path B was confirmed working for all three personas (Studenten and Admins by Verslag31, Docenten by Verslag34). The prefix exists only in Entra ID; all downstream components (Zitadel claims, NetBird JWT auto-groups, Identity Bridge, NATS subjects, Squid ACLs) use the clean name.</p>
+<p>The primary reason is policy readability: when a NetBird ACL or Squid rule references <code>Studenten</code>, it is immediately clear what group is being controlled. With <code>2ITCSC1A-Studenten</code>, every reader must mentally strip the prefix to understand the policy intent. Path B also leaves Addendum J's <code>NETBIRD_POLICY_GROUPS</code> config (<code>Studenten,Docenten,Admins</code>) already correct and reuses an existing transformation point rather than adding one.</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
-<li>The Zitadel Action must maintain an allowlist mapping from Entra ID group GUIDs to clean names. Adding a new group in Entra ID requires updating this mapping.</li>
-<li>A mismatch between Zitadel's output group name and what NetBird expects in JWT claims will result in peers not being assigned to the correct auto-groups — effectively a lockout scenario.</li>
-<li>The Identity Bridge does not need to perform any prefix stripping; it receives already-clean names from the Zitadel-issued JWT.</li>
-<li>NATS subjects use clean group names (e.g., <code>groupsync.Studenten</code>), keeping the subject hierarchy readable.</li>
-<li>If the lector mandate changes the prefix convention, only the Zitadel Action mapping needs to be updated — no downstream changes required.</li>
+<li>Path B's correctness hinges on <code>cloud_displayname</code>: if it ever stops emitting display names (e.g., the groups are treated as on-prem-synced), the claim falls back to GUIDs and the allowlist (keyed on the name string) matches nothing — every group is dropped fail-closed, and the fragile fallback would be GUID matching in ACLs or a GUID→name lookup. This is verified in the GroupSync <code>cloud_displayname</code> step before relying on Path B.</li>
+<li>The clean internal name must match <strong>byte-for-byte</strong> across the Identity Bridge external ACL, Addendum J's <code>NETBIRD_POLICY_GROUPS</code>, and every NetBird ACL policy. A mismatch (case, spacing) blocks all affected peers with 401 on every API request — including the admin — and recovery requires direct SQLite intervention on mgmt01 (GitHub #5399).</li>
+<li>The Identity Bridge does not need to perform any prefix stripping; it sees the already-clean group name (<code>Studenten</code>) on the peer when it polls the NetBird API.</li>
+<li>If the lector mandate changes the prefix convention, only the Zitadel Action's strip logic needs to be updated — no downstream changes required.</li>
 </ul>
 <p>See also: <a href="../../components/zitadel/">Component: Zitadel</a>, <a href="../../components/identity-bridge/">Component: Identity Bridge</a>, <a href="../../components/netbird/">Component: NetBird</a>, <a href="../../concepts/identity-flow/">Concept: Identity Flow</a></p>
 

@@ -3567,23 +3567,29 @@
 <p><strong>Component:</strong> <a href="../../components/wazuh/">Wazuh</a><br />
 <strong>Severity:</strong> Gotcha (known limitation)</p>
 <h2 id="what-happened">What happened<a class="headerlink" href="#what-happened" title="Permanent link">&para;</a></h2>
-<p>The Wazuh Dashboard Apps section is unreachable. Clicking the "API" section triggers a connection check to external Wazuh update servers, which fails in the air-gapped sandbox environment. The UI shows a perpetual loading spinner with no error message or timeout indication.</p>
+<p>The Wazuh Dashboard's app modules (Security Events, the Agents tab) are gated: instead of loading, the dashboard reports the manager as <strong>"Status: Offline"</strong> with <strong>"Updates status: Error checking updates"</strong> and hard-redirects to the server-APIs (API configuration) page. The <strong>Discover</strong> interface, by contrast, works fully.</p>
+<p>This is misleading, because the manager API is actually healthy — <code>authenticate</code>, <code>info</code>, and <code>stats</code> all return HTTP 200. The "Offline" verdict is a false negative produced by a single failing check, not by an unreachable manager.</p>
 <h2 id="root-cause">Root cause<a class="headerlink" href="#root-cause" title="Permanent link">&para;</a></h2>
-<p>The dashboard performs a version/UUID health check against Wazuh's external API (<code>https://api.wazuh.com/...</code>) as part of the Apps section initialization. This check requires internet access. In the air-gapped lab environment, the request hangs indefinitely, blocking the entire Apps section from loading.</p>
+<p>Two internet-dependent checks fail in the air-gapped sandbox and cascade into the offline determination:</p>
+<ol>
+<li>On the manager, <code>GET /manager/version/check</code> returns <strong>HTTP 500</strong>. This endpoint performs an internet-dependent update / CTI check; with no outbound internet in the sandbox it errors rather than returning a version.</li>
+<li>The dashboard's <code>POST /api/check-api</code> then returns <strong>HTTP 500 — "Could not obtain manager UUID"</strong>. The dashboard treats this failure as the manager being offline, sets "Status: Offline" / "Updates status: Error checking updates", and gates the app modules behind the API-configuration redirect.</li>
+</ol>
+<p>So the gate is <strong>not</strong> a DNS / hostname-resolution problem and not a perpetual hang — it is a fast 500 from an internet-dependent health check being interpreted as "manager offline".</p>
 <h2 id="resolution-workaround">Resolution / workaround<a class="headerlink" href="#resolution-workaround" title="Permanent link">&para;</a></h2>
-<p>Use the <strong>Discover</strong> interface (direct OpenSearch query) as the primary analysis tool. Discover provides full event search, filtering, and visualization capabilities — sufficient for all PoC needs:</p>
+<p>No definitive fix was applied; the gate is accepted as a known air-gap limitation. Use <strong>Discover</strong> as the primary analysis interface — it queries the indexer directly and is unaffected by the manager's version/UUID check:</p>
 <ul>
 <li>Navigate to Discover in the Wazuh Dashboard sidebar</li>
 <li>Select the <code>wazuh-alerts-*</code> index pattern</li>
-<li>Use KQL or Lucene query syntax for filtering</li>
+<li>Use KQL or Lucene query syntax for filtering (e.g. <code>rule.groups:"sase"</code>)</li>
 <li>Create saved searches and visualizations as needed</li>
 </ul>
-<p>The Apps section features (Agents overview, SCA, Vulnerability Detection dashboards) are not available, but the underlying data is fully accessible through Discover.</p>
+<p>Candidate fix paths (to revisit with Gerben, not yet validated): disable the update / CTI check on the manager side (its <code>api.yaml</code>) or the corresponding dashboard plugin setting so <code>check-api</code> no longer depends on the version check, then apply with <code>wazuh-control restart</code> (never <code>docker restart</code> — bind-mounts are overwritten in place). See <a href="../../components/wazuh/">Component: Wazuh</a>.</p>
 <h2 id="lessons">Lessons<a class="headerlink" href="#lessons" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Air-gapped deployments of Wazuh should expect the Apps section to be non-functional — plan analysis workflows around Discover from the start</li>
-<li>Discover is the primary analysis interface and is not affected by the external API dependency</li>
-<li>This limitation does not affect data collection, agent enrollment, or alerting — only the dashboard convenience layer</li>
+<li>An "Offline" verdict in the dashboard app is not proof the manager is down — confirm with the manager API directly (<code>authenticate</code>/<code>info</code>/<code>stats</code> returning 200) before chasing connectivity.</li>
+<li>In air-gapped Wazuh deployments, expect the app modules to be gated by the internet-dependent update/version check; plan analysis workflows around Discover from the start.</li>
+<li>The limitation affects only the dashboard convenience layer — data collection, agent enrollment, rule processing, and alerting are unaffected.</li>
 </ul>
 
 

@@ -979,10 +979,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dscp-qos-gepland" class="md-nav__link">
+  <a href="#qos-shaper-dscp-gebaseerd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DSCP / QoS (gepland)
+        QoS-shaper (DSCP-gebaseerd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wan-link-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WAN-link-monitoring
       
     </span>
   </a>
@@ -1051,10 +1062,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sd-wan-functies-uit-scope" class="md-nav__link">
+  <a href="#klassieke-ipsec-sd-wan-uit-scope-qos-en-failover-zijn-geimplementeerd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SD-WAN-functies uit scope
+        Klassieke IPsec-SD-WAN uit scope (QoS en failover zijn geïmplementeerd)
       
     </span>
   </a>
@@ -3616,10 +3627,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dscp-qos-gepland" class="md-nav__link">
+  <a href="#qos-shaper-dscp-gebaseerd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DSCP / QoS (gepland)
+        QoS-shaper (DSCP-gebaseerd)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wan-link-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WAN-link-monitoring
       
     </span>
   </a>
@@ -3688,10 +3710,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sd-wan-functies-uit-scope" class="md-nav__link">
+  <a href="#klassieke-ipsec-sd-wan-uit-scope-qos-en-failover-zijn-geimplementeerd" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SD-WAN-functies uit scope
+        Klassieke IPsec-SD-WAN uit scope (QoS en failover zijn geïmplementeerd)
       
     </span>
   </a>
@@ -3772,7 +3794,7 @@
 
 <h1 id="vyos-sase-gateway-site01">VyOS — SASE-gateway (site01)<a class="headerlink" href="#vyos-sase-gateway-site01" title="Permanent link">&para;</a></h1>
 <p><strong>Rol:</strong> SASE-gateway voor de remote site — biedt WAN-connectiviteit en NAT voor het Site-LAN, invulling gevend aan de SD-WAN-pijler via een Zero Trust Branch-model. Equivalent aan een Zscaler Zero Trust Branch edge-appliance.<br />
-<strong>Versie:</strong> VyOS 1.4 (rolling)<br />
+<strong>Versie:</strong> VyOS rolling 2026.02.16<br />
 <strong>Status:</strong> ✅ Operationeel — site01 op <code>192.168.122.33</code>, sitepc01 (Tiny11) ingeschreven in sandbox<br />
 <strong>Configuratielocatie:</strong> <code>/etc/vyos/config.boot</code> op site01</p>
 <hr />
@@ -3815,15 +3837,47 @@
 <p>VyOS biedt een lokale DNS-override zodat branch-apparaten de NetBird-coördinatieserver kunnen resolven voordat de overlay actief is:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>set system static-host-mapping host-name netbird.sandbox.local inet 192.168.122.23
 </code></pre></div>
-<h3 id="dscp-qos-gepland">DSCP / QoS (gepland)<a class="headerlink" href="#dscp-qos-gepland" title="Permanent link">&para;</a></h3>
-<p>DSCP EF-markering voor Microsoft Teams-verkeer was gepland om de QoS-laag van SD-WAN te demonstreren, maar is nog niet geïmplementeerd. Klassieke IPsec- en geavanceerde QoS SD-WAN-functies zijn uit scope gehaald ten gunste van de Zero Trust Branch-aanpak; zie <a href="../../decisions/sdwan-descoped/">Beslissing: SD-WAN uit scope</a>.</p>
+<h3 id="qos-shaper-dscp-gebaseerd">QoS-shaper (DSCP-gebaseerd)<a class="headerlink" href="#qos-shaper-dscp-gebaseerd" title="Permanent link">&para;</a></h3>
+<p>VyOS past op eth0 egress een QoS-shaper toe die Microsoft Teams-media classificeert op DSCP-markering — de QoS-laag van SD-WAN binnen het project. De DSCP-waarden worden op het endpoint gezet (Intune NetworkQoSPolicy CSP / GPO); VyOS ziet ze in cleartext op het <strong>split-tunnel-pad</strong>, waar Teams Optimize-media rechtstreeks naar eth1 wordt gerouteerd (via een Intune-<code>/14</code>-route) in plaats van door de WireGuard-overlay. Al het overige verkeer blijft binnen de versleutelde overlay, waar app-bewuste QoS niet mogelijk is.</p>
+<p>Op VyOS rolling 2026.02.16 gebruikt de shaper de <code>qos policy shaper</code>-commandostructuur (niet de oudere <code>traffic-policy</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>set qos policy shaper SDWAN-WAN bandwidth &#39;20mbit&#39;
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>set qos policy shaper SDWAN-WAN default bandwidth &#39;50%&#39;
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>set qos policy shaper SDWAN-WAN default queue-type &#39;fq-codel&#39;
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a># class 10 — Teams audio (DSCP EF, strict priority)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>set qos policy shaper SDWAN-WAN class 10 bandwidth &#39;10%&#39;
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>set qos policy shaper SDWAN-WAN class 10 ceiling &#39;30%&#39;
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>set qos policy shaper SDWAN-WAN class 10 priority &#39;0&#39;
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>set qos policy shaper SDWAN-WAN class 10 match TEAMS-AUDIO ip dscp &#39;EF&#39;
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a># class 15 — Teams video (DSCP AF41)
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>set qos policy shaper SDWAN-WAN class 15 priority &#39;1&#39;
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>set qos policy shaper SDWAN-WAN class 15 match TEAMS-VIDEO ip dscp &#39;AF41&#39;
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a># class 18 — Teams screen-sharing (DSCP AF21)
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>set qos policy shaper SDWAN-WAN class 18 priority &#39;2&#39;
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>set qos policy shaper SDWAN-WAN class 18 match TEAMS-SHARING ip dscp &#39;AF21&#39;
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>set qos interface eth0 egress &#39;SDWAN-WAN&#39;
+</code></pre></div>
+<p>De 20 Mbit root-bandbreedte is een bewust demo-plafond: het libvirt-pad heeft geen echte WAN-bottleneck, dus een laag plafond is nodig om contention te fabriceren voor de onder-last-test. Productie aligneert dit op de werkelijke WAN-capaciteit.</p>
+<p><strong>Verificatie:</strong> het operationele commando <code>show qos interface eth0</code> bestaat niet op deze rolling-build — gebruik in plaats daarvan de onderliggende Linux-<code>tc</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo tc -s class show dev eth0
+</code></pre></div>
+<p><strong>Bewezen (V43):</strong> een synthetische DSCP-EF-stroom markeerde 300/300 pakketten in class 10 met 0 drops (contract B4). Onder last (Test #5) hield de EF-class 0 drops / 0 overlimits terwijl de bulk-default-class 26 drops + ~17.000 overlimits opliep — real-time-media wordt beschermd onder congestie. Zie <a href="../../decisions/zt-sdwan-branch/">Beslissing: ZT SD-WAN Branch</a>.</p>
+<blockquote>
+<p><strong>Build-opmerking:</strong> op deze rolling-build mapt een percentage-<code>ceiling</code> verkeerd naar <code>tc</code> (<code>ceiling '30%'</code> wordt <code>ceil 3Gbit</code>, effectief onbegrensd). Classificatie en prioriteit werken correct; alleen ceiling-handhaving is getroffen — benign voor de PoC-demo.</p>
+</blockquote>
+<h3 id="wan-link-monitoring">WAN-link-monitoring<a class="headerlink" href="#wan-link-monitoring" title="Permanent link">&para;</a></h3>
+<p>Een health-check-script (<code>/config/scripts/wan-health-check.sh</code>) draait op een VyOS-task-scheduler-interval van 30 seconden en pingt pop01 (<code>192.168.122.13</code>), de internet-gateway (<code>192.168.122.1</code>) en <code>8.8.8.8</code>. Bij falen logt het een <code>CRITICAL</code>-regel naar <code>/var/log/sdwan-health.log</code>.</p>
+<p><strong>Bewezen (V43, Test #6):</strong> het neerhalen van pop01's interface produceerde een <code>CRITICAL</code>-detectie binnen 30 seconden, met herstel gelogd zodra de interface terugkwam. Dit is eerlijke single-WAN-framing — detectie en alerting, geen automatische dual-WAN-switch (het lab heeft één WAN). Productie zou multi-PoP-failover, BFD/SNMP en fail-closed-handhaving toevoegen.</p>
 <hr />
 <h2 id="integratiepunten">Integratiepunten<a class="headerlink" href="#integratiepunten" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Verkeerspad sitepc01:</strong> sitepc01 → NAT via site01 → NetBird-overlay → pop01 (SWG-inspectie). Dit is hetzelfde pad dat mobile01 volgt — er bestaat geen branch-specifieke tunnel.</li>
-<li><strong>Site-LAN-segment:</strong> <code>172.16.10.0/24</code>. sitepc01 zit op <code>172.16.10.50</code> met site01 als default gateway.</li>
+<li><strong>Verkeerspad sitepc01:</strong> sitepc01 → NAT via site01 → NetBird-overlay → pop01 (SWG-inspectie) voor Default/Allow-verkeer. Dit is hetzelfde pad dat mobile01 volgt — er bestaat geen branch-specifieke tunnel. Teams Optimize-media neemt in plaats daarvan het split-tunnel-pad rechtstreeks via eth0 (zie QoS hierboven).</li>
+<li><strong>Site-LAN-segment:</strong> <code>172.16.10.0/24</code>. sitepc01 zit op <code>172.16.10.10</code> met site01 als default gateway. Het draagt ook een tijdelijke tweede NIC op het WAN-segment (<code>192.168.122.50</code>), gebruikt als setup-/RDP-steiger — te verwijderen zodra overlay-RDP bewezen is.</li>
 <li><strong>Geen directe WireGuard-tunnel</strong> tussen site01 en pop01. Alle beveiligingshandhaving is gecentraliseerd op de PoP.</li>
-<li><strong>Identiteit sitepc01:</strong> ingeschreven als <code>docent1</code> (Docenten-persona) — Entra ID joined en Intune enrolled (gedocumenteerd in V44).</li>
+<li><strong>Identiteit sitepc01 (twee onafhankelijke lagen):</strong> ingeschreven in NetBird als <code>docent1</code> (Docenten-persona); afzonderlijk Entra ID joined en Intune enrolled via <code>student1</code>, het enige Intune-gelicenseerde sandbox-account (<code>docent1</code>/<code>admin1</code> zijn bewust ongelicenseerd). Gedocumenteerd in V44.</li>
 <li><strong>NetBird-coördinatie:</strong> sitepc01 gebruikt de <a href="../netbird/">NetBird</a>-client om toe te treden tot de overlay, geauthenticeerd via Entra ID.</li>
 </ul>
 <hr />
@@ -3832,12 +3886,12 @@
 <p>sitepc01 had een tijdelijke scaffold-NIC nodig (Ethernet 2 gericht op <code>8.8.8.8</code>) tijdens de initiële inschrijving, omdat <a href="../ioc2rpz/">Unbound</a> op pop01 DNS-verzoeken van niet-overlay IP-adressen blokkeert via de WAN ACL. Zonder de scaffold-NIC kan de machine Entra ID- of NetBird-eindpunten niet resolven om de inschrijving te voltooien.</p>
 <h3 id="icmp-misleidend-onder-allow-only-beleid">ICMP misleidend onder ALLOW-only beleid<a class="headerlink" href="#icmp-misleidend-onder-allow-only-beleid" title="Permanent link">&para;</a></h3>
 <p>Ping naar overlay-peers faalt by design wanneer het firewallbeleidsmodel ALLOW-only is (geen ICMP-regel). Gebruik in plaats daarvan poortgebaseerde connectiviteitstests:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">Test-NetConnection</span> <span class="n">-ComputerName</span> <span class="p">&lt;</span><span class="n">target</span><span class="p">&gt;</span> <span class="n">-Port</span> <span class="n">3128</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">Test-NetConnection</span> <span class="n">-ComputerName</span> <span class="p">&lt;</span><span class="n">target</span><span class="p">&gt;</span> <span class="n">-Port</span> <span class="n">3128</span>
 </code></pre></div>
 <h3 id="caddy-ca-certificaat-kip-en-ei-probleem">Caddy CA-certificaat kip-en-ei-probleem<a class="headerlink" href="#caddy-ca-certificaat-kip-en-ei-probleem" title="Permanent link">&para;</a></h3>
 <p>Het interne CA-certificaat van Caddy moet op sitepc01 geïmporteerd worden voordat NetBird-inschrijving kan slagen, maar het certificaat kan niet via de overlay worden overgedragen omdat de overlay nog niet actief is. De workaround is het certificaat via de scaffold-NIC over te zetten voordat de overlay tot stand is gebracht.</p>
-<h3 id="sd-wan-functies-uit-scope">SD-WAN-functies uit scope<a class="headerlink" href="#sd-wan-functies-uit-scope" title="Permanent link">&para;</a></h3>
-<p>Klassieke SD-WAN-mogelijkheden zoals IPsec-tunnelling en QoS-markering zijn uit scope gehaald voor het project. De rationale is gedocumenteerd in <a href="../../decisions/sdwan-descoped/">Beslissing: SD-WAN uit scope</a> en vervangen door het Zero Trust Branch-model beschreven in <a href="../../decisions/zt-sdwan-branch/">Beslissing: ZT SD-WAN Branch</a>.</p>
+<h3 id="klassieke-ipsec-sd-wan-uit-scope-qos-en-failover-zijn-geimplementeerd">Klassieke IPsec-SD-WAN uit scope (QoS en failover zijn geïmplementeerd)<a class="headerlink" href="#klassieke-ipsec-sd-wan-uit-scope-qos-en-failover-zijn-geimplementeerd" title="Permanent link">&para;</a></h3>
+<p>Enkel de <em>klassieke</em> IPsec/uCPE-SD-WAN-aanpak is uit scope gehaald — de oorspronkelijke acceptatietests F12–F14 (IPsec-tunnel, site-to-site datacentertoegang) zijn als N/A gemarkeerd. De SD-WAN-QoS- en failover-detectie-mogelijkheden zijn <strong>geïmplementeerd</strong> onder het Zero Trust Branch-model (de DSCP-shaper en WAN-health-check hierboven, bewezen in V43 Test #5 en Test #6). De rationale is gedocumenteerd in <a href="../../decisions/sdwan-descoped/">Beslissing: SD-WAN uit scope</a> en <a href="../../decisions/zt-sdwan-branch/">Beslissing: ZT SD-WAN Branch</a>.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

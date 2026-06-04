@@ -3616,7 +3616,7 @@
 
 <h1 id="nats-jetstream">NATS JetStream<a class="headerlink" href="#nats-jetstream" title="Permanent link">&para;</a></h1>
 <p><strong>Role:</strong> Central event bus on mgmt01 connecting isolated detection silos (Suricata, Squid, DLP, ClamAV, DNS-RPZ, Identity Bridge) into a coherent, reactive system.<br />
-<strong>Version:</strong> NATS 2.14.1 (<code>nats:2.14-alpine</code> — empirically verified; Addendum J listed 2.12.6, outdated)<br />
+<strong>Version:</strong> NATS 2.14.1 (<code>nats:2.14.1-alpine</code> — empirically verified; Addendum J listed 2.12.6, outdated)<br />
 <strong>Config location:</strong> mgmt01 Docker, secrets via env interpolation (no plaintext in committed config)</p>
 <h2 id="how-it-works-in-this-stack">How it works in this stack<a class="headerlink" href="#how-it-works-in-this-stack" title="Permanent link">&para;</a></h2>
 <p>NATS JetStream provides durable, at-least-once delivery for security events across the stack. Each detection component publishes structured JSON events to subject-specific topics. Two independent consumers process these events:</p>
@@ -3668,19 +3668,24 @@
 <td>Wazuh forwarder</td>
 </tr>
 <tr>
-<td><code>identity.login</code></td>
+<td><code>security.alert.casb</code></td>
+<td>o365 producer (mgmt01)</td>
+<td>Wazuh forwarder</td>
+</tr>
+<tr>
+<td><code>identity.peer.connected</code></td>
 <td>Identity Bridge (mgmt01)</td>
 <td>Control Daemon</td>
 </tr>
 <tr>
-<td><code>identity.group_change</code></td>
+<td><code>identity.peer.disconnected</code></td>
 <td>Identity Bridge (mgmt01)</td>
 <td>Control Daemon</td>
 </tr>
 <tr>
-<td><code>control.quarantine</code></td>
-<td>Control Daemon (mgmt01)</td>
-<td>— (internal)</td>
+<td><code>identity.multi_persona</code></td>
+<td>Identity Bridge (mgmt01)</td>
+<td>Control Daemon (zero-trust anomaly; SIEM rule planned)</td>
 </tr>
 </tbody>
 </table>
@@ -3707,12 +3712,12 @@
 <tr>
 <td>Control Daemon</td>
 <td>Outbound (consumer)</td>
-<td>Durable consumer on <code>security.alert.&gt;</code> + <code>identity.&gt;</code></td>
+<td>Durable + DeliverPolicy.NEW consumer on <code>security.alert.&gt;</code> (survives restart, no replay of historical events); ephemeral + DeliverPolicy.ALL consumer on <code>identity.&gt;</code> (rebuilds the in-memory identity map each start)</td>
 </tr>
 <tr>
 <td>Wazuh Forwarder</td>
 <td>Outbound (consumer)</td>
-<td>Durable consumer on <code>security.alert.&gt;</code>, writes to Wazuh manager socket</td>
+<td>Durable PULL consumer (DeliverPolicy.NEW, AckPolicy.EXPLICIT) on <code>security.alert.&gt;</code>; writes NDJSON to the shared <code>wazuh_nats_ingest</code> volume tailed by the Wazuh manager (localfile)</td>
 </tr>
 </tbody>
 </table>

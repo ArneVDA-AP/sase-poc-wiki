@@ -2595,6 +2595,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#producer-clamav-malware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer: ClamAV malware
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3692,6 +3703,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#producer-clamav-malware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer: ClamAV malware
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3909,9 +3931,15 @@
 </ul>
 <h3 id="producer-dns-rpz">Producer: DNS RPZ<a class="headerlink" href="#producer-dns-rpz" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Unbound Python module integration</li>
+<li>Tails the resolver log (<code>/var/log/resolver/latest.log</code>), filtering on <code>rpz: applied</code></li>
 <li>Publishes to subject: <code>security.alert.dns</code></li>
 <li>Extracts: queried domain, RPZ action (NXDOMAIN/redirect), feed source</li>
+</ul>
+<h3 id="producer-clamav-malware">Producer: ClamAV malware<a class="headerlink" href="#producer-clamav-malware" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Tails the c-icap log (<code>/var/log/cicap/latest.log</code>)</li>
+<li>Publishes to subject: <code>security.alert.malware</code> (routes <code>YARA.DLP*</code> signatures to <code>security.alert.dlp</code> instead)</li>
+<li>Extracts: virus signature, client IP, URL</li>
 </ul>
 <p>Verify each producer is publishing:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># From a nats-box container, subscribe to see events</span>
@@ -3931,15 +3959,18 @@
 <ul>
 <li>Integrated into the Identity Bridge service (<a href="../09-identity-bridge/">Runbook 09</a>)</li>
 <li>Publishes to subjects:</li>
-<li><code>identity.login</code> — when a new peer connects</li>
-<li><code>identity.group_change</code> — when a peer's persona group changes</li>
+<li><code>identity.peer.connected</code> — when a peer connects to the overlay</li>
+<li><code>identity.peer.disconnected</code> — when a peer disconnects</li>
+<li><code>identity.multi_persona</code> — when a peer is observed in more than one persona group (zero-trust anomaly)</li>
 </ul>
 <hr />
 <h2 id="step-6-deploy-control-daemon-on-mgmt01">Step 6: Deploy Control Daemon on mgmt01<a class="headerlink" href="#step-6-deploy-control-daemon-on-mgmt01" title="Permanent link">&para;</a></h2>
 <p>The Control Daemon is the central event processor that consumes security events and takes automated response actions.</p>
 <ol>
 <li>Deploy as a Docker container on mgmt01</li>
-<li>Configure subscriptions: <code>security.alert.*</code> (wildcard)</li>
+<li>Configure subscriptions:</li>
+<li><code>security.alert.&gt;</code> — durable consumer, <code>DeliverPolicy.NEW</code> (survives restart, no replay of historical events)</li>
+<li><code>identity.&gt;</code> — ephemeral consumer, <code>DeliverPolicy.ALL</code> (rebuilds the in-memory identity map on each start)</li>
 <li>Configure Redis connection for threat score storage</li>
 </ol>
 <p><strong>Threat scoring:</strong></p>
@@ -3976,9 +4007,10 @@
 <li>[ ] Suricata producer publishing to <code>security.alert.ids</code></li>
 <li>[ ] Squid producer publishing to <code>security.alert.proxy</code></li>
 <li>[ ] DNS RPZ producer publishing to <code>security.alert.dns</code></li>
+<li>[ ] ClamAV malware producer publishing to <code>security.alert.malware</code> (routing <code>YARA.DLP*</code> to <code>security.alert.dlp</code>)</li>
 <li>[ ] DLP producer publishing to <code>security.alert.dlp</code></li>
-<li>[ ] Identity Bridge publishing to <code>identity.login</code> / <code>identity.group_change</code></li>
-<li>[ ] Control Daemon consuming <code>security.alert.*</code> and scoring in Redis</li>
+<li>[ ] Identity Bridge publishing to <code>identity.peer.connected</code> / <code>identity.peer.disconnected</code> / <code>identity.multi_persona</code></li>
+<li>[ ] Control Daemon consuming <code>security.alert.&gt;</code> and scoring in Redis</li>
 <li>[ ] Quarantine action functional (peer removed from group on threshold breach)</li>
 </ul>
 <hr />

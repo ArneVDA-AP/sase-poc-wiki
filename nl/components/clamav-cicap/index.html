@@ -3780,7 +3780,8 @@
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">StructuredMinCreditCardCount 3</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="na">StructuredMinSSNCount 3</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="na">StructuredSSNFormatNormal yes</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="na">StructuredCCOnly no</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="na">StructuredSSNFormatStripped no</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="na">StructuredCCOnly no</span>
 </code></pre></div>
 <p>Herladen zonder volledige herstart:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>configctl<span class="w"> </span>clamav<span class="w"> </span>stop
@@ -3857,10 +3858,16 @@
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
 <p><strong>GUI-timeout bij eerste database-download</strong> — de ClamAV-handtekeningdownload (~300 MB) duurt langer dan de GUI-timeout. De download gaat op de achtergrond door. Controleer met <code>freshclam --verbose</code>.</p>
 <p><strong><code>database.clamav.net</code> retourneert 403 bij directe HTTP-verzoeken</strong> — het CDN vereist de freshclam-useragent. Een 403 van de server bevestigt dat TCP/TLS correct werkt; het is geen firewallprobleem.</p>
-<p><strong>Opstaartwaarschuwingen van c-icap zijn cosmetisch</strong> — berichten zoals <code>WARNING: Can not check the used c-icap release to build service virus_scan.so</code> hebben alleen betrekking op verificatie van de buildversie, niet op de runtimefunctionaliteit.</p>
+<p><strong>Opstartwaarschuwingen van c-icap zijn cosmetisch</strong> — berichten zoals <code>WARNING: Can not check the used c-icap release to build service virus_scan.so</code> hebben alleen betrekking op verificatie van de buildversie, niet op de runtimefunctionaliteit.</p>
 <p><strong>c-icap-logpad is niet voor de hand liggend</strong> — logs staan in <code>/var/log/cicap/cicap_JJJJMMDD.log</code>, niet in <code>/var/log/c-icap/server.log</code>.</p>
 <p><strong>YARA-regels valideren niet algoritmisch</strong> — <code>DLP_IBAN_Pattern</code> herkent het formaat maar voert geen mod-97-controlesomvalidatie uit. <code>DLP_BSN_Candidate</code> herkent 9-cijferige clusters maar voert geen 11-proef uit. Valse positieven zijn mogelijk. De <a href="../python-dlp/">Python DLP-server</a> op het uploadpad voert wel algoritmische validatie uit.</p>
 <p><strong><code>--ssl-no-revoke</code> vereist voor curl.exe-tests</strong> — curl.exe op Windows gebruikt de schannel TLS-stack, die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen intrekkingseindpunt, waardoor dit mislukt. Voeg <code>--ssl-no-revoke</code> toe aan alle CLI-testopdrachten.</p>
+<p><strong>Handleiding gebruikt <code>/squid_clamav</code> als ICAP-servicepad</strong> — oudere handleidingversies specificeren <code>icap://localhost:1344/squid_clamav</code>. Het correcte servicepad op de c-icap-installatie van OPNsense is <code>/virus_scan</code>. Het handleidingpad gebruiken geeft ICAP 404.</p>
+<p><strong>YARA-persistentie na OPNsense-firmware-updates</strong> — YARA-bestanden in <code>/var/db/clamav/</code> overleven OPNsense-updates zolang ze niet in door updates beheerde mappen staan. Controleer na een firmware-update of <code>dlp_custom.yar</code> nog aanwezig is en <code>clamdscan --reload</code> zonder fout voltooit.</p>
+<p><strong>ClamAV/ICAP-bereikbeperkingen</strong> — ClamAV kan alleen verkeer inspecteren dat via Squid stroomt. Het volgende verkeer wordt NIET geïnspecteerd:
+- Sites op de SSL Bump no-bump-lijst (bijv. <code>.microsoft.com</code>) — versleutelde bytes passeren zonder decryptie
+- Clients die geen WPAD/PAC gebruiken of de proxyinstelling hebben uitgeschakeld — hun verkeer omzeilt Squid volledig
+- Niet-HTTP-protocollen (SSH, SMB, DNS naar externe servers) — afgehandeld door Suricata, niet ClamAV</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3873,6 +3880,7 @@
 <li><a href="../../decisions/two-layer-dlp/">Beslissing: Twee-laags DLP</a></li>
 <li><a href="../nats-jetstream/">NATS JetStream</a></li>
 <li><a href="../control-daemon/">Control Daemon</a></li>
+<li><a href="../../runbooks/04-malware-dlp/">Runbook: Malware &amp; DLP-pipeline</a></li>
 </ul>
 
 

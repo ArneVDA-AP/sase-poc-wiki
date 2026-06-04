@@ -3615,7 +3615,7 @@
 <tr>
 <td><strong>Zero Trust Branch (NetBird-overlay + VyOS QoS)</strong></td>
 <td>Per-apparaat authenticatie; geen impliciet subnetvertrouwen; sluit aan op Zscaler/Netskope ZT-SD-WAN-model; VyOS biedt QoS via DSCP zonder IPsec</td>
-<td>VyOS QoS wordt toegepast op de site-gateway, niet end-to-end; failover-detectie is afhankelijk van NetBird relay-infrastructuur</td>
+<td>VyOS QoS wordt toegepast op de site-gateway, niet end-to-end; failover is enkel detectie-en-alerting (single-WAN-lab), geen automatische dual-WAN-omschakeling</td>
 </tr>
 </tbody>
 </table>
@@ -3625,7 +3625,7 @@
 <p>De ZT-Branch-implementatie is gevalideerd door twee specifieke tests:</p>
 <ul>
 <li><strong>Test #5 (QoS onder last, V43):</strong> DSCP EF-verkeer: 300/300 pakketten, 0 drops. Bulkverkeer onder dezelfde last: 26 drops + 17.000+ overlimits. Demonstreert effectieve verkeerspriorisering zonder IPsec-tunnels.</li>
-<li><strong>Test #6 (Failover-detectie, V43):</strong> CRITICAL-niveau failover-detectie in minder dan 30 seconden. Valideert dat de NetBird-overlay voldoende veerkracht biedt voor branch-connectiviteit.</li>
+<li><strong>Test #6 (Failover-detectie, V43):</strong> een VyOS-health-check-script dat pop01, de internet-gateway en <code>8.8.8.8</code> pingt, produceerde een CRITICAL-detectie binnen 30 seconden toen pop01's interface werd neergehaald, met herstel gelogd zodra die terugkwam. Dit is eerlijke single-WAN-framing — detectie en alerting, geen automatische dual-WAN-omschakeling.</li>
 </ul>
 <p>Spoor-1-contract acceptatiecriteria B1-B4 zijn volledig gesloten op basis van deze resultaten.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>

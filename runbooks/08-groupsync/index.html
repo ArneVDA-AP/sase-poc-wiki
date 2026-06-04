@@ -3804,12 +3804,12 @@
 <p>In the Azure portal, navigate to the app registration (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>):</p>
 <ol>
 <li>Go to <strong>Token configuration</strong> in the left menu</li>
-<li>Click <strong>Add optional claim</strong></li>
-<li>Select token type: <strong>ID</strong></li>
-<li>Check <code>cloud_displayname</code></li>
-<li>Save</li>
+<li>Open the <strong>Manifest</strong> editor and attach <code>cloud_displayname</code> to the groups claim (configured in Step 2): under <code>optionalClaims</code> add <code>"additionalProperties": ["cloud_displayname"]</code> to the <code>groups</code> entry, and set <code>"groupMembershipClaims": "ApplicationGroup"</code></li>
+<li>Save the manifest</li>
 </ol>
-<p>This ensures the user's display name (which includes the class prefix) is included in the ID token sent to Zitadel.</p>
+<blockquote>
+<p><strong>Gotcha: <code>cloud_displayname</code> is not selectable in the Token Configuration UI</strong> — it must be added by editing the manifest directly. It makes the <code>groups</code> claim emit each group's <em>display name</em> (e.g. <code>2ITCSC1A-Studenten</code>) instead of its ObjectID GUID — the hard precondition for Path B, since Zitadel's allowlist matches on the display-name string and cannot match a GUID. Requires Azure AD Premium (aplab.be has A5/P2) and cloud-only security groups.</p>
+</blockquote>
 <hr />
 <h2 id="step-2-configure-groups-claim">Step 2: Configure groups claim<a class="headerlink" href="#step-2-configure-groups-claim" title="Permanent link">&para;</a></h2>
 <p>Still in Token configuration:</p>
@@ -3832,26 +3832,26 @@
 <table>
 <thead>
 <tr>
-<th>Security Group</th>
-<th>Maps to persona</th>
+<th>Entra ID security group</th>
+<th>NetBird group (Path B)</th>
 <th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>SASE-MobileUsers</td>
-<td>Studenten</td>
-<td>BYOD mobile users with restricted access</td>
+<td><code>2ITCSC1A-Studenten</code></td>
+<td><code>Studenten</code></td>
+<td>Student persona — proxy access via Core-Services</td>
 </tr>
 <tr>
-<td>SASE-SiteUsers</td>
-<td>Docenten</td>
-<td>Site users with standard access</td>
+<td><code>2ITCSC1A-Docenten</code></td>
+<td><code>Docenten</code></td>
+<td>Teacher persona — proxy access via Core-Services</td>
 </tr>
 <tr>
-<td>SASE-Admins</td>
-<td>Admins</td>
-<td>Full administrative access</td>
+<td><code>2ITCSC1A-Admins</code></td>
+<td><code>Admins</code></td>
+<td>Admin persona — full administrative access</td>
 </tr>
 </tbody>
 </table>
@@ -3875,16 +3875,16 @@
 <strong>Allowed to fail:</strong> true</p>
 <p>This action:</p>
 <ul>
-<li>Reads the <code>cloud_displayname</code> claim from the Entra ID token</li>
-<li>Strips the <code>2ITcsc1A-</code> class prefix from the display name</li>
-<li>Maps GUIDs from the groups claim to clean group names (Studenten, Docenten, Admins)</li>
+<li>Reads the group display names from the Entra ID token's <code>groups</code> claim (present as names, not GUIDs, because <code>cloud_displayname</code> is enabled — Step 1)</li>
+<li>Maps each display name to its clean persona name via a hardcoded allowlist (<code>2ITCSC1A-Studenten</code> → <code>Studenten</code>, <code>2ITCSC1A-Docenten</code> → <code>Docenten</code>, <code>2ITCSC1A-Admins</code> → <code>Admins</code>); a group not in the allowlist is dropped (fail-closed)</li>
+<li>Writes the matched clean names to the user metadata key <code>sase_groups</code> (comma-joined)</li>
 </ul>
 <h3 id="action-2-complement-token">Action 2 — Complement Token<a class="headerlink" href="#action-2-complement-token" title="Permanent link">&para;</a></h3>
 <p><strong>Trigger:</strong> Complement Token
 <strong>Allowed to fail:</strong> true</p>
 <p>This action:</p>
 <ul>
-<li>Calls <code>setClaim('groups', [...])</code> to inject the resolved group names into the Zitadel-issued JWT</li>
+<li>Reads <code>sase_groups</code> from the user's metadata and calls <code>setClaim('groups', [...])</code> to inject those clean names into the Zitadel-issued JWT</li>
 <li>NetBird reads this <code>groups</code> claim to assign users to persona groups</li>
 </ul>
 <blockquote>

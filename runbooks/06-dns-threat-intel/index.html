@@ -3993,7 +3993,7 @@ See <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primar
 <h2 id="known-open-points">Known open points<a class="headerlink" href="#known-open-points" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ioc2rpz GUI JS fix is non-persistent</strong> — re-apply after container rebuilds</li>
-<li><strong>DNS NOTIFY doesn't reach BIND directly</strong> — ioc2rpz sends NOTIFY to port 53, BIND listens on 53530. Feeds update on the 3600s poll interval. Manual trigger: <code>rndc -p 953 retransfer threat-intel.rpz.sase</code></li>
+<li><strong>DNS NOTIFY doesn't reach BIND directly</strong> — ioc2rpz sends NOTIFY to port 53, BIND listens on 53530. Feeds update on the 3600s poll interval. Manual trigger: <code>rndc retransfer threat-intel.rpz.sase</code></li>
 </ul>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>

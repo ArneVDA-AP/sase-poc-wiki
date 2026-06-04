@@ -3744,7 +3744,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>Gotcha: CPU spike on startup.</strong> The Wazuh Manager and Indexer cause significant CPU load during initial startup due to glibc compatibility issues in the Docker environment. This is a known issue — wait 2-3 minutes for the stack to stabilize. See <a href="../../findings/wazuh-cpu-glibc/">Finding: Wazuh CPU glibc</a>.</p>
+<p><strong>Gotcha: Indexer needs host CPU passthrough.</strong> The Wazuh Indexer requires glibc x86-64-v2 CPU features; the default QEMU <code>kvm64</code> model crashes it with illegal-instruction errors. Set the GNS3 node CPU model to <code>host</code> for mgmt01 and set <code>vm.max_map_count=262144</code>. Startup then takes 2-3 minutes to stabilize (transient <code>port 9200</code> errors during reinitialization are normal). See <a href="../../findings/wazuh-cpu-glibc/">Finding: Wazuh CPU glibc</a>.</p>
 </blockquote>
 <p>Start the stack:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
@@ -3755,19 +3755,21 @@
 </code></pre></div>
 <hr />
 <h2 id="step-2-deploy-nats-to-wazuh-forwarder">Step 2: Deploy NATS-to-Wazuh forwarder<a class="headerlink" href="#step-2-deploy-nats-to-wazuh-forwarder" title="Permanent link">&para;</a></h2>
-<p>Deploy a Python script on mgmt01 that bridges NATS events into Wazuh:</p>
+<p>Deploy a Python container on mgmt01 that bridges NATS events into Wazuh:</p>
 <ol>
-<li>The forwarder subscribes to <code>security.alert.*</code> subjects on NATS</li>
-<li>For each received event, it forwards to the Wazuh API <code>/events</code> endpoint</li>
+<li>The forwarder is a <strong>durable PULL consumer</strong> (<code>DeliverPolicy.NEW</code>, <code>AckPolicy.EXPLICIT</code>) on <code>security.alert.&gt;</code></li>
+<li>For each received event, it writes a line of NDJSON to the shared <code>wazuh_nats_ingest</code> volume (<code>/ingest/security_alerts.json</code>). The Wazuh manager tails that file via a <code>&lt;localfile&gt;&lt;log_format&gt;json&lt;/log_format&gt;&lt;/localfile&gt;</code> block — this is the working ingest path; writing to the manager socket and posting to the Wazuh API were both evaluated and rejected.</li>
 <li>This creates a <strong>dual-write architecture</strong>: security events flow to both the Control Daemon (for automated response) and Wazuh (for logging, correlation, and investigation) independently</li>
 </ol>
 <blockquote>
-<p><strong>Note: Dual-write, not serial.</strong> The NATS forwarder and Control Daemon are independent subscribers. If Wazuh is down, the Control Daemon continues to process events and vice versa. Neither depends on the other.</p>
+<p><strong>Note: Dual-write, not serial.</strong> The NATS forwarder and Control Daemon are independent consumers. If Wazuh is down, the Control Daemon continues to process events and vice versa. Neither depends on the other.</p>
+<p><strong>Gotcha: reconnect-resilience.</strong> A <code>--force-recreate</code> of the NATS container changes its IP and breaks any hanging consumer connection. The forwarder must reconnect with <code>max_reconnect_attempts=-1</code> and re-resolve DNS (no cached IP).</p>
 </blockquote>
 <p>Verify the forwarder is running and forwarding:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Trigger a test event (e.g., Suricata alert)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Then check Wazuh API for the event</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>curl<span class="w"> </span>-k<span class="w"> </span>-u<span class="w"> </span>&lt;wazuh-api-user&gt;:&lt;password&gt;<span class="w"> </span>https://localhost:55000/security/events?limit<span class="o">=</span><span class="m">5</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Trigger a test event (e.g., browser EICAR download → security.alert.malware)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Then confirm the NDJSON line landed in the shared ingest file:</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>/ingest/security_alerts.json
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># And confirm it indexed: Wazuh Dashboard → Discover, index wazuh-alerts-*, query rule.groups:&quot;sase&quot;</span>
 </code></pre></div>
 <hr />
 <h2 id="step-3-deploy-wazuh-agent-on-pop01">Step 3: Deploy Wazuh agent on pop01<a class="headerlink" href="#step-3-deploy-wazuh-agent-on-pop01" title="Permanent link">&para;</a></h2>
@@ -3777,120 +3779,164 @@
 <li>Configure the agent to connect to the Wazuh Manager on mgmt01</li>
 <li>Register the agent (agent ID: 001)</li>
 </ol>
-<p>Configure direct log collection — the agent monitors these files:</p>
+<p>Configure host-level log collection. The agent feeds the OPNsense <strong>host</strong> telemetry (it does <strong>not</strong> monitor Suricata/Squid/c-icap/Unbound — those reach Wazuh via their own NATS producers and the forwarder, so the agent has <code>intrusion_detection_events=false</code> to avoid double-ingest):</p>
 <table>
 <thead>
 <tr>
-<th>Log file</th>
+<th>Feed</th>
 <th>Source</th>
 <th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>/var/log/suricata/eve.json</code></td>
-<td>Suricata IDS</td>
-<td>IDS alerts and flow data</td>
+<td>audit</td>
+<td>OPNsense audit log</td>
+<td>Configuration/admin actions</td>
 </tr>
 <tr>
-<td><code>/var/log/squid/access.log</code></td>
-<td>Squid proxy</td>
-<td>Proxy access events</td>
+<td>configd</td>
+<td>OPNsense configd</td>
+<td>Service/config events</td>
+</tr>
+<tr>
+<td>filter</td>
+<td>OPNsense firewall (filterlog)</td>
+<td>Packet-filter events</td>
+</tr>
+<tr>
+<td>kernel</td>
+<td>OPNsense kernel log</td>
+<td>System/kernel events</td>
+</tr>
+<tr>
+<td>pkg</td>
+<td>OPNsense package manager</td>
+<td>Package install/update events</td>
 </tr>
 </tbody>
 </table>
 <ol>
-<li>Create custom decoders for the SASE event format so Wazuh can parse the structured fields from Suricata and Squid logs</li>
+<li>The agent also has <code>active_response=false</code> — Active Response (enforcement) is owned by the Control Daemon (Layer 3), not by the agent on pop01.</li>
 </ol>
 <p>Restart the agent and verify registration:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># On Wazuh Manager (mgmt01)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wazuh-manager<span class="w"> </span>/var/ossec/bin/agent_control<span class="w"> </span>-l
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>/var/ossec/bin/agent_control<span class="w"> </span>-l
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Expected: agent 001 (pop01) — Active</span>
 </code></pre></div>
 <hr />
 <h2 id="step-4-configure-custom-wazuh-rules">Step 4: Configure custom Wazuh rules<a class="headerlink" href="#step-4-configure-custom-wazuh-rules" title="Permanent link">&para;</a></h2>
-<p>Create custom rules in the 100500-100600 range for SASE-specific detections:</p>
+<p>Create custom rules for the bus producers. All hang off a single base rule (100500) that matches on the <code>producer</code> field; the children classify and assign severity:</p>
 <table>
 <thead>
 <tr>
-<th>Rule range</th>
-<th>Category</th>
-<th>Examples</th>
+<th>Rule</th>
+<th>Producer / condition</th>
+<th>Level</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>100500-100519</td>
-<td>IDS correlation</td>
-<td>High-severity Suricata alerts, repeated alerts from same source</td>
+<td>100500</td>
+<td c-icap_="c-icap," dlp_="dlp," squid_="squid," suricata_="suricata," unbound="unbound">base — <code>producer</code> ∈</td>
+<td>0</td>
 </tr>
 <tr>
-<td>100520-100539</td>
-<td>DLP alerts</td>
-<td>Sensitive data pattern matches, blocked uploads</td>
+<td>100501</td>
+<td>Squid proxy event</td>
+<td>5</td>
 </tr>
 <tr>
-<td>100540-100559</td>
-<td>DNS RPZ blocks</td>
-<td>RPZ-blocked domains, repeated block attempts</td>
+<td>100510</td>
+<td>Suricata IDS alert</td>
+<td>6</td>
 </tr>
 <tr>
-<td>100560-100599</td>
-<td>Reserved</td>
-<td>Future use</td>
+<td>100511</td>
+<td>Suricata IDS, severity 1</td>
+<td>10</td>
+</tr>
+<tr>
+<td>100513</td>
+<td>Suricata IDS, severity 3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>100520</td>
+<td>DLP match</td>
+<td>10</td>
+</tr>
+<tr>
+<td>100530</td>
+<td>malware (ClamAV / c-icap)</td>
+<td>12</td>
+</tr>
+<tr>
+<td>100540</td>
+<td>DNS RPZ block</td>
+<td>8</td>
 </tr>
 </tbody>
 </table>
-<p>Place custom rules in the Wazuh Manager's local rules directory. After adding rules, restart the Wazuh Manager:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wazuh-manager<span class="w"> </span>/var/ossec/bin/wazuh-control<span class="w"> </span>restart
+<blockquote>
+<p><strong>Gotcha:</strong> the children attach to the base via <code>if_sid 100500</code>, so the base pcre2 alternation must include every producer. <code>unbound</code> was initially missing, so rule 100540 never fired until it was added (V38.9).</p>
+</blockquote>
+<p>Place custom rules in <code>config/mgmt01/wazuh/local_rules.xml</code> (mounted into the manager). After editing rules, restart the manager — never <code>docker restart</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>/var/ossec/bin/wazuh-control<span class="w"> </span>restart
 </code></pre></div>
 <hr />
 <h2 id="step-5-configure-casb-layer-2-m365-api-integration">Step 5: Configure CASB Layer 2 — M365 API integration<a class="headerlink" href="#step-5-configure-casb-layer-2-m365-api-integration" title="Permanent link">&para;</a></h2>
-<p>Set up Wazuh's ms-graph module to poll the Microsoft 365 Management Activity API for cloud security events:</p>
+<p>CASB Layer 2 polls Microsoft 365 audit activity and remediates risky shares. There is <strong>no</strong> "Wazuh office365 module" in this setup — a custom producer does the polling:</p>
 <ol>
-<li>Configure the <code>ms-graph</code> module in the Wazuh Manager configuration:</li>
-<li>API endpoint: Microsoft 365 Management Activity API</li>
-<li>Authentication: App registration credentials for aplab.be tenant</li>
+<li>Deploy the <code>o365_producer</code> container on mgmt01:</li>
+<li>Polls the <strong>Office 365 Management Activity API</strong> (<code>contentType=Audit.SharePoint</code>) with app-registration credentials for the aplab.be tenant</li>
+<li>Normalizes each audit blob and publishes it to NATS subject <code>security.alert.casb</code> (NATS role <code>casb-pub</code>)</li>
 <li>
-<p>Polling interval: configured per API requirements</p>
+<p>From there the NATS→Wazuh forwarder carries it into the manager like any other bus event</p>
 </li>
 <li>
-<p>Create custom rules in the 100600-family for M365 violations:</p>
+<p>Create custom rules in the 100600-family (a self-contained base, separate from the bus producers' 100500 base):</p>
 </li>
 </ol>
 <table>
 <thead>
 <tr>
 <th>Rule</th>
-<th>Detection</th>
-<th>Response</th>
+<th>Detection (<code>producer</code> = <code>o365</code>)</th>
+<th>Level</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>100600</td>
-<td>SharePoint anonymous sharing link created</td>
-<td>Alert + Active Response</td>
+<td>base — <code>producer</code> = <code>o365</code></td>
+<td>0</td>
 </tr>
 <tr>
 <td>100601</td>
-<td>OneDrive external share detected</td>
-<td>Alert</td>
+<td><code>Operation</code> = AnonymousLinkCreated</td>
+<td>10</td>
 </tr>
 <tr>
 <td>100602</td>
-<td>Suspicious sign-in from unusual location</td>
-<td>Alert</td>
+<td><code>Operation</code> = SharingLinkCreated AND <code>SharingLinkScope</code> = Anyone</td>
+<td>10</td>
+</tr>
+<tr>
+<td>100603</td>
+<td><code>Operation</code> = SharingSet AND <code>TargetUserOrGroupType</code> = Guest</td>
+<td>8</td>
 </tr>
 </tbody>
 </table>
 <ol>
-<li>Deploy Active Response script <code>sharepoint_remediate.sh</code>:</li>
-<li>Triggered by rule 100600</li>
-<li>Revokes anonymous/external sharing links via the Microsoft Graph API</li>
-<li>Logs remediation action back to Wazuh</li>
+<li>Deploy the Active Response scripts (ported from the team's CASB project), behind an <code>ENFORCE</code> gate that <strong>defaults to detect-only</strong> (<code>ENFORCE=false</code>):</li>
+<li><code>sharepoint_remediate.sh</code> — triggered by rules <strong>100601, 100602</strong>; revokes the anonymous / anyone link via the Microsoft Graph API</li>
+<li><code>guest_remediate.sh</code> — triggered by rule <strong>100603</strong>; removes the guest grant</li>
+<li>Both read Graph credentials from <code>graph.env</code> (in the <code>wazuh_etc</code> volume, never committed) and log the remediation action</li>
 </ol>
 <blockquote>
+<p><strong>Gotcha: jq dependency.</strong> The Active Response scripts need <code>jq</code>, which is not in the stock manager image — without it the script fails silently on its first call. Install it persistently via the <code>install_deps.sh</code> entrypoint wrapper plus a compose <code>entrypoint:</code> override (V39); a plain <code>yum install</code> does not survive a recreate.</p>
 <p><strong>Note:</strong> This is CASB Layer 2 in the three-layer CASB architecture. See <a href="../../decisions/casb-three-layers/">Decision: CASB three layers</a> for the full design.</p>
 </blockquote>
 <hr />
@@ -3904,34 +3950,38 @@
 </code></pre></div>
 <p><strong>Expected:</strong> Events from Suricata, Squid, DNS RPZ, and DLP appear in the dashboard with properly parsed fields.</p>
 <blockquote>
-<p><strong>Gotcha: Dashboard may fail to load initially.</strong> If the Wazuh Dashboard shows a connection error related to <code>airgate</code> hostname resolution, this is a known DNS issue in the Docker environment. See <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
+<p><strong>Gotcha: Dashboard app modules are gated in the air-gapped sandbox.</strong> Discover works fully (it reads the indexer directly), but the dashboard's app modules (Security Events, Agents) show "Status: Offline". The cause is not DNS: the manager's internet-dependent <code>version/check</code> returns HTTP 500 in the air-gapped sandbox, which the dashboard's <code>check-api</code> cascades into an offline determination even though the manager API itself is healthy (authenticate/info/stats all return 200). Investigate via Discover, not the app modules. See <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
 </blockquote>
 <hr />
 <h2 id="step-7-verify-casb-active-response">Step 7: Verify CASB Active Response<a class="headerlink" href="#step-7-verify-casb-active-response" title="Permanent link">&para;</a></h2>
+<p><strong>Active Response defaults to detect-only (<code>ENFORCE=false</code>).</strong> In detect-only mode the rule fires and the remediation script logs what it <em>would</em> do, but no Microsoft Graph API call is made. Set <code>ENFORCE=true</code> (the gate inside the script) only when you intend live remediation.</p>
 <p>Test the SharePoint remediation flow:</p>
 <ol>
 <li>Create an anonymous sharing link on a SharePoint document in the aplab.be tenant</li>
-<li>Wait for the ms-graph module to poll and detect the violation</li>
-<li>Wazuh should trigger rule 100600</li>
-<li>Active Response script <code>sharepoint_remediate.sh</code> should execute</li>
-<li>Verify: the anonymous sharing link is revoked (no longer accessible)</li>
+<li>Wait for the <code>o365_producer</code> to poll the Management Activity API and publish the audit event to <code>security.alert.casb</code></li>
+<li>Wazuh should trigger rule 100601 (<code>AnonymousLinkCreated</code>)</li>
+<li>Active Response script <code>sharepoint_remediate.sh</code> should execute (log-only unless <code>ENFORCE=true</code>)</li>
+<li>With <code>ENFORCE=true</code>, verify the anonymous sharing link is revoked via the Microsoft Graph API</li>
 </ol>
+<blockquote>
+<p><strong>Status: the revoke chain is proven to HTTP-204 via an offline stub; live revocation against a real OneDrive/SharePoint file is pending test-account provisioning</strong> (an external Microsoft dependency). Detect-only mode and the rule→Active-Response trigger are validated; live end-to-end revoke is not yet demonstrated on the sandbox.</p>
+</blockquote>
 <p>Check the Active Response log:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wazuh-manager<span class="w"> </span>cat<span class="w"> </span>/var/ossec/logs/active-responses.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>cat<span class="w"> </span>/var/ossec/logs/active-responses.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </code></pre></div>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>
 <ul>
 <li>[ ] Wazuh Manager v4.14.5 running on mgmt01</li>
 <li>[ ] Wazuh Indexer (OpenSearch) running and healthy</li>
-<li>[ ] Wazuh Dashboard accessible via browser</li>
-<li>[ ] NATS-to-Wazuh forwarder subscribing to <code>security.alert.*</code></li>
+<li>[ ] Wazuh Dashboard accessible via browser (Discover; app modules gated in air-gap)</li>
+<li>[ ] NATS-to-Wazuh forwarder consuming <code>security.alert.&gt;</code> → NDJSON to <code>wazuh_nats_ingest</code></li>
 <li>[ ] Wazuh agent 001 (pop01) registered and active</li>
-<li>[ ] Custom decoders parsing SASE event format</li>
-<li>[ ] Custom rules 100500-100600 deployed</li>
-<li>[ ] M365 ms-graph module polling Management Activity API</li>
+<li>[ ] Custom bus rules 100500–100540 deployed (<code>local_rules.xml</code>)</li>
+<li>[ ] Bus rules classify proxy/IDS/DLP/malware/DNS-RPZ events (children attach via <code>if_sid 100500</code>)</li>
+<li>[ ] <code>o365_producer</code> polling Office 365 Management Activity API → <code>security.alert.casb</code></li>
 <li>[ ] Custom rules 100600-family detecting SharePoint violations</li>
-<li>[ ] Active Response <code>sharepoint_remediate.sh</code> revoking sharing links</li>
+<li>[ ] Active Response <code>sharepoint_remediate.sh</code> (ENFORCE detect-only default; live revoke pending)</li>
 <li>[ ] Events visible in Wazuh Dashboard → Discover</li>
 </ul>
 <hr />

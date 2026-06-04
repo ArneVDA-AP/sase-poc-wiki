@@ -3625,7 +3625,7 @@
 <tr>
 <td>NATS JetStream</td>
 <td>Inbound (consumer)</td>
-<td>Durable consumer on <code>security.alert.&gt;</code> + <code>identity.&gt;</code></td>
+<td>Durable + DeliverPolicy.NEW consumer on <code>security.alert.&gt;</code> (survives restarts, no replay of historical events); ephemeral + DeliverPolicy.ALL consumer on <code>identity.&gt;</code> (rebuilds the in-memory identity map on every start)</td>
 </tr>
 <tr>
 <td>NetBird Management API</td>

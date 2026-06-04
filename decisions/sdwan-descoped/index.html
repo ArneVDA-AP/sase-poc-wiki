@@ -3675,7 +3675,7 @@
 <li><strong>F12, F13, F14</strong> are marked N/A in all acceptance test matrices. This is an explicit architectural decision, not an implementation gap.</li>
 <li><strong>F15 steps 7–8</strong> are N/A for the same reason (step 7 requires sitepc01 with NetBird; step 8 requires QoS on VyOS).</li>
 <li><strong>VyOS</strong> remains in the topology but its configuration is minimal — WAN connectivity and NAT only. See <a href="../../components/vyos/">VyOS</a>.</li>
-<li><strong>sitepc01</strong> datacenter access is planned via NetBird enrollment (not yet executed as of April 2026).</li>
+<li><strong>sitepc01</strong> reaches the datacenter via individual NetBird enrollment — confirmed enrolled and operational in Verslag43/Verslag44, not via a site-to-site tunnel.</li>
 <li>The architecture directly aligns with Zscaler's "Zero Trust SD-WAN" model: branches treated as untrusted networks (like cafés), every device authenticates individually, no site-to-site tunnels.</li>
 </ul>
 <h2 id="what-was-actually-built">What was actually built<a class="headerlink" href="#what-was-actually-built" title="Permanent link">&para;</a></h2>

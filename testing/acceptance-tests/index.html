@@ -4164,7 +4164,7 @@
 <td><strong>F4</strong></td>
 <td>Datacenter Access via ZTNA</td>
 <td>ZTNA</td>
-<td>✅ Validated</td>
+<td>✅ Validated (build-time, May 2026) — DC-LAN-over-overlay path since removed in V34, deferred</td>
 </tr>
 <tr>
 <td><strong>F5</strong></td>
@@ -4188,7 +4188,7 @@
 <td><strong>F8</strong></td>
 <td>Firewall Segmentation</td>
 <td>FWaaS</td>
-<td>✅ Validated (indirect — ZTNA ACL enforcement)</td>
+<td>✅ Validated — DC-LAN isolation holds (unenrolled = no route); positive ACL path removed in V34</td>
 </tr>
 <tr>
 <td><strong>F9</strong></td>
@@ -4218,7 +4218,7 @@
 <td><strong>F13</strong></td>
 <td>QoS Traffic Classification</td>
 <td>SD-WAN</td>
-<td>✖ N/A — architectural decision</td>
+<td>✖ N/A as a classic-IPsec test — QoS is instead implemented + validated under the ZT-Branch model (V43 Test #5; see <a href="../../decisions/zt-sdwan-branch/">ZT SD-WAN Branch</a>)</td>
 </tr>
 <tr>
 <td><strong>F14</strong></td>
@@ -4230,7 +4230,7 @@
 <td><strong>F15</strong></td>
 <td>Full-Stack SASE Validation</td>
 <td>Integration</td>
-<td>✅ Partial — steps 1–6 validated, steps 7–8 N/A (SD-WAN), step 9 operational (SIEM via Wazuh)</td>
+<td>✅ Partial — steps 1–6 + 8 validated, step 7 N/A (classic IPsec SD-WAN), step 9 operational (SIEM via Wazuh)</td>
 </tr>
 </tbody>
 </table>
@@ -4349,9 +4349,9 @@
 </tr>
 <tr>
 <td><strong>SD-WAN</strong></td>
+<td>QoS + failover detection (ZT-Branch, V43 Test #5/#6)</td>
 <td>—</td>
-<td>—</td>
-<td>F12, F13, F14</td>
+<td>F12, F13, F14 (classic IPsec)</td>
 </tr>
 </tbody>
 </table>
@@ -4381,7 +4381,7 @@
 <li><code>netbird down</code> on mobile01</li>
 <li><code>netbird up</code> → browser redirects to <code>https://netbird.sandbox.local</code> → Zitadel → <code>login.microsoftonline.com</code></li>
 <li>Authenticate as <code>2ITCSC1A-mobile_user1@aplab.be</code></li>
-<li>Tunnel becomes active; peer appears in Dashboard, auto-assigned to <code>SASE-MobileUsers</code> group via setup key auto-group</li>
+<li>Tunnel becomes active; peer appears in Dashboard, assigned to its persona group (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) via the Entra ID group claim in the OIDC token — the group materializes in NetBird on first connect (Pad B strips the <code>2ITCSC1A-</code> prefix to the internal group name)</li>
 </ol>
 <p>See <a href="../../components/netbird/">NetBird</a>, <a href="../../decisions/zitadel-idp-broker/">Decision: Zitadel as IdP broker</a>.</p>
 <hr />
@@ -4427,19 +4427,19 @@
 <p>Enrolled devices:</p>
 <ul>
 <li><strong>mobile01</strong> — enrolled as <code>2ITCSC1A-MOB-1</code>, compliant</li>
-<li><strong>sitepc01</strong> — enrolled as <code>docent1</code>, Entra joined + Intune enrolled</li>
+<li><strong>sitepc01</strong> — enrolled in NetBird as <code>docent1</code> (Docenten); separately Entra joined + Intune enrolled via <code>student1</code> (the only Intune-licensed sandbox account)</li>
 </ul>
 <p>Two policies remain in report-only mode (geo-block, compliant device) until the demo to avoid lockout during testing.</p>
 <p><strong>Critical precondition:</strong> Verify MFA registration on the test account before activating CA policies. Without prior MFA setup, the first login triggers an unrecoverable "MFA required but not configured" block, making the account inaccessible.</p>
 <p>See <a href="../../decisions/ca-posture-hybrid/">Decision: CA + Posture hybrid</a>.</p>
 <hr />
 <h3 id="f4-datacenter-access-via-ztna">F4 — Datacenter Access via ZTNA<a class="headerlink" href="#f4-datacenter-access-via-ztna" title="Permanent link">&para;</a></h3>
-<p>DC-LAN (10.0.0.0/24) is only reachable through the NetBird Networks mechanism. A host not enrolled in NetBird has no route to this subnet regardless of IP connectivity.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c"># mobile01 (PowerShell)</span>
+<p><strong>✅ Validated at build-time (May 2026); the path was subsequently removed in V34.</strong> At the time of validation, DC-LAN (10.0.0.0/24) was reachable through the NetBird Networks mechanism: a host not enrolled in NetBird had no route to this subnet regardless of IP connectivity, while an enrolled peer holding the <code>Datacenter Access</code> ACL policy could reach it.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c"># mobile01 (PowerShell) — as tested in May 2026</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">Test-NetConnection</span> <span class="n">10</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">100</span> <span class="n">-Port</span> <span class="n">80</span>
 </code></pre></div>
-<p>Expected: <code>InterfaceAlias: wt0</code>, <code>TcpTestSucceeded: True</code>. Validates the <code>Datacenter Access</code> ACL policy and the Networks routing configuration.</p>
-<p>See <a href="../../components/netbird/">NetBird</a>.</p>
+<p>At validation time: <code>InterfaceAlias: wt0</code>, <code>TcpTestSucceeded: True</code>, exercising the <code>Datacenter Access</code> ACL policy and the Networks routing configuration.</p>
+<p><strong>Current state:</strong> The <code>Internal-DC</code> Network and the <code>Datacenter Access</code> policy were removed in the V34 persona migration — site-to-site-style resource access contradicts the Zero-Trust per-resource model. DC-LAN-over-overlay is deferred and may resume in the Cosmos session. See <a href="../../runbooks/02-ztna-overlay/">runbook 02</a> and <a href="../../components/netbird/">NetBird</a>.</p>
 <hr />
 <h3 id="f5-url-filtering">F5 — URL Filtering<a class="headerlink" href="#f5-url-filtering" title="Permanent link">&para;</a></h3>
 <p><code>curl.exe</code> with an explicit proxy argument bypasses the browser cache, which could otherwise mask blocking. <code>X-Squid-Error: ERR_ACCESS_DENIED</code> identifies the Squid block page — not a server-side 403.</p>
@@ -4484,13 +4484,13 @@
 <p>See <a href="../../components/clamav-cicap/">ClamAV/c-icap</a>.</p>
 <hr />
 <h3 id="f8-firewall-segmentation">F8 — Firewall Segmentation<a class="headerlink" href="#f8-firewall-segmentation" title="Permanent link">&para;</a></h3>
-<p>DC-LAN isolation is enforced at the overlay layer — only NetBird-enrolled peers with the <code>Datacenter Access</code> ACL policy can reach dc01.</p>
-<p>Validated by contrast:</p>
+<p><strong>✅ Validated.</strong> The core segmentation property — an unenrolled device has no route to DC-LAN (10.0.0.0/24) — holds independently of any overlay access path and remains true today.</p>
+<p>Validated by contrast (May 2026, while the positive path still existed):</p>
 <ul>
-<li>mobile01 <strong>without</strong> NetBird: <code>ping 10.0.0.100</code> → Destination unreachable (no route)</li>
-<li>mobile01 <strong>with</strong> NetBird + policy: <code>Test-NetConnection 10.0.0.100 -Port 80</code> → <code>TcpTestSucceeded: True</code> via <code>wt0</code></li>
+<li>mobile01 <strong>without</strong> NetBird: <code>ping 10.0.0.100</code> → Destination unreachable (no route) — <em>still true</em></li>
+<li>mobile01 <strong>with</strong> NetBird + the <code>Datacenter Access</code> policy: <code>Test-NetConnection 10.0.0.100 -Port 80</code> → <code>TcpTestSucceeded: True</code> via <code>wt0</code> — <em>positive path removed in V34</em></li>
 </ul>
-<p><strong>Architectural note:</strong> DC-LAN uses NetBird Networks (not Network Routes). Access requires both overlay enrollment and explicit group membership in <code>SASE-InternalResources</code>.</p>
+<p><strong>Architectural note:</strong> DC-LAN used NetBird Networks (not Network Routes). The positive path required overlay enrollment plus membership in the <code>SASE-InternalResources</code> group; both the <code>Internal-DC</code> Network and that group were removed in the V34 persona migration (see <a href="../../runbooks/02-ztna-overlay/">runbook 02</a>). The negative isolation property — unenrolled = no route — is unaffected.</p>
 <p>See <a href="../../components/netbird/">NetBird</a>.</p>
 <hr />
 <h3 id="f9-suricata-alert-generation">F9 — Suricata Alert Generation<a class="headerlink" href="#f9-suricata-alert-generation" title="Permanent link">&para;</a></h3>
@@ -4723,8 +4723,8 @@
 <ul>
 <li><strong>Inline layer:</strong> Squid + ICAP (operational)</li>
 <li><strong>API layer:</strong> Wazuh + M365 Management Activity API</li>
-<li><strong>Custom rules:</strong> SID 100200/100201 for SharePoint <code>SharingSet</code> + <code>Anyone</code>/<code>External</code> detection</li>
-<li><strong>Active Response:</strong> <code>sharepoint_remediate.sh</code></li>
+<li><strong>Custom rules:</strong> base rule <code>100600</code> (<code>producer=o365</code>), with <code>100601</code> (<code>AnonymousLinkCreated</code>), <code>100602</code> (<code>SharingLinkCreated</code> + scope <code>Anyone</code>), <code>100603</code> (<code>SharingSet</code> + guest)</li>
+<li><strong>Active Response:</strong> <code>sharepoint_remediate.sh</code> (rules 100601/100602), <code>guest_remediate.sh</code> (rule 100603) — behind the ENFORCE gate, detect-only by default (live revoke pending)</li>
 </ul>
 <p>Graph API tenant permissions confirmed 1 April 2026 (admin consent granted on <code>aplab.be</code>).</p>
 <hr />
@@ -4766,17 +4766,17 @@
 <tr>
 <td>6</td>
 <td>Opens datacenter site → Success</td>
-<td>✅ Validated (F4)</td>
+<td>✅ Validated at build-time (F4); DC-LAN-over-overlay path removed in V34, deferred</td>
 </tr>
 <tr>
 <td>7</td>
 <td>Site user pings datacenter via tunnel</td>
-<td>✖ N/A — sitepc01 has no OS, IPsec descoped</td>
+<td>✖ N/A — classic IPsec site-to-site descoped; the ZT-Branch uses per-device NetBird enrollment instead</td>
 </tr>
 <tr>
 <td>8</td>
 <td>QoS marking visible on VyOS</td>
-<td>✖ N/A — QoS architectural decision</td>
+<td>✅ Validated — DSCP marking visible via <code>tc</code> on VyOS eth0 (V43 Test #5: EF classified, 0 drops under load)</td>
 </tr>
 <tr>
 <td>9</td>
@@ -4785,7 +4785,7 @@
 </tr>
 </tbody>
 </table>
-<p>7 of 9 F15 steps validated. The 2 remaining are architectural N/A (SD-WAN).</p>
+<p>Steps 1–5, 8, and 9 reflect the current stack. Step 6 was validated at build-time (F4) but its DC-LAN-over-overlay path was removed in V34 (deferred). Step 7 is architectural N/A — classic IPsec SD-WAN, replaced by the ZT-Branch model.</p>
 <hr />
 <h2 id="test-environment">Test environment<a class="headerlink" href="#test-environment" title="Permanent link">&para;</a></h2>
 <table>

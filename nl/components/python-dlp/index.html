@@ -3795,6 +3795,12 @@
 <p><strong>Client-IP verschijnt als "unknown" in DLP-logs</strong> — de server leest <code>X-Client-IP</code> uit <code>self.enc_req_headers</code> (ingekapselde headers), maar Squid stuurt het client-IP als een ICAP-niveauheader toegankelijk via <code>self.headers</code>. Dit is een cosmetisch probleem; blokkering werkt correct.</p>
 <p><strong>Containerlogs in Docker stdout</strong> — voor Wazuh SIEM-integratie, voeg een Docker-logging-driver toe (syslog gericht op Wazuh) of configureer de Wazuh-agent op mgmt01 om containerlogs te bewaken. Dit is een geplande taak voor Fase 4.</p>
 <p><strong>Algoritmische validators hebben drempelwaarden</strong> — één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas drempelwaarden aan in <code>dlp_server.py</code> op basis van de gebruikssituatie.</p>
+<p><strong>Code review — 10 problemen geïdentificeerd, 3 kritieke fixes toegepast:</strong>
+- <strong>OOM-risico:</strong> De oorspronkelijke code had geen body-groottelimiet — een grote upload kon het containergeheugen uitputten. Fix: uploads &gt; 10 MB worden doorgelaten (fail-open) zonder scanning.
+- <strong>Log-injectie:</strong> De <code>X-Client-IP</code>-headerwaarde werd zonder sanering rechtstreeks naar de loguitvoer geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
+- <strong>Geen uitzonderingsafhandeling:</strong> Uitzonderingen in <code>dlpscan_REQMOD</code> zouden de handler laten crashen zonder respons naar Squid. Fix: scanuitzonderingen resulteren in fail-open (aanvraag passeert).
+- <strong>PyPDF2 → pypdf:</strong> PyPDF2 is end-of-life (niet langer onderhouden). Vervangen door <code>pypdf</code>, de actieve fork.</p>
+<p><strong>Docker-daemon-autostart vereist</strong> — <code>restart: unless-stopped</code> in <code>docker-compose.yml</code> herstart de container alleen als de Docker-daemon draait. Bij een herstart van mgmt01 moet de Docker-daemon ook ingeschakeld zijn voor autostart (<code>systemctl enable docker</code>). Zonder dit start de DLP-container niet na een herstart.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3807,6 +3813,7 @@
 <li><a href="../../findings/pyicap-collections-bug/">Bevinding: pyicap collections-bug</a></li>
 <li><a href="../nats-jetstream/">NATS JetStream</a></li>
 <li><a href="../control-daemon/">Control Daemon</a></li>
+<li><a href="../../runbooks/04-malware-dlp/">Runbook: Malware &amp; DLP-pipeline</a></li>
 </ul>
 
 

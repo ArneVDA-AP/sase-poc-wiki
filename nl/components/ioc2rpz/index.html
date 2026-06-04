@@ -3820,7 +3820,7 @@
 <p>Vervang het meegeleverde SSL-certificaat (verlopen juli 2022) door een nieuw zelfondertekend certificaat vóór het opstarten.</p>
 <h3 id="ioc2rpz-gui-configuratie">ioc2rpz GUI-configuratie<a class="headerlink" href="#ioc2rpz-gui-configuratie" title="Permanent link">&para;</a></h3>
 <p>Toegang via <code>https://ioc2rpz.sandbox.local</code> (door Caddy geproxied). Na de eerste aanmelding configureren:</p>
-<p><strong>Server:</strong> Publiek IP <code>192.168.122.23</code>, NS <code>ns1.ioc2rpz.local</code></p>
+<p><strong>Server:</strong> Publiek IP <code>192.168.122.23</code>, NS <code>ns1.ioc2rpz.local</code>, ACL: <code>127.0.0.1, 172.20.0.2</code> (GUI-container), <code>172.20.0.1</code></p>
 <p><strong>TSIG-sleutels:</strong>
 - <code>tkey_mgmt_1</code> — beheersleutel, hmac-md5
 - <code>tkey_rpz_transfer</code> — zonetransfersleutel, hmac-sha256</p>
@@ -3832,7 +3832,7 @@
 - Actie: nxdomain, Wildcards: true
 - TSIG-sleutel: <code>tkey_rpz_transfer</code>
 - Notify: <code>192.168.122.13</code> (pop01)</p>
-<p>Controleer na "Publiceren" of het zonelog ~71.000+ indicatoren toont en "DNS Notify sent".</p>
+<p>Controleer na "Publiceren" of het zonelog ~35.900 indicatoren (≈71.800 regels) toont en "DNS Notify sent".</p>
 <p><strong>ioc2rpz.gui JavaScript-bug:</strong> Het aanmeldformulier mist een <code>e.preventDefault()</code> in de <code>signIn</code>-functie, waardoor de browser native indient terwijl axios ook post — de native inzending herlaadt de pagina en breekt het axios-verzoek af. Pas de correctie eenmalig toe na containerstart:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>ioc2rpz-ioc2rpz-gui-1<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="s2">&quot;s|signIn: function(e){ //|signIn: function(e){ e.preventDefault(); //|&quot;</span><span class="w"> </span><span class="se">\</span>

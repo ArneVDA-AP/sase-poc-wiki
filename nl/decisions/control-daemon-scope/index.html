@@ -3565,7 +3565,7 @@
 
 <h1 id="beslissing-ids-correlatiebranch-verwijderd-uit-control-daemon">Beslissing: IDS-correlatiebranch verwijderd uit Control Daemon<a class="headerlink" href="#beslissing-ids-correlatiebranch-verwijderd-uit-control-daemon" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Geïmplementeerd<br />
-<strong>Datum:</strong> Mei 2026 (Verslag35)</p>
+<strong>Datum:</strong> Juni 2026 (Verslag35)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>Het threat scoring-model van de Control Daemon bevatte aanvankelijk een IDS-correlatiebranch ontworpen om te reageren op C2 (Command and Control) beacon-detectie. Wanneer Suricata een IDS-alert afvuurde die overeenkwam met een C2-signatuur, zou de daemon het alert correleren met gebruikersidentiteit en quarantaine triggeren. Deze branch werd toegevoegd naast de malware-branch (die reageert op ClamAV/ICAP malware-detecties) en de DLP-branch (die reageert op data-exfiltratiepatronen).</p>
 <p>Tijdens de implementatie onthulde analyse dat de IDS-correlatiebranch de quarantainemogelijkheid dupliceerde die al door de malware-branch werd geboden, maar met slechtere attributie. De malware-branch mapt overlay IP-adressen native naar peer-identiteit via de API van NetBird, wat schone gebruikersattributie biedt. De IDS-correlatiebranch zou dezelfde mapping moeten uitvoeren maar voegde geen unieke handhavingsactie toe — beide branches resulteren in dezelfde quarantaine-uitkomst.</p>
