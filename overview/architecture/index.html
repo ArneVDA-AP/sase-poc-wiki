@@ -4308,7 +4308,7 @@
 </table>
 <p>Gates are complementary, not redundant. Gate 1 evaluates <em>who</em> the user is (MFA, sign-in risk, geo-location). Gate 2 evaluates <em>what</em> the device is (OS version, AV status, firewall). Gate 3 evaluates <em>what</em> is being transferred (malware, sensitive data, blocked domains). No single gate can substitute for the others.</p>
 <hr />
-<p><strong>DC-LAN inspection gap:</strong> dc01 uses pop01 as its default gateway (<code>10.0.0.1</code>) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does <strong>not</strong> pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not BYOD browsers.</p>
+<p><strong>DC-LAN inspection gap:</strong> dc01 uses pop01 as its default gateway (<code>10.0.0.1</code>) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does <strong>not</strong> pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not user browsers.</p>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>

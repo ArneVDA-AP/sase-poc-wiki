@@ -928,10 +928,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#exit-knooppunt-en-dc-lan-routering" class="md-nav__link">
+  <a href="#exit-node-en-dc-lan-routering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Exit-knooppunt en DC-LAN-routering
+        Exit node en DC-LAN-routering
       
     </span>
   </a>
@@ -3665,10 +3665,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#exit-knooppunt-en-dc-lan-routering" class="md-nav__link">
+  <a href="#exit-node-en-dc-lan-routering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Exit-knooppunt en DC-LAN-routering
+        Exit node en DC-LAN-routering
       
     </span>
   </a>
@@ -3810,7 +3810,7 @@
 
 
 <h1 id="netbird-zitadel-entra-id-ztna-overlay">NetBird + Zitadel + Entra ID — ZTNA-overlay<a class="headerlink" href="#netbird-zitadel-entra-id-ztna-overlay" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> ZTNA-transportlaag — creëert een WireGuard-mesh-overlay die BYOD-clients toegang geeft tot pop01 (proxy, DNS) en DC-LAN-resources, ongeacht hun fysieke netwerklocatie. Elke toegangsbeslissing is identiteitsgebaseerd; laterale beweging tussen resources vereist expliciet ACL-beleid.<br />
+<p><strong>Rol:</strong> ZTNA-transportlaag — creëert een WireGuard-mesh-overlay die managed Windows-clients toegang geeft tot pop01 (proxy, DNS) en DC-LAN-resources, ongeacht hun fysieke netwerklocatie. Elke toegangsbeslissing is identiteitsgebaseerd; lateral movement tussen resources vereist expliciet ACL-beleid.<br />
 <strong>Status:</strong> ✅ Volledig operationeel — snapshot <code>Fase2-ZTNA-Complete</code><br />
 <strong>Configuratielocatie:</strong> mgmt01 Docker Compose (<code>~/docker-compose.yml</code>), NetBird Dashboard (<code>https://netbird.sandbox.local</code>)</p>
 <hr />
@@ -3931,24 +3931,24 @@
 </blockquote>
 <p><strong>Volgorde van beleidsaanmaak (deny-by-default):</strong> Het standaard All→All-beleid is verwijderd, dus peers zonder beleid hebben geen connectiviteit. Maak het vervangende beleid aan <em>vóór</em> het verwijderen van de standaard, om te voorkomen dat alle peer-communicatie wegvalt.</p>
 <h3 id="acl-beleid">ACL-beleid<a class="headerlink" href="#acl-beleid" title="Permanent link">&para;</a></h3>
-<p><strong><code>Personas-to-Core-Services</code>:</strong> Bronnen: <code>Studenten</code>, <code>Docenten</code>, <code>Admins</code> → Bestemming: <code>Core-Services</code>, Protocol: <strong>alleen TCP 3128</strong>.</p>
+<p><strong><code>Personas-to-Core-Services</code>:</strong> Sources: <code>Studenten</code>, <code>Docenten</code>, <code>Admins</code> → Destination: <code>Core-Services</code>, Protocol: <strong>alleen TCP 3128</strong>.</p>
 <p>Dit ene beleid is de volledige allow-list onder deny-by-default. Het laat elke persona-peer de pop01 Squid-proxy (<code>100.70.154.79:3128</code>) bereiken; al het webverkeer loopt vervolgens door de SWG-pijplijn, waar de differentiatie per persona in Squid gebeurt (niet in NetBird-ACL's). WPAD-poorten (<code>:80</code>/<code>:443</code> op mgmt01) zijn <strong>bewust weggelaten</strong> — het PAC-bestand is leeg en clients gebruiken een handmatige proxy-instelling, dus WPAD-bereikbaarheid is niet nodig (V34.13). Quarantaine werkt omdat het verwijderen van een peer uit zijn persona-groep zijn enige pad naar <code>Core-Services</code> wegneemt.</p>
-<h3 id="exit-knooppunt-en-dc-lan-routering">Exit-knooppunt en DC-LAN-routering<a class="headerlink" href="#exit-knooppunt-en-dc-lan-routering" title="Permanent link">&para;</a></h3>
-<p><strong>Exit-knooppunt (internetverkeer)</strong> — via Netwerkroutes:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Netwerk: 0.0.0.0/0, Routeerpeer: pop01, Distributiegroepen: Studenten, Docenten, Admins
+<h3 id="exit-node-en-dc-lan-routering">Exit node en DC-LAN-routering<a class="headerlink" href="#exit-node-en-dc-lan-routering" title="Permanent link">&para;</a></h3>
+<p><strong>Exit node (internetverkeer)</strong> — via Netwerkroutes:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Netwerk: 0.0.0.0/0, Routing Peer: pop01, Distribution Groups: Studenten, Docenten, Admins
 </code></pre></div></p>
-<p>Het exit-knooppunt blijft bestaan zodat BYOD-persona-verkeer via pop01 naar buiten gaat. Het exit-knooppunt van NetBird is <strong>alles-of-niets</strong> — het kan geen bestemmingsbereiken selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, duwt een Intune-Remediation (<code>2ITCSC1A-Route-Remediation</code>) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.</p>
+<p>Het exit node blijft bestaan zodat persona-groepverkeer (Studenten/Docenten/Admins) via pop01 naar buiten gaat. Het exit node van NetBird is <strong>alles-of-niets</strong> — het kan geen destination ranges selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, duwt een Intune-Remediation (<code>2ITCSC1A-Route-Remediation</code>) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.</p>
 <p><strong>DC-LAN (10.0.0.0/8) over de overlay — uitgesteld.</strong> Het oorspronkelijke <code>Internal-DC</code>-netwerk (ACL-bewust) en zijn <code>Datacenter-Access</code>-beleid zijn <strong>verwijderd in de V34-migratie</strong>; er is geen actief DC-LAN-over-overlay-pad in de huidige sandbox. Het opnieuw introduceren van datacenterbereikbaarheid is uitgesteld tot de geplande Cosmos-app-gateway-sessie. De ontwerpredenering hieronder blijft behouden voor wanneer dat werk wordt hervat.</p>
 <blockquote>
-<p><strong>Netwerken vs. Netwerkroutes (ontwerpredenering, voor het uitgestelde DC-LAN-werk):</strong> Netwerkroutes omzeilen ACL-beleid standaard. Netwerken vereisen groepkoppeling by design. DC-LAN zou Netwerken moeten gebruiken voor zero-trust-correctheid; het exit-knooppunt moet Netwerkroutes gebruiken (NetBird-beperking voor 0.0.0.0/0).</p>
+<p><strong>Netwerken vs. Netwerkroutes (ontwerpredenering, voor het uitgestelde DC-LAN-werk):</strong> Netwerkroutes omzeilen ACL-beleid standaard. Netwerken vereisen groepkoppeling by design. DC-LAN zou Netwerken moeten gebruiken voor zero-trust-correctheid; het exit node moet Netwerkroutes gebruiken (NetBird-beperking voor 0.0.0.0/0).</p>
 </blockquote>
-<p><strong>Distributiegroepen vs. ACL-beleid:</strong> Deze dienen verschillende doelen — de distributiegroep bepaalt <em>welke peers de DNS-/netwerkconfiguratie ontvangen</em>, terwijl het ACL-beleid bepaalt <em>of het verkeer daadwerkelijk stroomt</em>. Als een peer in de distributiegroep zit maar geen ACL-beleid heeft dat verkeer toestaat, ontvangt hij de config maar kan hij de resource niet bereiken. Symptoom: <code>netbird status</code> toont <code>Nameservers: 0/1 Available</code> op een peer die de naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft.</p>
+<p><strong>Distribution Groups vs. ACL-beleid:</strong> Deze dienen verschillende doelen — de distribution group bepaalt <em>welke peers de DNS-/netwerkconfiguratie ontvangen</em>, terwijl het ACL-beleid bepaalt <em>of het verkeer daadwerkelijk stroomt</em>. Als een peer in de distribution group zit maar geen ACL-beleid heeft dat verkeer toestaat, ontvangt hij de config maar kan hij de resource niet bereiken. Symptoom: <code>netbird status</code> toont <code>Nameservers: 0/1 Available</code> op een peer die de nameserverconfig ontvangt maar er geen ACL-pad naartoe heeft.</p>
 <h3 id="dns-configuratie">DNS-configuratie<a class="headerlink" href="#dns-configuratie" title="Permanent link">&para;</a></h3>
 <p>NetBird Dashboard → DNS:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Aangepaste DNS-zone:   sandbox.local → pop01 (100.70.154.79)
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Primaire naamserver: pop01 (100.70.154.79), Overeenkomende domeinen: (leeg)
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Primaire nameserver: pop01 (100.70.154.79), Overeenkomende domeinen: (leeg)
 </code></pre></div>
-<p>De lege instelling voor overeenkomende domeinen routeert <strong>alle</strong> DNS-query's van NetBird-clients via pop01 Unbound — niet alleen <code>*.sandbox.local</code>. Zonder dit gebruiken externe query's de standaard-DNS van de client-adapter en omzeilen ze Unbound RPZ volledig. Zie <a href="../../findings/netbird-primary-nameserver/">Bevinding: NetBird primaire naamserver</a>.</p>
+<p>De lege instelling voor overeenkomende domeinen routeert <strong>alle</strong> DNS-query's van NetBird-clients via pop01 Unbound — niet alleen <code>*.sandbox.local</code>. Zonder dit gebruiken externe query's de standaard-DNS van de client-adapter en omzeilen ze Unbound RPZ volledig. Zie <a href="../../findings/netbird-primary-nameserver/">Bevinding: NetBird primaire nameserver</a>.</p>
 <hr />
 <h2 id="integratiepunten">Integratiepunten<a class="headerlink" href="#integratiepunten" title="Permanent link">&para;</a></h2>
 <table>
@@ -3968,7 +3968,7 @@
 <tr>
 <td><a href="../ioc2rpz/">ioc2rpz/RPZ</a></td>
 <td>DNS-afhankelijkheid</td>
-<td>Primaire naamserverinstelling routeert alle client-DNS via Unbound RPZ</td>
+<td>Primaire nameserver-instelling routeert alle client-DNS via Unbound RPZ</td>
 </tr>
 <tr>
 <td><a href="../caddy/">Caddy</a></td>
@@ -4004,7 +4004,7 @@
 <h2 id="nats-integratie">NATS-integratie<a class="headerlink" href="#nats-integratie" title="Permanent link">&para;</a></h2>
 <p>NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:</p>
 <ul>
-<li><strong>Producer:</strong> De <a href="../identity-bridge/">Identity Bridge</a> (die afhankelijk is van de NetBird Management API) publiceert identiteitsgebeurtenissen naar <code>identity.peer.connected</code>, <code>identity.peer.disconnected</code> en <code>identity.multi_persona</code> (zero-trust-anomalie) wanneer peers verbinden, verbreken of in meer dan één personagroep verschijnen.</li>
+<li><strong>Producer:</strong> De <a href="../identity-bridge/">Identity Bridge</a> (die afhankelijk is van de NetBird Management API) publiceert identity events naar <code>identity.peer.connected</code>, <code>identity.peer.disconnected</code> en <code>identity.multi_persona</code> (zero-trust-anomalie) wanneer peers verbinden, verbreken of in meer dan één personagroep verschijnen.</li>
 <li><strong>Handhavingsdoelwit:</strong> De <a href="../control-daemon/">Control Daemon</a> gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit beleidsdragende personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All-&gt;All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.</li>
 </ul>
 <hr />
@@ -4023,7 +4023,7 @@
 <li><a href="../../decisions/zitadel-idp-broker/">Beslissing: Zitadel als IdP-broker</a></li>
 <li><a href="../../decisions/ca-posture-hybrid/">Beslissing: CA + postuur hybride</a></li>
 <li><a href="../../decisions/gns3-vs-eveng/">Beslissing: GNS3 vs. EVE-NG</a></li>
-<li><a href="../../findings/netbird-primary-nameserver/">Bevinding: NetBird primaire naamserver</a></li>
+<li><a href="../../findings/netbird-primary-nameserver/">Bevinding: NetBird primaire nameserver</a></li>
 <li><a href="../../findings/netbird-config-zero-bytes/">Bevinding: NetBird config nul bytes</a></li>
 <li><a href="../../runbooks/02-ztna-overlay/">Runbook: ZTNA-overlay</a></li>
 <li><a href="../identity-bridge/">Identity Bridge</a></li>

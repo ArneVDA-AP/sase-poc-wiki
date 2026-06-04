@@ -3581,12 +3581,12 @@
 <tr>
 <td><strong>vtnet0 (WAN) alleen</strong></td>
 <td>Ziet al het internet-gebonden verkeer van pop01</td>
-<td>Mist intern DC-LAN-verkeer (laterale beweging, dc01-activiteit)</td>
+<td>Mist intern DC-LAN-verkeer (lateral movement, dc01-activiteit)</td>
 </tr>
 <tr>
 <td><strong>vtnet0 + vtnet1 (WAN + LAN)</strong></td>
 <td>Dekt zowel internet-gerichte als interne segmenten</td>
-<td>Ziet geen gedecodeerd BYOD-verkeer (WireGuard-payload is niet zichtbaar)</td>
+<td>Ziet geen gedecodeerd overlay-clientverkeer (WireGuard-payload is niet zichtbaar)</td>
 </tr>
 <tr>
 <td><strong>vtnet0 + vtnet1 + wt0</strong></td>
@@ -3598,11 +3598,11 @@
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>Suricata op vtnet0 (WAN) en vtnet1 (LAN) alleen.</p>
 <p>wt0 werd getest: <code>tcpdump -i wt0 -n 'tcp'</code> toonde 0 pakketten terwijl mobile01 actief was. WireGuard is een Laag 3 VPN — verkeer gerouteerd via wt0 verschijnt niet als inkomende frames op die interface vanuit BPF's perspectief. Suricata op wt0 zou niets zien.</p>
-<p>vtnet1 (LAN) werd toegevoegd om bedreigingen op het interne DC-LAN-segment te detecteren — laterale beweging, afwijkend gedrag van dc01 zelf (bijv. software-updateverkeer). Dit dekt het "assume breach" zero-trust-principe: intern verkeer wordt niet standaard vertrouwd.</p>
+<p>vtnet1 (LAN) werd toegevoegd om bedreigingen op het interne DC-LAN-segment te detecteren — lateral movement, afwijkend gedrag van dc01 zelf (bijv. software-updateverkeer). Dit dekt het "assume breach" zero-trust-principe: intern verkeer wordt niet standaard vertrouwd.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Suricata vereist expliciete per-interface-declaraties in <code>custom.yaml</code> — het gebruik van <code>interface: default</code> neemt alleen vtnet0 op, niet vtnet1. Zie <a href="../../findings/suricata-interface-default-bug/">Bevinding: Suricata interface default bug</a></li>
-<li>BYOD-clientverkeer (gedecodeerd door Squid) is zichtbaar op vtnet0 als herencrypteerde TLS-sessies van Squid naar originele servers — Suricata extraheert TLS-metadata (SNI, JA3/JA4) hieruit</li>
+<li>Clientverkeer (gedecodeerd door Squid) is zichtbaar op vtnet0 als herencrypteerde TLS-sessies van Squid naar originele servers — Suricata extraheert TLS-metadata (SNI, JA3/JA4) hieruit</li>
 <li>WireGuard-verkeer van mobile01 verschijnt als versleuteld UDP/51820 op vtnet0 — de payload is niet inspecteertbaar door Suricata</li>
 <li><code>HOME_NET</code> moet <code>100.64.0.0/10</code> (NetBird-overlay) bevatten zodat regels die <code>$HOME_NET</code> gebruiken NetBird-peers niet verkeerd classificeren als externe hosts</li>
 </ul>

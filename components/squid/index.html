@@ -3757,7 +3757,7 @@
 
 
 <h1 id="squid-explicit-proxy-wpadpac-ssl-bump-url-filtering">Squid — Explicit Proxy, WPAD/PAC, SSL Bump, URL Filtering<a class="headerlink" href="#squid-explicit-proxy-wpadpac-ssl-bump-url-filtering" title="Permanent link">&para;</a></h1>
-<p><strong>Role:</strong> The SWG ingress point — every HTTP/HTTPS transaction from a BYOD client passes through Squid before reaching the internet. Squid performs URL filtering, HTTPS decryption (SSL Bump), and orchestrates the ICAP inspection pipeline.<br />
+<p><strong>Role:</strong> The SWG ingress point — every HTTP/HTTPS transaction from an overlay client passes through Squid before reaching the internet. Squid performs URL filtering, HTTPS decryption (SSL Bump), and orchestrates the ICAP inspection pipeline.<br />
 <strong>Version:</strong> Squid 6.x (bundled with OPNsense 25.1)<br />
 <strong>Config location:</strong> <code>/usr/local/etc/squid/squid.conf</code> (OPNsense-generated) + <code>/usr/local/etc/squid/pre-auth/*.conf</code> (persistent custom directives)</p>
 <hr />

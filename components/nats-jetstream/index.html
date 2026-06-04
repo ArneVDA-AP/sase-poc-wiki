@@ -1051,6 +1051,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#jetstream-streams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JetStream streams
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#integration-points" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3526,6 +3537,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#jetstream-streams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JetStream streams
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#integration-points" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3686,6 +3708,56 @@
 <td><code>identity.multi_persona</code></td>
 <td>Identity Bridge (mgmt01)</td>
 <td>Control Daemon (zero-trust anomaly; SIEM rule planned)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="jetstream-streams">JetStream streams<a class="headerlink" href="#jetstream-streams" title="Permanent link">&para;</a></h2>
+<p>Five streams were created (V32, confirmed operational):</p>
+<table>
+<thead>
+<tr>
+<th>Stream</th>
+<th>Subjects</th>
+<th>Storage</th>
+<th>Max Age</th>
+<th>Max Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SECURITY_ALERTS</td>
+<td><code>security.alert.*</code></td>
+<td>file</td>
+<td>168h (7d)</td>
+<td>1 GiB</td>
+</tr>
+<tr>
+<td>THREAT_IOC</td>
+<td><code>threat.ioc.new</code></td>
+<td>file</td>
+<td>2160h (90d)</td>
+<td>512 MiB</td>
+</tr>
+<tr>
+<td>POLICY_UPDATE</td>
+<td><code>policy.update</code></td>
+<td>file</td>
+<td>720h (30d)</td>
+<td>256 MiB</td>
+</tr>
+<tr>
+<td>SESSION_CONTEXT</td>
+<td><code>session.context.&gt;</code></td>
+<td>memory</td>
+<td>24h</td>
+<td>128 MiB</td>
+</tr>
+<tr>
+<td>IDENTITY_EVENTS</td>
+<td><code>identity.&gt;</code></td>
+<td>file</td>
+<td>168h (7d)</td>
+<td>256 MiB</td>
 </tr>
 </tbody>
 </table>

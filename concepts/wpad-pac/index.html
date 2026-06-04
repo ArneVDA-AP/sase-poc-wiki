@@ -3581,7 +3581,7 @@
 <li>Browser executes <code>FindProxyForURL()</code> for each URL → returns <code>PROXY 100.70.154.79:3128</code> (Squid)</li>
 <li>All non-internal traffic flows through Squid for inspection</li>
 </ol>
-<p><strong>Why WPAD/PAC and not transparent proxy:</strong> Transparent proxy via <code>pf rdr</code> cannot intercept WireGuard-routed traffic on the <code>wt0</code> interface — WireGuard is Layer 3 and <code>pf rdr</code> does not see ingress on that interface from the kernel's perspective. WPAD/PAC explicit proxy is not a workaround; it is the correct pattern for overlay-based BYOD. See <a href="../../decisions/wpad-vs-transparent-proxy/">Decision: WPAD/PAC vs transparent proxy</a>.</p>
+<p><strong>Why WPAD/PAC and not transparent proxy:</strong> Transparent proxy via <code>pf rdr</code> cannot intercept WireGuard-routed traffic on the <code>wt0</code> interface — WireGuard is Layer 3 and <code>pf rdr</code> does not see ingress on that interface from the kernel's perspective. WPAD/PAC explicit proxy is not a workaround; it is the correct pattern for overlay-based clients. See <a href="../../decisions/wpad-vs-transparent-proxy/">Decision: WPAD/PAC vs transparent proxy</a>.</p>
 <p><strong>Explicit vs transparent:</strong>
 - Explicit proxy: client knows the proxy address and sends requests directly to it (HTTP <code>GET http://...</code> or HTTPS <code>CONNECT</code> then the request)
 - Transparent proxy: firewall silently redirects port 80/443 to the proxy; client is unaware</p>

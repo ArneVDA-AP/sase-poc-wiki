@@ -3595,7 +3595,7 @@
 <p><strong>Definitie:</strong> Een lichtgewicht protocol (RFC 3507) waarmee een proxy inhoudinspectie kan uitbesteden aan externe services — Squid stuurt HTTP-transacties naar ICAP-servers, die een verdict teruggeven (doorlaten, aanpassen of blokkeren).</p>
 <h2 id="hoe-het-hier-van-toepassing-is">Hoe het hier van toepassing is<a class="headerlink" href="#hoe-het-hier-van-toepassing-is" title="Permanent link">&para;</a></h2>
 <p>Squid op pop01 kan HTTPS-inhoud niet op applicatielaagniveau inspecteren zonder hulp. ICAP is het integratieprotocol dat Squid verbindt met twee externe inspectiediensten:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>BYOD-client → Squid (SSL Bump decodeert) → ICAP REQMOD → Python DLP (upload-controle)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Client → Squid (SSL Bump decodeert) → ICAP REQMOD → Python DLP (upload-controle)
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>                                          → ICAP RESPMOD → ClamAV/c-icap (download-scan)
 </code></pre></div>
 <p>Beide ICAP-services draaien gelijktijdig en onafhankelijk. ICAP REQMOD verwerkt de aanvraag voordat Squid die doorstuurt; ICAP RESPMOD verwerkt het antwoord voordat Squid het aan de client levert.</p>

@@ -1051,6 +1051,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#jetstream-streams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JetStream-streams
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#integratiepunten" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3526,6 +3537,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#jetstream-streams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JetStream-streams
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#integratiepunten" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3619,7 +3641,7 @@
 <strong>Versie:</strong> NATS 2.14.1 (<code>nats:2.14.1-alpine</code> — empirisch geverifieerd; Addendum J vermeldde 2.12.6, verouderd)<br />
 <strong>Configuratielocatie:</strong> mgmt01 Docker, secrets via env-interpolatie (geen plaintext in gecommitte configuratie)</p>
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
-<p>NATS JetStream biedt duurzame, at-least-once aflevering voor beveiligingsgebeurtenissen over de gehele stack. Elke detectiecomponent publiceert gestructureerde JSON-events naar onderwerpspecifieke topics. Twee onafhankelijke consumers verwerken deze events:</p>
+<p>NATS JetStream biedt duurzame, at-least-once aflevering voor security events over de gehele stack. Elke detectiecomponent publiceert gestructureerde JSON-events naar onderwerpspecifieke topics. Twee onafhankelijke consumers verwerken deze events:</p>
 <ol>
 <li><strong>Control Daemon</strong> — real-time threat scoring en quarantainebeslissingen</li>
 <li><strong>NATS→Wazuh Forwarder</strong> — stuurt events door naar Wazuh voor SIEM-indexering en forensische analyse</li>
@@ -3686,6 +3708,56 @@
 <td><code>identity.multi_persona</code></td>
 <td>Identity Bridge (mgmt01)</td>
 <td>Control Daemon (zero-trust-anomalie; SIEM-regel gepland)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="jetstream-streams">JetStream-streams<a class="headerlink" href="#jetstream-streams" title="Permanent link">&para;</a></h2>
+<p>Vijf streams aangemaakt (V32, operationeel bevestigd):</p>
+<table>
+<thead>
+<tr>
+<th>Stream</th>
+<th>Subjects</th>
+<th>Opslag</th>
+<th>Max leeftijd</th>
+<th>Max grootte</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SECURITY_ALERTS</td>
+<td><code>security.alert.*</code></td>
+<td>file</td>
+<td>168h (7d)</td>
+<td>1 GiB</td>
+</tr>
+<tr>
+<td>THREAT_IOC</td>
+<td><code>threat.ioc.new</code></td>
+<td>file</td>
+<td>2160h (90d)</td>
+<td>512 MiB</td>
+</tr>
+<tr>
+<td>POLICY_UPDATE</td>
+<td><code>policy.update</code></td>
+<td>file</td>
+<td>720h (30d)</td>
+<td>256 MiB</td>
+</tr>
+<tr>
+<td>SESSION_CONTEXT</td>
+<td><code>session.context.&gt;</code></td>
+<td>memory</td>
+<td>24h</td>
+<td>128 MiB</td>
+</tr>
+<tr>
+<td>IDENTITY_EVENTS</td>
+<td><code>identity.&gt;</code></td>
+<td>file</td>
+<td>168h (7d)</td>
+<td>256 MiB</td>
 </tr>
 </tbody>
 </table>

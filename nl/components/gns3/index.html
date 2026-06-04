@@ -3752,7 +3752,7 @@
 </code></pre></div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>NAT-Internet ──── mobile01 NIC1     (aparte TAP — simulatie van extern netwerk)
 </code></pre></div>
-<p>mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het verbindt direct via zijn eigen netwerkadapter en simuleert een echte BYOD-gebruiker buiten de GNS3-topologie. Het bereikt de SASE-stack uitsluitend via de NetBird WireGuard-tunnel.</p>
+<p>mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het verbindt direct via zijn eigen netwerkadapter en simuleert een echte remote gebruiker buiten de GNS3-topologie. Het bereikt de SASE-stack uitsluitend via de NetBird WireGuard-tunnel.</p>
 <h3 id="ip-adressering">IP-adressering<a class="headerlink" href="#ip-adressering" title="Permanent link">&para;</a></h3>
 <p><strong>WAN-segment (192.168.122.0/24, libvirt NAT-gateway .1):</strong></p>
 <table>
@@ -3829,7 +3829,7 @@
 <tr>
 <td>mobile01</td>
 <td><code>100.70.95.98</code></td>
-<td>BYOD-client</td>
+<td>Remote client (managed Windows)</td>
 </tr>
 </tbody>
 </table>

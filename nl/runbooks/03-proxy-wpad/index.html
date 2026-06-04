@@ -3854,7 +3854,7 @@ Zie <a href="../../findings/pre-auth-ssl-bump-params/">Finding: pre-auth ssl-bum
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>netbird<span class="w"> </span>service<span class="w"> </span>restart
 </code></pre></div>
 <blockquote>
-<p><strong>Valkuil: Service-herstart is verplicht na CA-import.</strong> Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded" — de daemon draait met de oude vertrouwensopslag.</p>
+<p><strong>Valkuil: Service-herstart is verplicht na CA-import.</strong> Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded" — de daemon draait met de oude trust store.</p>
 </blockquote>
 <p><strong>Verificatie:</strong> <code>netbird status</code> toont Connected, overlay-IP <code>100.70.135.241</code>.</p>
 <hr />
@@ -3913,9 +3913,9 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 </code></pre></div>
 <hr />
 <h2 id="stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren">Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren<a class="headerlink" href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" title="Permanent link">&para;</a></h2>
-<p>Onder het V34-personamodel (zie <a href="../../components/netbird/">Component: NetBird</a>) draagt één allow-beleid alle connectiviteit: <strong><code>Personas-to-Core-Services</code></strong> — bronnen <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → bestemming <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. Dit laat elke BYOD-persona-peer de pop01 Squid-proxy bereiken.</p>
+<p>Onder het V34-personamodel (zie <a href="../../components/netbird/">Component: NetBird</a>) draagt één allow-beleid alle connectiviteit: <strong><code>Personas-to-Core-Services</code></strong> — sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.</p>
 <blockquote>
-<p><strong>Verouderd:</strong> eerdere builds gebruikten aparte <code>Admin-Infrastructure</code>-, <code>Mobile-to-Services</code>- en <code>Datacenter Access</code>-beleidsregels op <code>SASE-*</code>-groepen. Die beleidsregels en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.</p>
+<p><strong>Verouderd:</strong> eerdere builds gebruikten aparte <code>Admin-Infrastructure</code>-, <code>Mobile-to-Services</code>- en <code>Datacenter Access</code>-policies op <code>SASE-*</code>-groepen. Die policies en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.</p>
 </blockquote>
 <p><strong>DNS-bereikbaarheidsvalkuil:</strong> een peer die de pop01-naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft, toont <code>Nameservers: 0/1 Available</code> in <code>netbird status</code>. Zorg dat de groep van de peer een ACL-pad naar <code>Core-Services</code> (pop01 Unbound) heeft.</p>
 <hr />
@@ -3926,7 +3926,7 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  Scriptadres: http://wpad.sandbox.local/wpad.dat
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>  Handmatige proxy: Uit
 </code></pre></div>
-<p>De Caddy root-CA moet al zijn geïmporteerd in de Windows-vertrouwensopslag (gedaan tijdens NetBird-registratie).</p>
+<p>De Caddy root-CA moet al zijn geïmporteerd in de Windows-trust store (gedaan tijdens NetBird-registratie).</p>
 <hr />
 <h2 id="stap-9-ssl-bump-inschakelen">Stap 9: SSL Bump inschakelen<a class="headerlink" href="#stap-9-ssl-bump-inschakelen" title="Permanent link">&para;</a></h2>
 <p><strong>Maak SASE-PoC-CA aan</strong> via System → Trust → Authorities:

@@ -3950,7 +3950,7 @@
 </code></pre></div>
 <p><strong>Expected:</strong> Events from Suricata, Squid, DNS RPZ, and DLP appear in the dashboard with properly parsed fields.</p>
 <blockquote>
-<p><strong>Gotcha: Dashboard app modules are gated in the air-gapped sandbox.</strong> Discover works fully (it reads the indexer directly), but the dashboard's app modules (Security Events, Agents) show "Status: Offline". The cause is not DNS: the manager's internet-dependent <code>version/check</code> returns HTTP 500 in the air-gapped sandbox, which the dashboard's <code>check-api</code> cascades into an offline determination even though the manager API itself is healthy (authenticate/info/stats all return 200). Investigate via Discover, not the app modules. See <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
+<p><strong>Note:</strong> The dashboard previously showed "Status: Offline" due to an empty manager UUID (wiped by <code>docker compose down -v</code>) — resolved 2 juni 2026 via in-place bump to 4.14.5. The <code>Error checking updates</code> CTI-500 (air-gap, cosmetic) remains but is non-blocking in 4.14.5+. App modules and Discover both work fully. See <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
 </blockquote>
 <hr />
 <h2 id="step-7-verify-casb-active-response">Step 7: Verify CASB Active Response<a class="headerlink" href="#step-7-verify-casb-active-response" title="Permanent link">&para;</a></h2>
@@ -3974,7 +3974,7 @@
 <ul>
 <li>[ ] Wazuh Manager v4.14.5 running on mgmt01</li>
 <li>[ ] Wazuh Indexer (OpenSearch) running and healthy</li>
-<li>[ ] Wazuh Dashboard accessible via browser (Discover; app modules gated in air-gap)</li>
+<li>[ ] Wazuh Dashboard accessible via browser (Discover + app modules both work; <code>Error checking updates</code> CTI-500 cosmetic in air-gap, non-blocking)</li>
 <li>[ ] NATS-to-Wazuh forwarder consuming <code>security.alert.&gt;</code> → NDJSON to <code>wazuh_nats_ingest</code></li>
 <li>[ ] Wazuh agent 001 (pop01) registered and active</li>
 <li>[ ] Custom bus rules 100500–100540 deployed (<code>local_rules.xml</code>)</li>

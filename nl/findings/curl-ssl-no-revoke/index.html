@@ -3598,16 +3598,16 @@
 </code></pre></div>
 <p>Zonder <code>--ssl-no-revoke</code> bereikt het verzoek de ICAP-pijplijn nooit — curl mislukt bij de TLS-handshake.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>Windows <code>curl.exe</code> gebruikt de Schannel TLS-backend, die CRL- (Certificate Revocation List) en OCSP-validatie probeert voor elk certificaat in de keten. Wanneer Squid SSL Bump uitvoert, wordt het certificaat dat aan de client wordt gepresenteerd uitgegeven door de SASE-PoC-CA — een lokaal gegenereerde CA zonder gepubliceerd CRL- of OCSP-eindpunt. Schannel behandelt een ontbrekend intrekkingseindpunt als een fout en breekt de verbinding af.</p>
+<p>Windows <code>curl.exe</code> gebruikt de Schannel TLS-backend, die CRL- (Certificate Revocation List) en OCSP-validatie probeert voor elk certificaat in de keten. Wanneer Squid SSL Bump uitvoert, wordt het certificaat dat aan de client wordt gepresenteerd uitgegeven door de SASE-PoC-CA — een lokaal gegenereerde CA zonder gepubliceerd CRL- of OCSP-eindpunt. Schannel behandelt een ontbrekend revocation endpoint als een fout en breekt de verbinding af.</p>
 <h2 id="oplossing">Oplossing<a class="headerlink" href="#oplossing" title="Permanent link">&para;</a></h2>
-<p>Voeg <code>--ssl-no-revoke</code> toe aan alle <code>curl.exe</code>-opdrachten van Windows-hosts die via de SSL Bump-proxy naar HTTPS-bestemmingen routeren. Deze vlag instrueert Schannel om intrekkingscontroles over te slaan.</p>
+<p>Voeg <code>--ssl-no-revoke</code> toe aan alle <code>curl.exe</code>-opdrachten van Windows-hosts die via de SSL Bump-proxy naar HTTPS-bestemmingen routeren. Deze vlag instrueert Schannel om revocation checks over te slaan.</p>
 <p>Deze vlag heeft geen invloed op de testgeldigheid — het blokkeer- of doorlaatgedrag van de ICAP-pijplijn is volledig onafhankelijk van de CRL-controle die Schannel uitvoert.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Alle Windows <code>curl.exe</code>-proxytests naar HTTPS-bestemmingen vereisen <code>--ssl-no-revoke</code> in deze omgeving.</li>
 <li>Browsertests worden niet beïnvloed: browsers behandelen de SASE-PoC-CA via de geïnstalleerde vertrouwde CA en tolereren ontbrekende CRL-eindpunten soepeler.</li>
 <li>PowerShell <code>Invoke-WebRequest</code> gebruikt dezelfde Schannel-backend en heeft hetzelfde gedrag — dezelfde workaround is van toepassing als Invoke-WebRequest wordt gebruikt voor tests.</li>
-<li>In productie zou de SASE-PoC-CA worden gedistribueerd via Groepsbeleid en zou een CRL-eindpunt worden geconfigureerd — waardoor dit probleem niet meer speelt.</li>
+<li>In productie zou de SASE-PoC-CA worden gedistribueerd via Group Policy en zou een CRL-eindpunt worden geconfigureerd — waardoor dit probleem niet meer speelt.</li>
 </ul>
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

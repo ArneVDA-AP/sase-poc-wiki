@@ -33,7 +33,7 @@
     
     
       
-        <title>Bevinding: NetBird primaire naamserver vereist voor externe RPZ-dekking - Security Project Wiki</title>
+        <title>Bevinding: NetBird primaire nameserver vereist voor externe RPZ-dekking - Security Project Wiki</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bevinding-netbird-primaire-naamserver-vereist-voor-externe-rpz-dekking" class="md-skip">
+        <a href="#bevinding-netbird-primaire-nameserver-vereist-voor-externe-rpz-dekking" class="md-skip">
           Ga naar inhoud
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Bevinding: NetBird primaire naamserver vereist voor externe RPZ-dekking
+              Bevinding: NetBird primaire nameserver vereist voor externe RPZ-dekking
             
           </span>
         </div>
@@ -3563,16 +3563,16 @@
 
 
 
-<h1 id="bevinding-netbird-primaire-naamserver-vereist-voor-externe-rpz-dekking">Bevinding: NetBird primaire naamserver vereist voor externe RPZ-dekking<a class="headerlink" href="#bevinding-netbird-primaire-naamserver-vereist-voor-externe-rpz-dekking" title="Permanent link">&para;</a></h1>
+<h1 id="bevinding-netbird-primaire-nameserver-vereist-voor-externe-rpz-dekking">Bevinding: NetBird primaire nameserver vereist voor externe RPZ-dekking<a class="headerlink" href="#bevinding-netbird-primaire-nameserver-vereist-voor-externe-rpz-dekking" title="Permanent link">&para;</a></h1>
 <p><strong>Component:</strong> <a href="../../components/ioc2rpz/">ioc2rpz</a>, <a href="../../components/netbird/">NetBird</a><br />
-<strong>Ernst:</strong> Blokker (voor DNS-bedreigingsinformatie)</p>
+<strong>Ernst:</strong> Blokker (voor DNS threat intelligence)</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>Unbound RPZ werkte bevestigd voor <code>*.sandbox.local</code>-interne domeinen — <code>testentry.rpz.urlhaus.abuse.ch</code> retourneerde correct NXDOMAIN wanneer rechtstreeks opgevraagd vanaf pop01. Echter, vanuit mobile01 via NetBird werden externe domeinen van bekende kwaadaardige domeinen niet geblokkeerd. <code>nslookup testentry.rpz.urlhaus.abuse.ch</code> op mobile01 retourneerde het echte (niet-geblokkeerde) IP.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p>De Custom DNS Zone van NetBird (<code>sandbox.local → pop01</code>) routeert alleen <code>*.sandbox.local</code>-query's via Unbound. Voor alle andere domeinen gebruikte mobile01 de standaard-DNS van de lokale netwerkadapter (doorgaans de ISP-resolver of router). Die query's bereikten pop01 Unbound nooit, dus de RPZ evalueerde ze nooit.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
-<p>In NetBird Dashboard → DNS: configureer een primaire naamserver:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Primaire naamserver: pop01 (100.70.154.79)
+<p>In NetBird Dashboard → DNS: configureer een primaire nameserver:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Primaire nameserver: pop01 (100.70.154.79)
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Overeenkomende domeinen: (leeg)
 </code></pre></div>
 <p>Het lege veld voor overeenkomende domeinen is cruciaal — het zorgt ervoor dat NetBird <em>alle</em> DNS-query's van de client via pop01 Unbound routeert, niet alleen query's voor specifieke domeinen. Met deze instelling zijn externe query's ook onderworpen aan Unbound RPZ-evaluatie.</p>
@@ -3581,7 +3581,7 @@
 <ul>
 <li>NetBird Custom DNS Zones beïnvloeden alleen query's die overeenkomen met het opgegeven domeinachtervoegsel</li>
 <li>Om RPZ te beschermen tegen externe bedreigingen, moet al het DNS-verkeer (niet alleen intern) verlopen via de afhandelende resolver</li>
-<li>De instelling Primaire naamserver met lege overeenkomende domeinen is het NetBird-mechanisme hiervoor — het vervangt de adapter-DNS van de client voor alle query's zolang de tunnel actief is</li>
+<li>De instelling Primaire nameserver met lege overeenkomende domeinen is het NetBird-mechanisme hiervoor — het vervangt de adapter-DNS van de client voor alle query's zolang de tunnel actief is</li>
 <li>Dit is architectureel equivalent aan het dwingen van alle DNS via een bedrijfsresolver in een traditionele VPN-opstelling</li>
 </ul>
 

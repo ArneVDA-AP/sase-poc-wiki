@@ -3735,7 +3735,7 @@
 <blockquote>
 <p><strong>Valkuil: Dit moet vóór alles anders gebeuren.</strong> Bij 4 GB (of zelfs 6 GB) crashen ClamAV en Suricata stilzwijgend via FreeBSD's OOM-killer — er worden geen logboekregels geschreven. ClamAV gebruikt ~1,2 GB, Suricata ~760 MB na Hyperscan-compilatie (piekt op ~4 GB tijdens compilatie), Squid ~400 MB. Samen overschrijden ze 6 GB.</p>
 </blockquote>
-<p>Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (<code>shutdown -h now</code>), verander het RAM in GNS3-knooppuntinstellingen, herstart.</p>
+<p>Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (<code>shutdown -h now</code>), verander het RAM in GNS3 node-instellingen, herstart.</p>
 <p><strong>Verificatie na opstarten:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>top
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># ClamAV: ~1230 MB RSS, Suricata: ~761 MB RSS</span>
@@ -3811,7 +3811,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vi<span class="w"> </span>/usr/local/opnsense/service/templates/OPNsense/IDS/custom.yaml
 </code></pre></div>
 <blockquote>
-<p><strong>Valkuil: <code>interface: default</code> resolveert naar vtnet0 ALLEEN.</strong> Dit was de oorzaak van een volledige probleemoplossingsessie — vtnet1 had een BPF-apparaat open maar Suricata stuurde er nooit pakketten naartoe. Resultaat: 0 gebeurtenissen van vtnet1 ondanks bevestigde BPF-opname. Elke interface heeft een expliciete declaratie nodig.
+<p><strong>Valkuil: <code>interface: default</code> resolveert naar vtnet0 ALLEEN.</strong> Dit was de oorzaak van een volledige probleemoplossingsessie — vtnet1 had een BPF-apparaat open maar Suricata stuurde er nooit pakketten naartoe. Resultaat: 0 events van vtnet1 ondanks bevestigde BPF-opname. Elke interface heeft een expliciete declaratie nodig.
 Zie <a href="../../findings/suricata-interface-default-bug/">Finding: Suricata interface default-fout</a>.</p>
 </blockquote>
 <p>Gebruik deze exacte inhoud — de definitieve werkende versie na de vtnet1-fix:</p>
@@ -3907,12 +3907,12 @@ Zie <a href="../../findings/suricata-interface-default-bug/">Finding: Suricata i
 </tr>
 </tbody>
 </table>
-<p>Controleer of vtnet1-gebeurtenissen bestaan:</p>
+<p>Controleer of vtnet1-events bestaan:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>grep<span class="w"> </span><span class="s1">&#39;&quot;in_iface&quot;:&quot;vtnet1&quot;&#39;</span><span class="w"> </span>/var/log/suricata/eve.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># Moet &gt; 0 zijn</span>
 </code></pre></div>
 <p>Controleer OPNsense WebUI → Services → Intrusion Detection → Alerts: zowel WAN- als LAN-meldingen moeten zichtbaar zijn.</p>
-<p><strong>Opmerking over herhaalde tests:</strong> Meerdere curl-verzoeken naar hetzelfde domein kunnen slechts één melding opleveren. Dit is geen drempelwaardefout — Squid hergebruikt upstream TCP-verbindingen (connection pooling), dus Suricata ziet één flow en genereert correct één melding per SID per flow.</p>
+<p><strong>Opmerking over herhaalde tests:</strong> Meerdere curl-verzoeken naar hetzelfde domein kunnen slechts één melding opleveren. Dit is geen threshold-fout — Squid hergebruikt upstream TCP-verbindingen (connection pooling), dus Suricata ziet één flow en genereert correct één melding per SID per flow.</p>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>
 <ul>

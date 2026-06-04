@@ -3959,7 +3959,7 @@ See <a href="../../findings/unbound-config-path/">Finding: Unbound config path</
 <p>The OPNsense WebUI shows "The configuration contains manual overwrites" — this is expected and correct.</p>
 <hr />
 <h2 id="step-7-configure-netbird-dns-primary-nameserver">Step 7: Configure NetBird DNS primary nameserver<a class="headerlink" href="#step-7-configure-netbird-dns-primary-nameserver" title="Permanent link">&para;</a></h2>
-<p>This step is a <strong>prerequisite for BYOD RPZ protection</strong>. Without it, external queries from mobile01 bypass Unbound entirely.</p>
+<p>This step is a <strong>prerequisite for client RPZ protection</strong>. Without it, external queries from mobile01 bypass Unbound entirely.</p>
 <p>NetBird Dashboard → DNS → Nameservers → Add:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>IP:             100.70.154.79 (pop01 overlay IP)
 <a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>Match domains:  (LEAVE EMPTY)

@@ -3567,7 +3567,7 @@
 <p><strong>Status:</strong> Geïmplementeerd<br />
 <strong>Datum:</strong> Mei 2026 (Verslag32)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>NATS vereist een authenticatiemodel om de toegang tot JetStream-streams en -consumers te beveiligen. De Control Daemon en de NATS→Wazuh-forwarder consumeren uit JetStream, waarvoor <code>$JS.API.&gt;</code>-toegang nodig is voor consumerbeheer en het bevestigen van berichten, terwijl producers (de detectiecomponenten en de Identity Bridge) enkel naar hun eigen subjects plus <code>_INBOX.&gt;</code> publiceren. Er bestaan twee authenticatiemodellen in NATS: het eenvoudigere <code>authorization{}</code>-blok (single-account) en het meer capabele <code>accounts{}</code>-blok (multi-account met expliciete permissietoekenningen).</p>
+<p>NATS vereist een authenticatiemodel om de toegang tot JetStream-streams en -consumers te beveiligen. De Control Daemon en de NATS→Wazuh-forwarder consumeren uit JetStream, waarvoor <code>$JS.API.&gt;</code>- en <code>$JS.ACK.&gt;</code>-toegang nodig is voor consumerbeheer en het bevestigen van berichten, terwijl producers (de detectiecomponenten en de Identity Bridge) enkel naar hun eigen subjects plus <code>_INBOX.&gt;</code> publiceren. Er bestaan twee authenticatiemodellen in NATS: het eenvoudigere <code>authorization{}</code>-blok (single-account) en het meer capabele <code>accounts{}</code>-blok (multi-account met expliciete permissietoekenningen).</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

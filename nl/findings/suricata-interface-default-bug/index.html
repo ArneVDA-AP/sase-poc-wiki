@@ -3560,8 +3560,8 @@
 <p><strong>Component:</strong> <a href="../../components/suricata/">Suricata</a><br />
 <strong>Ernst:</strong> Blokker</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>Suricata was geconfigureerd om WAN- en LAN-interfaces te bewaken. vtnet1 (LAN) genereerde geen alerts ondanks dat dc01 verkeer produceerde (apt update, SSH-sessies). Testcases voor regels die op vtnet1 zouden moeten activeren, leverden geen gebeurtenissen op.</p>
-<p><code>procstat -f &lt;PID&gt; | grep bpf</code> bevestigde dat vtnet1 een BPF-apparaat open had op OS-niveau, maar Suricata stuurde er geen pakketten naartoe — de BPF-descriptor bestond maar produceerde nul gebeurtenissen.</p>
+<p>Suricata was geconfigureerd om WAN- en LAN-interfaces te bewaken. vtnet1 (LAN) genereerde geen alerts ondanks dat dc01 verkeer produceerde (apt update, SSH-sessies). Testcases voor regels die op vtnet1 zouden moeten activeren, leverden geen events op.</p>
+<p><code>procstat -f &lt;PID&gt; | grep bpf</code> bevestigde dat vtnet1 een BPF-apparaat open had op OS-niveau, maar Suricata stuurde er geen pakketten naartoe — de BPF-descriptor bestond maar produceerde nul events.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p><code>custom.yaml</code> bevatte:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">pcap</span><span class="p">:</span>
@@ -3581,7 +3581,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>configctl<span class="w"> </span>template<span class="w"> </span>reload<span class="w"> </span>OPNsense/IDS
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>configctl<span class="w"> </span>ids<span class="w"> </span>restart
 </code></pre></div></p>
-<p>Na de correctie: <code>procstat -f &lt;PID&gt; | grep bpf</code> toont twee BPF-descriptors en vtnet1-gebeurtenissen verschijnen binnen minuten.</p>
+<p>Na de correctie: <code>procstat -f &lt;PID&gt; | grep bpf</code> toont twee BPF-descriptors en vtnet1-events verschijnen binnen minuten.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Gebruik nooit <code>interface: default</code> in Suricata custom.yaml — vermeld altijd elke interface expliciet</li>

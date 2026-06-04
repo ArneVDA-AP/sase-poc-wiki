@@ -3810,7 +3810,7 @@
 
 
 <h1 id="netbird-zitadel-entra-id-ztna-overlay">NetBird + Zitadel + Entra ID — ZTNA Overlay<a class="headerlink" href="#netbird-zitadel-entra-id-ztna-overlay" title="Permanent link">&para;</a></h1>
-<p><strong>Role:</strong> ZTNA transport layer — creates a WireGuard mesh overlay that gives BYOD clients access to pop01 (proxy, DNS) and DC-LAN resources regardless of their physical network location. Every access decision is identity-based; lateral movement between resources requires explicit ACL policies.<br />
+<p><strong>Role:</strong> ZTNA transport layer — creates a WireGuard mesh overlay that gives managed Windows clients access to pop01 (proxy, DNS) and DC-LAN resources regardless of their physical network location. Every access decision is identity-based; lateral movement between resources requires explicit ACL policies.<br />
 <strong>Status:</strong> ✅ Fully operational — snapshot <code>Fase2-ZTNA-Complete</code><br />
 <strong>Config location:</strong> mgmt01 Docker Compose (<code>~/docker-compose.yml</code>), NetBird Dashboard (<code>https://netbird.sandbox.local</code>)</p>
 <hr />
@@ -3937,7 +3937,7 @@
 <p><strong>Exit node (internet traffic)</strong> — via Network Routes:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Network: 0.0.0.0/0, Routing Peer: pop01, Distribution groups: Studenten, Docenten, Admins
 </code></pre></div></p>
-<p>The exit node persists so BYOD persona traffic egresses through pop01. NetBird's exit node is <strong>all-or-nothing</strong> — it cannot selectively exclude destination ranges (issues #2493 / #3523). To keep Microsoft 365 "Optimize" ranges off the tunnel, an Intune Remediation (<code>2ITCSC1A-Route-Remediation</code>) pushes those routes directly on the client instead — a client-side split-tunnel that compensates for the missing per-route exclusion.</p>
+<p>The exit node persists so persona group traffic (Studenten/Docenten/Admins) egresses through pop01. NetBird's exit node is <strong>all-or-nothing</strong> — it cannot selectively exclude destination ranges (issues #2493 / #3523). To keep Microsoft 365 "Optimize" ranges off the tunnel, an Intune Remediation (<code>2ITCSC1A-Route-Remediation</code>) pushes those routes directly on the client instead — a client-side split-tunnel that compensates for the missing per-route exclusion.</p>
 <p><strong>DC-LAN (10.0.0.0/8) over the overlay — deferred.</strong> The original <code>Internal-DC</code> Network (ACL-aware) and its <code>Datacenter-Access</code> policy were <strong>removed in the V34 migration</strong>; there is no active DC-LAN-over-overlay path in the current sandbox. Re-introducing datacenter reachability is deferred to the planned Cosmos app-gateway session. The design rationale below is retained for when that work resumes.</p>
 <blockquote>
 <p><strong>Networks vs Network Routes (design rationale, for the deferred DC-LAN work):</strong> Network Routes bypass ACL policies by default. Networks require group linkage by design. DC-LAN should use Networks for zero-trust correctness; the exit node must use Network Routes (NetBird limitation for 0.0.0.0/0).</p>

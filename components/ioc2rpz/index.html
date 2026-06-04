@@ -3765,7 +3765,7 @@
 
 
 <h1 id="ioc2rpz-bind-unbound-dns-threat-intelligence">ioc2rpz + BIND + Unbound — DNS Threat Intelligence<a class="headerlink" href="#ioc2rpz-bind-unbound-dns-threat-intelligence" title="Permanent link">&para;</a></h1>
-<p><strong>Role:</strong> Proactive DNS-level blocking of known-malicious domains. ioc2rpz aggregates threat intelligence feeds (URLhaus, ThreatFox) into an RPZ zone; BIND acts as a TSIG-authenticated intermediary; Unbound enforces the RPZ policy for all DNS queries from BYOD clients and DC-LAN nodes.<br />
+<p><strong>Role:</strong> Proactive DNS-level blocking of known-malicious domains. ioc2rpz aggregates threat intelligence feeds (URLhaus, ThreatFox) into an RPZ zone; BIND acts as a TSIG-authenticated intermediary; Unbound enforces the RPZ policy for all DNS queries from overlay clients and DC-LAN nodes.<br />
 <strong>Status:</strong> ✅ Fully operational — 71 767 RPZ records from two feeds, validated from three test points.<br />
 <strong>Config locations:</strong>
 - ioc2rpz: <code>/opt/ioc2rpz/</code> on mgmt01 (Docker)
@@ -3773,7 +3773,7 @@
 - Unbound: <code>/usr/local/etc/unbound.opnsense.d/rpz.conf</code> on pop01</p>
 <hr />
 <h2 id="how-it-works-in-this-stack">How it works in this stack<a class="headerlink" href="#how-it-works-in-this-stack" title="Permanent link">&para;</a></h2>
-<p>DNS threat intelligence intercepts at the earliest possible point in the connection lifecycle — name resolution. If a BYOD client tries to look up the hostname of a known malware C2 server, Unbound returns NXDOMAIN before any TCP connection can be established, regardless of port or protocol.</p>
+<p>DNS threat intelligence intercepts at the earliest possible point in the connection lifecycle — name resolution. If a client tries to look up the hostname of a known malware C2 server, Unbound returns NXDOMAIN before any TCP connection can be established, regardless of port or protocol.</p>
 <p><strong>Three-component chain:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>URLhaus + ThreatFox (Abuse.ch)
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    ↓ HTTP pull by ioc2rpz
@@ -3783,11 +3783,11 @@
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ↓ unauthenticated AXFR (loopback)
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Unbound (pop01, port 53, respip module)
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    ↓ RPZ-enforced responses
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>BYOD clients + dc01
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Overlay clients + dc01
 </code></pre></div>
 <p>ioc2rpz is a <strong>zone source</strong>, not a resolver. Clients never query ioc2rpz directly. They query Unbound, which has the RPZ zone loaded in memory. No extra latency per query.</p>
 <p>BIND exists solely because Unbound 1.24.2 does not support TSIG for zone transfers — a missing feature documented in GitHub NLnetLabs/unbound issue #336 (open since October 2020). BIND handles the TSIG-authenticated AXFR from ioc2rpz and presents the zone to Unbound via loopback without authentication. See <a href="../../decisions/bind-tsig-intermediary/">Decision: BIND as TSIG intermediary</a>.</p>
-<p><strong>NetBird primary nameserver:</strong> For RPZ to protect BYOD clients on external domains, all their DNS queries must route through pop01 Unbound. NetBird's primary nameserver setting (match domains: empty) achieves this. Without it, clients use their adapter's default DNS for non-internal domains, bypassing Unbound entirely. See <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primary nameserver</a>.</p>
+<p><strong>NetBird primary nameserver:</strong> For RPZ to protect overlay clients on external domains, all their DNS queries must route through pop01 Unbound. NetBird's primary nameserver setting (match domains: empty) achieves this. Without it, clients use their adapter's default DNS for non-internal domains, bypassing Unbound entirely. See <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primary nameserver</a>.</p>
 <hr />
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <h3 id="ioc2rpz-docker-deployment">ioc2rpz Docker deployment<a class="headerlink" href="#ioc2rpz-docker-deployment" title="Permanent link">&para;</a></h3>

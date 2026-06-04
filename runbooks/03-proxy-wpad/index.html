@@ -3913,7 +3913,7 @@ See <a href="../../findings/docker-volume-recreation/">Finding: Docker volume re
 </code></pre></div>
 <hr />
 <h2 id="step-7-verify-the-acl-policy-for-proxydns-reachability">Step 7: Verify the ACL policy for proxy/DNS reachability<a class="headerlink" href="#step-7-verify-the-acl-policy-for-proxydns-reachability" title="Permanent link">&para;</a></h2>
-<p>Under the V34 persona model (see <a href="../../components/netbird/">Component: NetBird</a>) a single allow-policy carries all connectivity: <strong><code>Personas-to-Core-Services</code></strong> — sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. This lets every BYOD persona peer reach the pop01 Squid proxy.</p>
+<p>Under the V34 persona model (see <a href="../../components/netbird/">Component: NetBird</a>) a single allow-policy carries all connectivity: <strong><code>Personas-to-Core-Services</code></strong> — sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. This lets every persona peer (Studenten/Docenten/Admins) reach the pop01 Squid proxy.</p>
 <blockquote>
 <p><strong>Superseded:</strong> earlier builds used separate <code>Admin-Infrastructure</code>, <code>Mobile-to-Services</code>, and <code>Datacenter Access</code> policies on <code>SASE-*</code> groups. Those policies and groups were removed in the V34 migration — do not recreate them.</p>
 </blockquote>

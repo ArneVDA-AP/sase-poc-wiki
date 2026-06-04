@@ -3950,7 +3950,7 @@
 </code></pre></div>
 <p><strong>Verwacht:</strong> Events van Suricata, Squid, DNS RPZ en DLP verschijnen in het dashboard met correct geparseerde velden.</p>
 <blockquote>
-<p><strong>Valkuil: Dashboard-app-modules zijn gegate in de air-gapped sandbox.</strong> Discover werkt volledig (het leest de indexer rechtstreeks uit), maar de app-modules van het dashboard (Security Events, Agents) tonen "Status: Offline". De oorzaak is geen DNS: de internet-afhankelijke <code>version/check</code> van de manager retourneert HTTP 500 in de air-gapped sandbox, wat de <code>check-api</code> van het dashboard cascadeert tot een offline-bepaling hoewel de manager-API zelf gezond is (authenticate/info/stats geven alle 200). Onderzoek via Discover, niet via de app-modules. Zie <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
+<p><strong>Opmerking:</strong> Het dashboard toonde eerder "Status: Offline" door een lege manager-UUID (gewist door <code>docker compose down -v</code>) — opgelost op 2 juni 2026 via in-place bump naar 4.14.5. De <code>Error checking updates</code> CTI-500 (air-gap, cosmetisch) blijft aanwezig maar is non-blocking in 4.14.5+. App-modules en Discover werken beide volledig. Zie <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
 </blockquote>
 <hr />
 <h2 id="stap-7-casb-active-response-verifieren">Stap 7: CASB Active Response verifiëren<a class="headerlink" href="#stap-7-casb-active-response-verifieren" title="Permanent link">&para;</a></h2>
@@ -3974,7 +3974,7 @@
 <ul>
 <li>[ ] Wazuh Manager v4.14.5 draait op mgmt01</li>
 <li>[ ] Wazuh Indexer (OpenSearch) draait en is gezond</li>
-<li>[ ] Wazuh Dashboard toegankelijk via browser (Discover; app-modules gegate in air-gap)</li>
+<li>[ ] Wazuh Dashboard toegankelijk via browser (Discover + app-modules werken beide; <code>Error checking updates</code> CTI-500 cosmetisch in air-gap, non-blocking)</li>
 <li>[ ] NATS-naar-Wazuh-forwarder consumeert <code>security.alert.&gt;</code> → NDJSON naar <code>wazuh_nats_ingest</code></li>
 <li>[ ] Wazuh-agent 001 (pop01) geregistreerd en actief</li>
 <li>[ ] Aangepaste busregels 100500–100540 gedeployd (<code>local_rules.xml</code>)</li>

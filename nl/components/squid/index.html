@@ -3757,7 +3757,7 @@
 
 
 <h1 id="squid-expliciete-proxy-wpadpac-ssl-bump-url-filtering">Squid — Expliciete proxy, WPAD/PAC, SSL Bump, URL-filtering<a class="headerlink" href="#squid-expliciete-proxy-wpadpac-ssl-bump-url-filtering" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> Het SWG-ingangspoint — elke HTTP/HTTPS-transactie van een BYOD-client passeert Squid voordat die het internet bereikt. Squid voert URL-filtering en HTTPS-decryptie (SSL Bump) uit en orkestreert de ICAP-inspectiepijplijn.<br />
+<p><strong>Rol:</strong> Het SWG entry point — elke HTTP/HTTPS-transactie van een overlay-client passeert Squid voordat die het internet bereikt. Squid voert URL-filtering en HTTPS-decryptie (SSL Bump) uit en orkestreert de ICAP inspection pipeline.<br />
 <strong>Versie:</strong> Squid 6.x (meegeleverd met OPNsense 25.1)<br />
 <strong>Configuratielocatie:</strong> <code>/usr/local/etc/squid/squid.conf</code> (door OPNsense gegenereerd) + <code>/usr/local/etc/squid/pre-auth/*.conf</code> (persistente aangepaste directives)</p>
 <hr />
@@ -3765,7 +3765,7 @@
 <p>Squid draait in <strong>expliciete proxymodus</strong>: clients worden via een PAC-bestand geconfigureerd om hun HTTP/HTTPS-verkeer rechtstreeks naar Squid te sturen op <code>100.70.154.79:3128</code> (de NetBird-overlay-IP van pop01). Dit is het tegenovergestelde van een transparante proxy, waarbij de firewall verkeer stilzwijgend onderschept.</p>
 <p>De keuze voor expliciete modus is niet optioneel — transparante proxy via <code>pf rdr</code> kan geen via WireGuard gerouteerd verkeer op de <code>wt0</code>-interface onderscheppen. Zie <a href="../../findings/wt0-pf-rdr-limitation/">Bevinding: wt0 pf rdr-beperking</a> en <a href="../../decisions/wpad-vs-transparent-proxy/">Beslissing: WPAD/PAC vs. transparante proxy</a>.</p>
 <p><strong>WPAD/PAC-distributie:</strong> Het PAC-bestand wordt gehost door <a href="../caddy/">Caddy</a> op mgmt01 via <code>http://wpad.sandbox.local/wpad.dat</code>. Clients ontdekken dit via een NetBird Custom DNS Zone die <code>wpad.sandbox.local</code> omzet naar de overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows-instellingen → Proxy → "Installatiescript gebruiken".</p>
-<p><strong>SSL Bump:</strong> Squid decrypteert HTTPS-verkeer met een zelfondertekend CA-certificaat (<code>SASE-PoC-CA</code>, geïnstalleerd in de vertrouwensopslag van de client). Dit maakt het mogelijk dat de ICAP-pijplijn HTTPS-inhoud inspecteert. Zonder SSL Bump zien ClamAV en de Python DLP-server alleen versleutelde bytes.</p>
+<p><strong>SSL Bump:</strong> Squid decrypteert HTTPS-verkeer met een zelfondertekend CA-certificaat (<code>SASE-PoC-CA</code>, geïnstalleerd in de trust store van de client). Dit maakt het mogelijk dat de ICAP pipeline HTTPS-inhoud inspecteert. Zonder SSL Bump zien ClamAV en de Python DLP-server alleen versleutelde bytes.</p>
 <p><strong>URL-filtering:</strong> Twee blokkeerlijstmechanismen worden uitgevoerd vóór elke <code>allow</code>-regel (eerste overeenkomst wint):
 1. Handmatige blokkeerlijst: <code>gambling.com</code>, <code>.bet365.com</code>, <code>.pokerstars.com</code>
 2. UT1 Toulouse Remote ACL (<code>dsi.ut-capitole.fr/blacklists</code>) — categorieën: adult, malware, phishing, gambling</p>
@@ -3843,7 +3843,7 @@
 </table>
 <hr />
 <h2 id="nats-integratie">NATS-integratie<a class="headerlink" href="#nats-integratie" title="Permanent link">&para;</a></h2>
-<p>Squid publiceert proxy-toegangsgebeurtenissen naar de NATS event bus op mgmt01. Een Python-producerscript op pop01 tailed <code>access.log</code> en publiceert gestructureerde events naar <code>security.alert.proxy</code>. Events bevatten: bron-IP (overlay), bestemmings-URL, HTTP-methode, responscode, ACL-beslissing en identiteitsgroep (via external_acl). Deze events voeden zowel de <a href="../control-daemon/">Control Daemon</a> (realtime threat scoring) als <a href="../wazuh/">Wazuh</a> SIEM (forensische analyse).</p>
+<p>Squid publiceert proxy access events naar de NATS event bus op mgmt01. Een Python-producerscript op pop01 tailed <code>access.log</code> en publiceert gestructureerde events naar <code>security.alert.proxy</code>. Events bevatten: bron-IP (overlay), bestemmings-URL, HTTP-methode, responscode, ACL-beslissing en identiteitsgroep (via external_acl). Deze events voeden zowel de <a href="../control-daemon/">Control Daemon</a> (realtime threat scoring) als <a href="../wazuh/">Wazuh</a> SIEM (forensische analyse).</p>
 <p>Daarnaast integreert Squid met de <a href="../identity-bridge/">Identity Bridge</a> via <code>external_acl_type</code>: voor elk verzoek bevraagt een helper <code>http://192.168.122.23:&lt;port&gt;/lookup?ip=%SRC</code> om het overlay-IP om te zetten naar een Entra ID-personagroep. Dit maakt identiteitsgebaseerde URL-filtering mogelijk (bijv. Studenten geblokkeerd voor ChatGPT, Docenten toegestaan).</p>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>

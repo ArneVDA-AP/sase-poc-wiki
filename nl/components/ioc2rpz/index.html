@@ -33,7 +33,7 @@
     
     
       
-        <title>ioc2rpz + BIND + Unbound — DNS-bedreigingsinformatie - Security Project Wiki</title>
+        <title>ioc2rpz + BIND + Unbound — DNS-threat intelligence - Security Project Wiki</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#ioc2rpz-bind-unbound-dns-bedreigingsinformatie" class="md-skip">
+        <a href="#ioc2rpz-bind-unbound-dns-threat-intelligence" class="md-skip">
           Ga naar inhoud
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ioc2rpz + BIND + Unbound — DNS-bedreigingsinformatie
+              ioc2rpz + BIND + Unbound — DNS-threat intelligence
             
           </span>
         </div>
@@ -3764,8 +3764,8 @@
 
 
 
-<h1 id="ioc2rpz-bind-unbound-dns-bedreigingsinformatie">ioc2rpz + BIND + Unbound — DNS-bedreigingsinformatie<a class="headerlink" href="#ioc2rpz-bind-unbound-dns-bedreigingsinformatie" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> Proactieve DNS-blokkering van bekende kwaadaardige domeinen. ioc2rpz aggregeert bedreigingsinformatie-feeds (URLhaus, ThreatFox) in een RPZ-zone; BIND fungeert als TSIG-geauthenticeerde tussenpersoon; Unbound dwingt het RPZ-beleid af voor alle DNS-query's van BYOD-clients en DC-LAN-knooppunten.<br />
+<h1 id="ioc2rpz-bind-unbound-dns-threat-intelligence">ioc2rpz + BIND + Unbound — DNS-threat intelligence<a class="headerlink" href="#ioc2rpz-bind-unbound-dns-threat-intelligence" title="Permanent link">&para;</a></h1>
+<p><strong>Rol:</strong> Proactieve DNS-blokkering van bekende kwaadaardige domeinen. ioc2rpz aggregeert threat intelligence-feeds (URLhaus, ThreatFox) in een RPZ-zone; BIND fungeert als TSIG-geauthenticeerde intermediary; Unbound dwingt het RPZ-beleid af voor alle DNS-query's van overlay-clients en DC-LAN-nodes.<br />
 <strong>Status:</strong> ✅ Volledig operationeel — 71.767 RPZ-records uit twee feeds, gevalideerd vanaf drie testpunten.<br />
 <strong>Configuratielocaties:</strong>
 - ioc2rpz: <code>/opt/ioc2rpz/</code> op mgmt01 (Docker)
@@ -3773,7 +3773,7 @@
 - Unbound: <code>/usr/local/etc/unbound.opnsense.d/rpz.conf</code> op pop01</p>
 <hr />
 <h2 id="werking-in-deze-stack">Werking in deze stack<a class="headerlink" href="#werking-in-deze-stack" title="Permanent link">&para;</a></h2>
-<p>DNS-bedreigingsinformatie onderschept zo vroeg mogelijk in de verbindingslevenscyclus — bij naamresolutie. Als een BYOD-client de hostnaam van een bekende malware-C2-server probeert op te zoeken, retourneert Unbound NXDOMAIN voordat er een TCP-verbinding tot stand kan komen, ongeacht poort of protocol.</p>
+<p>DNS-threat intelligence onderschept zo vroeg mogelijk in de verbindingslevenscyclus — bij naamresolutie. Als een client de hostnaam van een bekende malware-C2-server probeert op te zoeken, retourneert Unbound NXDOMAIN voordat er een TCP-verbinding tot stand kan komen, ongeacht poort of protocol.</p>
 <p><strong>Driecomponentenketen:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>URLhaus + ThreatFox (Abuse.ch)
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    ↓ HTTP-pull door ioc2rpz
@@ -3783,11 +3783,11 @@
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ↓ niet-geauthenticeerde AXFR (loopback)
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Unbound (pop01, poort 53, respip-module)
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    ↓ RPZ-afgedwongen responses
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>BYOD-clients + dc01
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Overlay-clients + dc01
 </code></pre></div>
 <p>ioc2rpz is een <strong>zonebron</strong>, geen resolver. Clients vragen ioc2rpz nooit direct. Ze vragen Unbound, dat de RPZ-zone in het geheugen heeft. Geen extra latentie per query.</p>
-<p>BIND bestaat uitsluitend omdat Unbound 1.24.2 TSIG voor zonetransfers niet ondersteunt — een ontbrekende functie gedocumenteerd in GitHub NLnetLabs/unbound issue #336 (open sinds oktober 2020). BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en presenteert de zone aan Unbound via loopback zonder authenticatie. Zie <a href="../../decisions/bind-tsig-intermediary/">Beslissing: BIND als TSIG-tussenpersoon</a>.</p>
-<p><strong>NetBird primaire naamserver:</strong> Om RPZ BYOD-clients op externe domeinen te beschermen, moeten alle DNS-query's via pop01 Unbound verlopen. De primaire naamserverinstelling van NetBird (overeenkomende domeinen: leeg) bereikt dit. Zonder dit gebruiken clients de standaard-DNS van hun adapter voor niet-interne domeinen, waardoor Unbound volledig wordt omzeild. Zie <a href="../../findings/netbird-primary-nameserver/">Bevinding: NetBird primaire naamserver</a>.</p>
+<p>BIND bestaat uitsluitend omdat Unbound 1.24.2 TSIG voor zone transfers niet ondersteunt — een ontbrekende functie gedocumenteerd in GitHub NLnetLabs/unbound issue #336 (open sinds oktober 2020). BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en presenteert de zone aan Unbound via loopback zonder authenticatie. Zie <a href="../../decisions/bind-tsig-intermediary/">Beslissing: BIND als TSIG-intermediary</a>.</p>
+<p><strong>NetBird primaire naamserver:</strong> Om RPZ overlay-clients op externe domeinen te beschermen, moeten alle DNS-query's via pop01 Unbound verlopen. De primaire nameserver-instelling van NetBird (overeenkomende domeinen: leeg) bereikt dit. Zonder dit gebruiken clients de standaard-DNS van hun adapter voor niet-interne domeinen, waardoor Unbound volledig wordt omzeild. Zie <a href="../../findings/netbird-primary-nameserver/">Bevinding: NetBird primaire naamserver</a>.</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <h3 id="ioc2rpz-docker-implementatie">ioc2rpz Docker-implementatie<a class="headerlink" href="#ioc2rpz-docker-implementatie" title="Permanent link">&para;</a></h3>
@@ -3823,7 +3823,7 @@
 <p><strong>Server:</strong> Publiek IP <code>192.168.122.23</code>, NS <code>ns1.ioc2rpz.local</code>, ACL: <code>127.0.0.1, 172.20.0.2</code> (GUI-container), <code>172.20.0.1</code></p>
 <p><strong>TSIG-sleutels:</strong>
 - <code>tkey_mgmt_1</code> — beheersleutel, hmac-md5
-- <code>tkey_rpz_transfer</code> — zonetransfersleutel, hmac-sha256</p>
+- <code>tkey_rpz_transfer</code> — zone transfer key, hmac-sha256</p>
 <p><strong>Bronnen:</strong>
 - <code>urlhaus_rpz</code> — <code>https://urlhaus.abuse.ch/downloads/rpz/</code>
 - <code>threatfox_rpz</code> — <code>https://threatfox.abuse.ch/downloads/threatfox.rpz</code> (let op: niet <code>/downloads/rpz/</code>)</p>
@@ -3843,7 +3843,7 @@
 <p>Plugin installeren: Systeem → Firmware → Plugins → <code>os-bind</code>.</p>
 <p><strong>ACL:</strong> Maak <code>loopback_only</code> (<code>127.0.0.1/32</code>) aan vóór het configureren van algemene instellingen.</p>
 <p><strong>Algemene instellingen:</strong>
-- Luister-IP's: <code>127.0.0.1</code>, Luisterpoort: <code>53530</code>
+- Listen IPs: <code>127.0.0.1</code>, Listen Port: <code>53530</code>
 - DNS-doorstuurservers: (leeg), Recursie: geen, Transfer toestaan: <code>loopback_only</code></p>
 <p><strong>Secundaire zone:</strong>
 - Zonenaam: <code>threat-intel.rpz.sase</code>
@@ -3908,7 +3908,7 @@
 <tr>
 <td><a href="../netbird/">NetBird</a></td>
 <td>afhankelijkheid</td>
-<td>Primaire naamserverinstelling routeert alle client-DNS via pop01 Unbound</td>
+<td>Primaire nameserver-instelling routeert alle client-DNS via pop01 Unbound</td>
 </tr>
 <tr>
 <td><a href="../caddy/">Caddy</a></td>
@@ -3918,7 +3918,7 @@
 <tr>
 <td><a href="../gns3/">GNS3/Topologie</a></td>
 <td>afhankelijkheid</td>
-<td>ioc2rpz→BIND-zonetransfer gebruikt 192.168.122.x (WAN-segment); iptables FORWARD-regels moeten <code>-I FORWARD 1</code> gebruiken</td>
+<td>ioc2rpz→BIND-zone transfer gebruikt 192.168.122.x (WAN-segment); iptables FORWARD-regels moeten <code>-I FORWARD 1</code> gebruiken</td>
 </tr>
 <tr>
 <td><a href="../suricata/">Suricata</a></td>
@@ -3929,7 +3929,7 @@
 </table>
 <hr />
 <h2 id="nats-integratie">NATS-integratie<a class="headerlink" href="#nats-integratie" title="Permanent link">&para;</a></h2>
-<p>DNS RPZ-blokkeergebeurtenissen worden gepubliceerd naar de NATS event bus via <code>security.alert.dns</code>. Wanneer Unbound's RPZ-module NXDOMAIN retourneert voor een threat-intelligence-domein, wordt het event gepubliceerd met: opgevraagd domein, client-IP en de RPZ-zone die overeenkomt. Deze events dragen bij aan de per-peer threat score — herhaalde RPZ-hits van een enkele client kunnen duiden op malware die probeert C2-infrastructuur te bereiken, wat quarantaine door de <a href="../control-daemon/">Control Daemon</a> kan activeren.</p>
+<p>DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via <code>security.alert.dns</code>. Wanneer Unbound's RPZ-module NXDOMAIN retourneert voor een threat-intelligence-domein, wordt het event gepubliceerd met: opgevraagd domein, client-IP en de RPZ-zone die overeenkomt. Deze events dragen bij aan de per-peer threat score — herhaalde RPZ-hits van een enkele client kunnen duiden op malware die probeert C2-infrastructuur te bereiken, wat quarantaine door de <a href="../control-daemon/">Control Daemon</a> kan activeren.</p>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
 <p><strong>iptables FORWARD-regelvolgorde</strong> — gebruik bij het toevoegen van poortdoorsturingen voor GUI-toegang op de GNS3-host altijd <code>-I FORWARD 1</code>. Toevoegen (<code>-A</code>) plaatst de regel na de REJECT-keten van libvirt. Zie <a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a>.</p>
@@ -3941,9 +3941,9 @@
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../overview/architecture/">Architectuuroverzicht</a></li>
-<li><a href="../../concepts/rpz/">Concept: RPZ / DNS-bedreigingsinformatie</a></li>
+<li><a href="../../concepts/rpz/">Concept: RPZ / DNS-threat intelligence</a></li>
 <li><a href="../../decisions/ioc2rpz-vs-unbound-native/">Beslissing: ioc2rpz vs. Unbound native</a></li>
-<li><a href="../../decisions/bind-tsig-intermediary/">Beslissing: BIND als TSIG-tussenpersoon</a></li>
+<li><a href="../../decisions/bind-tsig-intermediary/">Beslissing: BIND als TSIG-intermediary</a></li>
 <li><a href="../../findings/unbound-no-tsig/">Bevinding: Unbound geen TSIG</a></li>
 <li><a href="../../findings/unbound-config-path/">Bevinding: Unbound-configuratiepad</a></li>
 <li><a href="../../findings/ioc2rpz-gui-js-bug/">Bevinding: ioc2rpz GUI JS-bug</a></li>

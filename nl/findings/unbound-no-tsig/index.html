@@ -33,7 +33,7 @@
     
     
       
-        <title>Bevinding: Unbound 1.24.2 ondersteunt geen TSIG voor zonetransfers - Security Project Wiki</title>
+        <title>Bevinding: Unbound 1.24.2 ondersteunt geen TSIG voor zone transfers - Security Project Wiki</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bevinding-unbound-1242-ondersteunt-geen-tsig-voor-zonetransfers" class="md-skip">
+        <a href="#bevinding-unbound-1242-ondersteunt-geen-tsig-voor-zone-transfers" class="md-skip">
           Ga naar inhoud
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Bevinding: Unbound 1.24.2 ondersteunt geen TSIG voor zonetransfers
+              Bevinding: Unbound 1.24.2 ondersteunt geen TSIG voor zone transfers
             
           </span>
         </div>
@@ -3556,21 +3556,21 @@
 
 
 
-<h1 id="bevinding-unbound-1242-ondersteunt-geen-tsig-voor-zonetransfers">Bevinding: Unbound 1.24.2 ondersteunt geen TSIG voor zonetransfers<a class="headerlink" href="#bevinding-unbound-1242-ondersteunt-geen-tsig-voor-zonetransfers" title="Permanent link">&para;</a></h1>
+<h1 id="bevinding-unbound-1242-ondersteunt-geen-tsig-voor-zone-transfers">Bevinding: Unbound 1.24.2 ondersteunt geen TSIG voor zone transfers<a class="headerlink" href="#bevinding-unbound-1242-ondersteunt-geen-tsig-voor-zone-transfers" title="Permanent link">&para;</a></h1>
 <p><strong>Component:</strong> <a href="../../components/ioc2rpz/">ioc2rpz</a><br />
 <strong>Ernst:</strong> Blokker</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>Een poging om Unbound te configureren voor het rechtstreeks overdragen van de RPZ-zone van ioc2rpz met TSIG-authenticatie mislukte. Het <code>rpz:</code>-blok van Unbound accepteert een <code>primary:</code>-adres maar heeft geen optie voor het opgeven van een TSIG-sleutel.</p>
-<p>ioc2rpz vereist TSIG-authenticatie voor autorisatie van zonetransfer. Zonder dit worden AXFR-verzoeken door ioc2rpz geweigerd.</p>
+<p>ioc2rpz vereist TSIG-authenticatie voor autorisatie van zone transfer. Zonder dit worden AXFR-verzoeken door ioc2rpz geweigerd.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>Unbound 1.24.2 implementeert TSIG niet voor inkomende zonetransfers (<code>rpz: primary:</code>-configuratie). Dit is een gedocumenteerde ontbrekende functie in NLnetLabs/unbound GitHub issue #336, open sinds oktober 2020.</p>
+<p>Unbound 1.24.2 implementeert TSIG niet voor inkomende zone transfers (<code>rpz: primary:</code>-configuratie). Dit is een gedocumenteerde ontbrekende functie in NLnetLabs/unbound GitHub issue #336, open sinds oktober 2020.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
-<p>BIND 9.20 (OPNsense <code>os-bind</code>-plugin) invoegen als tussenpersoon. BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en presenteert de zone aan Unbound via loopback op <code>127.0.0.1:53530</code> zonder authenticatie.</p>
-<p>Zie <a href="../../decisions/bind-tsig-intermediary/">Beslissing: BIND als TSIG-tussenpersoon</a>.</p>
+<p>BIND 9.20 (OPNsense <code>os-bind</code>-plugin) invoegen als intermediary. BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en presenteert de zone aan Unbound via loopback op <code>127.0.0.1:53530</code> zonder authenticatie.</p>
+<p>Zie <a href="../../decisions/bind-tsig-intermediary/">Beslissing: BIND als TSIG-intermediary</a>.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Controleer altijd de huidige functieondersteuning in release notes vóór het ontwerpen van een transferketen — ontbrekende functies in langlopende open issues zijn mogelijk niet opgelost binnen uw tijdlijn</li>
-<li>BIND is een goed ondersteund secundair zonemechanisme; het gebruiken als TSIG-capable tussenpersoon is een schone workaround met minimale overhead</li>
+<li>BIND is een goed ondersteund secundair zonemechanisme; het gebruiken als TSIG-capable intermediary is een schone workaround met minimale overhead</li>
 <li>NLnetLabs/unbound issue #336 is de gezaghebbende referentie als deze beperking toekomstige projecten beïnvloedt</li>
 </ul>
 
