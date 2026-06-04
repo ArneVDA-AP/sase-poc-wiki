@@ -267,7 +267,7 @@ Description:  Internet exit node
 Groups:       SASE-MobileUsers
 ```
 
-This routes all non-overlay traffic from BYOD clients through pop01 — required for Squid to inspect the traffic.
+This routes all non-overlay traffic from overlay clients through pop01 — required for Squid to inspect the traffic.
 
 ---
 

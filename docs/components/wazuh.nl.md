@@ -19,7 +19,7 @@ Voor CASB Laag 2 pollt de `o365_producer` de Office 365 Management Activity API 
 
 ## Configuratie
 
-- **Dashboard:** `192.168.122.23:5601` (poort 443 bezet door NetBird Caddy). Discover-interface werkt volledig. App API-sectie onbereikbaar door air-gap-verbindingscontrole. Zie [Bevinding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
+- **Dashboard:** `192.168.122.23:5601` (poort 443 bezet door NetBird Caddy). Volledig operationeel (opgelost 2 juni 2026). `Error checking updates` CTI-500 blijft aanwezig in air-gap maar is cosmetisch en non-blocking in 4.14.5+. Zie [Bevinding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
 - **pop01-agent:** Ingeschreven als ID 001 Active. Levert host-feeds (audit, configd, filter, kernel, pkg). Suricata/Squid/c-icap/Unbound uitgesloten van agent-feeds — deze hebben NATS-producers.
 - **Agent-instellingen:** `intrusion_detection_events=false` + `active_response=false` (dubbel-ingest-bescherming + handhavingsbescherming)
 - **Rule-ID-overzicht:**
@@ -39,7 +39,7 @@ Voor CASB Laag 2 pollt de `o365_producer` de Office 365 Management Activity API 
 ## Bekende problemen / valkuilen
 
 - **glibc x86-64-v2-vereiste:** Wazuh indexer vereist Haswell+ CPU-features. Het standaard QEMU `kvm64` CPU-model crasht. Oplossing: stel het QEMU CPU-model in op `host` in de GNS3-node-instellingen. Zie [Bevinding: Wazuh CPU glibc](../findings/wazuh-cpu-glibc.md).
-- **Dashboard air-gate:** De dashboard-app (Security-Events-module, Agents-tab) wordt geblokkeerd doordat de internet-afhankelijke `version/check` van de manager HTTP 500 retourneert in de air-gapped sandbox, wat cascadeert naar een "Status: Offline"-bepaling. De manager-API zelf is gezond (authenticate/info/stats geven alle 200). Discover werkt volledig. Zie [Bevinding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
+- **Dashboard air-gate (opgelost 2 juni 2026):** De werkelijke oorzaak was een lege manager-UUID in `global.db` (gewist door `docker compose down -v`), niet de air-gap CTI-controle. Opgelost via in-place bump naar 4.14.5 (zonder `-v`), waardoor de UUID bewaard bleef. De `Error checking updates` CTI-500 blijft (air-gap) maar is non-blocking in 4.14.5+. Gebruik nooit `down -v` voor Wazuh versie-werk. Zie [Bevinding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
 - **jq-afhankelijkheid:** Active Response-scripts vereisen jq. Geinstalleerd via `install_deps.sh` entrypoint (V39).
 
 ## Gerelateerd

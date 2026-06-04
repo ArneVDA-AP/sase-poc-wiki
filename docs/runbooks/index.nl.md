@@ -36,7 +36,7 @@ Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aa
 | 4 | [Malware & DLP](04-malware-dlp.nl.md) | pop01 + mgmt01 | Operationeel | ClamAV/c-icap RESPMOD, YARA-regels, Python DLP REQMOD |
 | 5 | [IDS](05-ids.nl.md) | pop01 | Operationeel | Suricata op WAN+LAN, Hyperscan, 79.620+ regels, drop/alert-beleid |
 | 6 | [DNS Threat Intel](06-dns-threat-intel.nl.md) | mgmt01 + pop01 | Operationeel | ioc2rpz-feeds, BIND TSIG-intermediair, Unbound RPZ, 71.767 records |
-| 7 | [Toegangsbeleid](07-access-policy.nl.md) | Entra ID + NetBird | Gepland | Conditional Access (5 beleidsregels), posturecontroles, validatiescenario's |
+| 7 | [Toegangsbeleid](07-access-policy.nl.md) | Entra ID + NetBird | Gepland | Conditional Access (5 policies), posturecontroles, validatiescenario's |
 | 8 | [GroupSync](08-groupsync.nl.md) | Entra ID + Zitadel + NetBird | Operationeel | JWT group sync, Entra ID token config, Zitadel Actions |
 | 9 | [Identity Bridge](09-identity-bridge.nl.md) | mgmt01 + pop01 | Operationeel | FastAPI overlay-IP → persona-groep, Squid external_acl |
 | 10 | [NATS JetStream](10-nats-jetstream.nl.md) | mgmt01 + pop01 | Operationeel | Event bus, producers, Control Daemon, Redis |

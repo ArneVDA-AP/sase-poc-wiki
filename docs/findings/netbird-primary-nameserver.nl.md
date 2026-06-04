@@ -1,12 +1,12 @@
 ---
-title: "Bevinding: NetBird primaire naamserver vereist voor externe RPZ-dekking"
+title: "Bevinding: NetBird primaire nameserver vereist voor externe RPZ-dekking"
 tags: [finding, network, ioc2rpz, workaround]
 ---
 
-# Bevinding: NetBird primaire naamserver vereist voor externe RPZ-dekking
+# Bevinding: NetBird primaire nameserver vereist voor externe RPZ-dekking
 
 **Component:** [ioc2rpz](../components/ioc2rpz.md), [NetBird](../components/netbird.md)  
-**Ernst:** Blokker (voor DNS-bedreigingsinformatie)
+**Ernst:** Blokker (voor DNS threat intelligence)
 
 ## Wat er gebeurde
 
@@ -18,10 +18,10 @@ De Custom DNS Zone van NetBird (`sandbox.local → pop01`) routeert alleen `*.sa
 
 ## Oplossing / workaround
 
-In NetBird Dashboard → DNS: configureer een primaire naamserver:
+In NetBird Dashboard → DNS: configureer een primaire nameserver:
 
 ```
-Primaire naamserver: pop01 (100.70.154.79)
+Primaire nameserver: pop01 (100.70.154.79)
 Overeenkomende domeinen: (leeg)
 ```
 
@@ -33,5 +33,5 @@ Na toepassen: bevestigd via `nslookup testentry.rpz.urlhaus.abuse.ch` op mobile0
 
 - NetBird Custom DNS Zones beïnvloeden alleen query's die overeenkomen met het opgegeven domeinachtervoegsel
 - Om RPZ te beschermen tegen externe bedreigingen, moet al het DNS-verkeer (niet alleen intern) verlopen via de afhandelende resolver
-- De instelling Primaire naamserver met lege overeenkomende domeinen is het NetBird-mechanisme hiervoor — het vervangt de adapter-DNS van de client voor alle query's zolang de tunnel actief is
+- De instelling Primaire nameserver met lege overeenkomende domeinen is het NetBird-mechanisme hiervoor — het vervangt de adapter-DNS van de client voor alle query's zolang de tunnel actief is
 - Dit is architectureel equivalent aan het dwingen van alle DNS via een bedrijfsresolver in een traditionele VPN-opstelling

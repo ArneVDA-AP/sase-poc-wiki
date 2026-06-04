@@ -17,7 +17,7 @@ WPAD/PAC is het mechanisme dat elke browseraanvraag op mobile01 via Squid op pop
 4. Browser voert `FindProxyForURL()` uit voor elke URL → geeft `PROXY 100.70.154.79:3128` terug (Squid)
 5. Al het niet-interne verkeer stroomt door Squid voor inspectie
 
-**Waarom WPAD/PAC en geen transparante proxy:** Transparante proxy via `pf rdr` kan WireGuard-gerouteerd verkeer op de `wt0`-interface niet onderscheppen — WireGuard is Laag 3 en `pf rdr` ziet vanuit het perspectief van de kernel geen inkomend verkeer op die interface. WPAD/PAC expliciete proxy is geen tijdelijke oplossing; het is het juiste patroon voor overlay-gebaseerde BYOD. Zie [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md).
+**Waarom WPAD/PAC en geen transparante proxy:** Transparante proxy via `pf rdr` kan WireGuard-gerouteerd verkeer op de `wt0`-interface niet onderscheppen — WireGuard is Laag 3 en `pf rdr` ziet vanuit het perspectief van de kernel geen inkomend verkeer op die interface. WPAD/PAC expliciete proxy is geen tijdelijke oplossing; het is het juiste patroon voor overlay-gebaseerde clients. Zie [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md).
 
 **Expliciet vs transparant:**
 - Expliciete proxy: client kent het proxyadres en stuurt aanvragen er direct naartoe (HTTP `GET http://...` of HTTPS `CONNECT` gevolgd door de aanvraag)
@@ -41,7 +41,7 @@ Met expliciete proxymodus kan Squid ook HTTPS verwerken via `CONNECT`-tunnel (en
 
 **WPAD-autodiscovery werkt niet met NetBird NRPT** — NetBird stelt het zoekdomein `sandbox.local` in via NRPT (Name Resolution Policy Table) op uitsluitend de `wt0`-adapter, niet globaal. `Get-DnsClientGlobalSetting` op mobile01 toont een lege `SuffixSearchList`. Omdat Windows de globale suffixlijst gebruikt voor WPAD-autodiscovery, wordt autodiscovery niet geactiveerd voor het zoekdomein op adapterniveau van NetBird.
 
-**mobile01 is handmatig geconfigureerd** — Windows-instellingen → Proxy → "InstallatieScript gebruiken" → URL: `http://wpad.sandbox.local/wpad.dat`. In een productie-uitrol bij Atlascollege zou WPAD worden gedistribueerd via **DHCP-optie 252**, die de PAC-URL rechtstreeks naar clients pusht zonder DNS-afhankelijkheid of gebruikersactie. Alternatieven zijn Groepsbeleid of Intune MDM-beleid.
+**mobile01 is handmatig geconfigureerd** — Windows-instellingen → Proxy → "InstallatieScript gebruiken" → URL: `http://wpad.sandbox.local/wpad.dat`. In een productie-uitrol bij Atlascollege zou WPAD worden gedistribueerd via **DHCP-optie 252**, die de PAC-URL rechtstreeks naar clients pusht zonder DNS-afhankelijkheid of gebruikersactie. Alternatieven zijn Group Policy of Intune MDM-beleid.
 
 ## Bronnen
 

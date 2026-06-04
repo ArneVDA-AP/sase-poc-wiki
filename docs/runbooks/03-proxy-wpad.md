@@ -173,7 +173,7 @@ nslookup wpad.sandbox.local
 
 ## Step 7: Verify the ACL policy for proxy/DNS reachability
 
-Under the V34 persona model (see [Component: NetBird](../components/netbird.md)) a single allow-policy carries all connectivity: **`Personas-to-Core-Services`** — sources `Studenten`/`Docenten`/`Admins` → destination `Core-Services` (pop01 + mgmt01), protocol TCP 3128. This lets every BYOD persona peer reach the pop01 Squid proxy.
+Under the V34 persona model (see [Component: NetBird](../components/netbird.md)) a single allow-policy carries all connectivity: **`Personas-to-Core-Services`** — sources `Studenten`/`Docenten`/`Admins` → destination `Core-Services` (pop01 + mgmt01), protocol TCP 3128. This lets every persona peer (Studenten/Docenten/Admins) reach the pop01 Squid proxy.
 
 > **Superseded:** earlier builds used separate `Admin-Infrastructure`, `Mobile-to-Services`, and `Datacenter Access` policies on `SASE-*` groups. Those policies and groups were removed in the V34 migration — do not recreate them.
 

@@ -21,7 +21,7 @@ De server ontvangt de volledige HTTP-verzoekbody, parseert `multipart/form-data`
 - **BSN** (Nederlands burgerservicenummer) — 11-proefvalidatie
 - **AWS-toegangssleutels** — regexpatroon `AKIA[A-Z0-9]{16}`
 
-Als een overeenkomst boven de drempelwaarde wordt gevonden, retourneert de server een ICAP-blokkeerrespons. Squid toont een opgemaakte DLP-blokpagina aan de client (onderscheiden van de generieke Squid 403-pagina).
+Als een overeenkomst boven de threshold wordt gevonden, retourneert de server een ICAP-blokkeerrespons. Squid toont een opgemaakte DLP-blokpagina aan de client (onderscheiden van de generieke Squid 403-pagina).
 
 **Waarom een aparte server voor upload-DLP:** De `virus_scan` c-icap-service van ClamAV parseert `multipart/form-data` of URL-gecodeerde POST-bodies niet correct. De c-icap-ontwikkelaar bevestigde deze beperking. POST-gegevens worden als onbewerkte bytes doorgegeven, waardoor DLP-patroonherkenning voor geüploade inhoud onbetrouwbaar is. Zie [Beslissing: Twee-laags DLP](../decisions/two-layer-dlp.md).
 
@@ -94,7 +94,7 @@ Gebruik `printf`, niet `echo -e` — FreeBSD's `/bin/sh` interpreteert `-e` niet
 
 ## NATS-integratie
 
-De Python DLP ICAP-server publiceert upload-inspectiegebeurtenissen naar `security.alert.dlp` op de NATS event bus. Wanneer een DLP-patroonovereenkomst wordt gevonden (Luhn-creditcard, IBAN mod-97, BSN 11-proef, AWS-sleutel), bevat het event: patroontype, aantal overeenkomsten, bron-IP, bestemmings-URL en HTTP-methode. DLP-events dragen bij aan de per-peer threat score. Aangezien de Python DLP-server al op mgmt01 draait (dezelfde host als NATS), publiceert deze rechtstreeks zonder cross-host-connectiviteit.
+De Python DLP ICAP-server publiceert upload-inspection-events naar `security.alert.dlp` op de NATS event bus. Wanneer een DLP-patroonovereenkomst wordt gevonden (Luhn-creditcard, IBAN mod-97, BSN 11-proef, AWS-sleutel), bevat het event: patroontype, aantal overeenkomsten, bron-IP, bestemmings-URL en HTTP-methode. DLP-events dragen bij aan de per-peer threat score. Aangezien de Python DLP-server al op mgmt01 draait (dezelfde host als NATS), publiceert deze rechtstreeks zonder cross-host-connectiviteit.
 
 ---
 
@@ -106,7 +106,7 @@ De Python DLP ICAP-server publiceert upload-inspectiegebeurtenissen naar `securi
 
 **Containerlogs in Docker stdout** — voor Wazuh SIEM-integratie, voeg een Docker-logging-driver toe (syslog gericht op Wazuh) of configureer de Wazuh-agent op mgmt01 om containerlogs te bewaken. Dit is een geplande taak voor Fase 4.
 
-**Algoritmische validators hebben drempelwaarden** — één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas drempelwaarden aan in `dlp_server.py` op basis van de gebruikssituatie.
+**Algoritmische validators hebben thresholdn** — één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas thresholdn aan in `dlp_server.py` op basis van de gebruikssituatie.
 
 **Code review — 10 problemen geïdentificeerd, 3 kritieke fixes toegepast:**
 - **OOM-risico:** De oorspronkelijke code had geen body-groottelimiet — een grote upload kon het containergeheugen uitputten. Fix: uploads > 10 MB worden doorgelaten (fail-open) zonder scanning.

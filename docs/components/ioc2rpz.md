@@ -5,7 +5,7 @@ tags: [ioc2rpz, dns, rpz, bind, unbound, docker, opnsense, sase, network]
 
 # ioc2rpz + BIND + Unbound — DNS Threat Intelligence
 
-**Role:** Proactive DNS-level blocking of known-malicious domains. ioc2rpz aggregates threat intelligence feeds (URLhaus, ThreatFox) into an RPZ zone; BIND acts as a TSIG-authenticated intermediary; Unbound enforces the RPZ policy for all DNS queries from BYOD clients and DC-LAN nodes.  
+**Role:** Proactive DNS-level blocking of known-malicious domains. ioc2rpz aggregates threat intelligence feeds (URLhaus, ThreatFox) into an RPZ zone; BIND acts as a TSIG-authenticated intermediary; Unbound enforces the RPZ policy for all DNS queries from overlay clients and DC-LAN nodes.  
 **Status:** ✅ Fully operational — 71 767 RPZ records from two feeds, validated from three test points.  
 **Config locations:**
 - ioc2rpz: `/opt/ioc2rpz/` on mgmt01 (Docker)
@@ -16,7 +16,7 @@ tags: [ioc2rpz, dns, rpz, bind, unbound, docker, opnsense, sase, network]
 
 ## How it works in this stack
 
-DNS threat intelligence intercepts at the earliest possible point in the connection lifecycle — name resolution. If a BYOD client tries to look up the hostname of a known malware C2 server, Unbound returns NXDOMAIN before any TCP connection can be established, regardless of port or protocol.
+DNS threat intelligence intercepts at the earliest possible point in the connection lifecycle — name resolution. If a client tries to look up the hostname of a known malware C2 server, Unbound returns NXDOMAIN before any TCP connection can be established, regardless of port or protocol.
 
 **Three-component chain:**
 
@@ -29,14 +29,14 @@ BIND 9.20 (pop01, os-bind, 127.0.0.1:53530, secondary zone)
     ↓ unauthenticated AXFR (loopback)
 Unbound (pop01, port 53, respip module)
     ↓ RPZ-enforced responses
-BYOD clients + dc01
+Overlay clients + dc01
 ```
 
 ioc2rpz is a **zone source**, not a resolver. Clients never query ioc2rpz directly. They query Unbound, which has the RPZ zone loaded in memory. No extra latency per query.
 
 BIND exists solely because Unbound 1.24.2 does not support TSIG for zone transfers — a missing feature documented in GitHub NLnetLabs/unbound issue #336 (open since October 2020). BIND handles the TSIG-authenticated AXFR from ioc2rpz and presents the zone to Unbound via loopback without authentication. See [Decision: BIND as TSIG intermediary](../decisions/bind-tsig-intermediary.md).
 
-**NetBird primary nameserver:** For RPZ to protect BYOD clients on external domains, all their DNS queries must route through pop01 Unbound. NetBird's primary nameserver setting (match domains: empty) achieves this. Without it, clients use their adapter's default DNS for non-internal domains, bypassing Unbound entirely. See [Finding: NetBird primary nameserver](../findings/netbird-primary-nameserver.md).
+**NetBird primary nameserver:** For RPZ to protect overlay clients on external domains, all their DNS queries must route through pop01 Unbound. NetBird's primary nameserver setting (match domains: empty) achieves this. Without it, clients use their adapter's default DNS for non-internal domains, bypassing Unbound entirely. See [Finding: NetBird primary nameserver](../findings/netbird-primary-nameserver.md).
 
 ---
 

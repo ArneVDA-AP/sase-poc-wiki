@@ -3779,7 +3779,7 @@
 <td><code>site01</code></td>
 </tr>
 <tr>
-<td>Ubuntu 24.04</td>
+<td>Tiny11 (Windows 11)</td>
 <td>QEMU (QCOW2)</td>
 <td><code>sitepc01</code></td>
 </tr>
@@ -3794,7 +3794,7 @@
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>Switch-LAN   ──── pop01  vtnet1     (LAN naar DC-LAN)
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>Switch-LAN   ──── dc01   ens3       (DC-LAN)
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>Switch-Site  ──── site01 eth1       (Site-LAN)
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>Switch-Site  ──── sitepc01 ens3     (Site-LAN)
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>Switch-Site  ──── sitepc01 Ethernet (Site-LAN)
 </code></pre></div>
 <p><strong>Verificatie:</strong> Alle nodes verschijnen op het canvas met de juiste bekabeling. Klik met rechts → Start elke node; controleer consoletoegang.</p>
 <hr />
@@ -3840,11 +3840,11 @@
 <td>SD-WAN-gateway</td>
 </tr>
 <tr>
-<td>sitepc01 (Ubuntu)</td>
+<td>sitepc01 (Tiny11)</td>
 <td>4096 MB</td>
 <td>2</td>
 <td>1</td>
-<td>Nog geen OS geïnstalleerd</td>
+<td>Tiny11 / Windows 11 — overlay-ingeschreven (docent1)</td>
 </tr>
 </tbody>
 </table>
@@ -3906,7 +3906,7 @@ Zie <a href="../../findings/suricata-netmap-virtio/">Finding: Suricata Netmap/vi
 <td>Site-LAN</td>
 <td><code>172.16.10.0/24</code></td>
 <td><code>172.16.10.1</code> (site01 eth1)</td>
-<td>sitepc01: <code>172.16.10.50</code></td>
+<td>sitepc01: <code>172.16.10.10</code></td>
 </tr>
 </tbody>
 </table>

@@ -139,7 +139,7 @@ ACL:        127.0.0.1, 172.20.0.2 (GUI-container), 172.20.0.1
 **TSIG-sleutels (maak er twee aan):**
 ```
 tkey_mgmt_1        — beheersleutel, hmac-md5
-tkey_rpz_transfer  — zonetransfersleutel, hmac-sha256
+tkey_rpz_transfer  — zone transfer key, hmac-sha256
 ```
 
 **Bronnen (Threat Feeds):**
@@ -162,7 +162,7 @@ Notify:     192.168.122.13  (pop01)
 AXFR-tijd:  3600
 ```
 
-> **Valkuil: TSIG-sleutel MOET gekoppeld zijn aan de zone.** Een niet-gekoppelde sleutel (leeg `tkeys`-veld in de configuratie) veroorzaakt zonetransferafwijzing met "tsig indicates error". Controleer in de GUI of de zone de juiste TSIG-sleutel toont, klik dan op Publish.
+> **Valkuil: TSIG-sleutel MOET gekoppeld zijn aan de zone.** Een niet-gekoppelde sleutel (leeg `tkeys`-veld in de configuratie) veroorzaakt zone transfer-afwijzing met "tsig indicates error". Controleer in de GUI of de zone de juiste TSIG-sleutel toont, klik dan op Publish.
 
 Na Publish, verwachte uitvoer:
 ```
@@ -190,12 +190,12 @@ Navigeer weg en terug (GUI-dropdown quirk).
 **Algemene instellingen:**
 ```
 BIND Daemon inschakelen: aangevinkt
-Luister-IP's:           127.0.0.1
-Luisterpoort:           53530
+Listen IPs:           127.0.0.1
+Listen Port:           53530
 DNS Forwarders:         leeg
 Recursie:               geen ACL (uit)
 DNSSec Validatie:       nee
-Overdracht toestaan:    loopback_only
+Allow Transfer:    loopback_only
 ```
 
 **Secundaire zone:** Services → BIND → Secondary Zones:
@@ -212,7 +212,7 @@ Query toestaan:     loopback_only
 
 Zie [Beslissing: BIND als TSIG-intermediair](../decisions/bind-tsig-intermediary.nl.md) waarom BIND nodig is (Unbound 1.24.2 mist TSIG-ondersteuning).
 
-**Controleer zonetransfer:**
+**Controleer zone transfer:**
 
 ```bash
 pluginctl bind status
@@ -280,7 +280,7 @@ De OPNsense WebUI toont "The configuration contains manual overwrites" — dit i
 
 ## Stap 7: NetBird DNS primaire nameserver configureren
 
-Deze stap is een **vereiste voor BYOD RPZ-bescherming**. Zonder dit omzeilen externe queries van mobile01 Unbound volledig.
+Deze stap is een **vereiste voor client RPZ-bescherming**. Zonder dit omzeilen externe queries van mobile01 Unbound volledig.
 
 NetBird Dashboard → DNS → Nameservers → Add:
 

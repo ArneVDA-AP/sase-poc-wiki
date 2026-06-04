@@ -3940,7 +3940,7 @@
 <td><strong>Site-LAN</strong></td>
 <td><code>172.16.10.0/24</code></td>
 <td>Remote site segment</td>
-<td>site01 (eth1 = gateway <code>.1</code>), sitepc01 (<code>.50</code>, no OS)</td>
+<td>site01 (eth1 = gateway <code>.1</code>), sitepc01 (<code>.10</code>, Windows 11)</td>
 </tr>
 <tr>
 <td><strong>NetBird Overlay</strong></td>
@@ -4186,8 +4186,8 @@
 <tr>
 <td>M365 Activity API + Wazuh AR</td>
 <td><a href="../../components/wazuh/">wazuh.md</a></td>
-<td>CASB Layer 2 — API-mode enforcement</td>
-<td>✅ Operational</td>
+<td>CASB Layer 2 — Office 365 Management Activity API detection</td>
+<td>✅ Detection operational; AR enforcement detect-only (live revoke pending)</td>
 </tr>
 </tbody>
 </table>
@@ -4258,18 +4258,19 @@
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  ├── Python DLP (mgmt01)           → security.alert.dlp
 <a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  ├── c-icap/ClamAV (pop01)         → security.alert.malware
 <a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  ├── DNS-RPZ (pop01)               → security.alert.dns
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  └── Identity Bridge (mgmt01)      → identity.login / identity.group_change
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>                    │
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>                    ▼
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>            NATS JetStream (mgmt01)
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>                    │
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>          ┌─────────┴─────────┐
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>          ▼                   ▼
-<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>    Control Daemon         Wazuh SIEM
-<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    (real-time)            (forensic)
-<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>    - threat scoring       - custom rules (100500-100600)
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    - quarantine/restore   - M365 Active Response
-<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>    - ENFORCE gate         - Discover dashboard
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  ├── O365 producer (mgmt01)        → security.alert.casb
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  └── Identity Bridge (mgmt01)      → identity.peer.connected / .peer.disconnected / .multi_persona
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>                    │
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>                    ▼
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>            NATS JetStream (mgmt01)
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>                    │
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>          ┌─────────┴─────────┐
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>          ▼                   ▼
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    Control Daemon         Wazuh SIEM
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>    (real-time)            (forensic)
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    - threat scoring       - custom rules (100500-100600)
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>    - quarantine/restore   - M365 Active Response
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>    - ENFORCE gate         - Discover dashboard
 </code></pre></div>
 <p>The dual-write architecture ensures detection events are available for both real-time response (control daemon) and forensic investigation (Wazuh) independently. Neither path depends on the other.</p>
 <hr />
@@ -4307,7 +4308,7 @@
 </table>
 <p>Gates are complementary, not redundant. Gate 1 evaluates <em>who</em> the user is (MFA, sign-in risk, geo-location). Gate 2 evaluates <em>what</em> the device is (OS version, AV status, firewall). Gate 3 evaluates <em>what</em> is being transferred (malware, sensitive data, blocked domains). No single gate can substitute for the others.</p>
 <hr />
-<p><strong>DC-LAN inspection gap:</strong> dc01 uses pop01 as its default gateway (<code>10.0.0.1</code>) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does <strong>not</strong> pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not BYOD browsers.</p>
+<p><strong>DC-LAN inspection gap:</strong> dc01 uses pop01 as its default gateway (<code>10.0.0.1</code>) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does <strong>not</strong> pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not user browsers.</p>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>

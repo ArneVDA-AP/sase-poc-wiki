@@ -10,7 +10,7 @@ tags: [decision, nats, jetstream, authentication]
 
 ## Context
 
-NATS requires an authentication model to secure access to JetStream streams and consumers. The Control Daemon and the NATS→Wazuh forwarder consume from JetStream, requiring `$JS.API.>` access for consumer management and message acknowledgment, while producers (the detection components and the Identity Bridge) only publish to their own subjects plus `_INBOX.>`. Two authentication models exist in NATS: the simpler `authorization{}` block (single-account) and the more capable `accounts{}` block (multi-account with explicit permission grants).
+NATS requires an authentication model to secure access to JetStream streams and consumers. The Control Daemon and the NATS→Wazuh forwarder consume from JetStream, requiring `$JS.API.>` and `$JS.ACK.>` access for consumer management and message acknowledgment, while producers (the detection components and the Identity Bridge) only publish to their own subjects plus `_INBOX.>`. Two authentication models exist in NATS: the simpler `authorization{}` block (single-account) and the more capable `accounts{}` block (multi-account with explicit permission grants).
 
 ## Options considered
 

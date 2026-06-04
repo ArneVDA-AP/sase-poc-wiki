@@ -2590,10 +2590,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-5-casb-layer-2-configureren-m365-api-integratie" class="md-nav__link">
+  <a href="#stap-5-casb-laag-2-configureren-m365-api-integratie" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 5: CASB Layer 2 configureren — M365 API-integratie
+        Stap 5: CASB Laag 2 configureren — M365 API-integratie
       
     </span>
   </a>
@@ -3592,10 +3592,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-5-casb-layer-2-configureren-m365-api-integratie" class="md-nav__link">
+  <a href="#stap-5-casb-laag-2-configureren-m365-api-integratie" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 5: CASB Layer 2 configureren — M365 API-integratie
+        Stap 5: CASB Laag 2 configureren — M365 API-integratie
       
     </span>
   </a>
@@ -3744,7 +3744,7 @@
 </tbody>
 </table>
 <blockquote>
-<p><strong>Valkuil: CPU-piek bij opstarten.</strong> De Wazuh Manager en Indexer veroorzaken aanzienlijke CPU-belasting tijdens de initiële opstart door glibc-compatibiliteitsproblemen in de Docker-omgeving. Dit is een bekend probleem — wacht 2-3 minuten tot de stack stabiliseert. Zie <a href="../../findings/wazuh-cpu-glibc/">Finding: Wazuh CPU glibc</a>.</p>
+<p><strong>Valkuil: Indexer vereist host-CPU-passthrough.</strong> De Wazuh Indexer vereist glibc x86-64-v2 CPU-features; het standaard QEMU <code>kvm64</code>-model crasht hem met illegal-instruction-fouten. Stel het GNS3-node-CPU-model in op <code>host</code> voor mgmt01 en zet <code>vm.max_map_count=262144</code>. Het opstarten duurt dan 2-3 minuten om te stabiliseren (tijdelijke <code>port 9200</code>-fouten tijdens herinitialisatie zijn normaal). Zie <a href="../../findings/wazuh-cpu-glibc/">Finding: Wazuh CPU glibc</a>.</p>
 </blockquote>
 <p>Start de stack:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
@@ -3755,19 +3755,21 @@
 </code></pre></div>
 <hr />
 <h2 id="stap-2-nats-naar-wazuh-forwarder-deployen">Stap 2: NATS-naar-Wazuh-forwarder deployen<a class="headerlink" href="#stap-2-nats-naar-wazuh-forwarder-deployen" title="Permanent link">&para;</a></h2>
-<p>Deploy een Python-script op mgmt01 dat NATS-events doorstuurt naar Wazuh:</p>
+<p>Deploy een Python-container op mgmt01 die NATS-events naar Wazuh overbrugt:</p>
 <ol>
-<li>De forwarder abonneert zich op <code>security.alert.*</code>-subjects op NATS</li>
-<li>Voor elk ontvangen event stuurt het door naar het Wazuh API <code>/events</code>-endpoint</li>
+<li>De forwarder is een <strong>durable PULL-consumer</strong> (<code>DeliverPolicy.NEW</code>, <code>AckPolicy.EXPLICIT</code>) op <code>security.alert.&gt;</code></li>
+<li>Voor elk ontvangen event schrijft het een regel NDJSON naar het gedeelde <code>wazuh_nats_ingest</code>-volume (<code>/ingest/security_alerts.json</code>). De Wazuh manager tailt dat bestand via een <code>&lt;localfile&gt;&lt;log_format&gt;json&lt;/log_format&gt;&lt;/localfile&gt;</code>-blok — dit is het werkende ingestiepad; rechtstreeks naar de manager-socket schrijven en naar de Wazuh-API posten zijn beide geëvalueerd en verworpen.</li>
 <li>Dit creëert een <strong>dual-write-architectuur</strong>: beveiligingsevents stromen onafhankelijk naar zowel de Control Daemon (voor geautomatiseerde respons) als Wazuh (voor logging, correlatie en onderzoek)</li>
 </ol>
 <blockquote>
-<p><strong>Opmerking: Dual-write, niet serieel.</strong> De NATS-forwarder en Control Daemon zijn onafhankelijke subscribers. Als Wazuh uitvalt, blijft de Control Daemon events verwerken en andersom. Geen van beiden is afhankelijk van de ander.</p>
+<p><strong>Opmerking: Dual-write, niet serieel.</strong> De NATS-forwarder en Control Daemon zijn onafhankelijke consumers. Als Wazuh uitvalt, blijft de Control Daemon events verwerken en andersom. Geen van beiden is afhankelijk van de ander.</p>
+<p><strong>Valkuil: reconnect-resilience.</strong> Een <code>--force-recreate</code> van de NATS-container wijzigt zijn IP en verbreekt elke hangende consumerverbinding. De forwarder moet opnieuw verbinden met <code>max_reconnect_attempts=-1</code> en DNS opnieuw resolven (geen gecachete IP).</p>
 </blockquote>
 <p>Controleer of de forwarder draait en doorstuurt:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Trigger een testevent (bijv. Suricata-alert)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Controleer vervolgens de Wazuh API voor het event</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>curl<span class="w"> </span>-k<span class="w"> </span>-u<span class="w"> </span>&lt;wazuh-api-gebruiker&gt;:&lt;wachtwoord&gt;<span class="w"> </span>https://localhost:55000/security/events?limit<span class="o">=</span><span class="m">5</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Trigger een testevent (bijv. browser EICAR-download → security.alert.malware)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="c1"># Bevestig vervolgens dat de NDJSON-regel in het gedeelde ingestiebestand is beland:</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span><span class="m">5</span><span class="w"> </span>/ingest/security_alerts.json
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># En bevestig dat het geïndexeerd is: Wazuh Dashboard → Discover, index wazuh-alerts-*, query rule.groups:&quot;sase&quot;</span>
 </code></pre></div>
 <hr />
 <h2 id="stap-3-wazuh-agent-deployen-op-pop01">Stap 3: Wazuh-agent deployen op pop01<a class="headerlink" href="#stap-3-wazuh-agent-deployen-op-pop01" title="Permanent link">&para;</a></h2>
@@ -3777,121 +3779,165 @@
 <li>Configureer de agent om verbinding te maken met de Wazuh Manager op mgmt01</li>
 <li>Registreer de agent (agent-ID: 001)</li>
 </ol>
-<p>Configureer directe logverzameling — de agent monitort deze bestanden:</p>
+<p>Configureer logverzameling op hostniveau. De agent levert de OPNsense-<strong>host</strong>telemetrie (hij monitort <strong>niet</strong> Suricata/Squid/c-icap/Unbound — die bereiken Wazuh via hun eigen NATS-producers en de forwarder, dus de agent heeft <code>intrusion_detection_events=false</code> om dubbel-ingest te vermijden):</p>
 <table>
 <thead>
 <tr>
-<th>Logbestand</th>
+<th>Feed</th>
 <th>Bron</th>
 <th>Doel</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>/var/log/suricata/eve.json</code></td>
-<td>Suricata IDS</td>
-<td>IDS-alerts en flowgegevens</td>
+<td>audit</td>
+<td>OPNsense-auditlog</td>
+<td>Configuratie-/adminacties</td>
 </tr>
 <tr>
-<td><code>/var/log/squid/access.log</code></td>
-<td>Squid proxy</td>
-<td>Proxy-toegangsevents</td>
+<td>configd</td>
+<td>OPNsense configd</td>
+<td>Service-/configevents</td>
+</tr>
+<tr>
+<td>filter</td>
+<td>OPNsense-firewall (filterlog)</td>
+<td>Packet-filter-events</td>
+</tr>
+<tr>
+<td>kernel</td>
+<td>OPNsense-kernellog</td>
+<td>Systeem-/kernelevents</td>
+</tr>
+<tr>
+<td>pkg</td>
+<td>OPNsense-packagemanager</td>
+<td>Package-installatie-/updateevents</td>
 </tr>
 </tbody>
 </table>
 <ol>
-<li>Maak aangepaste decoders voor het SASE-eventformaat zodat Wazuh de gestructureerde velden uit Suricata- en Squid-logs kan parsen</li>
+<li>De agent heeft ook <code>active_response=false</code> — Active Response (handhaving) is eigendom van de Control Daemon (Laag 3), niet van de agent op pop01.</li>
 </ol>
 <p>Herstart de agent en verifieer registratie:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Op Wazuh Manager (mgmt01)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wazuh-manager<span class="w"> </span>/var/ossec/bin/agent_control<span class="w"> </span>-l
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>/var/ossec/bin/agent_control<span class="w"> </span>-l
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Verwacht: agent 001 (pop01) — Active</span>
 </code></pre></div>
 <hr />
 <h2 id="stap-4-aangepaste-wazuh-regels-configureren">Stap 4: Aangepaste Wazuh-regels configureren<a class="headerlink" href="#stap-4-aangepaste-wazuh-regels-configureren" title="Permanent link">&para;</a></h2>
-<p>Maak aangepaste regels in het 100500-100600-bereik voor SASE-specifieke detecties:</p>
+<p>Maak aangepaste regels voor de busproducers. Ze hangen allemaal aan één basisregel (100500) die matcht op het <code>producer</code>-veld; de kinderen classificeren en kennen severity toe:</p>
 <table>
 <thead>
 <tr>
-<th>Regelbereik</th>
-<th>Categorie</th>
-<th>Voorbeelden</th>
+<th>Regel</th>
+<th>Producer / conditie</th>
+<th>Niveau</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>100500-100519</td>
-<td>IDS-correlatie</td>
-<td>Hoge-severity Suricata-alerts, herhaalde alerts van dezelfde bron</td>
+<td>100500</td>
+<td c-icap_="c-icap," dlp_="dlp," squid_="squid," suricata_="suricata," unbound="unbound">basis — <code>producer</code> ∈</td>
+<td>0</td>
 </tr>
 <tr>
-<td>100520-100539</td>
-<td>DLP-alerts</td>
-<td>Gevoelige datapatroonmatches, geblokkeerde uploads</td>
+<td>100501</td>
+<td>Squid proxy-event</td>
+<td>5</td>
 </tr>
 <tr>
-<td>100540-100559</td>
-<td>DNS RPZ-blokkades</td>
-<td>RPZ-geblokkeerde domeinen, herhaalde blokkeerpogingen</td>
+<td>100510</td>
+<td>Suricata IDS-alert</td>
+<td>6</td>
 </tr>
 <tr>
-<td>100560-100599</td>
-<td>Gereserveerd</td>
-<td>Toekomstig gebruik</td>
+<td>100511</td>
+<td>Suricata IDS, severity 1</td>
+<td>10</td>
+</tr>
+<tr>
+<td>100513</td>
+<td>Suricata IDS, severity 3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>100520</td>
+<td>DLP-match</td>
+<td>10</td>
+</tr>
+<tr>
+<td>100530</td>
+<td>malware (ClamAV / c-icap)</td>
+<td>12</td>
+</tr>
+<tr>
+<td>100540</td>
+<td>DNS RPZ-blokkade</td>
+<td>8</td>
 </tr>
 </tbody>
 </table>
-<p>Plaats aangepaste regels in de lokale regelmap van de Wazuh Manager. Herstart de Wazuh Manager na het toevoegen van regels:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wazuh-manager<span class="w"> </span>/var/ossec/bin/wazuh-control<span class="w"> </span>restart
+<blockquote>
+<p><strong>Valkuil:</strong> de kinderen hangen aan de basis via <code>if_sid 100500</code>, dus de pcre2-alternatie van de basis moet elke producer bevatten. <code>unbound</code> ontbrak aanvankelijk, waardoor regel 100540 nooit afvuurde totdat het werd toegevoegd (V38.9).</p>
+</blockquote>
+<p>Plaats aangepaste regels in <code>config/mgmt01/wazuh/local_rules.xml</code> (gemount in de manager). Herstart na het bewerken van regels de manager — nooit <code>docker restart</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>/var/ossec/bin/wazuh-control<span class="w"> </span>restart
 </code></pre></div>
 <hr />
-<h2 id="stap-5-casb-layer-2-configureren-m365-api-integratie">Stap 5: CASB Layer 2 configureren — M365 API-integratie<a class="headerlink" href="#stap-5-casb-layer-2-configureren-m365-api-integratie" title="Permanent link">&para;</a></h2>
-<p>Stel de ms-graph-module van Wazuh in om de Microsoft 365 Management Activity API te pollen voor cloudbeveiligingsevents:</p>
+<h2 id="stap-5-casb-laag-2-configureren-m365-api-integratie">Stap 5: CASB Laag 2 configureren — M365 API-integratie<a class="headerlink" href="#stap-5-casb-laag-2-configureren-m365-api-integratie" title="Permanent link">&para;</a></h2>
+<p>CASB Laag 2 pollt de Microsoft 365-auditactiviteit en remedieert riskante shares. Er is <strong>geen</strong> "Wazuh office365-module" in deze opstelling — een aangepaste producer doet de polling:</p>
 <ol>
-<li>Configureer de <code>ms-graph</code>-module in de Wazuh Manager-configuratie:</li>
-<li>API-endpoint: Microsoft 365 Management Activity API</li>
-<li>Authenticatie: App registration-referenties voor aplab.be-tenant</li>
+<li>Deploy de <code>o365_producer</code>-container op mgmt01:</li>
+<li>Pollt de <strong>Office 365 Management Activity API</strong> (<code>contentType=Audit.SharePoint</code>) met app-registration-referenties voor de aplab.be-tenant</li>
+<li>Normaliseert elke audit-blob en publiceert die naar NATS-subject <code>security.alert.casb</code> (NATS-rol <code>casb-pub</code>)</li>
 <li>
-<p>Polling-interval: geconfigureerd volgens API-vereisten</p>
+<p>Vanaf daar draagt de NATS→Wazuh forwarder het de manager in zoals elk ander busevent</p>
 </li>
 <li>
-<p>Maak aangepaste regels in de 100600-familie voor M365-schendingen:</p>
+<p>Maak aangepaste regels in de 100600-familie (een zelfstandige basis, los van de 100500-basis van de busproducers):</p>
 </li>
 </ol>
 <table>
 <thead>
 <tr>
 <th>Regel</th>
-<th>Detectie</th>
-<th>Respons</th>
+<th>Detectie (<code>producer</code> = <code>o365</code>)</th>
+<th>Niveau</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>100600</td>
-<td>SharePoint anonieme deellink aangemaakt</td>
-<td>Alert + Active Response</td>
+<td>basis — <code>producer</code> = <code>o365</code></td>
+<td>0</td>
 </tr>
 <tr>
 <td>100601</td>
-<td>OneDrive externe share gedetecteerd</td>
-<td>Alert</td>
+<td><code>Operation</code> = AnonymousLinkCreated</td>
+<td>10</td>
 </tr>
 <tr>
 <td>100602</td>
-<td>Verdachte aanmelding vanuit ongebruikelijke locatie</td>
-<td>Alert</td>
+<td><code>Operation</code> = SharingLinkCreated AND <code>SharingLinkScope</code> = Anyone</td>
+<td>10</td>
+</tr>
+<tr>
+<td>100603</td>
+<td><code>Operation</code> = SharingSet AND <code>TargetUserOrGroupType</code> = Guest</td>
+<td>8</td>
 </tr>
 </tbody>
 </table>
 <ol>
-<li>Deploy Active Response-script <code>sharepoint_remediate.sh</code>:</li>
-<li>Getriggerd door regel 100600</li>
-<li>Trekt anonieme/externe deellinks in via de Microsoft Graph API</li>
-<li>Logt de herstelactie terug naar Wazuh</li>
+<li>Deploy de Active Response-scripts (geport uit het CASB-project van het team), achter een <code>ENFORCE</code>-gate die <strong>standaard op detect-only staat</strong> (<code>ENFORCE=false</code>):</li>
+<li><code>sharepoint_remediate.sh</code> — getriggerd door regels <strong>100601, 100602</strong>; trekt de anonieme / anyone-link in via de Microsoft Graph API</li>
+<li><code>guest_remediate.sh</code> — getriggerd door regel <strong>100603</strong>; verwijdert de gasttoekenning</li>
+<li>Beide lezen Graph-referenties uit <code>graph.env</code> (in het <code>wazuh_etc</code>-volume, nooit gecommit) en loggen de herstelactie</li>
 </ol>
 <blockquote>
-<p><strong>Opmerking:</strong> Dit is CASB Layer 2 in de drielaagse CASB-architectuur. Zie <a href="../../decisions/casb-three-layers/">Beslissing: CASB drie lagen</a> voor het volledige ontwerp.</p>
+<p><strong>Valkuil: jq-afhankelijkheid.</strong> De Active Response-scripts hebben <code>jq</code> nodig, dat niet in de standaard manager-image zit — zonder dit faalt het script stilletjes bij de eerste aanroep. Installeer het persistent via de <code>install_deps.sh</code>-entrypointwrapper plus een compose <code>entrypoint:</code>-override (V39); een gewone <code>yum install</code> overleeft een recreate niet.</p>
+<p><strong>Opmerking:</strong> Dit is CASB Laag 2 in de drielaagse CASB-architectuur. Zie <a href="../../decisions/casb-three-layers/">Beslissing: CASB drie lagen</a> voor het volledige ontwerp.</p>
 </blockquote>
 <hr />
 <h2 id="stap-6-events-verifieren-in-wazuh-dashboard">Stap 6: Events verifiëren in Wazuh Dashboard<a class="headerlink" href="#stap-6-events-verifieren-in-wazuh-dashboard" title="Permanent link">&para;</a></h2>
@@ -3904,34 +3950,38 @@
 </code></pre></div>
 <p><strong>Verwacht:</strong> Events van Suricata, Squid, DNS RPZ en DLP verschijnen in het dashboard met correct geparseerde velden.</p>
 <blockquote>
-<p><strong>Valkuil: Dashboard kan aanvankelijk niet laden.</strong> Als het Wazuh Dashboard een verbindingsfout toont gerelateerd aan <code>airgate</code>-hostnaamresolutie, is dit een bekend DNS-probleem in de Docker-omgeving. Zie <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
+<p><strong>Opmerking:</strong> Het dashboard toonde eerder "Status: Offline" door een lege manager-UUID (gewist door <code>docker compose down -v</code>) — opgelost op 2 juni 2026 via in-place bump naar 4.14.5. De <code>Error checking updates</code> CTI-500 (air-gap, cosmetisch) blijft aanwezig maar is non-blocking in 4.14.5+. App-modules en Discover werken beide volledig. Zie <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
 </blockquote>
 <hr />
 <h2 id="stap-7-casb-active-response-verifieren">Stap 7: CASB Active Response verifiëren<a class="headerlink" href="#stap-7-casb-active-response-verifieren" title="Permanent link">&para;</a></h2>
+<p><strong>Active Response staat standaard op detect-only (<code>ENFORCE=false</code>).</strong> In detect-only-modus vuurt de regel af en logt het herstelscript wat het <em>zou</em> doen, maar er wordt geen Microsoft Graph API-aanroep gedaan. Zet <code>ENFORCE=true</code> (de gate in het script) enkel wanneer je live remediatie beoogt.</p>
 <p>Test de SharePoint-herstelworkflow:</p>
 <ol>
 <li>Maak een anonieme deellink aan op een SharePoint-document in de aplab.be-tenant</li>
-<li>Wacht tot de ms-graph-module pollt en de schending detecteert</li>
-<li>Wazuh moet regel 100600 triggeren</li>
-<li>Active Response-script <code>sharepoint_remediate.sh</code> moet uitvoeren</li>
-<li>Verifieer: de anonieme deellink is ingetrokken (niet meer toegankelijk)</li>
+<li>Wacht tot de <code>o365_producer</code> de Management Activity API pollt en het auditevent publiceert naar <code>security.alert.casb</code></li>
+<li>Wazuh moet regel 100601 (<code>AnonymousLinkCreated</code>) triggeren</li>
+<li>Active Response-script <code>sharepoint_remediate.sh</code> moet uitvoeren (enkel loggen tenzij <code>ENFORCE=true</code>)</li>
+<li>Verifieer met <code>ENFORCE=true</code> dat de anonieme deellink wordt ingetrokken via de Microsoft Graph API</li>
 </ol>
+<blockquote>
+<p><strong>Status: de revoke-keten is bewezen tot HTTP-204 via een offline stub; live intrekking tegen een echt OneDrive-/SharePoint-bestand wacht op provisioning van een testaccount</strong> (een externe Microsoft-afhankelijkheid). Detect-only-modus en de regel→Active-Response-trigger zijn gevalideerd; live end-to-end intrekking is nog niet gedemonstreerd op de sandbox.</p>
+</blockquote>
 <p>Controleer het Active Response-log:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>wazuh-manager<span class="w"> </span>cat<span class="w"> </span>/var/ossec/logs/active-responses.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>cat<span class="w"> </span>/var/ossec/logs/active-responses.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </code></pre></div>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>
 <ul>
 <li>[ ] Wazuh Manager v4.14.5 draait op mgmt01</li>
 <li>[ ] Wazuh Indexer (OpenSearch) draait en is gezond</li>
-<li>[ ] Wazuh Dashboard toegankelijk via browser</li>
-<li>[ ] NATS-naar-Wazuh-forwarder geabonneerd op <code>security.alert.*</code></li>
+<li>[ ] Wazuh Dashboard toegankelijk via browser (Discover + app-modules werken beide; <code>Error checking updates</code> CTI-500 cosmetisch in air-gap, non-blocking)</li>
+<li>[ ] NATS-naar-Wazuh-forwarder consumeert <code>security.alert.&gt;</code> → NDJSON naar <code>wazuh_nats_ingest</code></li>
 <li>[ ] Wazuh-agent 001 (pop01) geregistreerd en actief</li>
-<li>[ ] Aangepaste decoders parsen SASE-eventformaat</li>
-<li>[ ] Aangepaste regels 100500-100600 gedeployd</li>
-<li>[ ] M365 ms-graph-module pollt Management Activity API</li>
+<li>[ ] Aangepaste busregels 100500–100540 gedeployd (<code>local_rules.xml</code>)</li>
+<li>[ ] Busregels classificeren proxy/IDS/DLP/malware/DNS-RPZ-events (kinderen hangen aan via <code>if_sid 100500</code>)</li>
+<li>[ ] <code>o365_producer</code> pollt Office 365 Management Activity API → <code>security.alert.casb</code></li>
 <li>[ ] Aangepaste regels 100600-familie detecteren SharePoint-schendingen</li>
-<li>[ ] Active Response <code>sharepoint_remediate.sh</code> trekt deellinks in</li>
+<li>[ ] Active Response <code>sharepoint_remediate.sh</code> (ENFORCE detect-only standaard; live revoke pending)</li>
 <li>[ ] Events zichtbaar in Wazuh Dashboard → Discover</li>
 </ul>
 <hr />

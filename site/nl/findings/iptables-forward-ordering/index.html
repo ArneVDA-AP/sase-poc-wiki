@@ -3580,6 +3580,7 @@
 <li>Gebruik bij het toevoegen van FORWARD-regels op een host met libvirt altijd <code>-I FORWARD 1</code> (invoegen bovenaan), nooit <code>-A FORWARD</code> (toevoegen)</li>
 <li>Diagnose: <code>iptables -L FORWARD --line-numbers</code> om regelposities en de libvirt-ketenlocatie te zien</li>
 <li>De REJECT-regel van libvirt is by design — het voorkomt dat onbeheerd verkeer libvirt-netwerken kruist</li>
+<li>Deze iptables-regels zijn <strong>niet persistent over reboots</strong> van de GNS3-host. Installeer <code>netfilter-persistent</code> (<code>apt install iptables-persistent</code>) en draai <code>netfilter-persistent save</code> na het toevoegen van regels. Zonder dit gaan alle poortdoorsturingen en FORWARD-regels verloren bij een reboot</li>
 </ul>
 
 

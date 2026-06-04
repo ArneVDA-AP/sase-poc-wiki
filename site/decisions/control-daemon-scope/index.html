@@ -3565,7 +3565,7 @@
 
 <h1 id="decision-ids-correlation-branch-removed-from-control-daemon">Decision: IDS Correlation Branch Removed from Control Daemon<a class="headerlink" href="#decision-ids-correlation-branch-removed-from-control-daemon" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Implemented<br />
-<strong>Date:</strong> May 2026 (Verslag35)</p>
+<strong>Date:</strong> June 2026 (Verslag35)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>The Control Daemon's threat scoring model initially included an IDS correlation branch designed to respond to C2 (Command and Control) beacon detection. When Suricata fired an IDS alert matching a C2 signature, the daemon would correlate the alert with user identity and trigger quarantine. This branch was added alongside the malware branch (which responds to ClamAV/ICAP malware detections) and the DLP branch (which responds to data exfiltration patterns).</p>
 <p>During implementation, analysis revealed that the IDS correlation branch duplicated the quarantine capability already provided by the malware branch, but with worse attribution. The malware branch natively maps overlay IP addresses to peer identity through NetBird's API, providing clean user attribution. The IDS correlation branch would need to perform the same mapping but added no unique enforcement action — both branches result in the same quarantine outcome.</p>

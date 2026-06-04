@@ -11,7 +11,7 @@ tags: [nats, jetstream, event-bus, docker, nats-jetstream]
 
 ## Hoe het werkt in deze stack
 
-NATS JetStream biedt duurzame, at-least-once aflevering voor beveiligingsgebeurtenissen over de gehele stack. Elke detectiecomponent publiceert gestructureerde JSON-events naar onderwerpspecifieke topics. Twee onafhankelijke consumers verwerken deze events:
+NATS JetStream biedt duurzame, at-least-once aflevering voor security events over de gehele stack. Elke detectiecomponent publiceert gestructureerde JSON-events naar onderwerpspecifieke topics. Twee onafhankelijke consumers verwerken deze events:
 
 1. **Control Daemon** — real-time threat scoring en quarantainebeslissingen
 2. **NATS→Wazuh Forwarder** — stuurt events door naar Wazuh voor SIEM-indexering en forensische analyse
@@ -38,6 +38,18 @@ De dual-write-architectuur garandeert dat geen van beide paden afhankelijk is va
 | `identity.peer.connected` | Identity Bridge (mgmt01) | Control Daemon |
 | `identity.peer.disconnected` | Identity Bridge (mgmt01) | Control Daemon |
 | `identity.multi_persona` | Identity Bridge (mgmt01) | Control Daemon (zero-trust-anomalie; SIEM-regel gepland) |
+
+## JetStream-streams
+
+Vijf streams aangemaakt (V32, operationeel bevestigd):
+
+| Stream | Subjects | Opslag | Max leeftijd | Max grootte |
+|--------|----------|--------|-------------|-------------|
+| SECURITY_ALERTS | `security.alert.*` | file | 168h (7d) | 1 GiB |
+| THREAT_IOC | `threat.ioc.new` | file | 2160h (90d) | 512 MiB |
+| POLICY_UPDATE | `policy.update` | file | 720h (30d) | 256 MiB |
+| SESSION_CONTEXT | `session.context.>` | memory | 24h | 128 MiB |
+| IDENTITY_EVENTS | `identity.>` | file | 168h (7d) | 256 MiB |
 
 ## Integratiepunten
 

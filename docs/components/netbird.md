@@ -5,7 +5,7 @@ tags: [netbird, zero-trust, sase, network, opnsense, docker]
 
 # NetBird + Zitadel + Entra ID — ZTNA Overlay
 
-**Role:** ZTNA transport layer — creates a WireGuard mesh overlay that gives BYOD clients access to pop01 (proxy, DNS) and DC-LAN resources regardless of their physical network location. Every access decision is identity-based; lateral movement between resources requires explicit ACL policies.  
+**Role:** ZTNA transport layer — creates a WireGuard mesh overlay that gives managed Windows clients access to pop01 (proxy, DNS) and DC-LAN resources regardless of their physical network location. Every access decision is identity-based; lateral movement between resources requires explicit ACL policies.  
 **Status:** ✅ Fully operational — snapshot `Fase2-ZTNA-Complete`  
 **Config location:** mgmt01 Docker Compose (`~/docker-compose.yml`), NetBird Dashboard (`https://netbird.sandbox.local`)
 
@@ -129,7 +129,7 @@ This single policy is the entire allow-list under deny-by-default. It lets every
 Network: 0.0.0.0/0, Routing Peer: pop01, Distribution groups: Studenten, Docenten, Admins
 ```
 
-The exit node persists so BYOD persona traffic egresses through pop01. NetBird's exit node is **all-or-nothing** — it cannot selectively exclude destination ranges (issues #2493 / #3523). To keep Microsoft 365 "Optimize" ranges off the tunnel, an Intune Remediation (`2ITCSC1A-Route-Remediation`) pushes those routes directly on the client instead — a client-side split-tunnel that compensates for the missing per-route exclusion.
+The exit node persists so persona group traffic (Studenten/Docenten/Admins) egresses through pop01. NetBird's exit node is **all-or-nothing** — it cannot selectively exclude destination ranges (issues #2493 / #3523). To keep Microsoft 365 "Optimize" ranges off the tunnel, an Intune Remediation (`2ITCSC1A-Route-Remediation`) pushes those routes directly on the client instead — a client-side split-tunnel that compensates for the missing per-route exclusion.
 
 **DC-LAN (10.0.0.0/8) over the overlay — deferred.** The original `Internal-DC` Network (ACL-aware) and its `Datacenter-Access` policy were **removed in the V34 migration**; there is no active DC-LAN-over-overlay path in the current sandbox. Re-introducing datacenter reachability is deferred to the planned Cosmos app-gateway session. The design rationale below is retained for when that work resumes.
 

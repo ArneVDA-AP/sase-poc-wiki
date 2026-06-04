@@ -10,7 +10,7 @@ tags: [decision, ioc2rpz, dns, rpz, network]
 
 ## Context
 
-DNS-bedreigingsinformatie vereist een bron die feed-URL's (URLhaus, ThreatFox) aggregeert in een RPZ-zone en deze actueel houdt. Twee benaderingen: ioc2rpz gebruiken als een speciale feed-aggregator, of Unbound configureren om zonebestanden rechtstreeks van statische URL's te laden.
+DNS threat intelligence vereist een bron die feed-URL's (URLhaus, ThreatFox) aggregeert in een RPZ-zone en deze actueel houdt. Twee benaderingen: ioc2rpz gebruiken als een speciale feed-aggregator, of Unbound configureren om zonebestanden rechtstreeks van statische URL's te laden.
 
 ## Overwogen opties
 

@@ -3765,7 +3765,7 @@
 
 
 <h1 id="ioc2rpz-bind-unbound-dns-threat-intelligence">ioc2rpz + BIND + Unbound — DNS Threat Intelligence<a class="headerlink" href="#ioc2rpz-bind-unbound-dns-threat-intelligence" title="Permanent link">&para;</a></h1>
-<p><strong>Role:</strong> Proactive DNS-level blocking of known-malicious domains. ioc2rpz aggregates threat intelligence feeds (URLhaus, ThreatFox) into an RPZ zone; BIND acts as a TSIG-authenticated intermediary; Unbound enforces the RPZ policy for all DNS queries from BYOD clients and DC-LAN nodes.<br />
+<p><strong>Role:</strong> Proactive DNS-level blocking of known-malicious domains. ioc2rpz aggregates threat intelligence feeds (URLhaus, ThreatFox) into an RPZ zone; BIND acts as a TSIG-authenticated intermediary; Unbound enforces the RPZ policy for all DNS queries from overlay clients and DC-LAN nodes.<br />
 <strong>Status:</strong> ✅ Fully operational — 71 767 RPZ records from two feeds, validated from three test points.<br />
 <strong>Config locations:</strong>
 - ioc2rpz: <code>/opt/ioc2rpz/</code> on mgmt01 (Docker)
@@ -3773,7 +3773,7 @@
 - Unbound: <code>/usr/local/etc/unbound.opnsense.d/rpz.conf</code> on pop01</p>
 <hr />
 <h2 id="how-it-works-in-this-stack">How it works in this stack<a class="headerlink" href="#how-it-works-in-this-stack" title="Permanent link">&para;</a></h2>
-<p>DNS threat intelligence intercepts at the earliest possible point in the connection lifecycle — name resolution. If a BYOD client tries to look up the hostname of a known malware C2 server, Unbound returns NXDOMAIN before any TCP connection can be established, regardless of port or protocol.</p>
+<p>DNS threat intelligence intercepts at the earliest possible point in the connection lifecycle — name resolution. If a client tries to look up the hostname of a known malware C2 server, Unbound returns NXDOMAIN before any TCP connection can be established, regardless of port or protocol.</p>
 <p><strong>Three-component chain:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>URLhaus + ThreatFox (Abuse.ch)
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    ↓ HTTP pull by ioc2rpz
@@ -3783,11 +3783,11 @@
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    ↓ unauthenticated AXFR (loopback)
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Unbound (pop01, port 53, respip module)
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    ↓ RPZ-enforced responses
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>BYOD clients + dc01
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Overlay clients + dc01
 </code></pre></div>
 <p>ioc2rpz is a <strong>zone source</strong>, not a resolver. Clients never query ioc2rpz directly. They query Unbound, which has the RPZ zone loaded in memory. No extra latency per query.</p>
 <p>BIND exists solely because Unbound 1.24.2 does not support TSIG for zone transfers — a missing feature documented in GitHub NLnetLabs/unbound issue #336 (open since October 2020). BIND handles the TSIG-authenticated AXFR from ioc2rpz and presents the zone to Unbound via loopback without authentication. See <a href="../../decisions/bind-tsig-intermediary/">Decision: BIND as TSIG intermediary</a>.</p>
-<p><strong>NetBird primary nameserver:</strong> For RPZ to protect BYOD clients on external domains, all their DNS queries must route through pop01 Unbound. NetBird's primary nameserver setting (match domains: empty) achieves this. Without it, clients use their adapter's default DNS for non-internal domains, bypassing Unbound entirely. See <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primary nameserver</a>.</p>
+<p><strong>NetBird primary nameserver:</strong> For RPZ to protect overlay clients on external domains, all their DNS queries must route through pop01 Unbound. NetBird's primary nameserver setting (match domains: empty) achieves this. Without it, clients use their adapter's default DNS for non-internal domains, bypassing Unbound entirely. See <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primary nameserver</a>.</p>
 <hr />
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <h3 id="ioc2rpz-docker-deployment">ioc2rpz Docker deployment<a class="headerlink" href="#ioc2rpz-docker-deployment" title="Permanent link">&para;</a></h3>
@@ -3832,7 +3832,7 @@
 - Action: nxdomain, Wildcards: true
 - TSIG key: <code>tkey_rpz_transfer</code>
 - Notify: <code>192.168.122.13</code> (pop01)</p>
-<p>After "Publish", verify the zone log shows ~71 000+ indicators and "DNS Notify sent".</p>
+<p>After "Publish", verify the zone log shows ~35 900 indicators (≈71 800 rules) and "DNS Notify sent".</p>
 <p><strong>ioc2rpz.gui JavaScript bug:</strong> The login form has a missing <code>e.preventDefault()</code> in the <code>signIn</code> function, causing the browser to submit natively while axios also posts — the native submit reloads the page, aborting the axios request. Apply the fix once after container start:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>ioc2rpz-ioc2rpz-gui-1<span class="w"> </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="s2">&quot;s|signIn: function(e){ //|signIn: function(e){ e.preventDefault(); //|&quot;</span><span class="w"> </span><span class="se">\</span>
@@ -3934,7 +3934,7 @@
 <h2 id="known-issues-gotchas">Known issues / gotchas<a class="headerlink" href="#known-issues-gotchas" title="Permanent link">&para;</a></h2>
 <p><strong>iptables FORWARD rule ordering</strong> — when adding port forwards for GUI access on the GNS3 host, always use <code>-I FORWARD 1</code>. Appending (<code>-A</code>) places the rule after libvirt's REJECT chain. See <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWARD ordering</a>.</p>
 <p><strong>ioc2rpz.gui JS login bug</strong> — upstream bug in <code>io2auth.js</code>. Apply the sed fix after each container rebuild. See <a href="../../findings/ioc2rpz-gui-js-bug/">Finding: ioc2rpz GUI JS bug</a>.</p>
-<p><strong>DNS NOTIFY does not reach BIND</strong> — ioc2rpz sends NOTIFY to <code>192.168.122.13:53</code> (Unbound port), not <code>53530</code> (BIND port). BIND discovers updates only at the next SOA poll (3600 s). Manual trigger: <code>rndc -p 953 retransfer threat-intel.rpz.sase</code>. In production, add a <code>pf rdr</code> rule redirecting port-53 NOTIFY from <code>192.168.122.23</code> to port 53530.</p>
+<p><strong>DNS NOTIFY does not reach BIND</strong> — ioc2rpz sends NOTIFY to <code>192.168.122.13:53</code> (Unbound port), not <code>53530</code> (BIND port). BIND discovers updates only at the next SOA poll (3600 s). Manual trigger: <code>rndc retransfer threat-intel.rpz.sase</code>. In production, add a <code>pf rdr</code> rule redirecting port-53 NOTIFY from <code>192.168.122.23</code> to port 53530.</p>
 <p><strong>BIND zone directory uses <code>secondary/</code>, not <code>slave/</code></strong> — modern BIND (9.20+) uses the naming convention <code>secondary</code> instead of the legacy <code>slave</code>. Zone files are stored at <code>/usr/local/etc/namedb/secondary/threat-intel.rpz.sase.db</code>. Documentation referencing <code>/slave/</code> is outdated.</p>
 <p><strong>OPNsense Unbound WebUI shows "manual overwrites" warning</strong> — this is expected and harmless. The rpz.conf overrides module-config, which OPNsense detects. Document this in operational runbooks so administrators are not surprised.</p>
 <p><strong>TSIG key must be linked to RPZ zone in ioc2rpz</strong> — the key must be explicitly selected in GUI → Configuration → RPZ Zones. If left empty (<code>tkeys: [""]</code>), BIND receives TSIG errors (<code>tsig indicates error</code>) for every AXFR attempt.</p>

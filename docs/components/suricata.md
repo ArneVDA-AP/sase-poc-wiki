@@ -130,7 +130,7 @@ Four detection categories confirmed after vtnet1 fix:
 
 | Component | Direction | What |
 |-----------|-----------|------|
-| [Squid](squid.md) | parallel | Suricata on vtnet0 sees Squid's upstream connections — re-encrypted HTTPS; TLS metadata visible; XFF headers reveal originating BYOD client IP (SID 2031071 showed `100.70.95.98` from mobile01) |
+| [Squid](squid.md) | parallel | Suricata on vtnet0 sees Squid's upstream connections — re-encrypted HTTPS; TLS metadata visible; XFF headers reveal originating client IP (SID 2031071 showed `100.70.95.98` from mobile01) |
 | [NetBird](netbird.md) | HOME_NET dependency | `100.64.0.0/10` must be in HOME_NET for correct rule evaluation |
 | [ioc2rpz/RPZ](ioc2rpz.md) | complementary | Abuse.ch URLhaus in Suricata signatures and RPZ feeds overlap in source; Suricata detects connections, RPZ prevents DNS resolution |
 

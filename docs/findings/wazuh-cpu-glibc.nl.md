@@ -20,13 +20,13 @@ Wanneer glibc of OpenSearch (de indexer-engine) probeert deze instructies te geb
 
 ## Oplossing / workaround
 
-Stel het QEMU CPU-model in op `host` in de GNS3-knooppuntinstellingen voor mgmt01:
+Stel het QEMU CPU-model in op `host` in de GNS3 node-instellingen voor mgmt01:
 
 ```
 GNS3 → mgmt01 → Configure → QEMU → CPU model: host
 ```
 
-Het `host`-model geeft de fysieke host-CPU-features door aan de gast-VM, waardoor alle moderne instructiesets beschikbaar worden. Na het wijzigen van deze instelling en het herstarten van het knooppunt startte de Wazuh indexer succesvol.
+Het `host`-model geeft de fysieke host-CPU-features door aan de gast-VM, waardoor alle moderne instructiesets beschikbaar worden. Na het wijzigen van deze instelling en het herstarten van het node startte de Wazuh indexer succesvol.
 
 ## Lessen
 

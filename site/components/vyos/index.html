@@ -979,10 +979,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dscp-qos-planned" class="md-nav__link">
+  <a href="#qos-shaper-dscp-based" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DSCP / QoS (planned)
+        QoS shaper (DSCP-based)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wan-link-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WAN link monitoring
       
     </span>
   </a>
@@ -1051,10 +1062,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sd-wan-features-descoped" class="md-nav__link">
+  <a href="#classic-ipsec-sd-wan-descoped-qos-and-failover-are-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SD-WAN features descoped
+        Classic IPsec SD-WAN descoped (QoS and failover are implemented)
       
     </span>
   </a>
@@ -3616,10 +3627,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dscp-qos-planned" class="md-nav__link">
+  <a href="#qos-shaper-dscp-based" class="md-nav__link">
     <span class="md-ellipsis">
       
-        DSCP / QoS (planned)
+        QoS shaper (DSCP-based)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wan-link-monitoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WAN link monitoring
       
     </span>
   </a>
@@ -3688,10 +3710,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#sd-wan-features-descoped" class="md-nav__link">
+  <a href="#classic-ipsec-sd-wan-descoped-qos-and-failover-are-implemented" class="md-nav__link">
     <span class="md-ellipsis">
       
-        SD-WAN features descoped
+        Classic IPsec SD-WAN descoped (QoS and failover are implemented)
       
     </span>
   </a>
@@ -3772,7 +3794,7 @@
 
 <h1 id="vyos-sase-gateway-site01">VyOS — SASE Gateway (site01)<a class="headerlink" href="#vyos-sase-gateway-site01" title="Permanent link">&para;</a></h1>
 <p><strong>Role:</strong> SASE Gateway for the remote site — provides WAN connectivity and NAT for the Site-LAN, filling the SD-WAN pillar via a Zero Trust Branch model. Equivalent to a Zscaler Zero Trust Branch edge appliance.<br />
-<strong>Version:</strong> VyOS 1.4 (rolling)<br />
+<strong>Version:</strong> VyOS rolling 2026.02.16<br />
 <strong>Status:</strong> ✅ Operational — site01 at <code>192.168.122.33</code>, sitepc01 (Tiny11) enrolled in sandbox<br />
 <strong>Config location:</strong> <code>/etc/vyos/config.boot</code> on site01</p>
 <hr />
@@ -3815,15 +3837,47 @@
 <p>VyOS provides a local DNS override so that branch devices can resolve the NetBird coordination server before the overlay is up:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>set system static-host-mapping host-name netbird.sandbox.local inet 192.168.122.23
 </code></pre></div>
-<h3 id="dscp-qos-planned">DSCP / QoS (planned)<a class="headerlink" href="#dscp-qos-planned" title="Permanent link">&para;</a></h3>
-<p>DSCP EF marking for Microsoft Teams traffic was planned to demonstrate the QoS layer of SD-WAN but has not yet been implemented. Classic IPsec and advanced QoS SD-WAN features were descoped in favour of the Zero Trust Branch approach; see <a href="../../decisions/sdwan-descoped/">Decision: SD-WAN Descoped</a>.</p>
+<h3 id="qos-shaper-dscp-based">QoS shaper (DSCP-based)<a class="headerlink" href="#qos-shaper-dscp-based" title="Permanent link">&para;</a></h3>
+<p>VyOS applies a QoS shaper on eth0 egress that classifies Microsoft Teams media by DSCP marking — the SD-WAN QoS layer of the project. The DSCP values are set at the endpoint (Intune NetworkQoSPolicy CSP / GPO); VyOS sees them in cleartext on the <strong>split-tunnel path</strong>, where Teams Optimize media is routed to eth1 directly (via an Intune <code>/14</code> route) rather than through the WireGuard overlay. All other traffic stays inside the encrypted overlay, where app-aware QoS is not possible.</p>
+<p>On VyOS rolling 2026.02.16 the shaper uses the <code>qos policy shaper</code> command tree (not the older <code>traffic-policy</code>):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>set qos policy shaper SDWAN-WAN bandwidth &#39;20mbit&#39;
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>set qos policy shaper SDWAN-WAN default bandwidth &#39;50%&#39;
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>set qos policy shaper SDWAN-WAN default queue-type &#39;fq-codel&#39;
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a># class 10 — Teams audio (DSCP EF, strict priority)
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>set qos policy shaper SDWAN-WAN class 10 bandwidth &#39;10%&#39;
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>set qos policy shaper SDWAN-WAN class 10 ceiling &#39;30%&#39;
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>set qos policy shaper SDWAN-WAN class 10 priority &#39;0&#39;
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>set qos policy shaper SDWAN-WAN class 10 match TEAMS-AUDIO ip dscp &#39;EF&#39;
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a># class 15 — Teams video (DSCP AF41)
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>set qos policy shaper SDWAN-WAN class 15 priority &#39;1&#39;
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>set qos policy shaper SDWAN-WAN class 15 match TEAMS-VIDEO ip dscp &#39;AF41&#39;
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a># class 18 — Teams screen-sharing (DSCP AF21)
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>set qos policy shaper SDWAN-WAN class 18 priority &#39;2&#39;
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>set qos policy shaper SDWAN-WAN class 18 match TEAMS-SHARING ip dscp &#39;AF21&#39;
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>set qos interface eth0 egress &#39;SDWAN-WAN&#39;
+</code></pre></div>
+<p>The 20 Mbit root bandwidth is a deliberate demo-ceiling: the libvirt path has no real WAN bottleneck, so a low ceiling is needed to fabricate contention for the under-load test. Production aligns this to the real WAN capacity.</p>
+<p><strong>Verification:</strong> the <code>show qos interface eth0</code> operational command does not exist on this rolling build — use the underlying Linux <code>tc</code> instead:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo tc -s class show dev eth0
+</code></pre></div>
+<p><strong>Proven (V43):</strong> a synthetic DSCP-EF stream marked 300/300 packets into class 10 with 0 drops (contract B4). Under load (Test #5), the EF class held 0 drops / 0 overlimits while the bulk default class took 26 drops + ~17,000 overlimits — real-time media is protected under congestion. See <a href="../../decisions/zt-sdwan-branch/">Decision: ZT SD-WAN Branch</a>.</p>
+<blockquote>
+<p><strong>Build note:</strong> on this rolling build a percentage <code>ceiling</code> maps incorrectly into <code>tc</code> (<code>ceiling '30%'</code> becomes <code>ceil 3Gbit</code>, effectively unbounded). Classification and priority work correctly; only ceiling enforcement is affected — benign for the PoC demo.</p>
+</blockquote>
+<h3 id="wan-link-monitoring">WAN link monitoring<a class="headerlink" href="#wan-link-monitoring" title="Permanent link">&para;</a></h3>
+<p>A health-check script (<code>/config/scripts/wan-health-check.sh</code>) runs on a 30-second VyOS task-scheduler interval, pinging pop01 (<code>192.168.122.13</code>), the internet gateway (<code>192.168.122.1</code>), and <code>8.8.8.8</code>. On failure it logs a <code>CRITICAL</code> line to <code>/var/log/sdwan-health.log</code>.</p>
+<p><strong>Proven (V43, Test #6):</strong> taking pop01's interface down produced a <code>CRITICAL</code> detection within 30 seconds, with recovery logged once the interface returned. This is honest single-WAN framing — detection and alerting, not an automatic dual-WAN switch (the lab has a single WAN). Production would add multi-PoP failover, BFD/SNMP, and fail-closed enforcement.</p>
 <hr />
 <h2 id="integration-points">Integration points<a class="headerlink" href="#integration-points" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>sitepc01 traffic path:</strong> sitepc01 → NAT via site01 → NetBird overlay → pop01 (SWG inspection). This is the same path mobile01 follows — no branch-specific tunnel exists.</li>
-<li><strong>Site-LAN segment:</strong> <code>172.16.10.0/24</code>. sitepc01 sits at <code>172.16.10.50</code> with site01 as its default gateway.</li>
+<li><strong>sitepc01 traffic path:</strong> sitepc01 → NAT via site01 → NetBird overlay → pop01 (SWG inspection) for Default/Allow traffic. This is the same path mobile01 follows — no branch-specific tunnel exists. Teams Optimize media instead takes the split-tunnel path direct out of eth0 (see QoS above).</li>
+<li><strong>Site-LAN segment:</strong> <code>172.16.10.0/24</code>. sitepc01 sits at <code>172.16.10.10</code> with site01 as its default gateway. It also carries a temporary second NIC on the WAN segment (<code>192.168.122.50</code>), used as a setup/RDP scaffold — to be removed once overlay-RDP is proven.</li>
 <li><strong>No direct WireGuard tunnel</strong> between site01 and pop01. All security enforcement is centralised at the PoP.</li>
-<li><strong>sitepc01 identity:</strong> enrolled as <code>docent1</code> (Docenten persona) — Entra ID joined and Intune enrolled (documented in V44).</li>
+<li><strong>sitepc01 identity (two independent layers):</strong> enrolled in NetBird as <code>docent1</code> (Docenten persona); separately Entra ID joined and Intune enrolled via <code>student1</code>, the only Intune-licensed sandbox account (<code>docent1</code>/<code>admin1</code> are deliberately unlicensed). Documented in V44.</li>
 <li><strong>NetBird coordination:</strong> sitepc01 uses the <a href="../netbird/">NetBird</a> client to join the overlay, authenticated through Entra ID.</li>
 </ul>
 <hr />
@@ -3832,12 +3886,12 @@
 <p>sitepc01 required a temporary scaffold-NIC (Ethernet 2 pointed at <code>8.8.8.8</code>) during initial enrollment because <a href="../ioc2rpz/">Unbound</a> on pop01 blocks DNS queries from non-overlay IP addresses via its WAN ACL. Without the scaffold-NIC, the machine cannot resolve Entra ID or NetBird endpoints to complete enrollment.</p>
 <h3 id="icmp-misleading-under-allow-only-policy">ICMP misleading under ALLOW-only policy<a class="headerlink" href="#icmp-misleading-under-allow-only-policy" title="Permanent link">&para;</a></h3>
 <p>Ping to overlay peers fails by design when the firewall policy model is ALLOW-only (no ICMP rule). Use port-based connectivity tests instead:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">Test-NetConnection</span> <span class="n">-ComputerName</span> <span class="p">&lt;</span><span class="n">target</span><span class="p">&gt;</span> <span class="n">-Port</span> <span class="n">3128</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">Test-NetConnection</span> <span class="n">-ComputerName</span> <span class="p">&lt;</span><span class="n">target</span><span class="p">&gt;</span> <span class="n">-Port</span> <span class="n">3128</span>
 </code></pre></div>
 <h3 id="caddy-ca-certificate-chicken-and-egg">Caddy CA certificate chicken-and-egg<a class="headerlink" href="#caddy-ca-certificate-chicken-and-egg" title="Permanent link">&para;</a></h3>
 <p>The Caddy internal CA certificate must be imported on sitepc01 before NetBird enrollment can succeed, but the certificate cannot be transferred over the overlay because the overlay is not yet up. The workaround is to transfer the certificate via the scaffold-NIC before the overlay is established.</p>
-<h3 id="sd-wan-features-descoped">SD-WAN features descoped<a class="headerlink" href="#sd-wan-features-descoped" title="Permanent link">&para;</a></h3>
-<p>Classic SD-WAN capabilities such as IPsec tunnelling and QoS marking were descoped from the project. The rationale is documented in <a href="../../decisions/sdwan-descoped/">Decision: SD-WAN Descoped</a> and replaced by the Zero Trust Branch model described in <a href="../../decisions/zt-sdwan-branch/">Decision: ZT SD-WAN Branch</a>.</p>
+<h3 id="classic-ipsec-sd-wan-descoped-qos-and-failover-are-implemented">Classic IPsec SD-WAN descoped (QoS and failover are implemented)<a class="headerlink" href="#classic-ipsec-sd-wan-descoped-qos-and-failover-are-implemented" title="Permanent link">&para;</a></h3>
+<p>Only the <em>classic</em> IPsec/uCPE SD-WAN approach was descoped — the original acceptance tests F12–F14 (IPsec tunnel, site-to-site datacenter access) are marked N/A. The SD-WAN QoS and failover-detection capabilities are <strong>implemented</strong> under the Zero Trust Branch model (the DSCP shaper and WAN health-check above, proven in V43 Test #5 and Test #6). The rationale is documented in <a href="../../decisions/sdwan-descoped/">Decision: SD-WAN Descoped</a> and <a href="../../decisions/zt-sdwan-branch/">Decision: ZT SD-WAN Branch</a>.</p>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>

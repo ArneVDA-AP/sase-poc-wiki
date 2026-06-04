@@ -343,3 +343,78 @@ corrected.
 **Files changed:** wiki pages across all domains (EN+NL) per the per-domain tables in
 `.agent-memory/audit-tracker.md`; `CLAUDE.md` (authority rule); `log.md` + `log.nl.md` (this entry).
 No `raw/` files were modified. No renames, moves, slug or frontmatter changes.
+
+---
+
+## 2026-06-05 — BYOD + over-translation cleanup + rigorous re-audit
+
+**Goal:** Fix all remaining stale "BYOD" references in current-state descriptions, correct
+over-translated Dutch technical terms (~181 instances), then run a full multi-agent re-audit
+of every wiki page against the raw verslagen to verify correctness before deployment.
+
+### Phase 1: BYOD cleanup (40 stale references → 0)
+All current-state "BYOD client" / "BYOD persona" descriptions replaced with accurate terms
+("overlay client", "managed Windows client", etc.) across 55 EN+NL files.
+
+### Phase 2: Over-translated Dutch terms (~181 fixes)
+English technical terms that were unnecessarily translated into Dutch were restored:
+`eindknooppunt` → exit node, `beleidsregels` → policies, `handtekeningen` → signatures,
+`gebeurtenissen` → events, `drempelwaarde` → threshold, `naamserver` → nameserver,
+`zonetransfer` → zone transfer, `verbindingspooling` → connection pooling,
+`Luisterpoort` → Listen Port, `Doelbronnen` → Target resources, `Toewijzingen` → Assignments,
+`Voorwaarden` → Conditions, `Toegangscontroles` → Access controls,
+`Aanmeldingslogboeken` → Sign-in logs, and more.
+
+### Phase 3: Full re-audit (4 domain agents + 1 independent Opus auditor)
+Four parallel verification agents covered all 12 domains + cross-cutting pages, checking every
+wiki claim against the raw verslagen. An independent auditor (Opus model) then cross-checked
+the domain agents' findings.
+
+**Domain agent results (combined 37+ 11 + 12 + 30 checks):**
+- DNS+SWG+DLP+IDS: ALL PASS
+- ZTNA+CA+GroupSync: ALL PASS (37/37)
+- Identity+NATS+CASB+Wazuh: PASS with 3 minor gaps (fixed)
+- SD-WAN+Lab+CrossCutting: 4 discrepancies (fixed)
+
+**Fixes applied from audit:**
+- `decisions/sdwan-descoped.md` + `.nl.md` — F15 step 8 is validated (not N/A); VyOS is
+  SASE Gateway with QoS (not "minimal NAT only"); rationale corrected (QoS was reimplemented)
+- `overview/architecture.nl.md` — missing "SWG identity layer" trust boundary row added (EN/NL parity)
+- `decisions/nats-accounts-auth.md` + `.nl.md` — `$JS.ACK.>` added alongside `$JS.API.>` for consumers (V32)
+- `components/control-daemon.md` + `.nl.md` — explicit scoring weights `malware=80`, `dlp_match=30` + V35 test reference
+- `components/nats-jetstream.md` + `.nl.md` — 5 JetStream streams table added (V32.13)
+- **Independent auditor false positive (reverted):** auditor flagged `security.alert.ids` → `.ips`
+  based on V34's snapshot, but the live nats.conf on the server confirms `.ids` is the current
+  subject name — the config was updated after V34. Change was applied then reverted.
+
+**Independent auditor summary: 30 PASS, 1 false positive (reverted).** The flagged NATS subject
+discrepancy was based on V34's point-in-time observation; the live server config confirms `.ids`.
+
+**Verification sweep results:**
+- Over-translated terms: 0 remaining
+- BYOD in current-state: 0 (28 remaining all in historical/evolution framing)
+- Secrets leaked: 0
+- EN↔NL parity: verified across 5 page pairs
+- All IPs, ports, versions, group names consistent cross-page
+
+**Files changed:** 63 wiki pages (EN+NL). No `raw/` files modified.
+
+---
+
+## 2026-06-05 — Wazuh dashboard airgate finding rewrite (new source: Wazuh_DB_Fix.md)
+
+**New source document:** `raw/Wazuh_DB_Fix.md` (v1.0, 2 juni 2026) — versie-herstel runbook voor de Wazuh-stack na een `down -v`-incident + versie-skew. Validated 2 juni 2026.
+
+**Root cause corrected:** The existing finding (`findings/wazuh-dashboard-airgate.md`) had the wrong root cause — it blamed the air-gap CTI-500 (`GET /manager/version/check`) for the "Status: Offline" redirect. The new source reveals the redirect is caused by an **empty manager UUID** in `global.db` (wiped by `docker compose down -v`). The CTI-500 is a separate, cosmetic, non-blocking issue in Wazuh 4.14.5+ (fix #8130).
+
+**Status change:** Finding status updated from "known limitation / workaround" to **resolved** (2 juni 2026), fixed via in-place bump to 4.14.5 GA (no `-v`), preserving the existing UUID.
+
+**Audit:** Independent Opus auditor agent verified all planned changes against `Wazuh_DB_Fix.md` before edits were applied. 8 planned edits: all PASS. 2 additional missed files identified by auditor and added to scope.
+
+**Files updated (10):**
+- `findings/wazuh-dashboard-airgate.md` + `.nl.md` — complete rewrite: correct root cause (empty UUID), two structural rules, resolution, updated lessons
+- `components/wazuh.md` + `.nl.md` — dashboard status updated to "fully operational"; known-issues entry corrected
+- `runbooks/11-wazuh.md` + `.nl.md` — gotcha callout updated (resolved); checklist item corrected (app modules no longer gated)
+- `index.md` + `.nl.md` — finding blurb corrected (was "hostname resolution issue", now reflects empty UUID cause)
+
+**Source documents ingested:** `Wazuh_DB_Fix.md` (1 versie-herstel runbook). No `raw/` files modified.

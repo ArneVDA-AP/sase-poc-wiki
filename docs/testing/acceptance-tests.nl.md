@@ -36,7 +36,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | Test | Naam | Status |
 |------|------|--------|
 | **T-A1** | DLP YARA — detectie van CONFIDENTIAL-label bij download | ✅ Gevalideerd |
-| **T-A2** | DLP SDD — StructuredDataDetection-drempelwaarde (4× CC → blokkeren, 1× CC → doorlaten) | ✅ Gevalideerd |
+| **T-A2** | DLP SDD — StructuredDataDetection-threshold (4× CC → blokkeren, 1× CC → doorlaten) | ✅ Gevalideerd |
 | **T-A3** | DLP ICAP REQMOD — Python DLP uploadblokkering (Luhn CC in POST) | ✅ Gevalideerd |
 | **T-A4** | DNS RPZ — NXDOMAIN + aa-vlag van pop01 lokaal | ✅ Gevalideerd |
 | **T-A5** | DNS RPZ — NXDOMAIN van mobile01 via NetBird-overlay | ✅ Gevalideerd |
@@ -45,9 +45,9 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **T-A8** | Suricata verdachte User-Agent | ✅ Gevalideerd |
 | **T-A9** | Suricata DNS-anomaliedetectie | ✅ Gevalideerd |
 | **T-A10** | Identity Bridge — overlay-IP naar personagroepresolutie | ✅ Gevalideerd |
-| **T-A11** | NATS-eventbus — cross-componentgebeurtenisaflevering | ✅ Gevalideerd |
+| **T-A11** | NATS-eventbus — cross-component event delivery | ✅ Gevalideerd |
 | **T-A12** | Control Daemon — dreigingsscoreaccumulatie + quarantaine | ✅ Gevalideerd |
-| **T-A13** | Wazuh SIEM — NATS-gebeurtenisingestie + dashboardquery | ✅ Gevalideerd |
+| **T-A13** | Wazuh SIEM — NATS event ingestion + dashboardquery | ✅ Gevalideerd |
 
 ---
 
@@ -108,7 +108,7 @@ Zie [NetBird](../components/netbird.md), [Beslissing: Zitadel als IdP-broker](..
 
 ### F3 — Posturecontrole (Deels bewezen)
 
-**Poort 1 — Entra ID Conditional Access:** Vijf CA-beleidsregels geïmplementeerd:
+**Poort 1 — Entra ID Conditional Access:** Vijf CA policies geïmplementeerd:
 
 | Beleid | Modus | Effect |
 |--------|-------|--------|
@@ -125,9 +125,9 @@ Ingeschreven apparaten:
 - **mobile01** — ingeschreven als `2ITCSC1A-MOB-1`, conform
 - **sitepc01** — ingeschreven in NetBird als `docent1` (Docenten); afzonderlijk Entra joined + Intune-ingeschreven via `student1` (het enige Intune-gelicentieerde sandbox-account)
 
-Twee beleidsregels blijven in report-only-modus (geo-blokkering, conform apparaat) tot de demo om lockout tijdens testen te vermijden.
+Twee policies blijven in report-only-modus (geo-blokkering, conform apparaat) tot de demo om lockout tijdens testen te vermijden.
 
-**Kritieke voorwaarde:** Controleer MFA-registratie op het testaccount voordat CA-beleidsregels worden geactiveerd. Zonder eerdere MFA-instelling triggert de eerste aanmelding een onherstelbare "MFA vereist maar niet geconfigureerd"-blokkering, waardoor het account ontoegankelijk wordt.
+**Kritieke voorwaarde:** Controleer MFA-registratie op het testaccount voordat CA policies worden geactiveerd. Zonder eerdere MFA-instelling triggert de eerste aanmelding een onherstelbare "MFA vereist maar niet geconfigureerd"-blokkering, waardoor het account ontoegankelijk wordt.
 
 Zie [Beslissing: CA + Posture hybride](../decisions/ca-posture-hybrid.md).
 
@@ -253,7 +253,7 @@ grep '"in_iface":"vtnet1".*"event_type":"alert"' /var/log/suricata/eve.json | wc
 
 > Het Handboek definieerde F9 oorspronkelijk als "controleer of alert zichtbaar is in Wazuh-dashboard." Wazuh is nu operationeel (F10) en Suricata-alerts stromen via NATS naar Wazuh, waarmee deze leemte is gedicht. Suricata-detectie en Wazuh-integratie zijn beide volledig gevalideerd.
 
-> Meerdere curl-verzoeken naar dezelfde bestemming genereren één Suricata-alert per SID per flow — dit is correct gedrag, geen onderdrukking. Oorzaak: Squid-verbindingspooling hergebruikt upstream TCP-verbindingen; Suricata ziet één flow. Zie [Bevinding: Suricata verbindingspooling](../findings/suricata-connection-pooling.md).
+> Meerdere curl-verzoeken naar dezelfde bestemming genereren één Suricata-alert per SID per flow — dit is correct gedrag, geen onderdrukking. Oorzaak: Squid connection pooling hergebruikt upstream TCP-verbindingen; Suricata ziet één flow. Zie [Bevinding: Suricata connection pooling](../findings/suricata-connection-pooling.md).
 
 Zie [Suricata](../components/suricata.md).
 
@@ -281,7 +281,7 @@ Gevalideerde YARA-regels in sandbox:
 |-------|---------|-------|
 | `DLP_Confidential_Label` | CONFIDENTIAL, VERTROUWELIJK, GEHEIM, DO NOT DISTRIBUTE (nocase) | ✅ End-to-end |
 | `DLP_IBAN_Pattern` | NL/DE/BE IBAN-formaat regex | ✅ Lokale clamdscan |
-| `DLP_BSN_Candidate` | Cluster van 9-cijferige reeksen (drempelwaarde >2) | ✅ Lokale clamdscan |
+| `DLP_BSN_Candidate` | Cluster van 9-cijferige reeksen (threshold >2) | ✅ Lokale clamdscan |
 | `DLP_AWS_AccessKey` | `AKIA[0-9A-Z]{16}` | ✅ Lokale clamdscan |
 
 **Beperking:** YARA-regels voeren geen algoritmische validatie uit — geen mod-97 voor IBAN, geen 11-proef voor BSN. Valse positieven zijn mogelijk bij downloads. De Python DLP-laag (T-A3) biedt algoritmische validatie voor uploads.
@@ -290,9 +290,9 @@ Zie [ClamAV/c-icap](../components/clamav-cicap.md), [DLP](../concepts/dlp.md).
 
 ---
 
-### T-A2 — DLP SDD: StructuredDataDetection-drempelwaarde
+### T-A2 — DLP SDD: StructuredDataDetection-threshold
 
-ClamAV's StructuredDataDetection (SDD) gebruikt Luhn-validatie — willekeurige 16-cijferige reeksen triggeren niet. De drempelwaarde is `StructuredMinCreditCardCount: 3` (geconfigureerd), dus detectie vuur bij 4+ geldige CC-nummers.
+ClamAV's StructuredDataDetection (SDD) gebruikt Luhn-validatie — willekeurige 16-cijferige reeksen triggeren niet. De threshold is `StructuredMinCreditCardCount: 3` (geconfigureerd), dus detectie vuur bij 4+ geldige CC-nummers.
 
 ```bash
 # 4 geldige Luhn CC-nummers → gedetecteerd
@@ -300,7 +300,7 @@ echo "CC1: 4532015112830366 CC2: 4916338506082832 CC3: 5425233430109903 CC4: 222
 clamdscan /tmp/sdd_test.txt
 # Uitvoer: Heuristics.Structured.CreditCardNumber FOUND
 
-# 1 geldig CC-nummer → doorgelaten (onder drempelwaarde)
+# 1 geldig CC-nummer → doorgelaten (onder threshold)
 echo "CC: 4532015112830366" > /tmp/sdd_test_single.txt
 clamdscan /tmp/sdd_test_single.txt
 # Uitvoer: OK
@@ -378,21 +378,21 @@ Test dat de Identity Bridge overlay-IP's correct vertaalt naar Entra ID-personag
 
 ---
 
-### T-A11 — NATS-eventbus: cross-componentgebeurtenisaflevering
+### T-A11 — NATS-eventbus: cross-component event delivery
 
-Test end-to-end gebeurtenisaflevering van een producent (bijv. Suricata) via NATS naar zowel de Control Daemon als Wazuh. Valideert door een Suricata-alert te triggeren en te controleren dat de gebeurtenis verschijnt in zowel NATS-monitoring als Wazuh.
+Test end-to-end event delivery van een producent (bijv. Suricata) via NATS naar zowel de Control Daemon als Wazuh. Valideert door een Suricata-alert te triggeren en te controleren dat het event verschijnt in zowel NATS-monitoring als Wazuh.
 
 ---
 
 ### T-A12 — Control Daemon: dreigingsscoreaccumulatie + quarantaine
 
-Test dreigingsscoreaccumulatie en quarantaine. Valideert door meerdere gemiddeld-ernstige gebeurtenissen te sturen voor dezelfde client, de Redis-score toename te observeren, en te verifiëren dat de peer wordt verwijderd uit personagroepen wanneer de drempelwaarde wordt overschreden.
+Test dreigingsscoreaccumulatie en quarantaine. Valideert door meerdere gemiddeld-ernstige events te sturen voor dezelfde client, de Redis-score toename te observeren, en te verifiëren dat de peer wordt verwijderd uit personagroepen wanneer de threshold wordt overschreden.
 
 ---
 
-### T-A13 — Wazuh SIEM: NATS-gebeurtenisingestie + dashboardquery
+### T-A13 — Wazuh SIEM: NATS event ingestion + dashboardquery
 
-Test NATS-naar-Wazuh gebeurtenisingestie. Valideert door een detectiegebeurtenis te triggeren en vervolgens het Wazuh Discover-dashboard te bevragen naar de gebeurtenis met correcte velden.
+Test NATS-naar-Wazuh event ingestion. Valideert door een detection event te triggeren en vervolgens het Wazuh Discover-dashboard te bevragen naar het event met correcte velden.
 
 ---
 
@@ -400,7 +400,7 @@ Test NATS-naar-Wazuh gebeurtenisingestie. Valideert door een detectiegebeurtenis
 
 ### F10 — Centrale logaggregatie (SIEM)
 
-Wazuh is geïmplementeerd en operationeel. De NATS-forwarder bruggt Suricata-alerts van de eventbus naar Wazuh, en de pop01-agent voedt lokale logbronnen (Squid-toegangslog, Suricata `eve.json`, OPNsense-firewalllog, Python DLP Docker-log). Gebeurtenissen zijn opvraagbaar in het Wazuh Discover-dashboard.
+Wazuh is geïmplementeerd en operationeel. De NATS-forwarder bruggt Suricata-alerts van de eventbus naar Wazuh, en de pop01-agent voedt lokale logbronnen (Squid-toegangslog, Suricata `eve.json`, OPNsense-firewalllog, Python DLP Docker-log). Events zijn opvraagbaar in het Wazuh Discover-dashboard.
 
 ### F11 — CASB-alert en herstel
 
@@ -439,10 +439,10 @@ Stappen 1–5, 8 en 9 weerspiegelen de huidige stack. Stap 6 is gevalideerd bij 
 |--------|--------|
 | Snapshot bij validatie | `Fase2-ZTNA-Complete` (basis), daarna Fase 3 incrementeel |
 | pop01 RAM | 8 GB (verhoogd van 4 GB voor gelijktijdige Suricata + ClamAV-belasting) |
-| ClamAV-handtekeningen | daily v27953, main v63, bytecode v339 — 3.642.437 handtekeningen |
+| ClamAV-signatures | daily v27953, main v63, bytecode v339 — 3.642.437 signatures |
 | Suricata-regels | ET Open + Abuse.ch: **79.620+** regels (Hyperscan-engine) |
 | RPZ-records | URLhaus + ThreatFox: **71.767** records |
-| mobile01 | Windows 11, VMware, extern — simuleert BYOD buiten schoolnetwerk |
+| mobile01 | Windows 11, VMware, extern — simuleert remote managed Windows client buiten schoolnetwerk |
 | NetBird-overlaybereik | 100.64.0.0/10 |
 
 ---
@@ -453,7 +453,7 @@ Stappen 1–5, 8 en 9 weerspiegelen de huidige stack. Stap 6 is gevalideerd bij 
 - [Beslissing: SD-WAN Geschrapt](../decisions/sdwan-descoped.md)
 - [Beslissing: CA + Posture hybride (Driepoortsmodel)](../decisions/ca-posture-hybrid.md)
 - [Bevinding: curl --ssl-no-revoke op Windows](../findings/curl-ssl-no-revoke.md)
-- [Bevinding: Suricata verbindingspooling](../findings/suricata-connection-pooling.md)
+- [Bevinding: Suricata connection pooling](../findings/suricata-connection-pooling.md)
 - [NetBird](../components/netbird.md)
 - [Squid](../components/squid.md)
 - [ClamAV/c-icap](../components/clamav-cicap.md)

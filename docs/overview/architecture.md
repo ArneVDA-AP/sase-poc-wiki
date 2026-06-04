@@ -259,7 +259,7 @@ Gates are complementary, not redundant. Gate 1 evaluates *who* the user is (MFA,
 
 ---
 
-**DC-LAN inspection gap:** dc01 uses pop01 as its default gateway (`10.0.0.1`) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does **not** pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not BYOD browsers.
+**DC-LAN inspection gap:** dc01 uses pop01 as its default gateway (`10.0.0.1`) for internet access. This traffic is routed by OPNsense and inspected by Suricata on vtnet1, but does **not** pass through Squid/ICAP — there is no WPAD/PAC or proxy configuration on dc01. DNS queries from dc01 do go through Unbound RPZ. This is an accepted scope limitation: DC resources are server workloads, not user browsers.
 
 ---
 

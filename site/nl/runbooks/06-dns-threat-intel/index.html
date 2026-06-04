@@ -3855,7 +3855,7 @@ Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWAR
 </code></pre></div></p>
 <p><strong>TSIG-sleutels (maak er twee aan):</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>tkey_mgmt_1        — beheersleutel, hmac-md5
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>tkey_rpz_transfer  — zonetransfersleutel, hmac-sha256
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>tkey_rpz_transfer  — zone transfer key, hmac-sha256
 </code></pre></div></p>
 <p><strong>Bronnen (Threat Feeds):</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>urlhaus_rpz:   https://urlhaus.abuse.ch/downloads/rpz/
@@ -3873,7 +3873,7 @@ Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWAR
 <a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>AXFR-tijd:  3600
 </code></pre></div></p>
 <blockquote>
-<p><strong>Valkuil: TSIG-sleutel MOET gekoppeld zijn aan de zone.</strong> Een niet-gekoppelde sleutel (leeg <code>tkeys</code>-veld in de configuratie) veroorzaakt zonetransferafwijzing met "tsig indicates error". Controleer in de GUI of de zone de juiste TSIG-sleutel toont, klik dan op Publish.</p>
+<p><strong>Valkuil: TSIG-sleutel MOET gekoppeld zijn aan de zone.</strong> Een niet-gekoppelde sleutel (leeg <code>tkeys</code>-veld in de configuratie) veroorzaakt zone transfer-afwijzing met "tsig indicates error". Controleer in de GUI of de zone de juiste TSIG-sleutel toont, klik dan op Publish.</p>
 </blockquote>
 <p>Na Publish, verwachte uitvoer:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>Source: &quot;urlhaus_rpz&quot;, got 450 indicators
@@ -3893,12 +3893,12 @@ Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWAR
 <p>Navigeer weg en terug (GUI-dropdown quirk).</p>
 <p><strong>Algemene instellingen:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>BIND Daemon inschakelen: aangevinkt
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>Luister-IP&#39;s:           127.0.0.1
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>Luisterpoort:           53530
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>Listen IPs:           127.0.0.1
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>Listen Port:           53530
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>DNS Forwarders:         leeg
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>Recursie:               geen ACL (uit)
 <a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>DNSSec Validatie:       nee
-<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>Overdracht toestaan:    loopback_only
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>Allow Transfer:    loopback_only
 </code></pre></div></p>
 <p><strong>Secundaire zone:</strong> Services → BIND → Secondary Zones:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Zonenaam:           threat-intel.rpz.sase
@@ -3911,7 +3911,7 @@ Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWAR
 <a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>Query toestaan:     loopback_only
 </code></pre></div></p>
 <p>Zie <a href="../../decisions/bind-tsig-intermediary/">Beslissing: BIND als TSIG-intermediair</a> waarom BIND nodig is (Unbound 1.24.2 mist TSIG-ondersteuning).</p>
-<p><strong>Controleer zonetransfer:</strong></p>
+<p><strong>Controleer zone transfer:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>pluginctl<span class="w"> </span><span class="nb">bind</span><span class="w"> </span>status
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>cat<span class="w"> </span>/var/log/named/named.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-20
 </code></pre></div>
@@ -3959,7 +3959,7 @@ Zie <a href="../../findings/unbound-config-path/">Finding: Unbound configuratiep
 <p>De OPNsense WebUI toont "The configuration contains manual overwrites" — dit is verwacht en correct.</p>
 <hr />
 <h2 id="stap-7-netbird-dns-primaire-nameserver-configureren">Stap 7: NetBird DNS primaire nameserver configureren<a class="headerlink" href="#stap-7-netbird-dns-primaire-nameserver-configureren" title="Permanent link">&para;</a></h2>
-<p>Deze stap is een <strong>vereiste voor BYOD RPZ-bescherming</strong>. Zonder dit omzeilen externe queries van mobile01 Unbound volledig.</p>
+<p>Deze stap is een <strong>vereiste voor client RPZ-bescherming</strong>. Zonder dit omzeilen externe queries van mobile01 Unbound volledig.</p>
 <p>NetBird Dashboard → DNS → Nameservers → Add:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>IP:             100.70.154.79 (pop01 overlay-IP)
 <a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>Match-domeinen: (LEEG LATEN)
@@ -3993,7 +3993,7 @@ Zie <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primai
 <h2 id="bekende-openstaande-punten">Bekende openstaande punten<a class="headerlink" href="#bekende-openstaande-punten" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>ioc2rpz GUI JS-fix is niet persistent</strong> — opnieuw toepassen na containerrebuilds</li>
-<li><strong>DNS NOTIFY bereikt BIND niet direct</strong> — ioc2rpz stuurt NOTIFY naar poort 53, BIND luistert op 53530. Feeds worden bijgewerkt op het poll-interval van 3600s. Handmatige trigger: <code>rndc -p 953 retransfer threat-intel.rpz.sase</code></li>
+<li><strong>DNS NOTIFY bereikt BIND niet direct</strong> — ioc2rpz stuurt NOTIFY naar poort 53, BIND luistert op 53530. Feeds worden bijgewerkt op het poll-interval van 3600s. Handmatige trigger: <code>rndc retransfer threat-intel.rpz.sase</code></li>
 </ul>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>

@@ -33,7 +33,7 @@
     
     
       
-        <title>Bevinding: Suricata vuurt één keer per SID per flow (Squid-verbindingspooling) - Security Project Wiki</title>
+        <title>Bevinding: Suricata vuurt één keer per SID per flow (Squid connection pooling) - Security Project Wiki</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-verbindingspooling" class="md-skip">
+        <a href="#bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-connection-pooling" class="md-skip">
           Ga naar inhoud
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Bevinding: Suricata vuurt één keer per SID per flow (Squid-verbindingspooling)
+              Bevinding: Suricata vuurt één keer per SID per flow (Squid connection pooling)
             
           </span>
         </div>
@@ -3585,7 +3585,7 @@
 
 
 
-<h1 id="bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-verbindingspooling">Bevinding: Suricata vuurt één keer per SID per flow (Squid-verbindingspooling)<a class="headerlink" href="#bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-verbindingspooling" title="Permanent link">&para;</a></h1>
+<h1 id="bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-connection-pooling">Bevinding: Suricata vuurt één keer per SID per flow (Squid connection pooling)<a class="headerlink" href="#bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-connection-pooling" title="Permanent link">&para;</a></h1>
 <p><strong>Component:</strong> <a href="../../components/suricata/">Suricata</a><br />
 <strong>Ernst:</strong> Inzicht — geen bug</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
@@ -3597,7 +3597,7 @@
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c"># Resultaat: slechts één SID 2100498-alert in eve.json</span>
 </code></pre></div>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>Squid-verbindingspooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow — dit is verwacht gedrag by design, geen onderdrukking.</p>
+<p>Squid connection pooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow — dit is verwacht gedrag by design, geen onderdrukking.</p>
 <p>Het aantal alerts in <code>eve.json</code> weerspiegelt het aantal afzonderlijke upstream TCP-flows, niet het aantal HTTP-verzoeken van de client.</p>
 <h2 id="oplossing">Oplossing<a class="headerlink" href="#oplossing" title="Permanent link">&para;</a></h2>
 <p>Geen oplossing nodig — dit is correct gedrag. Voor tests die een nieuwe Suricata-alert vereisen voor dezelfde SID:</p>
@@ -3608,7 +3608,7 @@
 </ul>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Houd bij het interpreteren van Suricata-alertaantallen tijdens proxy-gebaseerde tests rekening met Squid-verbindingspooling. Één alert per SID per flow is verwacht en correct.</li>
+<li>Houd bij het interpreteren van Suricata-alertaantallen tijdens proxy-gebaseerde tests rekening met Squid connection pooling. Één alert per SID per flow is verwacht en correct.</li>
 <li>Dit heeft geen invloed op productiedetectie: werkelijk afzonderlijke kwaadaardige flows genereren elk hun eigen alert.</li>
 <li>Onderzocht en bevestigd in Verslag23 (Bevinding 23.6).</li>
 </ul>

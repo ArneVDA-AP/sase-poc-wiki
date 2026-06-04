@@ -3615,7 +3615,7 @@
 <tr>
 <td><strong>Zero Trust Branch (NetBird overlay + VyOS QoS)</strong></td>
 <td>Per-device authentication; no implicit subnet trust; aligns with Zscaler/Netskope ZT-SD-WAN model; VyOS provides QoS via DSCP without IPsec</td>
-<td>VyOS QoS is applied at the site gateway, not end-to-end; failover detection depends on NetBird relay infrastructure</td>
+<td>VyOS QoS is applied at the site gateway, not end-to-end; failover is detection-and-alerting only (single-WAN lab), not an automatic dual-WAN switch</td>
 </tr>
 </tbody>
 </table>
@@ -3625,7 +3625,7 @@
 <p>The ZT-Branch implementation was validated through two dedicated tests:</p>
 <ul>
 <li><strong>Test #5 (QoS under load, V43):</strong> DSCP EF traffic: 300/300 packets, 0 drops. Bulk traffic under same load: 26 drops + 17,000+ overlimits. Demonstrates effective traffic prioritization without IPsec tunnels.</li>
-<li><strong>Test #6 (Failover detection, V43):</strong> CRITICAL-level failover detection in under 30 seconds. Validates that the NetBird overlay provides sufficient resilience for branch connectivity.</li>
+<li><strong>Test #6 (Failover detection, V43):</strong> a VyOS health-check script pinging pop01, the internet gateway, and <code>8.8.8.8</code> produced a CRITICAL detection within 30 seconds when pop01's interface was taken down, with recovery logged once it returned. This is honest single-WAN framing — detection and alerting, not an automatic dual-WAN switch.</li>
 </ul>
 <p>Spoor-1-contract acceptance criteria B1-B4 are fully closed based on these results.</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>

@@ -35,8 +35,8 @@ Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird
 ## Gevolgen
 
 - **F12, F13, F14** zijn als N.v.t. gemarkeerd in alle acceptatietestmatrices. Dit is een expliciete architectuurbeslissing, geen implementatieleemte.
-- **F15-stappen 7–8** zijn N.v.t. om dezelfde reden (stap 7 vereist sitepc01 met NetBird; stap 8 vereist QoS op VyOS).
-- **VyOS** blijft in de topologie, maar de configuratie is minimaal — alleen WAN-connectiviteit en NAT. Zie [VyOS](../components/vyos.md).
+- **F15-stap 7** is N.v.t. (klassiek IPsec site-to-site geschrapt). **Stap 8** (QoS-markering) is gevalideerd onder het ZT-Branch model (V43 Test #5: DSCP EF geclassificeerd, 0 drops onder last).
+- **VyOS** blijft in de topologie als SASE-gateway — WAN-connectiviteit, NAT, QoS-shaping (DSCP EF/AF41/AF21) en WAN health monitoring. Zie [VyOS](../components/vyos.md).
 - **sitepc01** bereikt het datacenter via individuele NetBird-inschrijving — bevestigd ingeschreven en operationeel in Verslag43/Verslag44, niet via een site-to-site-tunnel.
 - De architectuur sluit direct aan op het "Zero Trust SD-WAN"-model van Zscaler: vestigingen behandeld als niet-vertrouwde netwerken (zoals cafés), elk apparaat authenticeert individueel, geen site-to-site-tunnels.
 
@@ -56,11 +56,11 @@ Zie: [VyOS](../components/vyos.md), [Beslissing: ZT-SD-WAN Branch](../decisions/
 
 ## Onderbouwing
 
-**IPsec repliceert wat ZTNA vervangt.** Een site-to-site IPsec-tunnel is netwerkcentrisch: hij verleent alle hosts op Site-LAN impliciete toegang tot het datacenter op basis van netwerklocatie. Dit is precies het perimeter-model dat SASE is ontworpen te vervangen. NetBird biedt al een Zero Trust-overlay waarbij elke peer individueel authenticeert en ACL-beleidsregels per-peer toegang afdwingen.
+**IPsec repliceert wat ZTNA vervangt.** Een site-to-site IPsec-tunnel is netwerkcentrisch: hij verleent alle hosts op Site-LAN impliciete toegang tot het datacenter op basis van netwerklocatie. Dit is precies het perimeter-model dat SASE is ontworpen te vervangen. NetBird biedt al een Zero Trust-overlay waarbij elke peer individueel authenticeert en ACL policies per-peer toegang afdwingen.
 
 **Zscaler-afstemming.** Het schrappen sluit de architectuur af op de publiek gedocumenteerde Zero Trust SD-WAN-aanpak van Zscaler: geen impliciet vertrouwen op basis van netwerklocatie, elke vestiging behandeld als een niet-vertrouwd netwerk, cloudinspectie voor al het verkeer.
 
-**Complexiteitsreductie.** Het verwijderen van IPsec, uCPE en QoS vermindert het implementatieoppervlak en houdt de PoC gericht op de SASE-beveiligingscomponenten.
+**Complexiteitsreductie.** Het verwijderen van IPsec en uCPE vermindert het implementatieoppervlak. QoS is opnieuw geimplementeerd onder het ZT-Branch model (zie [Wat er daadwerkelijk gebouwd is](#wat-er-daadwerkelijk-gebouwd-is)).
 
 ## Gerelateerd
 

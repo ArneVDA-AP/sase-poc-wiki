@@ -10,7 +10,7 @@ tags: [decision, proxy, wpad, squid, sase, network]
 
 ## Context
 
-BYOD-clients op de NetBird-overlay moeten al hun HTTP/HTTPS-verkeer via Squid laten lopen voor inspectie. Er zijn twee benaderingen: transparante interceptie (firewall leidt poort 80/443 stilzwijgend om) en expliciete proxy via WPAD/PAC (client is geconfigureerd om verkeer naar het proxyadres te sturen).
+Clients op de NetBird-overlay moeten al hun HTTP/HTTPS-verkeer via Squid laten lopen voor inspectie. Er zijn twee benaderingen: transparante interceptie (firewall leidt poort 80/443 stilzwijgend om) en expliciete proxy via WPAD/PAC (client is geconfigureerd om verkeer naar het proxyadres te sturen).
 
 Het handboek specificeerde transparante proxy via `pf rdr`.
 

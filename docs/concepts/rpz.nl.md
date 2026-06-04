@@ -9,7 +9,7 @@ tags: [ioc2rpz, dns, rpz, network, sase]
 
 ## Hoe het hier van toepassing is
 
-RPZ onderschept op het vroegst mogelijke punt in de bedreigingslevenscyclus: naamresolutie. Als een BYOD-client de hostnaam van een bekende C2-server probeert op te lossen, retourneert Unbound NXDOMAIN — de TCP-verbinding start nooit, ongeacht poort of protocol.
+RPZ onderschept op het vroegst mogelijke punt in de bedreigingslevenscyclus: naamresolutie. Als een client de hostnaam van een bekende C2-server probeert op te lossen, retourneert Unbound NXDOMAIN — de TCP-verbinding start nooit, ongeacht poort of protocol.
 
 De RPZ-zone in deze stack bevat ~71 767 records uit twee Abuse.ch-feeds (URLhaus + ThreatFox), bijgewerkt door ioc2rpz uit live threat intelligence-feeds. Wanneer een client een hostnaam opvraagt die overeenkomt met een RPZ-record, vervangt Unbound de geconfigureerde actie (NXDOMAIN) in plaats van het echte antwoord te retourneren.
 
@@ -29,7 +29,7 @@ Unbound laadt de RPZ-zone in het geheugen. De prestatieimpact per query is verwa
 
 **[ioc2rpz](../components/ioc2rpz.md)** — de zonebron. Aggregeert URLhaus- en ThreatFox-feeds in één RPZ-zone (`threat-intel.rpz.sase`). Fungeert als een autoritatieve DNS-server waarvan BIND overneemt.
 
-**[NetBird](../components/netbird.md)** — de primaire nameserver-configuratie routeert alle DNS-queries van BYOD-clients via pop01 Unbound. Zonder dit omzeilen externe queries Unbound volledig, waardoor RPZ-bescherming voor niet-interne domeinen teniet wordt gedaan.
+**[NetBird](../components/netbird.md)** — de primaire nameserver-configuratie routeert alle DNS-queries van overlay-clients via pop01 Unbound. Zonder dit omzeilen externe queries Unbound volledig, waardoor RPZ-bescherming voor niet-interne domeinen teniet wordt gedaan.
 
 **[Suricata](../components/suricata.md)** — aanvullende controle. Suricata detecteert verbindingen naar bekende kwaadaardige IP's (van Abuse.ch SSL IP Blacklist en vergelijkbaar); RPZ voorkomt DNS-resolutie van bekende kwaadaardige domeinen. Beide gebruiken Abuse.ch als bron; ze bestrijken verschillende bedreigingsoppervlakken (verbinding vs. naamresolutie).
 

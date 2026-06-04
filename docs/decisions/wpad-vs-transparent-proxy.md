@@ -10,7 +10,7 @@ tags: [decision, proxy, wpad, squid, sase, network]
 
 ## Context
 
-BYOD clients on the NetBird overlay need all their HTTP/HTTPS traffic routed through Squid for inspection. Two approaches exist: transparent interception (firewall silently redirects port 80/443) and explicit proxy via WPAD/PAC (client is configured to send traffic to the proxy address).
+Clients on the NetBird overlay need all their HTTP/HTTPS traffic routed through Squid for inspection. Two approaches exist: transparent interception (firewall silently redirects port 80/443) and explicit proxy via WPAD/PAC (client is configured to send traffic to the proxy address).
 
 The handbook specified transparent proxy via `pf rdr`.
 

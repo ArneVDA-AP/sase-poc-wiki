@@ -33,7 +33,7 @@
     
     
       
-        <title>Finding: Wazuh Dashboard Apps section fails in air-gapped environment - Security Project Wiki</title>
+        <title>Finding: Wazuh Dashboard Offline redirect caused by empty manager UUID - Security Project Wiki</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#finding-wazuh-dashboard-apps-section-fails-in-air-gapped-environment" class="md-skip">
+        <a href="#finding-wazuh-dashboard-offline-redirect-caused-by-empty-manager-uuid" class="md-skip">
           Skip to content
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Finding: Wazuh Dashboard Apps section fails in air-gapped environment
+              Finding: Wazuh Dashboard Offline redirect caused by empty manager UUID
             
           </span>
         </div>
@@ -3297,10 +3297,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#resolution-workaround" class="md-nav__link">
+  <a href="#two-structural-rules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Resolution / workaround
+        Two structural rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolution
       
     </span>
   </a>
@@ -3493,10 +3504,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#resolution-workaround" class="md-nav__link">
+  <a href="#two-structural-rules" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Resolution / workaround
+        Two structural rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolution
       
     </span>
   </a>
@@ -3549,6 +3571,13 @@
       
       
       
+        <a href="../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
         <a href="../../tags/#tag:finding" class="md-tag">finding</a>
       
     
@@ -3563,27 +3592,36 @@
 
 
 
-<h1 id="finding-wazuh-dashboard-apps-section-fails-in-air-gapped-environment">Finding: Wazuh Dashboard Apps section fails in air-gapped environment<a class="headerlink" href="#finding-wazuh-dashboard-apps-section-fails-in-air-gapped-environment" title="Permanent link">&para;</a></h1>
+<h1 id="finding-wazuh-dashboard-offline-redirect-caused-by-empty-manager-uuid">Finding: Wazuh Dashboard Offline redirect caused by empty manager UUID<a class="headerlink" href="#finding-wazuh-dashboard-offline-redirect-caused-by-empty-manager-uuid" title="Permanent link">&para;</a></h1>
 <p><strong>Component:</strong> <a href="../../components/wazuh/">Wazuh</a><br />
-<strong>Severity:</strong> Gotcha (known limitation)</p>
+<strong>Severity:</strong> Gotcha (resolved 2 juni 2026)</p>
 <h2 id="what-happened">What happened<a class="headerlink" href="#what-happened" title="Permanent link">&para;</a></h2>
-<p>The Wazuh Dashboard Apps section is unreachable. Clicking the "API" section triggers a connection check to external Wazuh update servers, which fails in the air-gapped sandbox environment. The UI shows a perpetual loading spinner with no error message or timeout indication.</p>
+<p>After a <code>docker compose down -v</code> (which wiped named Docker volumes) followed by a manager downgrade (4.14.5 → 4.14.3), the Wazuh Dashboard's app modules (Security Events, Agents tab) showed <strong>"Status: Offline"</strong> / <strong>"Updates status: Error checking updates"</strong> and hard-redirected to the API-configuration page on every load. Simultaneously, the pop01 agent (ID 001) disconnected. The Discover interface continued to work throughout.</p>
 <h2 id="root-cause">Root cause<a class="headerlink" href="#root-cause" title="Permanent link">&para;</a></h2>
-<p>The dashboard performs a version/UUID health check against Wazuh's external API (<code>https://api.wazuh.com/...</code>) as part of the Apps section initialization. This check requires internet access. In the air-gapped lab environment, the request hangs indefinitely, blocking the entire Apps section from loading.</p>
-<h2 id="resolution-workaround">Resolution / workaround<a class="headerlink" href="#resolution-workaround" title="Permanent link">&para;</a></h2>
-<p>Use the <strong>Discover</strong> interface (direct OpenSearch query) as the primary analysis tool. Discover provides full event search, filtering, and visualization capabilities — sufficient for all PoC needs:</p>
-<ul>
-<li>Navigate to Discover in the Wazuh Dashboard sidebar</li>
-<li>Select the <code>wazuh-alerts-*</code> index pattern</li>
-<li>Use KQL or Lucene query syntax for filtering</li>
-<li>Create saved searches and visualizations as needed</li>
-</ul>
-<p>The Apps section features (Agents overview, SCA, Vulnerability Detection dashboards) are not available, but the underlying data is fully accessible through Discover.</p>
+<p>Two distinct problems combined:</p>
+<p><strong>1. Empty manager UUID (cause of the Offline redirect)</strong><br />
+<code>docker compose down -v</code> wipes named Docker volumes, including <code>global.db</code>. On a fresh <code>global.db</code>, the manager UUID is empty (<code>"uuid": ""</code>). The dashboard's <code>POST /api/check-api</code> returns HTTP 500 — "Could not obtain manager UUID"; the dashboard interprets this as the manager being offline, sets "Status: Offline", and gates all app modules behind the API-configuration redirect.</p>
+<p><strong>2. Version skew (cause of agent disconnect)</strong><br />
+The OPNsense plugin <code>os-wazuh-agent</code> delivers a fixed agent version (4.14.5). Wazuh's compatibility rule requires <strong>manager ≥ agent</strong>. Downgrading the manager to 4.14.3 put it below the agent, causing enrollment refusal and the <code>(4101)</code> version-warning in agent logs.</p>
+<p><strong>Important:</strong> <code>GET /manager/version/check</code> → HTTP 500 ("Error checking updates") is caused by the air-gap blocking the CTI update endpoint, but it is a <em>separate</em> issue from the Offline redirect. In Wazuh 4.14.5 (fix #8130), this check is non-blocking — it does <strong>not</strong> cause the Offline redirect. The redirect is caused solely by the empty UUID.</p>
+<h2 id="two-structural-rules">Two structural rules<a class="headerlink" href="#two-structural-rules" title="Permanent link">&para;</a></h2>
+<p><strong>Rule 1 — The agent version sets the manager floor.</strong><br />
+The OPNsense plugin pins the agent version (currently 4.14.5). Downgrading a FreeBSD package is brick-risk. Always keep manager ≥ agent. Check the agent version before any manager version change.</p>
+<p><strong>Rule 2 — Version work = in-place tag bump, never <code>down -v</code>.</strong><br />
+<code>docker compose down -v</code> destroys named volumes: UUID (<code>global.db</code>), agent registration (<code>client.keys</code>), and indexed alerts. For version changes: edit the image tag in <code>docker-compose.yml</code>, run <code>docker compose pull</code> then <code>docker compose up -d</code> (no <code>-v</code>). The UUID and agent registration survive.</p>
+<h2 id="resolution">Resolution<a class="headerlink" href="#resolution" title="Permanent link">&para;</a></h2>
+<p>Resolved 2 juni 2026 via in-place bump to Wazuh 4.14.5 GA (no <code>-v</code>), which preserved the <code>global.db</code> UUID from the 4.14.3 run. The pop01 agent re-enrolled and shows Active. Dashboard app loads without redirect.</p>
+<p>All acceptance criteria met:
+- <code>wazuh-control info</code> → <code>v4.14.5</code>
+- <code>GET /manager/info</code> → <code>uuid</code> non-empty; dashboard app loads without redirect
+- <code>agent_control -l</code> → <code>001 OPNsense.internal Active</code>
+- Discover <code>rule.id:100540</code> → <code>data.producer:unbound</code> document indexed</p>
 <h2 id="lessons">Lessons<a class="headerlink" href="#lessons" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Air-gapped deployments of Wazuh should expect the Apps section to be non-functional — plan analysis workflows around Discover from the start</li>
-<li>Discover is the primary analysis interface and is not affected by the external API dependency</li>
-<li>This limitation does not affect data collection, agent enrollment, or alerting — only the dashboard convenience layer</li>
+<li>The "Status: Offline" redirect is caused by an <strong>empty manager UUID</strong>, not by DNS or the air-gap CTI check. Verify with <code>GET /manager/info</code> (Dev Tools in the dashboard) before chasing connectivity.</li>
+<li><code>docker compose down -v</code> is destructive for Wazuh: UUID and agent registration are in named volumes, not bind-mounts. Always use <code>docker compose up -d</code> (no <code>-v</code>) for version work.</li>
+<li>The CTI-500 (<code>Error checking updates</code>) is cosmetic in Wazuh 4.14.5+ and can be ignored in air-gapped deployments.</li>
+<li>The OPNsense agent version pins the manager floor — never set the manager below the agent version.</li>
 </ul>
 
 

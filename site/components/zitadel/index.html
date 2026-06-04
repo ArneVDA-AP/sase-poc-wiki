@@ -3766,7 +3766,7 @@
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  → Zitadel (OIDC issuer on mgmt01)
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    → Entra ID (aplab.be tenant, external IdP)
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>      → Microsoft login page
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    ← OIDC token with groups (GUIDs) + cloud_displayname
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    ← OIDC token: groups claim = display-name strings (via cloud_displayname)
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>  ← JWT with clean groups claim
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>→ NetBird Management reads groups from JWT
 </code></pre></div>
@@ -3775,21 +3775,17 @@
 <h2 id="zitadel-actions">Zitadel Actions<a class="headerlink" href="#zitadel-actions" title="Permanent link">&para;</a></h2>
 <p>Two custom Actions form the critical bridge between Entra ID's raw claims and the clean group names NetBird requires. Both are JavaScript snippets executed server-side by Zitadel during the authentication flow.</p>
 <h3 id="action-1-external-authentication-pre-creation-hook">Action 1 — External Authentication (Pre-creation hook)<a class="headerlink" href="#action-1-external-authentication-pre-creation-hook" title="Permanent link">&para;</a></h3>
-<p>When a user logs in via Entra ID for the first time, the Entra ID token carries two relevant claims:</p>
-<ul>
-<li><code>groups</code> — an array of GUIDs (e.g., <code>e5f8a2b3-...</code>) identifying Azure AD group membership</li>
-<li><code>cloud_displayname</code> — an optional claim carrying the human-readable group name with the tenant team prefix (e.g., <code>2ITcsc1A-Studenten</code>)</li>
-</ul>
-<p>Action 1 performs the GUID-to-name mapping by:</p>
+<p>When a user logs in via Entra ID for the first time, the Entra ID token's <code>groups</code> claim carries the user's group memberships. Because <code>cloud_displayname</code> is attached to the <code>groups</code> claim in the app manifest (see <a href="../../runbooks/08-groupsync/">Runbook 08</a>), the claim emits each group's <strong>display-name string</strong> (e.g. <code>2ITCSC1A-Studenten</code>) rather than its ObjectID GUID (e.g. <code>e5f8a2b3-...</code>).</p>
+<p>Action 1 (<code>mapEntraGroupsToMetadata</code>) resolves the clean internal names with an <strong>allowlist</strong> keyed on those display-name strings:</p>
 <ol>
-<li>Reading <code>cloud_displayname</code> from the Entra ID token</li>
-<li>Stripping the <code>2ITcsc1A-</code> prefix (this is <a href="../../decisions/groupsync-pad-b/">GroupSync Path B</a>)</li>
-<li>Setting the internal group name to the clean version: <code>Studenten</code>, <code>Docenten</code>, <code>Admins</code></li>
+<li>Read the <code>groups</code> claim (display-name strings)</li>
+<li>Look each name up in a hardcoded allowlist — <code>2ITCSC1A-Studenten</code> → <code>Studenten</code>, <code>2ITCSC1A-Docenten</code> → <code>Docenten</code>, <code>2ITCSC1A-Admins</code> → <code>Admins</code> (this is <a href="../../decisions/groupsync-pad-b/">GroupSync Path B</a>)</li>
+<li>Write the matched clean names to the user metadata key <code>sase_groups</code> (comma-joined)</li>
 </ol>
-<p>This mapping step is necessary because NetBird cannot interpret GUIDs — it needs human-readable group names to create auto-groups.</p>
+<p>The lookup is keyed on the <strong>name string</strong>, which is why <code>cloud_displayname</code> is a hard precondition — a raw GUID cannot be allowlisted to <code>Studenten</code>. The allowlist is deliberately <strong>fail-closed</strong>: a group not in the map is silently dropped rather than passed through (stricter than a blind prefix-strip). The clean names keep downstream NetBird ACLs and Squid policies readable.</p>
 <h3 id="action-2-complement-token">Action 2 — Complement Token<a class="headerlink" href="#action-2-complement-token" title="Permanent link">&para;</a></h3>
 <p>Adds the <code>groups</code> claim to the JWT token that Zitadel issues to NetBird. Without this action, the JWT contains authentication information but no group membership, and NetBird never sees which persona group the user belongs to.</p>
-<p>The action calls <code>setClaim('groups', [...])</code> to inject the mapped group names into the outgoing JWT. NetBird's JWT group sync then reads this claim and creates or assigns auto-groups accordingly.</p>
+<p>The action reads <code>sase_groups</code> from the user's metadata and calls <code>setClaim('groups', [...])</code> to inject those clean names into the outgoing JWT. NetBird's JWT group sync then reads this claim and creates or assigns auto-groups accordingly.</p>
 <h3 id="fail-open-design">Fail-open design<a class="headerlink" href="#fail-open-design" title="Permanent link">&para;</a></h3>
 <p>Both actions have <code>allowed-to-fail: true</code>. If either action fails, authentication still succeeds — the user gets a valid JWT but without group claims. This is a deliberate design choice: fail-open at the auth layer is acceptable because Gate 3 (the SWG pipeline on pop01) still enforces content inspection regardless of group membership. A user without group claims receives the most restrictive default policy rather than being locked out entirely.</p>
 <hr />
@@ -3820,7 +3816,7 @@
 </table>
 <p>This replaced the shared registration <code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code> which was used by other teams. The sandbox-specific registration avoids cross-team interference with Conditional Access policies and token configuration.</p>
 <h3 id="token-configuration-entra-id-side">Token Configuration (Entra ID side)<a class="headerlink" href="#token-configuration-entra-id-side" title="Permanent link">&para;</a></h3>
-<p>The <code>cloud_displayname</code> optional claim must be explicitly configured in the Entra ID app registration under Token Configuration. Without it, Action 1 has no human-readable group name to work with and the GUID-to-name mapping fails silently (due to <code>allowed-to-fail: true</code>).</p>
+<p>The <code>cloud_displayname</code> property must be attached to the <code>groups</code> claim in the Entra ID app registration manifest — it is not selectable in the Token Configuration UI and must be added by editing the manifest directly (see <a href="../../runbooks/08-groupsync/">Runbook 08</a>). Without it, the <code>groups</code> claim falls back to GUIDs, Action 1's allowlist has no name string to match (a GUID is never in the allowlist), and group resolution fails silently (due to <code>allowed-to-fail: true</code>).</p>
 <hr />
 <h2 id="integration-points">Integration points<a class="headerlink" href="#integration-points" title="Permanent link">&para;</a></h2>
 <table>
@@ -3857,8 +3853,8 @@
 <hr />
 <h2 id="known-issues-gotchas">Known issues / gotchas<a class="headerlink" href="#known-issues-gotchas" title="Permanent link">&para;</a></h2>
 <p><strong>No stdout/console logging in Actions</strong> — Zitadel Actions have no debugging output mechanism. There is no way to log intermediate values or trace execution within an action script. The only verification method is examining JWT claims in NetBird after a successful login, making iterative development slow and error-prone.</p>
-<p><strong>GitHub #5399: JWT group sync with embedded Dex</strong> — JWT group sync does not work out-of-the-box when using the embedded Dex + Zitadel combination. The <code>AUTH_SUPPORTED_SCOPES</code> environment variable is missing required scopes. This requires manual patching of the NetBird Docker Compose configuration.</p>
-<p><strong><code>cloud_displayname</code> dependency</strong> — If the Entra ID Token Configuration does not include <code>cloud_displayname</code> as an optional claim, Action 1 silently fails. The user authenticates successfully but without group mapping. Because <code>allowed-to-fail: true</code> suppresses the error, this failure mode is invisible without checking JWT claims downstream.</p>
+<p><strong>GitHub #5399 (embedded-Dex scope drop) — does not apply to this stack</strong> — Upstream #5399 reports that on NetBird builds using <em>embedded Dex</em> + Zitadel, JWT group sync fails out-of-the-box because <code>AUTH_SUPPORTED_SCOPES</code> is missing the groups scope. This sandbox runs the <strong>older multi-container NetBird stack with no Dex container</strong> (Management v0.67.0 validates Zitadel's token directly — Verslag30), so the action-injected <code>groups</code> claim flows through without any scope fix. The scope-drop variant of #5399 is therefore not applicable here; no Docker Compose patching is needed for group sync. (The separate "filled JWT allow-groups → 401 lockout" hazard, sometimes also tracked under #5399, still applies — see below and <a href="../netbird/">NetBird</a>.)</p>
+<p><strong><code>cloud_displayname</code> dependency</strong> — If <code>cloud_displayname</code> is not attached to the <code>groups</code> claim in the app manifest, the claim carries GUIDs instead of names and Action 1's allowlist matches nothing, silently dropping every group. The user authenticates successfully but without group resolution. Because <code>allowed-to-fail: true</code> suppresses the error, this failure mode is invisible without checking JWT claims downstream.</p>
 <p><strong>Action execution is opaque</strong> — There is no dashboard view showing action execution history or failure counts. Debugging requires end-to-end testing: log in as a test user, then inspect the resulting JWT in NetBird to verify group claims are present and correctly mapped.</p>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>

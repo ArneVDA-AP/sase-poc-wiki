@@ -24,11 +24,11 @@ Zonder `--ssl-no-revoke` bereikt het verzoek de ICAP-pijplijn nooit — curl mis
 
 ## Oorzaak
 
-Windows `curl.exe` gebruikt de Schannel TLS-backend, die CRL- (Certificate Revocation List) en OCSP-validatie probeert voor elk certificaat in de keten. Wanneer Squid SSL Bump uitvoert, wordt het certificaat dat aan de client wordt gepresenteerd uitgegeven door de SASE-PoC-CA — een lokaal gegenereerde CA zonder gepubliceerd CRL- of OCSP-eindpunt. Schannel behandelt een ontbrekend intrekkingseindpunt als een fout en breekt de verbinding af.
+Windows `curl.exe` gebruikt de Schannel TLS-backend, die CRL- (Certificate Revocation List) en OCSP-validatie probeert voor elk certificaat in de keten. Wanneer Squid SSL Bump uitvoert, wordt het certificaat dat aan de client wordt gepresenteerd uitgegeven door de SASE-PoC-CA — een lokaal gegenereerde CA zonder gepubliceerd CRL- of OCSP-eindpunt. Schannel behandelt een ontbrekend revocation endpoint als een fout en breekt de verbinding af.
 
 ## Oplossing
 
-Voeg `--ssl-no-revoke` toe aan alle `curl.exe`-opdrachten van Windows-hosts die via de SSL Bump-proxy naar HTTPS-bestemmingen routeren. Deze vlag instrueert Schannel om intrekkingscontroles over te slaan.
+Voeg `--ssl-no-revoke` toe aan alle `curl.exe`-opdrachten van Windows-hosts die via de SSL Bump-proxy naar HTTPS-bestemmingen routeren. Deze vlag instrueert Schannel om revocation checks over te slaan.
 
 Deze vlag heeft geen invloed op de testgeldigheid — het blokkeer- of doorlaatgedrag van de ICAP-pijplijn is volledig onafhankelijk van de CRL-controle die Schannel uitvoert.
 
@@ -37,7 +37,7 @@ Deze vlag heeft geen invloed op de testgeldigheid — het blokkeer- of doorlaatg
 - Alle Windows `curl.exe`-proxytests naar HTTPS-bestemmingen vereisen `--ssl-no-revoke` in deze omgeving.
 - Browsertests worden niet beïnvloed: browsers behandelen de SASE-PoC-CA via de geïnstalleerde vertrouwde CA en tolereren ontbrekende CRL-eindpunten soepeler.
 - PowerShell `Invoke-WebRequest` gebruikt dezelfde Schannel-backend en heeft hetzelfde gedrag — dezelfde workaround is van toepassing als Invoke-WebRequest wordt gebruikt voor tests.
-- In productie zou de SASE-PoC-CA worden gedistribueerd via Groepsbeleid en zou een CRL-eindpunt worden geconfigureerd — waardoor dit probleem niet meer speelt.
+- In productie zou de SASE-PoC-CA worden gedistribueerd via Group Policy en zou een CRL-eindpunt worden geconfigureerd — waardoor dit probleem niet meer speelt.
 
 ## Gerelateerd
 

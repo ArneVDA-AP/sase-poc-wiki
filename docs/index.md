@@ -51,7 +51,7 @@ decision point. Opens full-width in a new tab.
 | [Suricata WAN+LAN](decisions/suricata-wan-lan.md) | Why vtnet0 + vtnet1 — wt0 shows 0 packets in BPF |
 | [GNS3 vs EVE-NG](decisions/gns3-vs-eveng.md) | Multi-user requirement; QCOW2 format; EVE-NG single-session limitation |
 | [Zitadel as IdP broker](decisions/zitadel-idp-broker.md) | Quickstart installs Zitadel; Entra ID as external IdP; CA still fires |
-| [CA + Posture hybrid (Three-Gate Model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementary not substitutable; BYOD Intune gap |
+| [CA + Posture hybrid (Three-Gate Model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementary not substitutable; managed-device three-gate model |
 | [SD-WAN Descoped (F12, F13, F14)](decisions/sdwan-descoped.md) | Classic IPsec + uCPE removed (site-to-site tunnels contradict Zero Trust); QoS + failover reimplemented under the ZT-Branch model; sitepc01 → NetBird enrollment |
 | [NetBird Service PAT](decisions/netbird-service-pat.md) | Service-user PAT for Identity Bridge API auth — avoids NetBird issue #3127 |
 | [NATS accounts auth](decisions/nats-accounts-auth.md) | `accounts{}` model required for JetStream API access |
@@ -99,7 +99,7 @@ decision point. Opens full-width in a new tab.
 | [Overlay IP instability](findings/overlay-ip-instability.md) | NetBird overlay IPs can change — Identity Bridge must handle stale cache |
 | [NATS store dir](findings/nats-store-dir.md) | JetStream store must be on persistent Docker volume |
 | [Wazuh CPU glibc](findings/wazuh-cpu-glibc.md) | CPU spike on startup due to glibc compatibility |
-| [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard hostname resolution issue on startup |
+| [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard Offline caused by empty UUID after down -v — resolved, in-place 4.14.5 GA bump |
 | [NetBird JWT allow-groups lockout](findings/netbird-jwt-allow-groups-lockout.md) | Enabling JWT allow-groups can lock out all users if misconfigured |
 | [DC-LAN isolation route ACL](findings/dc-lan-isolation-route-acl.md) | NetBird Networks + ACL required for DC-LAN isolation |
 

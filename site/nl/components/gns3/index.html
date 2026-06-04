@@ -3687,7 +3687,7 @@
 <p>GNS3 draait als een systemd-service op een Ubuntu 24.04 VM (<code>poc-1a</code>) binnen Proxmox. De GNS3 Server beheert QEMU/KVM-virtuele machines en Ethernet-switch-nodes. Teamleden verbinden via de GNS3 GUI-applicatie van hun eigen laptop naar <code>10.158.10.67:3080</code> — meerdere mensen kunnen gelijktijdig aan dezelfde topologie werken, elk op hun eigen VM-console.</p>
 <p><strong>Waarom GNS3 en niet EVE-NG:</strong> EVE-NG heeft één webinterface — twee gebruikers die aan dezelfde node werken blokkeren elkaar. Het client-server-model van GNS3 stelt alle vier teamleden in staat gelijktijdig te werken. EVE-NG gebruikt ook OVA-imports die incompatibel zijn met de QCOW2-images die OPNsense, VyOS en Ubuntu als primair downloadformaat distribueren.</p>
 <p><strong>Geneste virtualisatie:</strong> GNS3 gebruikt QEMU/KVM voor VMs binnen de topologie. De Proxmox-host geeft CPU-virtualisatie-extensies (VMX/SVM) door naar de Ubuntu VM met <code>cpu type = host</code>. Verifieer met <code>egrep -c '(vmx|svm)' /proc/cpuinfo</code> — moet &gt; 0 zijn.</p>
-<p><strong>libvirt als WAN-segment:</strong> De NAT-node van GNS3 koppelt aan het standaardnetwerk van libvirt (<code>virbr0</code>, <code>192.168.122.0/24</code>). libvirt verwerkt NAT en internetrouting automatisch — geen handmatige iptables-regels nodig voor internettoegang van VMs.</p>
+<p><strong>libvirt als WAN-segment:</strong> De NAT-node van GNS3 koppelt aan het standaardnetwerk van libvirt (<code>virbr0</code>, <code>192.168.122.0/24</code>). libvirt verwerkt NAT en internetrouting automatisch — geen handmatige iptables-regels nodig voor internettoegang van VMs. Dit vervangt de EVE-NG IP-forwarding- en NAT-stappen uit het handboek.</p>
 <hr />
 <h2 id="topologie">Topologie<a class="headerlink" href="#topologie" title="Permanent link">&para;</a></h2>
 <h3 id="nodes">Nodes<a class="headerlink" href="#nodes" title="Permanent link">&para;</a></h3>
@@ -3733,7 +3733,7 @@
 <tr>
 <td>sitepc01</td>
 <td>QEMU (QCOW2)</td>
-<td>Ubuntu 24.04</td>
+<td>Tiny11 (Windows 11)</td>
 <td>4096 MB</td>
 <td>2</td>
 </tr>
@@ -3748,9 +3748,11 @@
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Switch-LAN   ──── pop01  vtnet1     (pop01 LAN → DC-LAN)
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Switch-LAN   ──── dc01   ens3       (dc01 DC-LAN)
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>Switch-Site  ──── site01 eth1       (site01 Site-LAN)
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>Switch-Site  ──── sitepc01 ens3     (sitepc01 Site-LAN)
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>Switch-Site  ──── sitepc01 Ethernet (sitepc01 Site-LAN)
 </code></pre></div>
-<p>mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het verbindt direct via zijn eigen netwerkadapter en simuleert een echte BYOD-gebruiker buiten de GNS3-topologie.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>NAT-Internet ──── mobile01 NIC1     (aparte TAP — simulatie van extern netwerk)
+</code></pre></div>
+<p>mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het verbindt direct via zijn eigen netwerkadapter en simuleert een echte remote gebruiker buiten de GNS3-topologie. Het bereikt de SASE-stack uitsluitend via de NetBird WireGuard-tunnel.</p>
 <h3 id="ip-adressering">IP-adressering<a class="headerlink" href="#ip-adressering" title="Permanent link">&para;</a></h3>
 <p><strong>WAN-segment (192.168.122.0/24, libvirt NAT-gateway .1):</strong></p>
 <table>
@@ -3800,7 +3802,7 @@
 <td>Site-LAN</td>
 <td><code>172.16.10.0/24</code></td>
 <td><code>172.16.10.1</code> (site01 eth1)</td>
-<td>sitepc01: <code>172.16.10.50</code> (geen OS)</td>
+<td>sitepc01: <code>172.16.10.10</code></td>
 </tr>
 </tbody>
 </table>
@@ -3810,33 +3812,56 @@
 <tr>
 <th>Node</th>
 <th>Overlay-IP</th>
+<th>Rol</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>pop01</td>
 <td><code>100.70.154.79</code></td>
+<td>Data plane, exit node, DNS-primary</td>
 </tr>
 <tr>
 <td>mgmt01</td>
 <td><code>100.70.135.241</code></td>
+<td>Management plane, WPAD-server</td>
 </tr>
 <tr>
 <td>mobile01</td>
 <td><code>100.70.95.98</code></td>
+<td>Remote client (managed Windows)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="port-forwards-voor-externe-toegang">Port-forwards voor externe toegang<a class="headerlink" href="#port-forwards-voor-externe-toegang" title="Permanent link">&para;</a></h3>
 <p>Port-forwards via iptables DNAT op de GNS3-host (<code>10.158.10.67</code>). Volgorde van regels is kritiek — zie <a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">7022</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to<span class="w"> </span><span class="m">192</span>.168.122.13:22
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">7443</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to<span class="w"> </span><span class="m">192</span>.168.122.13:443
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">7023</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to<span class="w"> </span><span class="m">192</span>.168.122.23:22
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">7033</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to<span class="w"> </span><span class="m">192</span>.168.122.33:22
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># FORWARD-regels: gebruik -I FORWARD 1, niet -A FORWARD</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>iptables<span class="w"> </span>-I<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span><span class="m">192</span>.168.122.0/24<span class="w"> </span>-j<span class="w"> </span>ACCEPT
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">7022</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to<span class="w"> </span><span class="m">192</span>.168.122.13:22
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">7443</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to<span class="w"> </span><span class="m">192</span>.168.122.13:443
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">7023</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to<span class="w"> </span><span class="m">192</span>.168.122.23:22
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>iptables<span class="w"> </span>-t<span class="w"> </span>nat<span class="w"> </span>-A<span class="w"> </span>PREROUTING<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">7033</span><span class="w"> </span>-j<span class="w"> </span>DNAT<span class="w"> </span>--to<span class="w"> </span><span class="m">192</span>.168.122.33:22
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># FORWARD-regels: gebruik -I FORWARD 1, niet -A FORWARD</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>iptables<span class="w"> </span>-I<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span><span class="m">192</span>.168.122.0/24<span class="w"> </span>-j<span class="w"> </span>ACCEPT
 </code></pre></div>
-<p>De GNS3-host draait ook nginx SNI-stream-passthrough op poort 443, routeert <code>netbird.sandbox.local</code> naar <code>192.168.122.23:443</code>.</p>
+<p>De GNS3-host draait ook nginx SNI-stream-passthrough op poort 443, routeert op basis van hostnaam:</p>
+<table>
+<thead>
+<tr>
+<th>SNI-hostnaam</th>
+<th>Doel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>netbird.sandbox.local</code></td>
+<td><code>192.168.122.23:443</code> (sandbox mgmt01)</td>
+</tr>
+<tr>
+<td><code>netbird.sase.local</code></td>
+<td><code>192.168.122.20:443</code> (teamproject mgmt01)</td>
+</tr>
+</tbody>
+</table>
+<p>Twee SNI-entries vermijden poortconflicten tussen de sandbox- en de teamprojectstack die op dezelfde GNS3-host draaien.</p>
 <hr />
 <h2 id="snapshots">Snapshots<a class="headerlink" href="#snapshots" title="Permanent link">&para;</a></h2>
 <p>GNS3-snapshots omvatten het volledige project — alle VMs tegelijk. In tegenstelling tot VMware/Proxmox-snapshots per VM legt een GNS3-snapshot de volledige topologiestatus vast.</p>
@@ -3855,17 +3880,23 @@
 <td><code>Fase2-ZTNA-Complete</code></td>
 <td>Volledige ZTNA-stack operationeel (NetBird, Zitadel, Entra ID-federatie)</td>
 </tr>
+<tr>
+<td><code>Fase3-Security-Complete</code></td>
+<td>Gepland — na Zeek/RITA-uitrol</td>
+</tr>
 </tbody>
 </table>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
-<p><strong>"Stop Node" = QEMU SIGKILL → bestandssysteemcorruptie op OPNsense</strong> — de stopknop van GNS3 stuurt SIGKILL direct naar QEMU. OPNsense draait op FreeBSD UFS met soft updates, dat asynchroon schrijft. Een abrupte kill kan een inconsistente bestandssysteemstatus of verloren configuratie veroorzaken. Sluit OPNsense altijd correct af:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>shutdown<span class="w"> </span>-h<span class="w"> </span>now
+<p><strong>"Stop Node" = QEMU SIGKILL → bestandssysteemcorruptie op OPNsense</strong> — de stopknop van GNS3 stuurt SIGKILL direct naar QEMU. OPNsense draait op FreeBSD UFS met soft updates, dat asynchroon schrijft. Een abrupte kill kan een inconsistente bestandssysteemstatus of verloren configuratie veroorzaken. Sluit OPNsense altijd correct af voordat je de GNS3-node stopt:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Vanuit OPNsense-console of SSH:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>shutdown<span class="w"> </span>-h<span class="w"> </span>now
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Wacht tot de node stopt in GNS3, ga dan verder</span>
 </code></pre></div>
-Oplossing: voeg <code>fsck_y_enable="YES"</code> toe aan <code>/etc/rc.conf</code> op pop01.</p>
+Mitigatie: voeg <code>fsck_y_enable="YES"</code> toe aan <code>/etc/rc.conf</code> op pop01 — FreeBSD draait dan automatisch fsck bij de volgende boot na een onregelmatige afsluiting.</p>
 <p><strong>iptables FORWARD-volgorde</strong> — libvirt plaatst zijn eigen REJECT-regels in de FORWARD-keten. Regels toegevoegd met <code>-A FORWARD</code> komen na die REJECT-regels terecht en matchen nooit. Gebruik altijd <code>-I FORWARD 1</code> voor ACCEPT-regels. Zie <a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a>.</p>
-<p><strong>ubridge learning bridge beperkt verkeerzichtbaarheid</strong> — Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort — niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet.</p>
-<p><strong>sitepc01 heeft geen OS geïnstalleerd</strong> — de node bestaat in de topologie en is bekabeld naar Switch-Site, maar Ubuntu 24.04 is niet geïnstalleerd. Hij is niet operationeel actief.</p>
+<p><strong>ubridge learning bridge beperkt verkeerzichtbaarheid</strong> — Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort — niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet. Dit heeft impact op elke toekomstige Zeek/RITA-uitrol: valideer met <code>tcpdump -i ens3 -n host 8.8.8.8</code> op mgmt01 vóór uitrol.</p>
+<p><strong>sitepc01 draait nu Tiny11 (Windows 11)</strong> — aanvankelijk aangemaakt als een lege node (geen OS), werd het later geïmporteerd als een Tiny11-image en ingeschreven in de NetBird-overlay als <code>docent1</code> (Entra ID joined + Intune enrolled). Het is operationeel actief.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3874,6 +3905,7 @@ Oplossing: voeg <code>fsck_y_enable="YES"</code> toe aan <code>/etc/rc.conf</cod
 <li><a href="../vyos/">Component: VyOS</a></li>
 <li><a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a></li>
 <li><a href="../../decisions/gns3-vs-eveng/">Beslissing: GNS3 vs EVE-NG</a></li>
+<li><a href="../../runbooks/01-lab-environment/">Runbook: Labomgeving</a></li>
 </ul>
 
 

@@ -166,7 +166,7 @@ rule.groups: "sase" OR data.alert.signature_id: *
 
 **Verwacht:** Events van Suricata, Squid, DNS RPZ en DLP verschijnen in het dashboard met correct geparseerde velden.
 
-> **Valkuil: Dashboard-app-modules zijn gegate in de air-gapped sandbox.** Discover werkt volledig (het leest de indexer rechtstreeks uit), maar de app-modules van het dashboard (Security Events, Agents) tonen "Status: Offline". De oorzaak is geen DNS: de internet-afhankelijke `version/check` van de manager retourneert HTTP 500 in de air-gapped sandbox, wat de `check-api` van het dashboard cascadeert tot een offline-bepaling hoewel de manager-API zelf gezond is (authenticate/info/stats geven alle 200). Onderzoek via Discover, niet via de app-modules. Zie [Finding: Wazuh Dashboard airgate](../findings/wazuh-dashboard-airgate.nl.md).
+> **Opmerking:** Het dashboard toonde eerder "Status: Offline" door een lege manager-UUID (gewist door `docker compose down -v`) — opgelost op 2 juni 2026 via in-place bump naar 4.14.5. De `Error checking updates` CTI-500 (air-gap, cosmetisch) blijft aanwezig maar is non-blocking in 4.14.5+. App-modules en Discover werken beide volledig. Zie [Finding: Wazuh Dashboard airgate](../findings/wazuh-dashboard-airgate.nl.md).
 
 ---
 
@@ -196,7 +196,7 @@ docker exec single-node-wazuh.manager-1 cat /var/ossec/logs/active-responses.log
 
 - [ ] Wazuh Manager v4.14.5 draait op mgmt01
 - [ ] Wazuh Indexer (OpenSearch) draait en is gezond
-- [ ] Wazuh Dashboard toegankelijk via browser (Discover; app-modules gegate in air-gap)
+- [ ] Wazuh Dashboard toegankelijk via browser (Discover + app-modules werken beide; `Error checking updates` CTI-500 cosmetisch in air-gap, non-blocking)
 - [ ] NATS-naar-Wazuh-forwarder consumeert `security.alert.>` → NDJSON naar `wazuh_nats_ingest`
 - [ ] Wazuh-agent 001 (pop01) geregistreerd en actief
 - [ ] Aangepaste busregels 100500–100540 gedeployd (`local_rules.xml`)

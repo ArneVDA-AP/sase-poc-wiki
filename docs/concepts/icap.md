@@ -12,7 +12,7 @@ tags: [icap, squid, clamav, c-icap, dlp, reqmod, respmod, proxy]
 Squid on pop01 cannot inspect HTTPS content at the application layer without help. ICAP is the integration protocol that connects Squid to two external inspection services:
 
 ```
-BYOD client → Squid (SSL Bump decrypts) → ICAP REQMOD → Python DLP (upload check)
+Client → Squid (SSL Bump decrypts) → ICAP REQMOD → Python DLP (upload check)
                                         → ICAP RESPMOD → ClamAV/c-icap (download scan)
 ```
 

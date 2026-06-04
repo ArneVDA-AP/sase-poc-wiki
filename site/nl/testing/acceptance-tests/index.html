@@ -2234,10 +2234,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#t-a2-dlp-sdd-structureddatadetection-drempelwaarde" class="md-nav__link">
+  <a href="#t-a2-dlp-sdd-structureddatadetection-threshold" class="md-nav__link">
     <span class="md-ellipsis">
       
-        T-A2 — DLP SDD: StructuredDataDetection-drempelwaarde
+        T-A2 — DLP SDD: StructuredDataDetection-threshold
       
     </span>
   </a>
@@ -2278,10 +2278,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#t-a11-nats-eventbus-cross-componentgebeurtenisaflevering" class="md-nav__link">
+  <a href="#t-a11-nats-eventbus-cross-component-event-delivery" class="md-nav__link">
     <span class="md-ellipsis">
       
-        T-A11 — NATS-eventbus: cross-componentgebeurtenisaflevering
+        T-A11 — NATS-eventbus: cross-component event delivery
       
     </span>
   </a>
@@ -2300,10 +2300,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#t-a13-wazuh-siem-nats-gebeurtenisingestie-dashboardquery" class="md-nav__link">
+  <a href="#t-a13-wazuh-siem-nats-event-ingestion-dashboardquery" class="md-nav__link">
     <span class="md-ellipsis">
       
-        T-A13 — Wazuh SIEM: NATS-gebeurtenisingestie + dashboardquery
+        T-A13 — Wazuh SIEM: NATS event ingestion + dashboardquery
       
     </span>
   </a>
@@ -3903,10 +3903,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#t-a2-dlp-sdd-structureddatadetection-drempelwaarde" class="md-nav__link">
+  <a href="#t-a2-dlp-sdd-structureddatadetection-threshold" class="md-nav__link">
     <span class="md-ellipsis">
       
-        T-A2 — DLP SDD: StructuredDataDetection-drempelwaarde
+        T-A2 — DLP SDD: StructuredDataDetection-threshold
       
     </span>
   </a>
@@ -3947,10 +3947,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#t-a11-nats-eventbus-cross-componentgebeurtenisaflevering" class="md-nav__link">
+  <a href="#t-a11-nats-eventbus-cross-component-event-delivery" class="md-nav__link">
     <span class="md-ellipsis">
       
-        T-A11 — NATS-eventbus: cross-componentgebeurtenisaflevering
+        T-A11 — NATS-eventbus: cross-component event delivery
       
     </span>
   </a>
@@ -3969,10 +3969,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#t-a13-wazuh-siem-nats-gebeurtenisingestie-dashboardquery" class="md-nav__link">
+  <a href="#t-a13-wazuh-siem-nats-event-ingestion-dashboardquery" class="md-nav__link">
     <span class="md-ellipsis">
       
-        T-A13 — Wazuh SIEM: NATS-gebeurtenisingestie + dashboardquery
+        T-A13 — Wazuh SIEM: NATS event ingestion + dashboardquery
       
     </span>
   </a>
@@ -4164,7 +4164,7 @@
 <td><strong>F4</strong></td>
 <td>Datacentertoegang via ZTNA</td>
 <td>ZTNA</td>
-<td>✅ Gevalideerd</td>
+<td>✅ Gevalideerd (bij opbouw, mei 2026) — DC-LAN-over-overlay-pad sindsdien verwijderd in V34, uitgesteld</td>
 </tr>
 <tr>
 <td><strong>F5</strong></td>
@@ -4188,7 +4188,7 @@
 <td><strong>F8</strong></td>
 <td>Firewall-segmentatie</td>
 <td>FWaaS</td>
-<td>✅ Gevalideerd (indirect — ZTNA ACL-handhaving)</td>
+<td>✅ Gevalideerd — DC-LAN-isolatie blijft gelden (niet-ingeschreven = geen route); positief ACL-pad verwijderd in V34</td>
 </tr>
 <tr>
 <td><strong>F9</strong></td>
@@ -4218,7 +4218,7 @@
 <td><strong>F13</strong></td>
 <td>QoS-verkeersclassificatie</td>
 <td>SD-WAN</td>
-<td>✖ N.v.t. — architectuurbeslissing</td>
+<td>✖ N.v.t. als klassieke-IPsec-test — QoS is in plaats daarvan geïmplementeerd + gevalideerd onder het ZT-Branch-model (V43 Test #5; zie <a href="../../decisions/zt-sdwan-branch/">ZT SD-WAN Branch</a>)</td>
 </tr>
 <tr>
 <td><strong>F14</strong></td>
@@ -4230,7 +4230,7 @@
 <td><strong>F15</strong></td>
 <td>Volledige SASE-validatie</td>
 <td>Integratie</td>
-<td>✅ Gedeeltelijk — stappen 1–6 gevalideerd, stappen 7–8 N.v.t. (SD-WAN), stap 9 operationeel (SIEM via Wazuh)</td>
+<td>✅ Gedeeltelijk — stappen 1–6 + 8 gevalideerd, stap 7 N.v.t. (klassiek IPsec SD-WAN), stap 9 operationeel (SIEM via Wazuh)</td>
 </tr>
 </tbody>
 </table>
@@ -4251,7 +4251,7 @@
 </tr>
 <tr>
 <td><strong>T-A2</strong></td>
-<td>DLP SDD — StructuredDataDetection-drempelwaarde (4× CC → blokkeren, 1× CC → doorlaten)</td>
+<td>DLP SDD — StructuredDataDetection-threshold (4× CC → blokkeren, 1× CC → doorlaten)</td>
 <td>✅ Gevalideerd</td>
 </tr>
 <tr>
@@ -4296,7 +4296,7 @@
 </tr>
 <tr>
 <td><strong>T-A11</strong></td>
-<td>NATS-eventbus — cross-componentgebeurtenisaflevering</td>
+<td>NATS-eventbus — cross-component event delivery</td>
 <td>✅ Gevalideerd</td>
 </tr>
 <tr>
@@ -4306,7 +4306,7 @@
 </tr>
 <tr>
 <td><strong>T-A13</strong></td>
-<td>Wazuh SIEM — NATS-gebeurtenisingestie + dashboardquery</td>
+<td>Wazuh SIEM — NATS event ingestion + dashboardquery</td>
 <td>✅ Gevalideerd</td>
 </tr>
 </tbody>
@@ -4349,9 +4349,9 @@
 </tr>
 <tr>
 <td><strong>SD-WAN</strong></td>
+<td>QoS + failover-detectie (ZT-Branch, V43 Test #5/#6)</td>
 <td>—</td>
-<td>—</td>
-<td>F12, F13, F14</td>
+<td>F12, F13, F14 (klassiek IPsec)</td>
 </tr>
 </tbody>
 </table>
@@ -4381,12 +4381,12 @@
 <li><code>netbird down</code> op mobile01</li>
 <li><code>netbird up</code> → browser stuurt door naar <code>https://netbird.sandbox.local</code> → Zitadel → <code>login.microsoftonline.com</code></li>
 <li>Authenticeer als <code>2ITCSC1A-mobile_user1@aplab.be</code></li>
-<li>Tunnel wordt actief; peer verschijnt in dashboard, automatisch toegewezen aan groep <code>SASE-MobileUsers</code> via setup key auto-group</li>
+<li>Tunnel wordt actief; peer verschijnt in dashboard, toegewezen aan zijn persona-groep (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) via de Entra ID-groepsclaim in het OIDC-token — de groep materialiseert in NetBird bij de eerste verbinding (Pad B stript de <code>2ITCSC1A-</code>-prefix naar de interne groepsnaam)</li>
 </ol>
 <p>Zie <a href="../../components/netbird/">NetBird</a>, <a href="../../decisions/zitadel-idp-broker/">Beslissing: Zitadel als IdP-broker</a>.</p>
 <hr />
 <h3 id="f3-posturecontrole-deels-bewezen">F3 — Posturecontrole (Deels bewezen)<a class="headerlink" href="#f3-posturecontrole-deels-bewezen" title="Permanent link">&para;</a></h3>
-<p><strong>Poort 1 — Entra ID Conditional Access:</strong> Vijf CA-beleidsregels geïmplementeerd:</p>
+<p><strong>Poort 1 — Entra ID Conditional Access:</strong> Vijf CA policies geïmplementeerd:</p>
 <table>
 <thead>
 <tr>
@@ -4427,19 +4427,19 @@
 <p>Ingeschreven apparaten:</p>
 <ul>
 <li><strong>mobile01</strong> — ingeschreven als <code>2ITCSC1A-MOB-1</code>, conform</li>
-<li><strong>sitepc01</strong> — ingeschreven als <code>docent1</code>, Entra joined + Intune-ingeschreven</li>
+<li><strong>sitepc01</strong> — ingeschreven in NetBird als <code>docent1</code> (Docenten); afzonderlijk Entra joined + Intune-ingeschreven via <code>student1</code> (het enige Intune-gelicentieerde sandbox-account)</li>
 </ul>
-<p>Twee beleidsregels blijven in report-only-modus (geo-blokkering, conform apparaat) tot de demo om lockout tijdens testen te vermijden.</p>
-<p><strong>Kritieke voorwaarde:</strong> Controleer MFA-registratie op het testaccount voordat CA-beleidsregels worden geactiveerd. Zonder eerdere MFA-instelling triggert de eerste aanmelding een onherstelbare "MFA vereist maar niet geconfigureerd"-blokkering, waardoor het account ontoegankelijk wordt.</p>
+<p>Twee policies blijven in report-only-modus (geo-blokkering, conform apparaat) tot de demo om lockout tijdens testen te vermijden.</p>
+<p><strong>Kritieke voorwaarde:</strong> Controleer MFA-registratie op het testaccount voordat CA policies worden geactiveerd. Zonder eerdere MFA-instelling triggert de eerste aanmelding een onherstelbare "MFA vereist maar niet geconfigureerd"-blokkering, waardoor het account ontoegankelijk wordt.</p>
 <p>Zie <a href="../../decisions/ca-posture-hybrid/">Beslissing: CA + Posture hybride</a>.</p>
 <hr />
 <h3 id="f4-datacentertoegang-via-ztna">F4 — Datacentertoegang via ZTNA<a class="headerlink" href="#f4-datacentertoegang-via-ztna" title="Permanent link">&para;</a></h3>
-<p>DC-LAN (10.0.0.0/24) is alleen bereikbaar via het NetBird Networks-mechanisme. Een host die niet is ingeschreven bij NetBird heeft geen route naar dit subnet, ongeacht IP-connectiviteit.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c"># mobile01 (PowerShell)</span>
+<p><strong>✅ Gevalideerd bij opbouw (mei 2026); het pad is nadien verwijderd in V34.</strong> Op het moment van validatie was DC-LAN (10.0.0.0/24) bereikbaar via het NetBird Networks-mechanisme: een host die niet bij NetBird was ingeschreven had geen route naar dit subnet, ongeacht IP-connectiviteit, terwijl een ingeschreven peer met het ACL-beleid <code>Datacenter Access</code> het wél kon bereiken.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c"># mobile01 (PowerShell) — zoals getest in mei 2026</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">Test-NetConnection</span> <span class="n">10</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">100</span> <span class="n">-Port</span> <span class="n">80</span>
 </code></pre></div>
-<p>Verwacht: <code>InterfaceAlias: wt0</code>, <code>TcpTestSucceeded: True</code>. Valideert het ACL-beleid <code>Datacenter Access</code> en de Networks-routeringsconfiguratie.</p>
-<p>Zie <a href="../../components/netbird/">NetBird</a>.</p>
+<p>Op het moment van validatie: <code>InterfaceAlias: wt0</code>, <code>TcpTestSucceeded: True</code>, wat het ACL-beleid <code>Datacenter Access</code> en de Networks-routeringsconfiguratie uitoefende.</p>
+<p><strong>Huidige toestand:</strong> Het <code>Internal-DC</code> Network en het <code>Datacenter Access</code>-beleid zijn verwijderd in de V34-personamigratie — site-to-site-achtige resourcetoegang is in strijd met het Zero-Trust per-resource-model. DC-LAN-over-overlay is uitgesteld en kan hervat worden in de Cosmos-sessie. Zie <a href="../../runbooks/02-ztna-overlay/">runbook 02</a> en <a href="../../components/netbird/">NetBird</a>.</p>
 <hr />
 <h3 id="f5-url-filtering">F5 — URL-filtering<a class="headerlink" href="#f5-url-filtering" title="Permanent link">&para;</a></h3>
 <p><code>curl.exe</code> met een expliciet proxy-argument omzeilt de browsercache, die blokkering anders zou kunnen maskeren. <code>X-Squid-Error: ERR_ACCESS_DENIED</code> identificeert de Squid-blokkeringspagina — geen server-side 403.</p>
@@ -4484,13 +4484,13 @@
 <p>Zie <a href="../../components/clamav-cicap/">ClamAV/c-icap</a>.</p>
 <hr />
 <h3 id="f8-firewall-segmentatie">F8 — Firewall-segmentatie<a class="headerlink" href="#f8-firewall-segmentatie" title="Permanent link">&para;</a></h3>
-<p>DC-LAN-isolatie wordt afgedwongen op de overlay-laag — alleen NetBird-ingeschreven peers met het ACL-beleid <code>Datacenter Access</code> kunnen dc01 bereiken.</p>
-<p>Gevalideerd door contrast:</p>
+<p><strong>✅ Gevalideerd.</strong> De kern-segmentatie-eigenschap — een niet-ingeschreven apparaat heeft geen route naar DC-LAN (10.0.0.0/24) — geldt onafhankelijk van enig overlay-toegangspad en blijft vandaag waar.</p>
+<p>Gevalideerd door contrast (mei 2026, toen het positieve pad nog bestond):</p>
 <ul>
-<li>mobile01 <strong>zonder</strong> NetBird: <code>ping 10.0.0.100</code> → Bestemming onbereikbaar (geen route)</li>
-<li>mobile01 <strong>met</strong> NetBird + beleid: <code>Test-NetConnection 10.0.0.100 -Port 80</code> → <code>TcpTestSucceeded: True</code> via <code>wt0</code></li>
+<li>mobile01 <strong>zonder</strong> NetBird: <code>ping 10.0.0.100</code> → Bestemming onbereikbaar (geen route) — <em>nog steeds waar</em></li>
+<li>mobile01 <strong>met</strong> NetBird + het <code>Datacenter Access</code>-beleid: <code>Test-NetConnection 10.0.0.100 -Port 80</code> → <code>TcpTestSucceeded: True</code> via <code>wt0</code> — <em>positief pad verwijderd in V34</em></li>
 </ul>
-<p><strong>Architectuurnoot:</strong> DC-LAN gebruikt NetBird Networks (niet Network Routes). Toegang vereist zowel overlay-inschrijving als expliciet groepslidmaatschap in <code>SASE-InternalResources</code>.</p>
+<p><strong>Architectuurnoot:</strong> DC-LAN gebruikte NetBird Networks (niet Network Routes). Het positieve pad vereiste zowel overlay-inschrijving als lidmaatschap van de groep <code>SASE-InternalResources</code>; zowel het <code>Internal-DC</code> Network als die groep zijn verwijderd in de V34-personamigratie (zie <a href="../../runbooks/02-ztna-overlay/">runbook 02</a>). De negatieve isolatie-eigenschap — niet-ingeschreven = geen route — blijft ongewijzigd.</p>
 <p>Zie <a href="../../components/netbird/">NetBird</a>.</p>
 <hr />
 <h3 id="f9-suricata-alertgeneratie">F9 — Suricata-alertgeneratie<a class="headerlink" href="#f9-suricata-alertgeneratie" title="Permanent link">&para;</a></h3>
@@ -4559,7 +4559,7 @@
 </table>
 <blockquote>
 <p>Het Handboek definieerde F9 oorspronkelijk als "controleer of alert zichtbaar is in Wazuh-dashboard." Wazuh is nu operationeel (F10) en Suricata-alerts stromen via NATS naar Wazuh, waarmee deze leemte is gedicht. Suricata-detectie en Wazuh-integratie zijn beide volledig gevalideerd.</p>
-<p>Meerdere curl-verzoeken naar dezelfde bestemming genereren één Suricata-alert per SID per flow — dit is correct gedrag, geen onderdrukking. Oorzaak: Squid-verbindingspooling hergebruikt upstream TCP-verbindingen; Suricata ziet één flow. Zie <a href="../../findings/suricata-connection-pooling/">Bevinding: Suricata verbindingspooling</a>.</p>
+<p>Meerdere curl-verzoeken naar dezelfde bestemming genereren één Suricata-alert per SID per flow — dit is correct gedrag, geen onderdrukking. Oorzaak: Squid connection pooling hergebruikt upstream TCP-verbindingen; Suricata ziet één flow. Zie <a href="../../findings/suricata-connection-pooling/">Bevinding: Suricata connection pooling</a>.</p>
 </blockquote>
 <p>Zie <a href="../../components/suricata/">Suricata</a>.</p>
 <hr />
@@ -4595,7 +4595,7 @@
 </tr>
 <tr>
 <td><code>DLP_BSN_Candidate</code></td>
-<td>Cluster van 9-cijferige reeksen (drempelwaarde &gt;2)</td>
+<td>Cluster van 9-cijferige reeksen (threshold &gt;2)</td>
 <td>✅ Lokale clamdscan</td>
 </tr>
 <tr>
@@ -4608,14 +4608,14 @@
 <p><strong>Beperking:</strong> YARA-regels voeren geen algoritmische validatie uit — geen mod-97 voor IBAN, geen 11-proef voor BSN. Valse positieven zijn mogelijk bij downloads. De Python DLP-laag (T-A3) biedt algoritmische validatie voor uploads.</p>
 <p>Zie <a href="../../components/clamav-cicap/">ClamAV/c-icap</a>, <a href="../../concepts/dlp/">DLP</a>.</p>
 <hr />
-<h3 id="t-a2-dlp-sdd-structureddatadetection-drempelwaarde">T-A2 — DLP SDD: StructuredDataDetection-drempelwaarde<a class="headerlink" href="#t-a2-dlp-sdd-structureddatadetection-drempelwaarde" title="Permanent link">&para;</a></h3>
-<p>ClamAV's StructuredDataDetection (SDD) gebruikt Luhn-validatie — willekeurige 16-cijferige reeksen triggeren niet. De drempelwaarde is <code>StructuredMinCreditCardCount: 3</code> (geconfigureerd), dus detectie vuur bij 4+ geldige CC-nummers.</p>
+<h3 id="t-a2-dlp-sdd-structureddatadetection-threshold">T-A2 — DLP SDD: StructuredDataDetection-threshold<a class="headerlink" href="#t-a2-dlp-sdd-structureddatadetection-threshold" title="Permanent link">&para;</a></h3>
+<p>ClamAV's StructuredDataDetection (SDD) gebruikt Luhn-validatie — willekeurige 16-cijferige reeksen triggeren niet. De threshold is <code>StructuredMinCreditCardCount: 3</code> (geconfigureerd), dus detectie vuur bij 4+ geldige CC-nummers.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># 4 geldige Luhn CC-nummers → gedetecteerd</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CC1: 4532015112830366 CC2: 4916338506082832 CC3: 5425233430109903 CC4: 2223000048410010&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/sdd_test.txt
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>clamdscan<span class="w"> </span>/tmp/sdd_test.txt
 <a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Uitvoer: Heuristics.Structured.CreditCardNumber FOUND</span>
 <a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># 1 geldig CC-nummer → doorgelaten (onder drempelwaarde)</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># 1 geldig CC-nummer → doorgelaten (onder threshold)</span>
 <a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;CC: 4532015112830366&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/sdd_test_single.txt
 <a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>clamdscan<span class="w"> </span>/tmp/sdd_test_single.txt
 <a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="c1"># Uitvoer: OK</span>
@@ -4706,25 +4706,25 @@
 <h3 id="t-a10-identity-bridge-overlay-ip-naar-personagroepresolutie">T-A10 — Identity Bridge: overlay-IP naar personagroepresolutie<a class="headerlink" href="#t-a10-identity-bridge-overlay-ip-naar-personagroepresolutie" title="Permanent link">&para;</a></h3>
 <p>Test dat de Identity Bridge overlay-IP's correct vertaalt naar Entra ID-personagroepen. Valideert door het <code>/lookup</code>-eindpunt te bevragen met een bekend overlay-IP en te controleren dat de teruggegeven groep overeenkomt met de verwachte persona.</p>
 <hr />
-<h3 id="t-a11-nats-eventbus-cross-componentgebeurtenisaflevering">T-A11 — NATS-eventbus: cross-componentgebeurtenisaflevering<a class="headerlink" href="#t-a11-nats-eventbus-cross-componentgebeurtenisaflevering" title="Permanent link">&para;</a></h3>
-<p>Test end-to-end gebeurtenisaflevering van een producent (bijv. Suricata) via NATS naar zowel de Control Daemon als Wazuh. Valideert door een Suricata-alert te triggeren en te controleren dat de gebeurtenis verschijnt in zowel NATS-monitoring als Wazuh.</p>
+<h3 id="t-a11-nats-eventbus-cross-component-event-delivery">T-A11 — NATS-eventbus: cross-component event delivery<a class="headerlink" href="#t-a11-nats-eventbus-cross-component-event-delivery" title="Permanent link">&para;</a></h3>
+<p>Test end-to-end event delivery van een producent (bijv. Suricata) via NATS naar zowel de Control Daemon als Wazuh. Valideert door een Suricata-alert te triggeren en te controleren dat het event verschijnt in zowel NATS-monitoring als Wazuh.</p>
 <hr />
 <h3 id="t-a12-control-daemon-dreigingsscoreaccumulatie-quarantaine">T-A12 — Control Daemon: dreigingsscoreaccumulatie + quarantaine<a class="headerlink" href="#t-a12-control-daemon-dreigingsscoreaccumulatie-quarantaine" title="Permanent link">&para;</a></h3>
-<p>Test dreigingsscoreaccumulatie en quarantaine. Valideert door meerdere gemiddeld-ernstige gebeurtenissen te sturen voor dezelfde client, de Redis-score toename te observeren, en te verifiëren dat de peer wordt verwijderd uit personagroepen wanneer de drempelwaarde wordt overschreden.</p>
+<p>Test dreigingsscoreaccumulatie en quarantaine. Valideert door meerdere gemiddeld-ernstige events te sturen voor dezelfde client, de Redis-score toename te observeren, en te verifiëren dat de peer wordt verwijderd uit personagroepen wanneer de threshold wordt overschreden.</p>
 <hr />
-<h3 id="t-a13-wazuh-siem-nats-gebeurtenisingestie-dashboardquery">T-A13 — Wazuh SIEM: NATS-gebeurtenisingestie + dashboardquery<a class="headerlink" href="#t-a13-wazuh-siem-nats-gebeurtenisingestie-dashboardquery" title="Permanent link">&para;</a></h3>
-<p>Test NATS-naar-Wazuh gebeurtenisingestie. Valideert door een detectiegebeurtenis te triggeren en vervolgens het Wazuh Discover-dashboard te bevragen naar de gebeurtenis met correcte velden.</p>
+<h3 id="t-a13-wazuh-siem-nats-event-ingestion-dashboardquery">T-A13 — Wazuh SIEM: NATS event ingestion + dashboardquery<a class="headerlink" href="#t-a13-wazuh-siem-nats-event-ingestion-dashboardquery" title="Permanent link">&para;</a></h3>
+<p>Test NATS-naar-Wazuh event ingestion. Valideert door een detection event te triggeren en vervolgens het Wazuh Discover-dashboard te bevragen naar het event met correcte velden.</p>
 <hr />
 <h2 id="operationele-tests-voorheen-gepland">Operationele tests — voorheen gepland<a class="headerlink" href="#operationele-tests-voorheen-gepland" title="Permanent link">&para;</a></h2>
 <h3 id="f10-centrale-logaggregatie-siem">F10 — Centrale logaggregatie (SIEM)<a class="headerlink" href="#f10-centrale-logaggregatie-siem" title="Permanent link">&para;</a></h3>
-<p>Wazuh is geïmplementeerd en operationeel. De NATS-forwarder bruggt Suricata-alerts van de eventbus naar Wazuh, en de pop01-agent voedt lokale logbronnen (Squid-toegangslog, Suricata <code>eve.json</code>, OPNsense-firewalllog, Python DLP Docker-log). Gebeurtenissen zijn opvraagbaar in het Wazuh Discover-dashboard.</p>
+<p>Wazuh is geïmplementeerd en operationeel. De NATS-forwarder bruggt Suricata-alerts van de eventbus naar Wazuh, en de pop01-agent voedt lokale logbronnen (Squid-toegangslog, Suricata <code>eve.json</code>, OPNsense-firewalllog, Python DLP Docker-log). Events zijn opvraagbaar in het Wazuh Discover-dashboard.</p>
 <h3 id="f11-casb-alert-en-herstel">F11 — CASB-alert en herstel<a class="headerlink" href="#f11-casb-alert-en-herstel" title="Permanent link">&para;</a></h3>
 <p>Wazuh is geïmplementeerd met M365 Management Activity API-integratie en Active Response:</p>
 <ul>
 <li><strong>Inline-laag:</strong> Squid + ICAP (operationeel)</li>
 <li><strong>API-laag:</strong> Wazuh + M365 Management Activity API</li>
-<li><strong>Aangepaste regels:</strong> SID 100200/100201 voor SharePoint <code>SharingSet</code> + <code>Anyone</code>/<code>External</code>-detectie</li>
-<li><strong>Actieve respons:</strong> <code>sharepoint_remediate.sh</code></li>
+<li><strong>Aangepaste regels:</strong> basisregel <code>100600</code> (<code>producer=o365</code>), met <code>100601</code> (<code>AnonymousLinkCreated</code>), <code>100602</code> (<code>SharingLinkCreated</code> + scope <code>Anyone</code>), <code>100603</code> (<code>SharingSet</code> + guest)</li>
+<li><strong>Actieve respons:</strong> <code>sharepoint_remediate.sh</code> (regels 100601/100602), <code>guest_remediate.sh</code> (regel 100603) — achter de ENFORCE-poort, standaard detect-only (live revoke nog niet actief)</li>
 </ul>
 <p>Graph API-tenantmachtigingen bevestigd op 1 april 2026 (beheerdertoestemming verleend op <code>aplab.be</code>).</p>
 <hr />
@@ -4766,17 +4766,17 @@
 <tr>
 <td>6</td>
 <td>Opent datacentersite → Geslaagd</td>
-<td>✅ Gevalideerd (F4)</td>
+<td>✅ Gevalideerd bij opbouw (F4); DC-LAN-over-overlay-pad verwijderd in V34, uitgesteld</td>
 </tr>
 <tr>
 <td>7</td>
 <td>Sitegebruiker pingt datacenter via tunnel</td>
-<td>✖ N.v.t. — sitepc01 heeft geen OS, IPsec geschrapt</td>
+<td>✖ N.v.t. — klassieke IPsec site-to-site geschrapt; de ZT-Branch gebruikt in plaats daarvan per-apparaat NetBird-inschrijving</td>
 </tr>
 <tr>
 <td>8</td>
 <td>QoS-markering zichtbaar op VyOS</td>
-<td>✖ N.v.t. — QoS-architectuurbeslissing</td>
+<td>✅ Gevalideerd — DSCP-markering zichtbaar via <code>tc</code> op VyOS eth0 (V43 Test #5: EF geclassificeerd, 0 drops onder last)</td>
 </tr>
 <tr>
 <td>9</td>
@@ -4785,7 +4785,7 @@
 </tr>
 </tbody>
 </table>
-<p>7 van 9 F15-stappen gevalideerd. De 2 resterende zijn architectureel N.v.t. (SD-WAN).</p>
+<p>Stappen 1–5, 8 en 9 weerspiegelen de huidige stack. Stap 6 is gevalideerd bij opbouw (F4), maar het DC-LAN-over-overlay-pad is verwijderd in V34 (uitgesteld). Stap 7 is architectureel N.v.t. — klassiek IPsec SD-WAN, vervangen door het ZT-Branch-model.</p>
 <hr />
 <h2 id="testomgeving">Testomgeving<a class="headerlink" href="#testomgeving" title="Permanent link">&para;</a></h2>
 <table>
@@ -4805,8 +4805,8 @@
 <td>8 GB (verhoogd van 4 GB voor gelijktijdige Suricata + ClamAV-belasting)</td>
 </tr>
 <tr>
-<td>ClamAV-handtekeningen</td>
-<td>daily v27953, main v63, bytecode v339 — 3.642.437 handtekeningen</td>
+<td>ClamAV-signatures</td>
+<td>daily v27953, main v63, bytecode v339 — 3.642.437 signatures</td>
 </tr>
 <tr>
 <td>Suricata-regels</td>
@@ -4818,7 +4818,7 @@
 </tr>
 <tr>
 <td>mobile01</td>
-<td>Windows 11, VMware, extern — simuleert BYOD buiten schoolnetwerk</td>
+<td>Windows 11, VMware, extern — simuleert remote managed Windows client buiten schoolnetwerk</td>
 </tr>
 <tr>
 <td>NetBird-overlaybereik</td>
@@ -4833,7 +4833,7 @@
 <li><a href="../../decisions/sdwan-descoped/">Beslissing: SD-WAN Geschrapt</a></li>
 <li><a href="../../decisions/ca-posture-hybrid/">Beslissing: CA + Posture hybride (Driepoortsmodel)</a></li>
 <li><a href="../../findings/curl-ssl-no-revoke/">Bevinding: curl --ssl-no-revoke op Windows</a></li>
-<li><a href="../../findings/suricata-connection-pooling/">Bevinding: Suricata verbindingspooling</a></li>
+<li><a href="../../findings/suricata-connection-pooling/">Bevinding: Suricata connection pooling</a></li>
 <li><a href="../../components/netbird/">NetBird</a></li>
 <li><a href="../../components/squid/">Squid</a></li>
 <li><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></li>

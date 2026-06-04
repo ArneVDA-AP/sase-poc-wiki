@@ -3606,7 +3606,7 @@
 <p><strong>Huidige staat:</strong> <code>ENFORCE=false</code> (dry-run) tot demovoorbereiding (Sessie 11).</p>
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Scoring-gewichten:</strong> <code>proxy_block</code> verwijderd uit scoring (ambient OS-ruis veroorzaakte false positives — Windows NCSI/telemetry). IDS-events zijn enkel log (C2 beacon response hoort bij Zeek/RITA, niet bij eigen correlatie).</li>
+<li><strong>Scoring-gewichten:</strong> <code>malware=80</code> (single-event — overschrijdt drempel 80 alleen), <code>dlp_match=30</code> (accumulerend). <code>proxy_block</code> verwijderd uit scoring (ambient OS-ruis veroorzaakte false positives — Windows NCSI/telemetry). IDS-events zijn enkel log (C2 beacon response hoort bij Zeek/RITA, niet bij eigen correlatie). Gevalideerd in V35: docent1 triggerde EICAR → score 80/80 → gequarantaineerd binnen enkele seconden → hersteld.</li>
 <li><strong>Quarantainemechanisme:</strong> Strip persona-groepen van peer → deny-by-default. NIET via een aparte deny-groep.</li>
 <li><strong>Dequarantaine:</strong> Herstelt originele groepen vanuit Redis-backup. Opgelost: NetBird retourneert <code>peers:null</code> voor lege groepen (niet <code>[]</code>), wat dequarantaine deed crashen.</li>
 <li><strong>Redis:</strong> Threat score opslag + sessiestatus op <code>redis:7-alpine</code>, poort 6379 enkel localhost.</li>
@@ -3625,7 +3625,7 @@
 <tr>
 <td>NATS JetStream</td>
 <td>Inkomend (consumer)</td>
-<td>Durable consumer op <code>security.alert.&gt;</code> + <code>identity.&gt;</code></td>
+<td>Durable + DeliverPolicy.NEW consumer op <code>security.alert.&gt;</code> (overleeft restarts, geen herafspelen van historische events); ephemeral + DeliverPolicy.ALL consumer op <code>identity.&gt;</code> (herbouwt de in-memory identity-map bij elke start)</td>
 </tr>
 <tr>
 <td>NetBird Management API</td>

@@ -3620,7 +3620,7 @@
 </tbody>
 </table>
 <p>All three gates are operational. Gates 1 and 2 were activated in V40 (CA policies) and V40 (Intune compliance). Some policies are in Report-only mode pending demo preparation (Session 11).</p>
-<p><strong>Why gates are complementary, not redundant:</strong> Gate 1 (CA) can enforce MFA and sign-in risk — but cannot check device state on unmanaged BYOD without Intune enrollment. Gate 2 (posture) can verify OS version and AV status — but cannot evaluate stolen-credential risk or enforce MFA. Neither gate can substitute for the other. Gate 3 catches threats that bypass both.</p>
+<p><strong>Why gates are complementary, not redundant:</strong> Gate 1 (CA) enforces MFA and evaluates sign-in risk — but identity alone says nothing about the device's security state. Gate 2 (Intune compliance) attests OS version, antivirus, and firewall — but cannot evaluate stolen-credential risk or enforce MFA. Neither gate can substitute for the other. Gate 3 catches threats in the content that bypass both.</p>
 <h2 id="where-it-appears-in-the-stack">Where it appears in the stack<a class="headerlink" href="#where-it-appears-in-the-stack" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><a href="../../components/netbird/">NetBird</a></strong> — implements Zero Trust Network Access: per-peer identity via OIDC, cryptographic peer keys, granular ACL policies per resource group. A user with access to dc01 cannot reach mgmt01 without a separate policy.</li>
@@ -3633,7 +3633,7 @@
 <p><strong>Zero Trust vs VPN:</strong> VPN gives network access; Zero Trust gives resource access. NetBird implements this via WireGuard mesh + ACL policies — each resource has its own explicit policy, and peers that lack a policy cannot even route to that resource.</p>
 <p><strong>Zero Trust principles (Microsoft framework) — explicit gate mapping:</strong>
 - <em>Verify Explicitly (identity)</em> → Gate 1: Entra ID CA evaluates who the user is (MFA, sign-in risk, geolocation)
-- <em>Verify Explicitly (device)</em> → Gate 2: NetBird posture checks evaluate what the device is (OS version, AV, client version)
+- <em>Verify Explicitly (device)</em> → Gate 2: Intune device compliance attests what the device is (OS version, Defender AV, firewall); NetBird posture checks remain optional defense-in-depth
 - <em>Use Least Privilege</em> → NetBird ACL policies per resource group
 - <em>Assume Breach</em> → Gate 3: SWG pipeline + Suricata inspect all content in the data plane, regardless of who passed Gates 1 and 2</p>
 <p><strong>Managed devices scope:</strong> Following a scope change (lector mandate, April 21 2026), the project targets managed Windows devices (Intune-managed, Entra joined) rather than BYOD. This enables Gate 2 to use Intune device compliance for attestation-based posture checks (OS version, Defender AV + firewall, real-time protection). NetBird posture checks remain as optional defense-in-depth.</p>

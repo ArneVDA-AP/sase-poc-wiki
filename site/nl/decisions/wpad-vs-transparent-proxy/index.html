@@ -3581,7 +3581,7 @@
 <p><strong>Status:</strong> Geïmplementeerd<br />
 <strong>Datum:</strong> Maart 2026 (Verslag19)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>BYOD-clients op de NetBird-overlay moeten al hun HTTP/HTTPS-verkeer via Squid laten lopen voor inspectie. Er zijn twee benaderingen: transparante interceptie (firewall leidt poort 80/443 stilzwijgend om) en expliciete proxy via WPAD/PAC (client is geconfigureerd om verkeer naar het proxyadres te sturen).</p>
+<p>Clients op de NetBird-overlay moeten al hun HTTP/HTTPS-verkeer via Squid laten lopen voor inspectie. Er zijn twee benaderingen: transparante interceptie (firewall leidt poort 80/443 stilzwijgend om) en expliciete proxy via WPAD/PAC (client is geconfigureerd om verkeer naar het proxyadres te sturen).</p>
 <p>Het handboek specificeerde transparante proxy via <code>pf rdr</code>.</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
 <table>
@@ -3607,7 +3607,7 @@
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>WPAD/PAC expliciete proxy, waarbij het PAC-bestand wordt geserveerd door Caddy op mgmt01 via <code>http://wpad.sandbox.local/wpad.dat</code>.</p>
-<p>De transparante proxyoptie was geen levensvatbaar alternatief — het is technisch onmogelijk op de <code>wt0</code>-interface. WireGuard is een Laag 3 gerouteerde interface; <code>pf rdr</code> werkt op inkomende frames en ziet geen verkeer dat via <code>wt0</code> wordt doorgestuurd. Bevestigd via <code>tcpdump -i wt0 -n 'tcp'</code> die 0 pakketten toont (Verslag17; OPNsense GitHub issue #3857, gesloten als "not planned").</p>
+<p>De transparante proxyoptie was geen levensvatbaar alternatief — het is technisch onmogelijk op de <code>wt0</code>-interface. WireGuard is een Laag 3 gerouteerde interface; <code>pf rdr</code> werkt op inkomende frames en ziet geen verkeer dat via <code>wt0</code> wordt doorgestuurd. Bevestigd via <code>tcpdump -i wt0 -n 'tcp'</code> die 0 pakketten toont (Verslag17, Bevinding 17.10/17.11; OPNsense GitHub issue #3857, gesloten als "not planned").</p>
 <p>WPAD/PAC is ook het architecturaal correcte patroon voor een SASE-stack: het commerciële equivalent (Zscaler Client Connector) distribueert proxyconfiguratie naar de browser op precies dezelfde manier.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>

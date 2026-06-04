@@ -36,7 +36,7 @@ De PoC vervangt het perimetermodel door een SASE-stack waarbij:
 
 **SASE vs SSE:** SSE (Security Service Edge) is de beveiligingsgerichte subset van SASE — ZTNA + SWG + CASB. SASE voegt de WAN Edge-component (SD-WAN) toe. Dit project implementeert SSE volledig en SD-WAN gedeeltelijk.
 
-**PoC vs productie:** Commerciële SASE gebruikt single-pass inspectiemotoren — TLS-decodering, URL-filtering, DLP en malwarescanning in één doorgang. Deze stack is een seriële keten (Squid decodeert → ICAP naar Python DLP → ICAP naar ClamAV → herencrypteert). Inspectiebereik is equivalent; architectuur is geoptimaliseerd voor duidelijkheid boven doorvoer.
+**PoC vs productie:** Commerciële SASE gebruikt single-pass inspection engines — TLS-decodering, URL-filtering, DLP en malwarescanning in één doorgang. Deze stack is een seriële keten (Squid decodeert → ICAP naar Python DLP → ICAP naar ClamAV → re-encrypts). Inspectiebereik is equivalent; architectuur is geoptimaliseerd voor duidelijkheid boven doorvoer.
 
 **Identiteit vs netwerkpositie:** De fundamentele verschuiving is dat toegangsbeslissingen gebaseerd zijn op *wie de gebruiker is* en *welk apparaat ze gebruiken*, niet *waar ze zich op het netwerk bevinden*. NetBird ACL-policies, Entra ID CA en de ICAP-inspectiepipeline handhaven dit gezamenlijk.
 

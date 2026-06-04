@@ -3580,7 +3580,7 @@
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    rpz-log: yes
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    rpz-log-name: &quot;ioc2rpz-threat-intel&quot;
 </code></pre></div>
-<p>Opmerking: <code>zonefile</code> verwijst nog steeds naar <code>/var/unbound/</code> — dit is correct. Het zonebestandpad is waar Unbound de overgedragen zone opslaat, die het regenereert via zonetransfer. Alleen persistente <em>configuratie</em>bestanden moeten in <code>/usr/local/etc/unbound.opnsense.d/</code> staan.</p>
+<p>Opmerking: <code>zonefile</code> verwijst nog steeds naar <code>/var/unbound/</code> — dit is correct. Het zonebestandpad is waar Unbound de overgedragen zone opslaat, die het regenereert via zone transfer. Alleen persistente <em>configuratie</em>bestanden moeten in <code>/usr/local/etc/unbound.opnsense.d/</code> staan.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Plaats nooit persistente Unbound-configuratiebestanden in <code>/var/unbound/etc/</code> — OPNsense overschrijft deze map bij herstart</li>

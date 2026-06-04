@@ -2404,10 +2404,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-11-acl-beleidsregels-aanmaken" class="md-nav__link">
+  <a href="#stap-11-acl-policies-aanmaken" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 11: ACL-beleidsregels aanmaken
+        Stap 11: ACL policies aanmaken
       
     </span>
   </a>
@@ -3746,10 +3746,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-11-acl-beleidsregels-aanmaken" class="md-nav__link">
+  <a href="#stap-11-acl-policies-aanmaken" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 11: ACL-beleidsregels aanmaken
+        Stap 11: ACL policies aanmaken
       
     </span>
   </a>
@@ -3896,8 +3896,8 @@
 <li>[ ] Labomgeving volledig operationeel (Runbook 01)</li>
 <li>[ ] Entra ID-tenant (<code>aplab.be</code>) toegankelijk</li>
 <li>[ ] A5 Educational-licentie actief</li>
-<li>[ ] App-registratie aangemaakt in Entra ID:</li>
-<li>Client-ID: <code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code></li>
+<li>[ ] App-registratie aangemaakt in Entra ID (<code>2ITCSC1A-Netbird-Sandbox</code>):</li>
+<li>Client-ID: <code>11803ee8-eb15-462c-a286-5415c17a29c6</code></li>
 <li>Tenant-ID: <code>23e9bcdc-5cb9-4867-9310-76cc0b462ddc</code></li>
 <li>[ ] mgmt01 heeft Docker geïnstalleerd en draaiend</li>
 </ul>
@@ -3905,9 +3905,12 @@
 <h2 id="stap-1-entra-id-app-registratie">Stap 1: Entra ID App-registratie<a class="headerlink" href="#stap-1-entra-id-app-registratie" title="Permanent link">&para;</a></h2>
 <p>Maak de app-registratie aan in Entra ID vóór het uitrollen van NetBird:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Entra ID → App Registrations → New Registration
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  Naam: NetBird SASE PoC
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  Naam: 2ITCSC1A-Netbird-Sandbox
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  Ondersteunde accounttypen: Accounts in this organizational directory only
 </code></pre></div>
+<blockquote>
+<p><strong>App-registratiewissel (V30).</strong> Een eerdere iteratie hergebruikte een gedeelde registratie (<code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code>) over de sandbox en het teamproject, wat verborgen koppeling veroorzaakte. De sandbox gebruikt nu zijn eigen <code>2ITCSC1A-Netbird-Sandbox</code>-registratie (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>) — de huidige waarde die in deze runbook wordt gebruikt.</p>
+</blockquote>
 <p>Noteer de Client-ID en Tenant-ID. De redirect-URI wordt later toegevoegd (na NetBird-deployment, Stap 8).</p>
 <hr />
 <h2 id="stap-2-hosts-vermelding-op-mgmt01">Stap 2: Hosts-vermelding op mgmt01<a class="headerlink" href="#stap-2-hosts-vermelding-op-mgmt01" title="Permanent link">&para;</a></h2>
@@ -4015,7 +4018,7 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <p>Navigeer naar de Zitadel-console:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>https://netbird.sandbox.local/zitadel/ui/console
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>→ Settings → Identity Providers → Add → Microsoft Azure AD
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>→ Client ID: cebe0d74-be9f-49ac-9f35-65f11586c1bb
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>→ Client ID: 11803ee8-eb15-462c-a286-5415c17a29c6
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>→ Client Secret: &lt;vanuit Entra ID app-registratie&gt;
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>→ Tenant ID: 23e9bcdc-5cb9-4867-9310-76cc0b462ddc
 </code></pre></div>
@@ -4035,6 +4038,9 @@ Zie <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 <p>Herstel: als <code>config.json</code> 0 bytes is, herstel vanuit de back-up en herstart NetBird.</p>
 <hr />
 <h2 id="stap-10-groepen-aanmaken-in-netbird-dashboard">Stap 10: Groepen aanmaken in NetBird Dashboard<a class="headerlink" href="#stap-10-groepen-aanmaken-in-netbird-dashboard" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>⚠️ Verouderd door de V34-personamigratie (mei 2026).</strong> Stappen 10–13 hieronder documenteren de <em>oorspronkelijke</em> Fase-2-build met <code>SASE-*</code>-groepen en drie ACL policies. Dat model is vervangen: een diagnose toonde dat alle connectiviteit op de <code>SASE-*</code>-groepen hing, terwijl de identiteit-gesynchroniseerde persona-groepen (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) geen beleid droegen, waardoor groep-gebaseerde quarantaine een no-op was. De huidige staat is een <code>Core-Services</code>-groep (pop01, mgmt01) plus één <code>Personas-to-Core-Services</code>-ACL-beleid (persona-groepen → <code>Core-Services</code>, <strong>alleen TCP 3128</strong>), en het <code>Internal-DC</code>-netwerk + <code>Datacenter-Access</code>-beleid zijn verwijderd (DC-LAN-over-overlay uitgesteld tot de geplande Cosmos-sessie). <strong>Volg voor de huidige build het groep-/beleidmodel in <a href="../../components/netbird/">Component: NetBird</a>; persona-groepen worden aangemaakt door identiteitssynchronisatie, niet handmatig (<a href="../08-groupsync/">Runbook 08: GroupSync</a>).</strong> De onderstaande stappen blijven behouden als historische/evolutiereferentie.</p>
+</blockquote>
 <p>NetBird Dashboard → Peers → maak groepen aan:</p>
 <table>
 <thead>
@@ -4069,28 +4075,28 @@ Zie <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 </table>
 <p>mgmt01 zit in zowel <code>SASE-Admins</code> als <code>SASE-Services</code> — dit scheidt de infrarol (beheertoegang) van de servicerol (WPAD via Caddy, ioc2rpz-feeds).</p>
 <hr />
-<h2 id="stap-11-acl-beleidsregels-aanmaken">Stap 11: ACL-beleidsregels aanmaken<a class="headerlink" href="#stap-11-acl-beleidsregels-aanmaken" title="Permanent link">&para;</a></h2>
+<h2 id="stap-11-acl-policies-aanmaken">Stap 11: ACL policies aanmaken<a class="headerlink" href="#stap-11-acl-policies-aanmaken" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Valkuil: Volgorde is cruciaal.</strong> Maak alle beleidsregels aan <strong>vóór</strong> het verwijderen van het standaard alles-naar-alles-beleid. Als je het standaardbeleid verwijdert zonder vervangers, valt alle peercommunicatie direct weg.</p>
+<p><strong>Valkuil: Volgorde is cruciaal.</strong> Maak alle policies aan <strong>vóór</strong> het verwijderen van het standaard alles-naar-alles-beleid. Als je het standaardbeleid verwijdert zonder vervangers, valt alle peercommunicatie direct weg.</p>
 </blockquote>
 <p><strong>Beleid 1 — Admin-Infrastructuur:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Naam:        Admin-Infrastructure
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>Bronnen:     SASE-Admins
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Bestemmingen: SASE-Admins
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>Sources:     SASE-Admins
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Destinations: SASE-Admins
 <a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>Protocol:    All
 <a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>Actie:       Accept
 </code></pre></div>
 <p><strong>Beleid 2 — Mobiel-naar-Services:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Naam:        Mobile-to-Services
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>Bronnen:     SASE-MobileUsers
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Bestemmingen: SASE-Services
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>Sources:     SASE-MobileUsers
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Destinations: SASE-Services
 <a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>Protocol:    All
 <a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>Actie:       Accept
 </code></pre></div>
 <p><strong>Beleid 3 — Datacentertoegeng:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Naam:        Datacenter Access
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>Bronnen:     SASE-MobileUsers
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>Bestemmingen: SASE-InternalResources
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>Sources:     SASE-MobileUsers
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>Destinations: SASE-InternalResources
 <a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>Protocol:    All
 <a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>Actie:       Accept
 </code></pre></div>
@@ -4102,7 +4108,7 @@ Zie <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 <a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>Beschrijving: Internet exit node
 <a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>Groepen:      SASE-MobileUsers
 </code></pre></div>
-<p>Dit routeert al het niet-overlay-verkeer van BYOD-clients via pop01 — vereist zodat Squid het verkeer kan inspecteren.</p>
+<p>Dit routeert al het niet-overlay-verkeer van overlay-clients via pop01 — vereist zodat Squid het verkeer kan inspecteren.</p>
 <hr />
 <h2 id="stap-13-dc-lan-configureren-via-networks">Stap 13: DC-LAN configureren via Networks<a class="headerlink" href="#stap-13-dc-lan-configureren-via-networks" title="Permanent link">&para;</a></h2>
 <p>NetBird Dashboard → Networks → Create Network:</p>
@@ -4137,13 +4143,16 @@ Zie <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primai
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">netbird</span> <span class="n">status</span>
 <a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="c"># Verwacht: Connected, X/Y peers, routes active</span>
 <a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
-<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="c"># Datacenter bereikbaar</span>
-<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="nb">Test-NetConnection</span> <span class="n">10</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">100</span> <span class="n">-Port</span> <span class="n">80</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="c"># Proxy bereikbaar (huidige-staat-pad: persona → Core-Services, TCP 3128)</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="nb">Test-NetConnection</span> <span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span> <span class="n">-Port</span> <span class="n">3128</span>
 <a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="c"># Verwacht: TcpTestSucceeded: True</span>
 <a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
 <a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="c"># Internet via exit node</span>
 <a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="nb">Test-NetConnection</span> <span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span>
 <a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a><span class="c"># Verwacht: PingSucceeded: True</span>
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a><span class="c"># (DC-LAN-bereikbaarheid — Test-NetConnection 10.0.0.100 -Port 80 — geldt alleen</span>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a><span class="c">#  voor de verouderde Stap 13-build; DC-LAN-over-overlay is uitgesteld, zie Stap 10-notitie.)</span>
 </code></pre></div>
 <hr />
 <h2 id="eindverificatie">Eindverificatie<a class="headerlink" href="#eindverificatie" title="Permanent link">&para;</a></h2>
@@ -4154,10 +4163,13 @@ Zie <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primai
 <li>[ ] NetBird Dashboard toegankelijk, peers zichtbaar (groen = online)</li>
 <li>[ ] <code>netbird status</code> op mobile01 toont "Connected"</li>
 <li>[ ] Ping tussen overlay-IP's: <code>100.70.154.79</code>, <code>100.70.135.241</code>, <code>100.70.95.98</code></li>
-<li>[ ] DC-LAN bereikbaar vanuit mobile01 (<code>10.0.0.100</code>)</li>
+<li>[ ] pop01-proxy bereikbaar vanuit mobile01 (<code>100.70.154.79:3128</code>)</li>
 <li>[ ] Internet bereikbaar vanuit mobile01 via exit node</li>
 <li>[ ] <code>config.json</code> back-up aangemaakt op pop01</li>
 </ul>
+<blockquote>
+<p>DC-LAN-bereikbaarheid (<code>10.0.0.100</code>) maakt <strong>geen</strong> deel uit van huidige-staat-validatie — het <code>Internal-DC</code>-netwerk is verwijderd in de V34-migratie (zie Stap 10-notitie).</p>
+</blockquote>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

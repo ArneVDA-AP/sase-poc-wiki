@@ -29,7 +29,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 | B4 | No-bump-uitzondering (Microsoft-login) | Certificate issuer = Microsoft (origineel) | F6 | Browser naar login.microsoftonline.com, certificaat inspecteren |
 | B5 | DLP-upload -- creditcardnummer in POST-body | Python DLP ICAP blokkeert, 403 | T-A3 | `curl.exe -x ... -X POST -d "CC: 4532015112830366"` naar httpbin |
 | B6 | DLP-download -- CONFIDENTIAL-label | ClamAV YARA blokkeert | T-A1 | Bestand downloaden met CONFIDENTIAL-markering |
-| B7 | DLP-drempelwaarde -- 4x CC-nummers blokkeren, 1x doorlaten | SDD-drempelhandhaving | T-A2 | POST met 4 vs 1 creditcardnummers |
+| B7 | DLP-threshold -- 4x CC-nummers blokkeren, 1x doorlaten | SDD-threshold enforcement | T-A2 | POST met 4 vs 1 creditcardnummers |
 
 ### CASB -- Identiteitsgebaseerde filtering
 
@@ -61,7 +61,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
 | F1 | Malware-event met hoge ernst | Control daemon plaatst peer in quarantaine (binnen enkele seconden) | CASB L3 | c-icap RESPMOD-malwaredetectie triggeren |
-| F2 | Meerdere medium-alerts (scoreopbouw) | Dreigingsscore stijgt, overschrijdt drempel, triggert quarantaine | CASB L3 | Opeenvolgende alerts van dezelfde client |
+| F2 | Meerdere medium-alerts (scoreopbouw) | Dreigingsscore stijgt, overschrijdt threshold, triggert quarantaine | CASB L3 | Opeenvolgende alerts van dezelfde client |
 | F3 | Scoreverval na quarantaine | Peer hersteld naar personagroep na vervalperiode | CASB L3 | Wachten op sliding-window-verval |
 
 ---

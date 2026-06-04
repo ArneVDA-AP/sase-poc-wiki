@@ -3673,9 +3673,9 @@
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>F12, F13, F14</strong> zijn als N.v.t. gemarkeerd in alle acceptatietestmatrices. Dit is een expliciete architectuurbeslissing, geen implementatieleemte.</li>
-<li><strong>F15-stappen 7–8</strong> zijn N.v.t. om dezelfde reden (stap 7 vereist sitepc01 met NetBird; stap 8 vereist QoS op VyOS).</li>
-<li><strong>VyOS</strong> blijft in de topologie, maar de configuratie is minimaal — alleen WAN-connectiviteit en NAT. Zie <a href="../../components/vyos/">VyOS</a>.</li>
-<li><strong>sitepc01</strong> datacentertoegang is gepland via NetBird-inschrijving (nog niet uitgevoerd per april 2026).</li>
+<li><strong>F15-stap 7</strong> is N.v.t. (klassiek IPsec site-to-site geschrapt). <strong>Stap 8</strong> (QoS-markering) is gevalideerd onder het ZT-Branch model (V43 Test #5: DSCP EF geclassificeerd, 0 drops onder last).</li>
+<li><strong>VyOS</strong> blijft in de topologie als SASE-gateway — WAN-connectiviteit, NAT, QoS-shaping (DSCP EF/AF41/AF21) en WAN health monitoring. Zie <a href="../../components/vyos/">VyOS</a>.</li>
+<li><strong>sitepc01</strong> bereikt het datacenter via individuele NetBird-inschrijving — bevestigd ingeschreven en operationeel in Verslag43/Verslag44, niet via een site-to-site-tunnel.</li>
 <li>De architectuur sluit direct aan op het "Zero Trust SD-WAN"-model van Zscaler: vestigingen behandeld als niet-vertrouwde netwerken (zoals cafés), elk apparaat authenticeert individueel, geen site-to-site-tunnels.</li>
 </ul>
 <h2 id="wat-er-daadwerkelijk-gebouwd-is">Wat er daadwerkelijk gebouwd is<a class="headerlink" href="#wat-er-daadwerkelijk-gebouwd-is" title="Permanent link">&para;</a></h2>
@@ -3690,9 +3690,9 @@
 <p>F12–F14 meten een ander paradigma (klassiek IPsec), niet de ZT-Branch implementatie. De ZT-Branch tests (#5 en #6) zijn het correcte validatiekader.</p>
 <p>Zie: <a href="../../components/vyos/">VyOS</a>, <a href="../zt-sdwan-branch/">Beslissing: ZT-SD-WAN Branch</a></p>
 <h2 id="onderbouwing">Onderbouwing<a class="headerlink" href="#onderbouwing" title="Permanent link">&para;</a></h2>
-<p><strong>IPsec repliceert wat ZTNA vervangt.</strong> Een site-to-site IPsec-tunnel is netwerkcentrisch: hij verleent alle hosts op Site-LAN impliciete toegang tot het datacenter op basis van netwerklocatie. Dit is precies het perimeter-model dat SASE is ontworpen te vervangen. NetBird biedt al een Zero Trust-overlay waarbij elke peer individueel authenticeert en ACL-beleidsregels per-peer toegang afdwingen.</p>
+<p><strong>IPsec repliceert wat ZTNA vervangt.</strong> Een site-to-site IPsec-tunnel is netwerkcentrisch: hij verleent alle hosts op Site-LAN impliciete toegang tot het datacenter op basis van netwerklocatie. Dit is precies het perimeter-model dat SASE is ontworpen te vervangen. NetBird biedt al een Zero Trust-overlay waarbij elke peer individueel authenticeert en ACL policies per-peer toegang afdwingen.</p>
 <p><strong>Zscaler-afstemming.</strong> Het schrappen sluit de architectuur af op de publiek gedocumenteerde Zero Trust SD-WAN-aanpak van Zscaler: geen impliciet vertrouwen op basis van netwerklocatie, elke vestiging behandeld als een niet-vertrouwd netwerk, cloudinspectie voor al het verkeer.</p>
-<p><strong>Complexiteitsreductie.</strong> Het verwijderen van IPsec, uCPE en QoS vermindert het implementatieoppervlak en houdt de PoC gericht op de SASE-beveiligingscomponenten.</p>
+<p><strong>Complexiteitsreductie.</strong> Het verwijderen van IPsec en uCPE vermindert het implementatieoppervlak. QoS is opnieuw geimplementeerd onder het ZT-Branch model (zie <a href="#wat-er-daadwerkelijk-gebouwd-is">Wat er daadwerkelijk gebouwd is</a>).</p>
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../components/vyos/">VyOS</a></li>

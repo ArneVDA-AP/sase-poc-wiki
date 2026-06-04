@@ -3810,7 +3810,7 @@
 
 
 <h1 id="netbird-zitadel-entra-id-ztna-overlay">NetBird + Zitadel + Entra ID — ZTNA Overlay<a class="headerlink" href="#netbird-zitadel-entra-id-ztna-overlay" title="Permanent link">&para;</a></h1>
-<p><strong>Role:</strong> ZTNA transport layer — creates a WireGuard mesh overlay that gives BYOD clients access to pop01 (proxy, DNS) and DC-LAN resources regardless of their physical network location. Every access decision is identity-based; lateral movement between resources requires explicit ACL policies.<br />
+<p><strong>Role:</strong> ZTNA transport layer — creates a WireGuard mesh overlay that gives managed Windows clients access to pop01 (proxy, DNS) and DC-LAN resources regardless of their physical network location. Every access decision is identity-based; lateral movement between resources requires explicit ACL policies.<br />
 <strong>Status:</strong> ✅ Fully operational — snapshot <code>Fase2-ZTNA-Complete</code><br />
 <strong>Config location:</strong> mgmt01 Docker Compose (<code>~/docker-compose.yml</code>), NetBird Dashboard (<code>https://netbird.sandbox.local</code>)</p>
 <hr />
@@ -3899,47 +3899,54 @@
 </thead>
 <tbody>
 <tr>
-<td><code>SASE-Admins</code></td>
+<td><code>Core-Services</code></td>
 <td>pop01, mgmt01</td>
-<td>Administrative SSH/HTTPS access</td>
+<td>Infrastructure peers (proxy, DNS, WPAD, ICAP)</td>
 </tr>
 <tr>
-<td><code>SASE-MobileUsers</code></td>
-<td>mobile01</td>
-<td>BYOD clients</td>
+<td><code>Studenten</code></td>
+<td>student persona peers</td>
+<td>Student clients (JWT auto-group)</td>
 </tr>
 <tr>
-<td><code>SASE-Services</code></td>
-<td>pop01, mgmt01</td>
-<td>Service endpoints (proxy, WPAD, DNS)</td>
+<td><code>Docenten</code></td>
+<td>teacher persona peers</td>
+<td>Teacher clients (JWT auto-group)</td>
 </tr>
 <tr>
-<td><code>SASE-InternalResources</code></td>
-<td>(resource group for Network)</td>
-<td>DC-LAN resources</td>
+<td><code>Admins</code></td>
+<td>admin persona peers</td>
+<td>Administrative users (JWT auto-group)</td>
+</tr>
+<tr>
+<td><code>All</code></td>
+<td>every peer</td>
+<td>NetBird built-in auto-group</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Policy creation order is critical:</strong> Create all policies before removing the default all-to-all policy. Removing the default without replacements immediately cuts all peer communication.</p>
+<p>Only <code>Core-Services</code> is created manually. The persona groups (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) are <strong>not</strong> created in the dashboard — a JWT group materializes as a NetBird group only when a peer carrying that <code>groups</code> claim first connects; enrolment <em>is</em> the group-sync (no separate step).</p>
+<blockquote>
+<p><strong>Group migration (V34, May 2026).</strong> The original Fase-2 build used <code>SASE-Admins</code>, <code>SASE-MobileUsers</code>, <code>SASE-Services</code>, and <code>SASE-InternalResources</code>. A diagnosis found that <strong>all</strong> NetBird ACL connectivity hung on the <code>SASE-*</code> groups while the persona groups carried <strong>zero</strong> policies — so quarantine-by-group (removing a peer from its persona group) would have been a no-op. The migration moved all connectivity onto the persona model + <code>Core-Services</code> and deleted every <code>SASE-*</code> group and policy. The persona model below is the current state; the <code>SASE-*</code> model is superseded.</p>
+</blockquote>
+<p><strong>Policy creation order (deny-by-default):</strong> The default All→All policy is removed, so peers without a policy have no connectivity. Build the replacement policy <em>before</em> removing the default to avoid cutting all peer communication.</p>
 <h3 id="acl-policies">ACL policies<a class="headerlink" href="#acl-policies" title="Permanent link">&para;</a></h3>
-<p><strong>Policy 1 — Admin-Infrastructure:</strong> Sources: <code>SASE-Admins</code> → Destinations: <code>SASE-Admins</code>, Protocol: All</p>
-<p><strong>Policy 2 — Mobile-to-Services:</strong> Sources: <code>SASE-MobileUsers</code> → Destinations: <code>SASE-Services</code>, Protocol: All<br />
-This allows mobile01 to reach pop01 proxy (<code>100.70.154.79:3128</code>) and mgmt01 WPAD (<code>100.70.135.241:80</code>).</p>
-<p><strong>Policy 3 — Datacenter Access:</strong> Sources: <code>SASE-MobileUsers</code> → Destinations: <code>SASE-InternalResources</code>, Protocol: All</p>
+<p><strong><code>Personas-to-Core-Services</code>:</strong> Sources: <code>Studenten</code>, <code>Docenten</code>, <code>Admins</code> → Destination: <code>Core-Services</code>, Protocol: <strong>TCP 3128 only</strong>.</p>
+<p>This single policy is the entire allow-list under deny-by-default. It lets every persona peer reach the pop01 Squid proxy (<code>100.70.154.79:3128</code>); all web traffic then flows through the SWG pipeline, where per-persona differentiation happens in Squid (not in NetBird ACLs). WPAD ports (<code>:80</code>/<code>:443</code> on mgmt01) are <strong>deliberately omitted</strong> — the PAC file is empty and clients use a manual proxy setting, so no WPAD reachability is needed (V34.13). Quarantine works because removing a peer from its persona group strips its only path to <code>Core-Services</code>.</p>
 <h3 id="exit-node-and-dc-lan-routing">Exit node and DC-LAN routing<a class="headerlink" href="#exit-node-and-dc-lan-routing" title="Permanent link">&para;</a></h3>
 <p><strong>Exit node (internet traffic)</strong> — via Network Routes:
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Network: 0.0.0.0/0, Routing Peer: pop01, Groups: SASE-MobileUsers
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Network: 0.0.0.0/0, Routing Peer: pop01, Distribution groups: Studenten, Docenten, Admins
 </code></pre></div></p>
-<p><strong>DC-LAN (10.0.0.0/8)</strong> — via Networks (ACL-aware, not Network Routes):
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Network name: Internal-DC
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Resource: DC-LAN, Type: IP Range, Range: 10.0.0.0/8, Group: SASE-InternalResources
-</code></pre></div></p>
-<p>Network Routes bypass ACL policies by default. Networks require group linkage by design. DC-LAN must use Networks for zero-trust correctness; exit node must use Network Routes (NetBird documentation limitation for 0.0.0.0/0).</p>
-<p><strong>Distribution groups vs ACL policies:</strong> These serve different purposes — the distribution group determines <em>which peers receive the DNS/network configuration</em>, while the ACL policy determines <em>whether traffic actually flows</em>. If a peer is in the distribution group but lacks an ACL policy allowing traffic, it receives the config but cannot reach the resource. Symptom: <code>netbird status</code> shows <code>Nameservers: 0/1 Available</code> on mgmt01 if mgmt01 is not in a source group of the Datacenter Access ACL policy that covers the nameserver.</p>
+<p>The exit node persists so persona group traffic (Studenten/Docenten/Admins) egresses through pop01. NetBird's exit node is <strong>all-or-nothing</strong> — it cannot selectively exclude destination ranges (issues #2493 / #3523). To keep Microsoft 365 "Optimize" ranges off the tunnel, an Intune Remediation (<code>2ITCSC1A-Route-Remediation</code>) pushes those routes directly on the client instead — a client-side split-tunnel that compensates for the missing per-route exclusion.</p>
+<p><strong>DC-LAN (10.0.0.0/8) over the overlay — deferred.</strong> The original <code>Internal-DC</code> Network (ACL-aware) and its <code>Datacenter-Access</code> policy were <strong>removed in the V34 migration</strong>; there is no active DC-LAN-over-overlay path in the current sandbox. Re-introducing datacenter reachability is deferred to the planned Cosmos app-gateway session. The design rationale below is retained for when that work resumes.</p>
+<blockquote>
+<p><strong>Networks vs Network Routes (design rationale, for the deferred DC-LAN work):</strong> Network Routes bypass ACL policies by default. Networks require group linkage by design. DC-LAN should use Networks for zero-trust correctness; the exit node must use Network Routes (NetBird limitation for 0.0.0.0/0).</p>
+</blockquote>
+<p><strong>Distribution groups vs ACL policies:</strong> These serve different purposes — the distribution group determines <em>which peers receive the DNS/network configuration</em>, while the ACL policy determines <em>whether traffic actually flows</em>. If a peer is in the distribution group but lacks an ACL policy allowing traffic, it receives the config but cannot reach the resource. Symptom: <code>netbird status</code> shows <code>Nameservers: 0/1 Available</code> on a peer that receives the nameserver config but has no ACL path to it.</p>
 <h3 id="dns-configuration">DNS configuration<a class="headerlink" href="#dns-configuration" title="Permanent link">&para;</a></h3>
 <p>NetBird Dashboard → DNS:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Custom DNS zone:   sandbox.local → pop01 (100.70.154.79)
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>Primary nameserver: pop01 (100.70.154.79), Match domains: (empty)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Custom DNS zone:   sandbox.local → pop01 (100.70.154.79)
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>Primary nameserver: pop01 (100.70.154.79), Match domains: (empty)
 </code></pre></div>
 <p>The empty match-domains setting routes <strong>all</strong> DNS queries from NetBird clients through pop01 Unbound — not just <code>*.sandbox.local</code>. Without this, external queries use the client adapter's default DNS, bypassing Unbound RPZ entirely. See <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primary nameserver</a>.</p>
 <hr />
@@ -3985,20 +3992,19 @@ This allows mobile01 to reach pop01 proxy (<code>100.70.154.79:3128</code>) and 
 <h2 id="jwt-group-sync">JWT group sync<a class="headerlink" href="#jwt-group-sync" title="Permanent link">&para;</a></h2>
 <p>The identity chain flows from Entra ID through Zitadel to NetBird:</p>
 <ol>
-<li><strong>Entra ID</strong> persona groups (<code>2ITcsc1A-Studenten</code>, <code>2ITcsc1A-Docenten</code>, <code>2ITcsc1A-Admins</code>) → <code>cloud_displayname</code> optionalClaim in JWT</li>
-<li><strong>Zitadel Action 1</strong> (External Auth): allowlist-map GUID → clean name (<code>Studenten</code>, <code>Docenten</code>, <code>Admins</code>) → writes to user metadata <code>sase_groups</code></li>
+<li><strong>Entra ID</strong> persona groups (<code>2ITCSC1A-Studenten</code>, <code>2ITCSC1A-Docenten</code>, <code>2ITCSC1A-Admins</code>) → <code>cloud_displayname</code> optionalClaim in JWT</li>
+<li><strong>Zitadel Action 1</strong> (External Auth): allowlist-map display name → clean name (<code>Studenten</code>, <code>Docenten</code>, <code>Admins</code>) → writes to user metadata <code>sase_groups</code></li>
 <li><strong>Zitadel Action 2</strong> (Complement Token): reads metadata → <code>setClaim("groups", [...])</code> in JWT</li>
 <li><strong>NetBird JWT sync</strong>: <code>groups</code> claim becomes user auto-groups → propagated to all peers of that user</li>
 </ol>
-<p><strong>Persona groups:</strong> <code>Studenten</code>, <code>Docenten</code>, <code>Admins</code> (clean names; Entra names carry <code>2ITcsc1A-</code> prefix)</p>
+<p><strong>Persona groups:</strong> <code>Studenten</code>, <code>Docenten</code>, <code>Admins</code> (clean names; Entra names carry <code>2ITCSC1A-</code> prefix)</p>
 <p><strong>JWT allow groups field:</strong> Must be left <strong>empty</strong>. A filled field with a non-matching value causes 401 lockout for all users — recovery requires direct SQLite access on the management container. See <a href="../../findings/netbird-jwt-allow-groups-lockout/">Finding: NetBird JWT allow-groups lockout</a>.</p>
 <p><strong>Service user:</strong> <code>identity-bridge</code> with admin role for API access. Regular user PATs trigger issue #3127 (strips JWT-propagated auto-groups from all peers). See <a href="../../findings/netbird-issue-3127/">Finding: NetBird issue #3127</a>.</p>
-<p><strong>Group migration (V34):</strong> All SASE-MobileUsers/SiteUsers/etc. replaced by persona groups + Core-Services.</p>
 <hr />
 <h2 id="nats-integration">NATS integration<a class="headerlink" href="#nats-integration" title="Permanent link">&para;</a></h2>
 <p>NetBird is both a producer and a target for NATS-driven enforcement:</p>
 <ul>
-<li><strong>Producer:</strong> The <a href="../identity-bridge/">Identity Bridge</a> (which depends on the NetBird Management API) publishes identity events to <code>identity.login</code> and <code>identity.group_change</code> when peer connections or group memberships change.</li>
+<li><strong>Producer:</strong> The <a href="../identity-bridge/">Identity Bridge</a> (which depends on the NetBird Management API) publishes identity events to <code>identity.peer.connected</code>, <code>identity.peer.disconnected</code>, and <code>identity.multi_persona</code> (zero-trust anomaly) as peers connect, disconnect, or appear in more than one persona group.</li>
 <li><strong>Enforcement target:</strong> The <a href="../control-daemon/">Control Daemon</a> uses the NetBird Groups API to quarantine peers by removing them from policy-bearing persona groups (Studenten/Docenten/Admins). Under the deny-by-default model (Default All-&gt;All policy removed), a peer without group membership loses all connectivity.</li>
 </ul>
 <hr />

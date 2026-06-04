@@ -17,7 +17,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | Pagina | Samenvatting |
 |--------|--------------|
 | **Overzicht** | |
-| [Architectuur](overview/architecture.md) | Volledig systeem: nodes, netwerksegmenten, verkeersstromen, inspectiepipeline, vertrouwensgrenzen |
+| [Architectuur](overview/architecture.md) | Volledig systeem: nodes, netwerksegmenten, verkeersstromen, inspectiepipeline, trust boundaries |
 | **Componenten** | |
 | [Squid](components/squid.md) | Expliciete HTTP/HTTPS-proxy — WPAD/PAC-distributie, SSL Bump, URL-filtering, ICAP-orchestratie |
 | [ClamAV/c-icap](components/clamav-cicap.md) | Malware-scanning + DLP Laag 1 (downloads) via ICAP RESPMOD; YARA-regels; StructuredDataDetection |
@@ -82,7 +82,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [Overlay IP-instabiliteit](findings/overlay-ip-instability.md) | NetBird overlay-IP's kunnen wijzigen — Identity Bridge moet stale cache afhandelen |
 | [NATS store dir](findings/nats-store-dir.md) | JetStream-opslag moet op persistent Docker-volume staan |
 | [Wazuh CPU glibc](findings/wazuh-cpu-glibc.md) | CPU-piek bij opstarten door glibc-compatibiliteit |
-| [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard hostnaam-resolutieprobleem bij opstarten |
+| [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard Offline door lege UUID na down -v — opgelost via in-place 4.14.5 GA bump |
 | [NetBird JWT allow-groups lockout](findings/netbird-jwt-allow-groups-lockout.md) | JWT allow-groups inschakelen kan alle gebruikers buitensluiten bij verkeerde configuratie |
 | [DC-LAN isolatie route ACL](findings/dc-lan-isolation-route-acl.md) | NetBird Networks + ACL vereist voor DC-LAN-isolatie |
 | **Testen** | |

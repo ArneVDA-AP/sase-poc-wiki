@@ -101,13 +101,13 @@ pop01 Squid (pre-auth listener, ssl-bump)
   │     → persona-ACL bepaalt policybeslissing (identiteitsgebaseerde filtering)
   ├── URL-filtercontrole (UT1 / handmatige blacklist) → 403 indien geblokkeerd
   ├── ICAP REQMOD → Python DLP (mgmt01:1345) → 403 bij gevoelige data in upload
-  ├── SSL Bump: TLS-terminatie + herencryptie (SASE-PoC-CA)
+  ├── SSL Bump: TLS-terminatie + re-encryption (SASE-PoC-CA)
   └── ICAP RESPMOD → ClamAV/c-icap (pop01:1344) → 403 bij malware of DLP-match
   │
   ▼
 Internet (via pop01 vtnet0 WAN)
   │
-  └── Suricata IDS op vtnet0: ziet herencrypteerde upstream-verbindingen
+  └── Suricata IDS op vtnet0: ziet re-encrypted upstream-verbindingen
         TLS-metadata, DNS-anomalieën, C2-signatures, verdachte user-agent
 ```
 
@@ -199,7 +199,7 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 
 ---
 
-## 8. Vertrouwensgrenzen
+## 8. Trust Boundaries
 
 | Grens | Wat het handhaaft | Waar |
 |-------|------------------|------|
@@ -210,6 +210,7 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 | NetBird ACL-policies | Welke peer welke resource kan bereiken | NetBird management |
 | Unbound RPZ | DNS-niveau domein toestaan/weigeren | pop01 Unbound |
 | OPNsense pf | Stateful firewall (basisbeveiliging) | pop01 |
+| SWG-identiteitslaag | Squid bevraagt Identity Bridge voor persona-groep — identiteitsgebaseerde filtering per gebruiker (Studenten/Docenten/Admins) | pop01 Squid → mgmt01 Identity Bridge |
 | DC-LAN-uitgaand verkeer | Geen SWG-inspectie — gerouteerd door OPNsense, niet via proxy | pop01 vtnet1 gateway |
 
 ---
@@ -258,7 +259,7 @@ Gates zijn aanvullend, niet redundant. Gate 1 evalueert *wie* de gebruiker is (M
 
 ---
 
-**DC-LAN-inspectiegat:** dc01 gebruikt pop01 als standaardgateway (`10.0.0.1`) voor internettoegang. Dit verkeer wordt gerouteerd door OPNsense en geïnspecteerd door Suricata op vtnet1, maar gaat **niet** via Squid/ICAP — er is geen WPAD/PAC- of proxyconfiguratie op dc01. DNS-queries van dc01 gaan wel via Unbound RPZ. Dit is een geaccepteerde scopebeperking: DC-resources zijn serverworkloads, geen BYOD-browsers.
+**DC-LAN-inspectiegat:** dc01 gebruikt pop01 als standaardgateway (`10.0.0.1`) voor internettoegang. Dit verkeer wordt gerouteerd door OPNsense en geïnspecteerd door Suricata op vtnet1, maar gaat **niet** via Squid/ICAP — er is geen WPAD/PAC- of proxyconfiguratie op dc01. DNS-queries van dc01 gaan wel via Unbound RPZ. Dit is een geaccepteerde scopebeperking: DC-resources zijn serverworkloads, geen user browsers.
 
 ---
 

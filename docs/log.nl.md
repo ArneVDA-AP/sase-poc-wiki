@@ -14,7 +14,7 @@ Toevoeg-alleen log van wiki-wijzigingen.
 **Aangemaakte bestanden:**
 
 ### Overzicht
-- `overview/architecture.md` — Volledige systeemarchitectuur: knooppunten, segmenten, opsplitsing control/data plane, vier verkeersstromen, inspectiepijplijn-tabel, vertrouwensgrenzen
+- `overview/architecture.md` — Volledige systeemarchitectuur: nodes, segmenten, opsplitsing control/data plane, vier verkeersstromen, inspection pipeline table, trust boundaries
 
 ### Componenten
 - `components/squid.md` — Expliciete proxy, WPAD/PAC, SSL Bump, URL-filtering, ICAP-orkestratie
@@ -33,14 +33,14 @@ Toevoeg-alleen log van wiki-wijzigingen.
 - `concepts/icap.md` — REQMOD vs. RESPMOD, Squid-orkestratie, twee-server-onderbouwing
 - `concepts/ssl-bump.md` — HTTPS-interceptie, SASE-PoC-CA, no-bump-lijst, pre-auth ssl-bump
 - `concepts/wpad-pac.md` — PAC-bestand ontdekkingsketen, transparante proxy mislukt, expliciete modus
-- `concepts/rpz.md` — RPZ-zonetransferketens, NXDOMAIN-afdwinging, DNS-bereik
+- `concepts/rpz.md` — RPZ-zone transfer chains, NXDOMAIN-afdwinging, DNS-bereik
 - `concepts/dlp.md` — Twee-laags DLP, algoritmische validatie, YARA-regelbereik
 
 ### Beslissingen
 - `decisions/wpad-vs-transparent-proxy.md` — pf rdr mislukt op wt0 → WPAD/PAC
 - `decisions/two-layer-dlp.md` — ClamAV multipart-kloof → Python DLP REQMOD
 - `decisions/ioc2rpz-vs-unbound-native.md` — Feed-aggregatie → ioc2rpz Docker
-- `decisions/bind-tsig-intermediary.md` — Unbound geen TSIG → BIND 9.20 als tussenpersoon
+- `decisions/bind-tsig-intermediary.md` — Unbound geen TSIG → BIND 9.20 als intermediary
 - `decisions/ids-vs-ips.md` — Netmap/virtio-incompatibiliteit → IDS-modus
 - `decisions/suricata-wan-lan.md` — wt0 BPF 0 paketten → vtnet0+vtnet1
 - `decisions/gns3-vs-eveng.md` — Meerdere-gebruikers-vereiste, QCOW2-formaat → GNS3
@@ -185,3 +185,78 @@ de systematische drift die deze audit corrigeerde.
 **Gewijzigde bestanden:** wikipagina's over alle domeinen (EN+NL) volgens de per-domein-tabellen in
 `.agent-memory/audit-tracker.md`; `CLAUDE.md` (gezagsregel); `log.md` + `log.nl.md` (deze entry).
 Geen `raw/`-bestanden gewijzigd. Geen hernoemingen, verplaatsingen, slug- of frontmatter-wijzigingen.
+
+---
+
+## 2026-06-05 — BYOD + vertaalopschoning + grondige heraudit
+
+**Doel:** Alle resterende verouderde "BYOD"-verwijzingen in huidige-staat-beschrijvingen herstellen,
+oververtaalde Nederlandse technische termen corrigeren (~181 instanties), daarna een volledige
+multi-agent heraudit van elke wikipagina tegen de raw verslagen uitvoeren ter verificatie vóór deployment.
+
+### Fase 1: BYOD-opschoning (40 verouderde verwijzingen → 0)
+Alle huidige-staat "BYOD client" / "BYOD persona"-beschrijvingen vervangen door correcte termen
+("overlay client", "managed Windows client", enz.) over 55 EN+NL-bestanden.
+
+### Fase 2: Oververtaalde Nederlandse termen (~181 fixes)
+Engelse technische termen die onnodig vertaald waren naar het Nederlands hersteld:
+`eindknooppunt` → exit node, `beleidsregels` → policies, `handtekeningen` → signatures,
+`gebeurtenissen` → events, `drempelwaarde` → threshold, `naamserver` → nameserver,
+`zonetransfer` → zone transfer, `verbindingspooling` → connection pooling,
+`Luisterpoort` → Listen Port, `Doelbronnen` → Target resources, `Toewijzingen` → Assignments,
+`Voorwaarden` → Conditions, `Toegangscontroles` → Access controls,
+`Aanmeldingslogboeken` → Sign-in logs, en meer.
+
+### Fase 3: Volledige heraudit (4 domeinagenten + 1 onafhankelijke Opus-auditor)
+Vier parallelle verificatieagenten dekten alle 12 domeinen + cross-cutting pagina's, elke wikiclaim
+gecontroleerd tegen de raw verslagen. Een onafhankelijke auditor (Opus-model) kruiste vervolgens
+de bevindingen van de domeinagenten.
+
+**Resultaten domeinagenten (gecombineerd 37+ 11 + 12 + 30 checks):**
+- DNS+SWG+DLP+IDS: ALLES GESLAAGD
+- ZTNA+CA+GroupSync: ALLES GESLAAGD (37/37)
+- Identity+NATS+CASB+Wazuh: GESLAAGD met 3 kleine hiaten (opgelost)
+- SD-WAN+Lab+CrossCutting: 4 discrepanties (opgelost)
+
+**Fixes toegepast vanuit audit:**
+- `decisions/sdwan-descoped.md` + `.nl.md` — F15 stap 8 is gevalideerd (niet N.v.t.); VyOS is
+  SASE-gateway met QoS (niet "minimaal, enkel NAT"); onderbouwing gecorrigeerd (QoS herimplementeerd)
+- `overview/architecture.nl.md` — ontbrekende "SWG-identiteitslaag" trust boundary rij toegevoegd (EN/NL pariteit)
+- `decisions/nats-accounts-auth.md` + `.nl.md` — `$JS.ACK.>` toegevoegd naast `$JS.API.>` voor consumers (V32)
+- `components/control-daemon.md` + `.nl.md` — expliciete scoring-gewichten `malware=80`, `dlp_match=30` + V35-testreferentie
+- `components/nats-jetstream.md` + `.nl.md` — 5 JetStream-streamstabel toegevoegd (V32.13)
+- **Onafhankelijke auditor vals positief (teruggedraaid):** auditor markeerde `security.alert.ids` → `.ips`
+  op basis van V34's momentopname, maar de live nats.conf op de server bevestigt dat `.ids` de huidige
+  subjectnaam is — de config werd bijgewerkt na V34. Wijziging werd toegepast en vervolgens teruggedraaid.
+
+**Samenvatting onafhankelijke auditor: 30 GESLAAGD, 1 vals positief (teruggedraaid).** De gemelde
+NATS-subject-discrepantie was gebaseerd op V34's momentopname; de live serverconfiguratie bevestigt `.ids`.
+
+**Verificatiesweep-resultaten:**
+- Oververtaalde termen: 0 resterend
+- BYOD in huidige staat: 0 (28 resterend allemaal in historisch/evolutie-framing)
+- Gelekte secrets: 0
+- EN↔NL pariteit: geverifieerd over 5 paginaparen
+- Alle IP's, poorten, versies, groepsnamen consistent cross-page
+
+**Gewijzigde bestanden:** 63 wikipagina's (EN+NL). Geen `raw/`-bestanden gewijzigd.
+
+---
+
+## 2026-06-05 — Wazuh dashboard airgate finding herschreven (nieuw brondocument: Wazuh_DB_Fix.md)
+
+**Nieuw brondocument:** `raw/Wazuh_DB_Fix.md` (v1.0, 2 juni 2026) — versie-herstel runbook voor de Wazuh-stack na een `down -v`-incident + versie-skew. Gevalideerd op 2 juni 2026.
+
+**Oorzaak gecorrigeerd:** De bestaande finding (`findings/wazuh-dashboard-airgate.md`) had de verkeerde root cause — de air-gap CTI-500 (`GET /manager/version/check`) werd aangewezen als oorzaak van de "Status: Offline"-redirect. Het nieuwe brondocument onthult dat de redirect wordt veroorzaakt door een **lege manager-UUID** in `global.db` (gewist door `docker compose down -v`). De CTI-500 is een apart, cosmetisch, non-blocking probleem in Wazuh 4.14.5+ (fix #8130).
+
+**Statuswijziging:** Finding-status bijgewerkt van "bekende beperking / workaround" naar **opgelost** (2 juni 2026), via in-place bump naar 4.14.5 GA (zonder `-v`), waarbij de bestaande UUID bewaard bleef.
+
+**Audit:** Onafhankelijke Opus auditor-agent heeft alle geplande wijzigingen geverifieerd t.o.v. `Wazuh_DB_Fix.md` vóór de edits werden uitgevoerd. 8 geplande edits: alle PASS. 2 extra gemiste bestanden geïdentificeerd door de auditor en toegevoegd aan de scope.
+
+**Gewijzigde bestanden (10):**
+- `findings/wazuh-dashboard-airgate.md` + `.nl.md` — volledige herschrijving: correcte root cause (lege UUID), twee structurele regels, oplossing, bijgewerkte lessen
+- `components/wazuh.md` + `.nl.md` — dashboard-status bijgewerkt naar "volledig operationeel"; known-issues-vermelding gecorrigeerd
+- `runbooks/11-wazuh.md` + `.nl.md` — gotcha-callout bijgewerkt (opgelost); checklist-item gecorrigeerd (app-modules niet langer gegate)
+- `index.md` + `.nl.md` — finding-blurb gecorrigeerd (was "hostnaam-resolutieprobleem", toont nu lege UUID als oorzaak)
+
+**Verwerkte brondocumenten:** `Wazuh_DB_Fix.md` (1 versie-herstel runbook). Geen `raw/`-bestanden gewijzigd.

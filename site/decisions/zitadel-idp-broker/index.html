@@ -3616,11 +3616,14 @@
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
 <p>Zitadel as primary OIDC issuer (installed by quickstart script), with Entra ID connected as an external IdP to Zitadel.</p>
 <p>This was an architectural reality of the quickstart script, not a deliberate choice between options. The quickstart produces a working stack with Zitadel as issuer. Entra ID is added afterward as an external IdP in Zitadel's console. The resulting chain is architecturally sound: Zitadel provides a central user management layer, and Entra ID provides school account authentication.</p>
-<p><strong>CA policies still work:</strong> Entra ID Conditional Access evaluates at the Entra ID <code>/authorize</code> endpoint targeted at the NetBird app registration (<code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code>). Whether the redirect originates from Zitadel or from the NetBird Dashboard is irrelevant — the user authenticates directly with Entra ID, and CA fires for that app registration.</p>
+<p><strong>CA policies still work:</strong> Entra ID Conditional Access evaluates at the Entra ID <code>/authorize</code> endpoint targeted at the NetBird app registration <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>). Whether the redirect originates from Zitadel or from the NetBird Dashboard is irrelevant — the user authenticates directly with Entra ID, and CA fires for that app registration.</p>
+<blockquote>
+<p><strong>App-registration switch (V30, May 2026).</strong> The earlier build reused a shared app registration (<code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code>), which created a hidden coupling between the sandbox and the team-project stack. V30 created a dedicated <code>2ITCSC1A-Netbird-Sandbox</code> registration (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>) and re-pointed Zitadel's Entra ID federation at it. The sandbox-specific registration is the current value; <code>cebe0d74…</code> is superseded.</p>
+</blockquote>
 <p><strong>TLS:</strong> The quickstart attempts Let's Encrypt for <code>netbird.sandbox.local</code> — this fails (non-public hostname). Caddy's <code>tls internal</code> directive (built-in local CA) is used instead. OIDC requires HTTPS, not a publicly trusted certificate.</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
-<li>All CA-targeted policies must reference the NetBird app registration (<code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code>), not a Zitadel registration</li>
+<li>All CA-targeted policies must reference the NetBird app registration <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>), not a Zitadel registration</li>
 <li>New users authenticating via Entra ID appear as "pending" in NetBird Dashboard — manual approval required (security feature of the quickstart)</li>
 <li>Zitadel uses nested <code>roles</code> JSON; NetBird expects a flat <code>groups</code> array — groups claim transformation may be needed in Zitadel</li>
 <li><code>docker compose up -d caddy</code> (not <code>restart</code>) is required when volume mounts change</li>
@@ -3629,7 +3632,7 @@
 <h2 id="implementation-detail-groups-claim-via-two-zitadel-actions">Implementation detail: groups-claim via two Zitadel Actions<a class="headerlink" href="#implementation-detail-groups-claim-via-two-zitadel-actions" title="Permanent link">&para;</a></h2>
 <p>The groups-claim mechanism that powers the entire identity chain is implemented via two Zitadel Actions (v1):</p>
 <ul>
-<li><strong>Action 1 (External Auth):</strong> Receives the Entra ID token at login, maps GUID → clean name via allowlist (<code>2ITcsc1A-Studenten</code> → <code>Studenten</code>), writes to user metadata <code>sase_groups</code></li>
+<li><strong>Action 1 (External Auth):</strong> Receives the Entra ID token at login, maps the Entra display-name string → clean name via allowlist (<code>2ITCSC1A-Studenten</code> → <code>Studenten</code>), writes to user metadata <code>sase_groups</code></li>
 <li><strong>Action 2 (Complement Token):</strong> Reads <code>sase_groups</code> metadata at token issuance, injects <code>groups</code> claim into JWT via <code>setClaim</code></li>
 </ul>
 <p>Both actions have <code>allowed-to-fail: true</code> — a deliberate decision. Fail-closed enforcement belongs in the policy layer (NetBird ACLs, Squid persona-ACLs), not in the authentication action. An action failure should degrade identity enrichment, not lock out all users.</p>

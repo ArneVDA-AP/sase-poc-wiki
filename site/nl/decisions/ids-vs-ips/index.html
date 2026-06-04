@@ -3565,7 +3565,7 @@
 
 <h1 id="beslissing-ids-modus-vs-ips-modus-voor-suricata">Beslissing: IDS-modus vs IPS-modus voor Suricata<a class="headerlink" href="#beslissing-ids-modus-vs-ips-modus-voor-suricata" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Geïmplementeerd (IDS-modus)<br />
-<strong>Datum:</strong> April 2026 (Verslag23)</p>
+<strong>Datum:</strong> Maart 2026 (Verslag23)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>Suricata kan in twee modi werken:
 - <strong>IDS (Intrusion Detection System):</strong> PCAP-opname — leest pakketkopieën passief, genereert alerts, kan geen verkeer droppen
@@ -3600,7 +3600,7 @@
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>IDS-modus (PCAP), met de drop/alert-beleidstabel geconfigureerd en klaar voor IPS-activering bij implementatie op fysieke hardware.</p>
-<p>Netmap IPS werd getest en bevestigd niet-functioneel op virtio-NIC's. Wanneer Netmap IPS werd geactiveerd: Suricata rapporteerde 0 verwerkte pakketten en alle eerdere alertactiviteit stopte. Terugkeren naar PCAP IDS herstelde de normale werking. (Verslag23)</p>
+<p>Netmap IPS werd getest en bevestigd niet-functioneel op virtio-NIC's. Wanneer Netmap IPS werd geactiveerd: Suricata rapporteerde 0 verwerkte pakketten en alle eerdere alertactiviteit stopte. Terugkeren naar PCAP IDS herstelde de normale werking. (Verslag23, Bevinding 23.3/23.4/23.5)</p>
 <p>De gedifferentieerde beleidstabel (drop vs. alert per categorie) is geconfigureerd in OPNsense. Op fysieke hardware met ondersteunde NIC's vereist overschakelen naar IPS-modus alleen het inschakelen van de IPS-schakelaar — de policies zijn al correct.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>

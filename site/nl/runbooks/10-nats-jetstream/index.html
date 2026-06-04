@@ -2595,6 +2595,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#producer-clamav-malware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer: ClamAV malware
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3692,6 +3703,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#producer-clamav-malware" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer: ClamAV malware
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3909,9 +3931,15 @@
 </ul>
 <h3 id="producer-dns-rpz">Producer: DNS RPZ<a class="headerlink" href="#producer-dns-rpz" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Unbound Python-module-integratie</li>
+<li>Tailt het resolver-log (<code>/var/log/resolver/latest.log</code>), filtert op <code>rpz: applied</code></li>
 <li>Publiceert naar subject: <code>security.alert.dns</code></li>
 <li>Extraheert: opgevraagd domein, RPZ-actie (NXDOMAIN/redirect), feedbron</li>
+</ul>
+<h3 id="producer-clamav-malware">Producer: ClamAV malware<a class="headerlink" href="#producer-clamav-malware" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Tailt het c-icap-log (<code>/var/log/cicap/latest.log</code>)</li>
+<li>Publiceert naar subject: <code>security.alert.malware</code> (routeert <code>YARA.DLP*</code>-signatures in plaats daarvan naar <code>security.alert.dlp</code>)</li>
+<li>Extraheert: virussignature, client-IP, URL</li>
 </ul>
 <p>Controleer of elke producer publiceert:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Vanuit een nats-box-container, abonneer om events te zien</span>
@@ -3931,15 +3959,18 @@
 <ul>
 <li>Geïntegreerd in de Identity Bridge-service (<a href="../09-identity-bridge/">Runbook 09</a>)</li>
 <li>Publiceert naar subjects:</li>
-<li><code>identity.login</code> — wanneer een nieuwe peer verbindt</li>
-<li><code>identity.group_change</code> — wanneer de personagroep van een peer wijzigt</li>
+<li><code>identity.peer.connected</code> — wanneer een peer verbindt met de overlay</li>
+<li><code>identity.peer.disconnected</code> — wanneer een peer de verbinding verbreekt</li>
+<li><code>identity.multi_persona</code> — wanneer een peer in meer dan één personagroep wordt waargenomen (zero-trust-anomalie)</li>
 </ul>
 <hr />
 <h2 id="stap-6-control-daemon-deployen-op-mgmt01">Stap 6: Control Daemon deployen op mgmt01<a class="headerlink" href="#stap-6-control-daemon-deployen-op-mgmt01" title="Permanent link">&para;</a></h2>
 <p>De Control Daemon is de centrale eventprocessor die beveiligingsevents consumeert en geautomatiseerde responsacties onderneemt.</p>
 <ol>
 <li>Deploy als Docker-container op mgmt01</li>
-<li>Configureer abonnementen: <code>security.alert.*</code> (wildcard)</li>
+<li>Configureer abonnementen:</li>
+<li><code>security.alert.&gt;</code> — durable consumer, <code>DeliverPolicy.NEW</code> (overleeft herstart, geen replay van historische events)</li>
+<li><code>identity.&gt;</code> — ephemeral consumer, <code>DeliverPolicy.ALL</code> (herbouwt de in-memory identiteitsmap bij elke start)</li>
 <li>Configureer Redis-verbinding voor threat score-opslag</li>
 </ol>
 <p><strong>Threat scoring:</strong></p>
@@ -3976,9 +4007,10 @@
 <li>[ ] Suricata-producer publiceert naar <code>security.alert.ids</code></li>
 <li>[ ] Squid-producer publiceert naar <code>security.alert.proxy</code></li>
 <li>[ ] DNS RPZ-producer publiceert naar <code>security.alert.dns</code></li>
+<li>[ ] ClamAV-malware-producer publiceert naar <code>security.alert.malware</code> (routeert <code>YARA.DLP*</code> naar <code>security.alert.dlp</code>)</li>
 <li>[ ] DLP-producer publiceert naar <code>security.alert.dlp</code></li>
-<li>[ ] Identity Bridge publiceert naar <code>identity.login</code> / <code>identity.group_change</code></li>
-<li>[ ] Control Daemon consumeert <code>security.alert.*</code> en scoort in Redis</li>
+<li>[ ] Identity Bridge publiceert naar <code>identity.peer.connected</code> / <code>identity.peer.disconnected</code> / <code>identity.multi_persona</code></li>
+<li>[ ] Control Daemon consumeert <code>security.alert.&gt;</code> en scoort in Redis</li>
 <li>[ ] Quarantaine-actie functioneel (peer verwijderd uit groep bij drempeloverschrijding)</li>
 </ul>
 <hr />

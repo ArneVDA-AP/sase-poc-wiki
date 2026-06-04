@@ -2388,10 +2388,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-7-acl-beleidsregels-aanmaken-voor-wpad-bereikbaarheid" class="md-nav__link">
+  <a href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 7: ACL-beleidsregels aanmaken voor WPAD-bereikbaarheid
+        Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
       
     </span>
   </a>
@@ -3658,10 +3658,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-7-acl-beleidsregels-aanmaken-voor-wpad-bereikbaarheid" class="md-nav__link">
+  <a href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 7: ACL-beleidsregels aanmaken voor WPAD-bereikbaarheid
+        Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
       
     </span>
   </a>
@@ -3854,7 +3854,7 @@ Zie <a href="../../findings/pre-auth-ssl-bump-params/">Finding: pre-auth ssl-bum
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>netbird<span class="w"> </span>service<span class="w"> </span>restart
 </code></pre></div>
 <blockquote>
-<p><strong>Valkuil: Service-herstart is verplicht na CA-import.</strong> Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded" — de daemon draait met de oude vertrouwensopslag.</p>
+<p><strong>Valkuil: Service-herstart is verplicht na CA-import.</strong> Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded" — de daemon draait met de oude trust store.</p>
 </blockquote>
 <p><strong>Verificatie:</strong> <code>netbird status</code> toont Connected, overlay-IP <code>100.70.135.241</code>.</p>
 <hr />
@@ -3912,14 +3912,12 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c"># Moet resolven naar 100.70.135.241</span>
 </code></pre></div>
 <hr />
-<h2 id="stap-7-acl-beleidsregels-aanmaken-voor-wpad-bereikbaarheid">Stap 7: ACL-beleidsregels aanmaken voor WPAD-bereikbaarheid<a class="headerlink" href="#stap-7-acl-beleidsregels-aanmaken-voor-wpad-bereikbaarheid" title="Permanent link">&para;</a></h2>
-<p>Als je het standaard alles-naar-alles-beleid hebt vervangen in Runbook 02, controleer of deze beleidsregels bestaan:</p>
-<ul>
-<li><strong>Admin-Infrastructure</strong> — beheerders kunnen beheerinfra bereiken (al aangemaakt)</li>
-<li><strong>Mobile-to-Services</strong> — BYOD-clients kunnen mgmt01 WPAD + pop01-proxy bereiken (al aangemaakt)</li>
-<li><strong>Datacenter Access</strong> — voeg <code>SASE-Admins</code> toe als bron zodat mgmt01 pop01 Unbound voor DNS kan bereiken</li>
-</ul>
-<p>Zonder de DNS ACL toont <code>netbird status</code> op mgmt01 "Nameservers: 0/1 Available".</p>
+<h2 id="stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren">Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren<a class="headerlink" href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" title="Permanent link">&para;</a></h2>
+<p>Onder het V34-personamodel (zie <a href="../../components/netbird/">Component: NetBird</a>) draagt één allow-beleid alle connectiviteit: <strong><code>Personas-to-Core-Services</code></strong> — sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.</p>
+<blockquote>
+<p><strong>Verouderd:</strong> eerdere builds gebruikten aparte <code>Admin-Infrastructure</code>-, <code>Mobile-to-Services</code>- en <code>Datacenter Access</code>-policies op <code>SASE-*</code>-groepen. Die policies en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.</p>
+</blockquote>
+<p><strong>DNS-bereikbaarheidsvalkuil:</strong> een peer die de pop01-naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft, toont <code>Nameservers: 0/1 Available</code> in <code>netbird status</code>. Zorg dat de groep van de peer een ACL-pad naar <code>Core-Services</code> (pop01 Unbound) heeft.</p>
 <hr />
 <h2 id="stap-8-windows-proxy-configureren-op-mobile01">Stap 8: Windows-proxy configureren op mobile01<a class="headerlink" href="#stap-8-windows-proxy-configureren-op-mobile01" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Windows Instellingen → Netwerk en internet → Proxy:
@@ -3928,7 +3926,7 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  Scriptadres: http://wpad.sandbox.local/wpad.dat
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>  Handmatige proxy: Uit
 </code></pre></div>
-<p>De Caddy root-CA moet al zijn geïmporteerd in de Windows-vertrouwensopslag (gedaan tijdens NetBird-registratie).</p>
+<p>De Caddy root-CA moet al zijn geïmporteerd in de Windows-trust store (gedaan tijdens NetBird-registratie).</p>
 <hr />
 <h2 id="stap-9-ssl-bump-inschakelen">Stap 9: SSL Bump inschakelen<a class="headerlink" href="#stap-9-ssl-bump-inschakelen" title="Permanent link">&para;</a></h2>
 <p><strong>Maak SASE-PoC-CA aan</strong> via System → Trust → Authorities:

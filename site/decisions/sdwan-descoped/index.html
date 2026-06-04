@@ -3673,9 +3673,9 @@
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>F12, F13, F14</strong> are marked N/A in all acceptance test matrices. This is an explicit architectural decision, not an implementation gap.</li>
-<li><strong>F15 steps 7–8</strong> are N/A for the same reason (step 7 requires sitepc01 with NetBird; step 8 requires QoS on VyOS).</li>
-<li><strong>VyOS</strong> remains in the topology but its configuration is minimal — WAN connectivity and NAT only. See <a href="../../components/vyos/">VyOS</a>.</li>
-<li><strong>sitepc01</strong> datacenter access is planned via NetBird enrollment (not yet executed as of April 2026).</li>
+<li><strong>F15 step 7</strong> is N/A (classic IPsec site-to-site descoped). <strong>Step 8</strong> (QoS marking) is validated under the ZT-Branch model (V43 Test #5: DSCP EF classified, 0 drops under load).</li>
+<li><strong>VyOS</strong> remains in the topology as SASE Gateway — WAN connectivity, NAT, QoS shaping (DSCP EF/AF41/AF21), and WAN health monitoring. See <a href="../../components/vyos/">VyOS</a>.</li>
+<li><strong>sitepc01</strong> reaches the datacenter via individual NetBird enrollment — confirmed enrolled and operational in Verslag43/Verslag44, not via a site-to-site tunnel.</li>
 <li>The architecture directly aligns with Zscaler's "Zero Trust SD-WAN" model: branches treated as untrusted networks (like cafés), every device authenticates individually, no site-to-site tunnels.</li>
 </ul>
 <h2 id="what-was-actually-built">What was actually built<a class="headerlink" href="#what-was-actually-built" title="Permanent link">&para;</a></h2>
@@ -3692,7 +3692,7 @@
 <h2 id="rationale">Rationale<a class="headerlink" href="#rationale" title="Permanent link">&para;</a></h2>
 <p><strong>IPsec replicates what ZTNA replaces.</strong> A site-to-site IPsec tunnel is network-centric: it grants all hosts on Site-LAN implicit access to the datacenter based on network location. This is precisely the perimeter model that SASE is designed to replace. NetBird already provides a Zero Trust overlay where every peer authenticates individually and ACL policies enforce per-peer access.</p>
 <p><strong>Zscaler alignment.</strong> Descoping aligns the architecture with Zscaler's publicly documented Zero Trust SD-WAN approach: no implicit trust from network location, every site treated as an untrusted network, cloud inspection for all traffic.</p>
-<p><strong>Complexity reduction.</strong> Removing IPsec, uCPE, and QoS reduces the implementation surface and keeps the PoC focused on the SASE security components.</p>
+<p><strong>Complexity reduction.</strong> Removing IPsec and uCPE reduces the implementation surface. QoS was reimplemented under the ZT-Branch model (see <a href="#what-was-actually-built">What was actually built</a>).</p>
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>
 <li><a href="../../components/vyos/">VyOS</a></li>

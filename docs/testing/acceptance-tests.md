@@ -442,7 +442,7 @@ Steps 1–5, 8, and 9 reflect the current stack. Step 6 was validated at build-t
 | ClamAV signatures | daily v27953, main v63, bytecode v339 — 3,642,437 signatures |
 | Suricata rules | ET Open + Abuse.ch: **79,620+** rules (Hyperscan engine) |
 | RPZ records | URLhaus + ThreatFox: **71,767** records |
-| mobile01 | Windows 11, VMware, external — simulates BYOD outside school network |
+| mobile01 | Windows 11, VMware, external — simulates remote managed Windows client outside school network |
 | NetBird overlay range | 100.64.0.0/10 |
 
 ---

@@ -17,7 +17,7 @@ Suricata can be configured to monitor specific network interfaces. The stack has
 | Option | Pro | Con |
 |--------|-----|-----|
 | **vtnet0 (WAN) only** | Sees all internet-bound traffic from pop01 | Misses internal DC-LAN traffic (lateral movement, dc01 activity) |
-| **vtnet0 + vtnet1 (WAN + LAN)** | Covers both internet-facing and internal segments | Does not see decrypted BYOD traffic (WireGuard payload is not visible) |
+| **vtnet0 + vtnet1 (WAN + LAN)** | Covers both internet-facing and internal segments | Does not see decrypted overlay client traffic (WireGuard payload is not visible) |
 | **vtnet0 + vtnet1 + wt0** | Maximum coverage | wt0 is a WireGuard tunnel; BPF on wt0 sees 0 TCP packets — WireGuard traffic does not appear as ingress frames from pf's perspective |
 
 ## Decision
@@ -31,6 +31,6 @@ vtnet1 (LAN) was added to detect threats on the internal DC-LAN segment — late
 ## Consequences
 
 - Suricata requires explicit per-interface declarations in `custom.yaml` — using `interface: default` only captures vtnet0, not vtnet1. See [Finding: Suricata interface default bug](../findings/suricata-interface-default-bug.md)
-- BYOD client traffic (decrypted by Squid) is visible on vtnet0 as re-encrypted TLS sessions from Squid to origin servers — Suricata extracts TLS metadata (SNI, JA3/JA4) from these
+- Client traffic (decrypted by Squid) is visible on vtnet0 as re-encrypted TLS sessions from Squid to origin servers — Suricata extracts TLS metadata (SNI, JA3/JA4) from these
 - WireGuard traffic from mobile01 appears as encrypted UDP/51820 on vtnet0 — the payload is not inspectable by Suricata
 - `HOME_NET` must include `100.64.0.0/10` (NetBird overlay) so rules using `$HOME_NET` do not misclassify NetBird peers as external hosts

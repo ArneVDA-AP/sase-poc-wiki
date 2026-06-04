@@ -10,7 +10,7 @@ tags: [finding, network, workaround]
 
 ## Wat er gebeurde
 
-Nadat GNS3 het pop01-knooppunt stopte met een SIGKILL (in plaats van een correcte `shutdown -h now`) startte NetBird niet op bij de volgende opstart zonder nuttige foutmelding. Interface `wt0` bestond niet. Alle services afhankelijk van het overlay-IP (`100.70.154.79`) — de Squid pre-auth listener, WPAD — waren niet functioneel.
+Nadat GNS3 het pop01 node stopte met een SIGKILL (in plaats van een correcte `shutdown -h now`) startte NetBird niet op bij de volgende opstart zonder nuttige foutmelding. Interface `wt0` bestond niet. Alle services afhankelijk van het overlay-IP (`100.70.154.79`) — de Squid pre-auth listener, WPAD — waren niet functioneel.
 
 `ls -la /var/db/netbird/config.json` toonde 0 bytes.
 
@@ -35,11 +35,11 @@ service netbird restart
 
 **Extra beperking:** Voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01. FreeBSD voert dan automatisch fsck uit bij de volgende opstart na een onzuivere afsluiting, wat herstelt wat mogelijk is. Dit herstelt geen inhoud verloren uit schrijfbuffers, maar repareert wel inconsistenties in het bestandssysteem.
 
-**Voorkoming aan de bron:** Sluit OPNsense altijd af via `shutdown -h now` vóór het stoppen van het GNS3-knooppunt.
+**Voorkoming aan de bron:** Sluit OPNsense altijd af via `shutdown -h now` vóór het stoppen van het GNS3 node.
 
 ## Lessen
 
 - GNS3 "Stop node" = QEMU SIGKILL — behandel het als een stroomonderbreking
 - FreeBSD UFS soft updates zijn kwetsbaar voor schrijfbufferverlies bij abrupte beëindiging
 - Maak een back-up van kritieke configuratiebestanden (NetBird config.json, andere applicatiestatus) aan het einde van de sessie
-- Het symptoom (0-byte configuratiebestand, service start niet) is kenmerkend — controleer dit eerst wanneer NetBird niet reageert na het stoppen van een GNS3-knooppunt
+- Het symptoom (0-byte configuratiebestand, service start niet) is kenmerkend — controleer dit eerst wanneer NetBird niet reageert na het stoppen van een GNS3 node

@@ -5,7 +5,7 @@ tags: [squid, opnsense, proxy, wpad, pac, ssl-bump, tls, icap, sase, caddy, netb
 
 # Squid — Explicit Proxy, WPAD/PAC, SSL Bump, URL Filtering
 
-**Role:** The SWG ingress point — every HTTP/HTTPS transaction from a BYOD client passes through Squid before reaching the internet. Squid performs URL filtering, HTTPS decryption (SSL Bump), and orchestrates the ICAP inspection pipeline.  
+**Role:** The SWG ingress point — every HTTP/HTTPS transaction from an overlay client passes through Squid before reaching the internet. Squid performs URL filtering, HTTPS decryption (SSL Bump), and orchestrates the ICAP inspection pipeline.  
 **Version:** Squid 6.x (bundled with OPNsense 25.1)  
 **Config location:** `/usr/local/etc/squid/squid.conf` (OPNsense-generated) + `/usr/local/etc/squid/pre-auth/*.conf` (persistent custom directives)
 

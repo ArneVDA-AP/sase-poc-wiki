@@ -2388,10 +2388,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-7-create-acl-policies-for-wpad-reachability" class="md-nav__link">
+  <a href="#step-7-verify-the-acl-policy-for-proxydns-reachability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 7: Create ACL policies for WPAD reachability
+        Step 7: Verify the ACL policy for proxy/DNS reachability
       
     </span>
   </a>
@@ -3658,10 +3658,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-7-create-acl-policies-for-wpad-reachability" class="md-nav__link">
+  <a href="#step-7-verify-the-acl-policy-for-proxydns-reachability" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 7: Create ACL policies for WPAD reachability
+        Step 7: Verify the ACL policy for proxy/DNS reachability
       
     </span>
   </a>
@@ -3912,14 +3912,12 @@ See <a href="../../findings/docker-volume-recreation/">Finding: Docker volume re
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c"># Must resolve to 100.70.135.241</span>
 </code></pre></div>
 <hr />
-<h2 id="step-7-create-acl-policies-for-wpad-reachability">Step 7: Create ACL policies for WPAD reachability<a class="headerlink" href="#step-7-create-acl-policies-for-wpad-reachability" title="Permanent link">&para;</a></h2>
-<p>If you replaced the default all-to-all policy in Runbook 02, verify these policies exist:</p>
-<ul>
-<li><strong>Admin-Infrastructure</strong> — admins can reach admin infra (already created)</li>
-<li><strong>Mobile-to-Services</strong> — BYOD clients can reach mgmt01 WPAD + pop01 proxy (already created)</li>
-<li><strong>Datacenter Access</strong> — add <code>SASE-Admins</code> as source so mgmt01 can reach pop01 Unbound for DNS</li>
-</ul>
-<p>Without the DNS ACL, <code>netbird status</code> on mgmt01 shows "Nameservers: 0/1 Available".</p>
+<h2 id="step-7-verify-the-acl-policy-for-proxydns-reachability">Step 7: Verify the ACL policy for proxy/DNS reachability<a class="headerlink" href="#step-7-verify-the-acl-policy-for-proxydns-reachability" title="Permanent link">&para;</a></h2>
+<p>Under the V34 persona model (see <a href="../../components/netbird/">Component: NetBird</a>) a single allow-policy carries all connectivity: <strong><code>Personas-to-Core-Services</code></strong> — sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. This lets every persona peer (Studenten/Docenten/Admins) reach the pop01 Squid proxy.</p>
+<blockquote>
+<p><strong>Superseded:</strong> earlier builds used separate <code>Admin-Infrastructure</code>, <code>Mobile-to-Services</code>, and <code>Datacenter Access</code> policies on <code>SASE-*</code> groups. Those policies and groups were removed in the V34 migration — do not recreate them.</p>
+</blockquote>
+<p><strong>DNS reachability gotcha:</strong> a peer that receives the pop01 nameserver config but has no ACL path to it shows <code>Nameservers: 0/1 Available</code> in <code>netbird status</code>. Ensure the peer's group has an ACL path to <code>Core-Services</code> (pop01 Unbound).</p>
 <hr />
 <h2 id="step-8-configure-windows-proxy-on-mobile01">Step 8: Configure Windows proxy on mobile01<a class="headerlink" href="#step-8-configure-windows-proxy-on-mobile01" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Windows Settings → Network &amp; Internet → Proxy:

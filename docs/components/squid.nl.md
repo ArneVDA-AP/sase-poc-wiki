@@ -5,7 +5,7 @@ tags: [squid, opnsense, proxy, wpad, pac, ssl-bump, tls, icap, sase, caddy, netb
 
 # Squid — Expliciete proxy, WPAD/PAC, SSL Bump, URL-filtering
 
-**Rol:** Het SWG-ingangspoint — elke HTTP/HTTPS-transactie van een BYOD-client passeert Squid voordat die het internet bereikt. Squid voert URL-filtering en HTTPS-decryptie (SSL Bump) uit en orkestreert de ICAP-inspectiepijplijn.  
+**Rol:** Het SWG entry point — elke HTTP/HTTPS-transactie van een overlay-client passeert Squid voordat die het internet bereikt. Squid voert URL-filtering en HTTPS-decryptie (SSL Bump) uit en orkestreert de ICAP inspection pipeline.  
 **Versie:** Squid 6.x (meegeleverd met OPNsense 25.1)  
 **Configuratielocatie:** `/usr/local/etc/squid/squid.conf` (door OPNsense gegenereerd) + `/usr/local/etc/squid/pre-auth/*.conf` (persistente aangepaste directives)
 
@@ -19,7 +19,7 @@ De keuze voor expliciete modus is niet optioneel — transparante proxy via `pf 
 
 **WPAD/PAC-distributie:** Het PAC-bestand wordt gehost door [Caddy](caddy.md) op mgmt01 via `http://wpad.sandbox.local/wpad.dat`. Clients ontdekken dit via een NetBird Custom DNS Zone die `wpad.sandbox.local` omzet naar de overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows-instellingen → Proxy → "Installatiescript gebruiken".
 
-**SSL Bump:** Squid decrypteert HTTPS-verkeer met een zelfondertekend CA-certificaat (`SASE-PoC-CA`, geïnstalleerd in de vertrouwensopslag van de client). Dit maakt het mogelijk dat de ICAP-pijplijn HTTPS-inhoud inspecteert. Zonder SSL Bump zien ClamAV en de Python DLP-server alleen versleutelde bytes.
+**SSL Bump:** Squid decrypteert HTTPS-verkeer met een zelfondertekend CA-certificaat (`SASE-PoC-CA`, geïnstalleerd in de trust store van de client). Dit maakt het mogelijk dat de ICAP pipeline HTTPS-inhoud inspecteert. Zonder SSL Bump zien ClamAV en de Python DLP-server alleen versleutelde bytes.
 
 **URL-filtering:** Twee blokkeerlijstmechanismen worden uitgevoerd vóór elke `allow`-regel (eerste overeenkomst wint):
 1. Handmatige blokkeerlijst: `gambling.com`, `.bet365.com`, `.pokerstars.com`
@@ -87,7 +87,7 @@ De weigeringsregels voor blokkeerlijsten staan voor alle toestemmingsregels. Squ
 
 ## NATS-integratie
 
-Squid publiceert proxy-toegangsgebeurtenissen naar de NATS event bus op mgmt01. Een Python-producerscript op pop01 tailed `access.log` en publiceert gestructureerde events naar `security.alert.proxy`. Events bevatten: bron-IP (overlay), bestemmings-URL, HTTP-methode, responscode, ACL-beslissing en identiteitsgroep (via external_acl). Deze events voeden zowel de [Control Daemon](control-daemon.md) (realtime threat scoring) als [Wazuh](wazuh.md) SIEM (forensische analyse).
+Squid publiceert proxy access events naar de NATS event bus op mgmt01. Een Python-producerscript op pop01 tailed `access.log` en publiceert gestructureerde events naar `security.alert.proxy`. Events bevatten: bron-IP (overlay), bestemmings-URL, HTTP-methode, responscode, ACL-beslissing en identiteitsgroep (via external_acl). Deze events voeden zowel de [Control Daemon](control-daemon.md) (realtime threat scoring) als [Wazuh](wazuh.md) SIEM (forensische analyse).
 
 Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `external_acl_type`: voor elk verzoek bevraagt een helper `http://192.168.122.23:<port>/lookup?ip=%SRC` om het overlay-IP om te zetten naar een Entra ID-personagroep. Dit maakt identiteitsgebaseerde URL-filtering mogelijk (bijv. Studenten geblokkeerd voor ChatGPT, Docenten toegestaan).
 

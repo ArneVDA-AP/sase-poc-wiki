@@ -3606,13 +3606,13 @@
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>De Identity Bridge overbrugt de kloof tussen de ZTNA-transportlaag (NetBird) en de SWG-inspectielaag (Squid). Zonder deze bridge ziet Squid enkel overlay-IP-adressen en kan het niet bepalen welke gebruiker of persona-groep een verzoek indient.</p>
 <p>De bridge pollt de NetBird Management API (<code>/api/peers</code> + <code>/api/users</code>) elke 30 seconden via een service-user PAT met admin-rol. Het bouwt een in-memory cache op die overlay-IP's koppelt aan persona-groepen. Squid bevraagt deze cache via <code>external_acl_type</code> bij elk HTTP-verzoek, met het overlay-IP van de client (<code>%SRC</code>) als opzoeksleutel.</p>
-<p>De antwoordstroom: Squid stuurt <code>&lt;IP&gt; &lt;group&gt;</code> → helper bevraagt <code>GET /member?ip=&lt;overlay_ip&gt;</code> → Identity Bridge retourneert <code>OK user=&lt;email&gt;</code> of <code>ERR</code> → Squid's persona-ACL wordt geactiveerd of valt door.</p>
+<p>De antwoordstroom: Squid stuurt <code>&lt;IP&gt; &lt;group&gt;</code> → helper bevraagt <code>GET /lookup?ip=&lt;overlay_ip&gt;</code> (met de <code>X-Bridge-Secret</code>-header) → Identity Bridge retourneert het volledige groepslidmaatschap van de peer → de helper antwoordt <code>OK user=&lt;email&gt;</code> als de gevraagde groep matcht, anders <code>ERR</code> → Squid's persona-ACL wordt geactiveerd of valt door. De bridge selecteert zelf geen persona; persona-resolutie gebeurt in de <code>http_access</code>-volgorde van Squid (V31).</p>
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Service-gebruiker:</strong> <code>identity-bridge</code> met admin-rol — gewone user-PAT's veroorzaken issue #3127 (JWT-gepropageerde auto-groepen worden bij elke poll van alle peers gestript)</li>
-<li><strong>Cache TTL:</strong> 30s (Squid <code>external_acl_type ttl=30 negative_ttl=10 children-max=5</code>)</li>
-<li><strong>Endpoint:</strong> <code>GET /member?ip=&lt;overlay_ip&gt;</code> — retourneert persona-groep of ERR</li>
-<li><strong>Health:</strong> <code>GET /health</code></li>
+<li><strong>Cache TTL:</strong> 30s (Squid <code>external_acl_type ttl=30 negative_ttl=10 concurrency=0</code>)</li>
+<li><strong>Endpoint:</strong> <code>GET /lookup?ip=&lt;overlay_ip&gt;</code> — vereist de <code>X-Bridge-Secret</code>-header (env <code>LOOKUP_SECRET</code>; fail-secure: een leeg geheim weigert elk verzoek). Retourneert het volledige groepslidmaatschap van de peer (<code>status</code>/<code>user</code>/<code>groups</code>/<code>os</code>) of ERR</li>
+<li><strong>Health:</strong> <code>GET /health</code> — open, geen auth, lekt geen identiteit</li>
 <li><strong>Enkel verbonden peers</strong> worden gecachet — niet-verbonden peers vallen terug op GUI-gegenereerde regels</li>
 <li><strong>Fail-open ontwerp:</strong> Wanneer onbereikbaar matchen geen identiteitsgebaseerde ACL's, en valt verkeer door naar niet-identiteitsgebonden URL-filtering. Alle andere beveiligingslagen blijven actief.</li>
 </ul>
@@ -3630,8 +3630,8 @@
 <tr>
 <td>NetBird Management API</td>
 <td>Uitgaand (poll)</td>
-<td>HTTPS (overlay 100.x.x.x)</td>
-<td><code>/api/peers</code> + <code>/api/users</code>, PAT-auth</td>
+<td>HTTP (NetBird Docker-netwerk)</td>
+<td><code>/api/peers</code> + <code>/api/users</code> via <code>management:80</code>, service-PAT-auth</td>
 </tr>
 <tr>
 <td>Squid external_acl</td>
@@ -3643,7 +3643,7 @@
 <td>NATS JetStream</td>
 <td>Uitgaand (publish)</td>
 <td>NATS (sase-internal Docker-netwerk)</td>
-<td><code>identity.login</code>, <code>identity.group_change</code> subjects</td>
+<td><code>identity.peer.connected</code>, <code>identity.peer.disconnected</code>, <code>identity.multi_persona</code> subjects</td>
 </tr>
 </tbody>
 </table>

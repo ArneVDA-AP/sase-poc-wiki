@@ -3706,7 +3706,7 @@
 <hr />
 <h2 id="werking-in-deze-stack">Werking in deze stack<a class="headerlink" href="#werking-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>Caddy op mgmt01 vervult drie afzonderlijke rollen die toevallig hetzelfde proces delen:</p>
-<p><strong>1. WPAD/PAC-bestandsserver</strong> — Caddy levert <code>/wpad.dat</code> op <code>http://wpad.sandbox.local</code> via de overlay-IP <code>100.70.135.241</code> van mgmt01. BYOD-clients ontdekken deze URL automatisch wanneer hun DNS-zoekdomein <code>sandbox.local</code> is: de browser vraagt <code>wpad.sandbox.local</code>, krijgt een antwoord, haalt <code>/wpad.dat</code> op en voert het PAC-bestand JavaScript uit om te ontdekken dat al het verkeer naar <code>PROXY 100.70.154.79:3128</code> (pop01 Squid) moet. Zie <a href="../../concepts/wpad-pac/">Concept: WPAD/PAC</a>.</p>
+<p><strong>1. WPAD/PAC-bestandsserver</strong> — Caddy levert <code>/wpad.dat</code> op <code>http://wpad.sandbox.local</code> via de overlay-IP <code>100.70.135.241</code> van mgmt01. De browser haalt <code>wpad.sandbox.local/wpad.dat</code> op en voert het PAC-bestand JavaScript uit om te ontdekken dat al het verkeer naar <code>PROXY 100.70.154.79:3128</code> (pop01 Squid) moet. In de PoC wordt mobile01 handmatig op deze URL gericht ("Installatiescript gebruiken") — WPAD-autodiscovery wordt niet geactiveerd omdat NetBird het zoekdomein <code>sandbox.local</code> alleen op de <code>wt0</code>-adapter instelt, niet in de globale suffixlijst. Zie <a href="../../concepts/wpad-pac/">Concept: WPAD/PAC</a>.</p>
 <p><strong>2. NetBird TLS-terminator</strong> — Het quickstart-script van NetBird installeert Caddy als de TLS-terminerende reverse proxy voor alle NetBird- en Zitadel-services op <code>netbird.sandbox.local</code>. Het TLS-certificaat is zelfondertekend via de <code>tls internal</code>-directive van Caddy (de ingebouwde lokale CA van Caddy). Let's Encrypt kan niet worden gebruikt omdat <code>netbird.sandbox.local</code> niet publiek oplosbaar is. Zie <a href="../../decisions/zitadel-idp-broker/">Beslissing: Zitadel IdP-broker</a>.</p>
 <p><strong>3. ioc2rpz GUI-proxy</strong> — Caddy reverse-proxiet de ioc2rpz GUI-container naar <code>https://ioc2rpz.sandbox.local</code>. Zie <a href="../ioc2rpz/">Component: ioc2rpz</a>.</p>
 <p>Caddy maakt deel uit van de control plane-rol van mgmt01: het distribueert configuratie (WPAD), maakt beheerinterfaces mogelijk (NetBird, ioc2rpz) en raakt het dataplaneverkeer dat via pop01 stroomt nooit aan.</p>
@@ -3815,6 +3815,8 @@
 <li><a href="../ioc2rpz/">Component: ioc2rpz</a></li>
 <li><a href="../../decisions/wpad-vs-transparent-proxy/">Beslissing: WPAD/PAC vs. transparante proxy</a></li>
 <li><a href="../../decisions/zitadel-idp-broker/">Beslissing: Zitadel als IdP-broker</a></li>
+<li><a href="../../runbooks/02-ztna-overlay/">Runbook: ZTNA Overlay</a></li>
+<li><a href="../../runbooks/03-proxy-wpad/">Runbook: Proxy &amp; WPAD</a></li>
 </ul>
 
 

@@ -5,7 +5,7 @@ tags: [clamav, c-icap, icap, antivirus, yara, dlp, respmod, opnsense, squid]
 
 # ClamAV + c-icap — Malware-scanning en DLP-laag 1
 
-**Rol:** ICAP RESPMOD-service op pop01 — scant alle HTTP-responses (downloads) op malware-handtekeningen, DLP-gevoelige inhoud (creditcards via StructuredDataDetection) en aangepaste patronen (YARA-regels voor IBAN, BSN, CONFIDENTIAL-labels en AWS-sleutels).  
+**Rol:** ICAP RESPMOD-service op pop01 — scant alle HTTP-responses (downloads) op malware signatures, DLP-gevoelige inhoud (creditcards via StructuredDataDetection) en aangepaste patronen (YARA-regels voor IBAN, BSN, CONFIDENTIAL-labels en AWS-sleutels).  
 **Versie:** ClamAV 1.x (meegeleverd met OPNsense `os-clamav`), c-icap (meegeleverd met `os-c-icap`)  
 **Configuratielocatie:** `/usr/local/etc/clamd.conf` (ClamAV), `/var/log/cicap/cicap_JJJJMMDD.log` (c-icap-logs)
 
@@ -18,12 +18,12 @@ ClamAV draait als daemon (`clamd`) op pop01 en ontvangt bestanden van c-icap voo
 **Waarom RESPMOD en niet REQMOD voor ClamAV:** De `virus_scan`-service van ClamAV verwerkt HTTP-responsebodies correct. POST-verzoekbodies (formuliergegevens, bestandsuploads) gebruiken `multipart/form-data`-codering, die c-icap's `virus_scan` niet correct parseert — geüploade inhoud wordt als onbewerkte bytes aan ClamAV doorgegeven, waardoor DLP-patroonherkenning onbetrouwbaar is. Voor upload-scanning, zie [Python DLP](python-dlp.md). Zie [Beslissing: Twee-laags DLP](../decisions/two-layer-dlp.md).
 
 **DLP-laag 1 — wat ClamAV detecteert:**
-- **Malware-handtekeningen** — 3,6 miljoen+ uit ClamAV's officiële databases (daily, main, bytecode)
-- **StructuredDataDetection (SDD)** — Luhn-gevalideerde creditcarddetectie (drempelwaarde: 3+ geldige kaartnummers per bestand)
+- **Malware signatures** — 3,6 miljoen+ uit ClamAV's officiële databases (daily, main, bytecode)
+- **StructuredDataDetection (SDD)** — Luhn-gevalideerde creditcarddetectie (threshold: 3+ geldige kaartnummers per bestand)
 - **YARA-regels** — vier aangepaste regels geladen uit `/var/db/clamav/dlp_custom.yar`:
   - `DLP_Confidential_Label` — "CONFIDENTIAL", "VERTROUWELIJK", "GEHEIM", "DO NOT DISTRIBUTE" (hoofdletterongevoelig)
   - `DLP_IBAN_Pattern` — NL-, DE- en BE-IBAN-formaatpatronen
-  - `DLP_BSN_Candidate` — 9-cijferige reeksen in clusters (drempelwaarde >2)
+  - `DLP_BSN_Candidate` — 9-cijferige reeksen in clusters (threshold >2)
   - `DLP_AWS_AccessKey` — patroon `AKIA[A-Z0-9]{16}`
 
 YARA-regels worden uitgevoerd *na* de bestandsdecompressie-engine van ClamAV — een regel die overeenkomt met "CONFIDENTIAL" wordt geactiveerd op een `.docx`-bestand omdat ClamAV de ZIP-container uitpakt en de binnenste `word/document.xml` scant. Dit is een significant voordeel ten opzichte van het scannen van onbewerkte bytes.
@@ -126,13 +126,13 @@ YARA-bestanden in `/var/db/clamav/` worden automatisch geladen door ClamAV. Over
 
 ## NATS-integratie
 
-ClamAV/c-icap-detectiegebeurtenissen worden gepubliceerd naar de NATS event bus via `security.alert.malware`. Wanneer c-icap malware detecteert (virushandtekeningmatch, YARA-regelovereenkomst of SDD-drempeloverschrijding), wordt het event gepubliceerd met: detectietype, handtekeningnaam, bron-IP en opgevraagde URL. Deze events dragen bij aan de per-peer threat score die wordt bijgehouden door de [Control Daemon](control-daemon.md).
+ClamAV/c-icap-detection events worden gepubliceerd naar de NATS event bus via `security.alert.malware`. Wanneer c-icap malware detecteert (virus signature match, YARA-regelovereenkomst of SDD-threshold violation), wordt het event gepubliceerd met: detectietype, signature name, bron-IP en opgevraagde URL. Deze events dragen bij aan de per-peer threat score die wordt bijgehouden door de [Control Daemon](control-daemon.md).
 
 ---
 
 ## Bekende problemen / valkuilen
 
-**GUI-timeout bij eerste database-download** — de ClamAV-handtekeningdownload (~300 MB) duurt langer dan de GUI-timeout. De download gaat op de achtergrond door. Controleer met `freshclam --verbose`.
+**GUI-timeout bij eerste database-download** — de ClamAV signature download (~300 MB) duurt langer dan de GUI-timeout. De download gaat op de achtergrond door. Controleer met `freshclam --verbose`.
 
 **`database.clamav.net` retourneert 403 bij directe HTTP-verzoeken** — het CDN vereist de freshclam-useragent. Een 403 van de server bevestigt dat TCP/TLS correct werkt; het is geen firewallprobleem.
 
@@ -142,7 +142,7 @@ ClamAV/c-icap-detectiegebeurtenissen worden gepubliceerd naar de NATS event bus 
 
 **YARA-regels valideren niet algoritmisch** — `DLP_IBAN_Pattern` herkent het formaat maar voert geen mod-97-controlesomvalidatie uit. `DLP_BSN_Candidate` herkent 9-cijferige clusters maar voert geen 11-proef uit. Valse positieven zijn mogelijk. De [Python DLP-server](python-dlp.md) op het uploadpad voert wel algoritmische validatie uit.
 
-**`--ssl-no-revoke` vereist voor curl.exe-tests** — curl.exe op Windows gebruikt de schannel TLS-stack, die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen intrekkingseindpunt, waardoor dit mislukt. Voeg `--ssl-no-revoke` toe aan alle CLI-testopdrachten.
+**`--ssl-no-revoke` vereist voor curl.exe-tests** — curl.exe op Windows gebruikt de schannel TLS-stack, die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen revocation endpoint, waardoor dit mislukt. Voeg `--ssl-no-revoke` toe aan alle CLI-testopdrachten.
 
 **Handleiding gebruikt `/squid_clamav` als ICAP-servicepad** — oudere handleidingversies specificeren `icap://localhost:1344/squid_clamav`. Het correcte servicepad op de c-icap-installatie van OPNsense is `/virus_scan`. Het handleidingpad gebruiken geeft ICAP 404.
 

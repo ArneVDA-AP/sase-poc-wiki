@@ -5,7 +5,7 @@ tags: [netbird, zero-trust, sase, network, opnsense, docker]
 
 # NetBird + Zitadel + Entra ID — ZTNA-overlay
 
-**Rol:** ZTNA-transportlaag — creëert een WireGuard-mesh-overlay die BYOD-clients toegang geeft tot pop01 (proxy, DNS) en DC-LAN-resources, ongeacht hun fysieke netwerklocatie. Elke toegangsbeslissing is identiteitsgebaseerd; laterale beweging tussen resources vereist expliciet ACL-beleid.  
+**Rol:** ZTNA-transportlaag — creëert een WireGuard-mesh-overlay die managed Windows-clients toegang geeft tot pop01 (proxy, DNS) en DC-LAN-resources, ongeacht hun fysieke netwerklocatie. Elke toegangsbeslissing is identiteitsgebaseerd; lateral movement tussen resources vereist expliciet ACL-beleid.  
 **Status:** ✅ Volledig operationeel — snapshot `Fase2-ZTNA-Complete`  
 **Configuratielocatie:** mgmt01 Docker Compose (`~/docker-compose.yml`), NetBird Dashboard (`https://netbird.sandbox.local`)
 
@@ -118,24 +118,24 @@ Alleen `Core-Services` wordt handmatig aangemaakt. De persona-groepen (`Studente
 
 ### ACL-beleid
 
-**`Personas-to-Core-Services`:** Bronnen: `Studenten`, `Docenten`, `Admins` → Bestemming: `Core-Services`, Protocol: **alleen TCP 3128**.
+**`Personas-to-Core-Services`:** Sources: `Studenten`, `Docenten`, `Admins` → Destination: `Core-Services`, Protocol: **alleen TCP 3128**.
 
 Dit ene beleid is de volledige allow-list onder deny-by-default. Het laat elke persona-peer de pop01 Squid-proxy (`100.70.154.79:3128`) bereiken; al het webverkeer loopt vervolgens door de SWG-pijplijn, waar de differentiatie per persona in Squid gebeurt (niet in NetBird-ACL's). WPAD-poorten (`:80`/`:443` op mgmt01) zijn **bewust weggelaten** — het PAC-bestand is leeg en clients gebruiken een handmatige proxy-instelling, dus WPAD-bereikbaarheid is niet nodig (V34.13). Quarantaine werkt omdat het verwijderen van een peer uit zijn persona-groep zijn enige pad naar `Core-Services` wegneemt.
 
-### Exit-knooppunt en DC-LAN-routering
+### Exit node en DC-LAN-routering
 
-**Exit-knooppunt (internetverkeer)** — via Netwerkroutes:
+**Exit node (internetverkeer)** — via Netwerkroutes:
 ```
-Netwerk: 0.0.0.0/0, Routeerpeer: pop01, Distributiegroepen: Studenten, Docenten, Admins
+Netwerk: 0.0.0.0/0, Routing Peer: pop01, Distribution Groups: Studenten, Docenten, Admins
 ```
 
-Het exit-knooppunt blijft bestaan zodat BYOD-persona-verkeer via pop01 naar buiten gaat. Het exit-knooppunt van NetBird is **alles-of-niets** — het kan geen bestemmingsbereiken selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, duwt een Intune-Remediation (`2ITCSC1A-Route-Remediation`) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.
+Het exit node blijft bestaan zodat persona-groepverkeer (Studenten/Docenten/Admins) via pop01 naar buiten gaat. Het exit node van NetBird is **alles-of-niets** — het kan geen destination ranges selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, duwt een Intune-Remediation (`2ITCSC1A-Route-Remediation`) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.
 
 **DC-LAN (10.0.0.0/8) over de overlay — uitgesteld.** Het oorspronkelijke `Internal-DC`-netwerk (ACL-bewust) en zijn `Datacenter-Access`-beleid zijn **verwijderd in de V34-migratie**; er is geen actief DC-LAN-over-overlay-pad in de huidige sandbox. Het opnieuw introduceren van datacenterbereikbaarheid is uitgesteld tot de geplande Cosmos-app-gateway-sessie. De ontwerpredenering hieronder blijft behouden voor wanneer dat werk wordt hervat.
 
-> **Netwerken vs. Netwerkroutes (ontwerpredenering, voor het uitgestelde DC-LAN-werk):** Netwerkroutes omzeilen ACL-beleid standaard. Netwerken vereisen groepkoppeling by design. DC-LAN zou Netwerken moeten gebruiken voor zero-trust-correctheid; het exit-knooppunt moet Netwerkroutes gebruiken (NetBird-beperking voor 0.0.0.0/0).
+> **Netwerken vs. Netwerkroutes (ontwerpredenering, voor het uitgestelde DC-LAN-werk):** Netwerkroutes omzeilen ACL-beleid standaard. Netwerken vereisen groepkoppeling by design. DC-LAN zou Netwerken moeten gebruiken voor zero-trust-correctheid; het exit node moet Netwerkroutes gebruiken (NetBird-beperking voor 0.0.0.0/0).
 
-**Distributiegroepen vs. ACL-beleid:** Deze dienen verschillende doelen — de distributiegroep bepaalt *welke peers de DNS-/netwerkconfiguratie ontvangen*, terwijl het ACL-beleid bepaalt *of het verkeer daadwerkelijk stroomt*. Als een peer in de distributiegroep zit maar geen ACL-beleid heeft dat verkeer toestaat, ontvangt hij de config maar kan hij de resource niet bereiken. Symptoom: `netbird status` toont `Nameservers: 0/1 Available` op een peer die de naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft.
+**Distribution Groups vs. ACL-beleid:** Deze dienen verschillende doelen — de distribution group bepaalt *welke peers de DNS-/netwerkconfiguratie ontvangen*, terwijl het ACL-beleid bepaalt *of het verkeer daadwerkelijk stroomt*. Als een peer in de distribution group zit maar geen ACL-beleid heeft dat verkeer toestaat, ontvangt hij de config maar kan hij de resource niet bereiken. Symptoom: `netbird status` toont `Nameservers: 0/1 Available` op een peer die de nameserverconfig ontvangt maar er geen ACL-pad naartoe heeft.
 
 ### DNS-configuratie
 
@@ -143,10 +143,10 @@ NetBird Dashboard → DNS:
 
 ```
 Aangepaste DNS-zone:   sandbox.local → pop01 (100.70.154.79)
-Primaire naamserver: pop01 (100.70.154.79), Overeenkomende domeinen: (leeg)
+Primaire nameserver: pop01 (100.70.154.79), Overeenkomende domeinen: (leeg)
 ```
 
-De lege instelling voor overeenkomende domeinen routeert **alle** DNS-query's van NetBird-clients via pop01 Unbound — niet alleen `*.sandbox.local`. Zonder dit gebruiken externe query's de standaard-DNS van de client-adapter en omzeilen ze Unbound RPZ volledig. Zie [Bevinding: NetBird primaire naamserver](../findings/netbird-primary-nameserver.md).
+De lege instelling voor overeenkomende domeinen routeert **alle** DNS-query's van NetBird-clients via pop01 Unbound — niet alleen `*.sandbox.local`. Zonder dit gebruiken externe query's de standaard-DNS van de client-adapter en omzeilen ze Unbound RPZ volledig. Zie [Bevinding: NetBird primaire nameserver](../findings/netbird-primary-nameserver.md).
 
 ---
 
@@ -155,7 +155,7 @@ De lege instelling voor overeenkomende domeinen routeert **alle** DNS-query's va
 | Component | Richting | Wat |
 |-----------|----------|-----|
 | [Squid](squid.md) | transport | Overlay-IP `100.70.154.79` van wt0 moet bestaan voor Squid pre-auth listener |
-| [ioc2rpz/RPZ](ioc2rpz.md) | DNS-afhankelijkheid | Primaire naamserverinstelling routeert alle client-DNS via Unbound RPZ |
+| [ioc2rpz/RPZ](ioc2rpz.md) | DNS-afhankelijkheid | Primaire nameserver-instelling routeert alle client-DNS via Unbound RPZ |
 | [Caddy](caddy.md) | → browser | WPAD PAC-bestand geleverd door Caddy op mgmt01 overlay-IP, alleen bereikbaar via NetBird |
 | [Suricata](suricata.md) | zichtbaarheid | Suricata ziet WireGuard als versleuteld UDP op vtnet0 — binnenste payload niet inspecteerbaar |
 | [Driepoortmodel](../decisions/ca-posture-hybrid.md) | authenticatielaag | Poort 1 (Entra ID CA) + Poort 2 (postuurcontroles) koppelen beide aan de NetBird-aanmeldflow |
@@ -185,7 +185,7 @@ De identiteitsketen loopt van Entra ID via Zitadel naar NetBird:
 
 NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:
 
-- **Producer:** De [Identity Bridge](identity-bridge.md) (die afhankelijk is van de NetBird Management API) publiceert identiteitsgebeurtenissen naar `identity.peer.connected`, `identity.peer.disconnected` en `identity.multi_persona` (zero-trust-anomalie) wanneer peers verbinden, verbreken of in meer dan één personagroep verschijnen.
+- **Producer:** De [Identity Bridge](identity-bridge.md) (die afhankelijk is van de NetBird Management API) publiceert identity events naar `identity.peer.connected`, `identity.peer.disconnected` en `identity.multi_persona` (zero-trust-anomalie) wanneer peers verbinden, verbreken of in meer dan één personagroep verschijnen.
 - **Handhavingsdoelwit:** De [Control Daemon](control-daemon.md) gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit beleidsdragende personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All->All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.
 
 ---
@@ -212,7 +212,7 @@ NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:
 - [Beslissing: Zitadel als IdP-broker](../decisions/zitadel-idp-broker.md)
 - [Beslissing: CA + postuur hybride](../decisions/ca-posture-hybrid.md)
 - [Beslissing: GNS3 vs. EVE-NG](../decisions/gns3-vs-eveng.md)
-- [Bevinding: NetBird primaire naamserver](../findings/netbird-primary-nameserver.md)
+- [Bevinding: NetBird primaire nameserver](../findings/netbird-primary-nameserver.md)
 - [Bevinding: NetBird config nul bytes](../findings/netbird-config-zero-bytes.md)
 - [Runbook: ZTNA-overlay](../runbooks/02-ztna-overlay.md)
 - [Identity Bridge](identity-bridge.md)

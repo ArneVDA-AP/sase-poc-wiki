@@ -3680,6 +3680,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2026-06-04-raw-wiki-one-directional-consistency-audit-full-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-04 — Raw → Wiki one-directional consistency audit (full pass)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-06-05-byod-over-translation-cleanup-rigorous-re-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-05 — BYOD + over-translation cleanup + rigorous re-audit
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2026-06-05 — BYOD + over-translation cleanup + rigorous re-audit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-byod-cleanup-40-stale-references-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: BYOD cleanup (40 stale references → 0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-over-translated-dutch-terms-181-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Over-translated Dutch terms (~181 fixes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-full-re-audit-4-domain-agents-1-independent-opus-auditor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Full re-audit (4 domain agents + 1 independent Opus auditor)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-06-05-wazuh-dashboard-airgate-finding-rewrite-new-source-wazuh_db_fixmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-05 — Wazuh dashboard airgate finding rewrite (new source: Wazuh_DB_Fix.md)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4007,6 +4079,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2026-06-04-raw-wiki-one-directional-consistency-audit-full-pass" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-04 — Raw → Wiki one-directional consistency audit (full pass)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-06-05-byod-over-translation-cleanup-rigorous-re-audit" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-05 — BYOD + over-translation cleanup + rigorous re-audit
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2026-06-05 — BYOD + over-translation cleanup + rigorous re-audit">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-byod-cleanup-40-stale-references-0" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: BYOD cleanup (40 stale references → 0)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-over-translated-dutch-terms-181-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: Over-translated Dutch terms (~181 fixes)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-full-re-audit-4-domain-agents-1-independent-opus-auditor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: Full re-audit (4 domain agents + 1 independent Opus auditor)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-06-05-wazuh-dashboard-airgate-finding-rewrite-new-source-wazuh_db_fixmd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-05 — Wazuh dashboard airgate finding rewrite (new source: Wazuh_DB_Fix.md)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4288,6 +4432,125 @@
 </ul>
 <p><strong>Source documents ingested:</strong> V28–V44 (17 verslagen), 10 implementation documents (Addenda E, G, GroupSync, H, I, J, CASB Architecture, ZTSDWAN Architecture, SDWAN Nulmeting, GroupSync Correcties, Correctienotitie CASB, Projectoverzicht Mei 2026, Sessieplanning Juni 2026)</p>
 <p><strong>Total new pages:</strong> 42. <strong>Total updated pages:</strong> 30+.</p>
+<hr />
+<h2 id="2026-06-04-raw-wiki-one-directional-consistency-audit-full-pass">2026-06-04 — Raw → Wiki one-directional consistency audit (full pass)<a class="headerlink" href="#2026-06-04-raw-wiki-one-directional-consistency-audit-full-pass" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> Bring every wiki page into agreement with the raw sources in one direction only —
+<code>raw/</code> is the single source of truth; only the wiki was changed. Both languages corrected and
+EN↔NL divergence treated as a defect. Scope = correctness only (no editorial trimming, no
+renames/moves/slug changes).</p>
+<p><strong>Authority model applied:</strong> verslag-confirmed state = ground truth; a later verslag supersedes an
+earlier one; correction notes override their parent plan doc but a verslag still wins; addenda /
+architecture docs / Doc1–7 = pre-implementation intent (rationale + gap-fill only). This inverts the
+rule the wiki was originally built under (see CLAUDE.md fix below), which is why the largest drift
+class was pages that had followed a plan/addendum where a verslag later diverged.</p>
+<p><strong>Domains audited (all 12 + cross-cutting Phase E):</strong> DNS-Threat-Intel · SWG/Proxy · Malware+DLP ·
+IDS · Lab/Virtualization · ZTNA-Overlay · Context-Aware/CA · GroupSync · Identity-Bridge/Control-Daemon ·
+NATS/JetStream · CASB+Wazuh · ZT-SD-WAN · Phase E (overview/architecture, concepts, index, tags,
+section indexes, testing/*).</p>
+<p><strong>Findings by class (~88 distinct findings across 86 logical pages × EN+NL):</strong>
+- <strong>factual (~28)</strong> — wrong app-reg GUID (<code>cebe0d74…</code>→<code>11803ee8…</code>), Identity-Bridge poll target
+  (<code>HTTPS overlay</code>→<code>http://management:80</code>), NATS version (<code>2.14</code>→<code>2.14.1-alpine</code>), Suricata/DNS
+  date drift (April→March 2026), Control-Daemon date (May→June), group-name casing
+  (<code>2ITcsc1A-</code>→<code>2ITCSC1A-</code> across 4 pages), VyOS version (<code>1.4 rolling</code>→<code>rolling 2026.02.16</code>),
+  sitepc01 Site-LAN IP (<code>172.16.10.50</code>→<code>172.16.10.10</code>), and more.
+- <strong>stale-superseded (~13)</strong> — NetBird groups/ACL (SASE-<em> → persona model + single
+  <code>Personas-to-Core-Services</code> policy, V34); CA posture (NetBird posture → Intune compliance Gate 2,
+  V40); sitepc01 (<code>no OS</code> → Tiny11 operational, V43/V44); runbook-07/08/09 group tables.
+- </em><em>status-drift (~10)</em><em> — Wazuh CASB live-revoke (working → detect-only HTTP-204 stub, live pending);
+  VyOS QoS+failover (planned/descoped → implemented, V43); GroupSync #5399 Dex gotcha (live → not
+  applicable, V30.17); acceptance-tests F4/F8 (see below).
+- </em><em>inconsistency / EN↔NL divergence (~20)</em><em> — dominant NL pattern was dropped content (NL pages
+  missing blocks the EN had); plus one self-contradiction (<code>concepts/identity-flow</code> mislabelled the
+  JWT-vs-IdP-Sync </em>mechanism<em> as "Path A/B", which raw reserves for prefix handling).
+- </em><em>ungrounded-and-wrong (~10)</em><em> — <code>components/identity-bridge</code> invented <code>/member</code>, <code>children-max=5</code>,
+  <code>identity.login</code>/<code>identity.group_change</code>; <code>findings/wazuh-dashboard-airgate</code> invented an
+  <code>api.wazuh.com</code> URL + "perpetual spinner"; <code>-p 953</code> on <code>rndc</code> (×4 DNS pages); <code>control.quarantine</code>
+  NATS subject.
+- </em><em>link (~7)</em><em> — missing Related-runbook links added while editing. Final link audit across all
+  172 files (1,259 internal <code>.md</code> links) = </em><em>0 broken</em>*.</p>
+<p><strong>Key resolutions (authority model in action):</strong>
+- <strong>GroupSync Pad A/B:</strong> Pad B shipped (V31/V34) and is a <strong>fail-closed allowlist that maps the
+  Entra display-name STRING → clean NetBird name</strong> (<code>2ITCSC1A-Studenten</code>→<code>Studenten</code>), unmatched
+  groups silently dropped — net effect strips the prefix but is stricter than a blind strip. Entra
+  security-group casing is <strong>all-caps <code>2ITCSC1A-</code></strong> (V34/V40 verslagen supersede the correction
+  note's lowercase <code>2ITcsc1A-</code>). Corrected the original wiki's "GUID-keyed" error AND an intermediate
+  "generic prefix-strip" over-correction.
+- <strong>Quarantine breaks active flow = TESTED, reframed honestly:</strong> V35.14 dry-run on <code>docent1</code> —
+  EICAR scored 80/80, peer quarantined <strong>within seconds</strong> (persona groups stripped → deny-by-default),
+  connectivity lost, restored on un-quarantine. Presented as tested with timing <strong>"within seconds"</strong>
+  (not "milliseconds") and WITHOUT the unsupported "page died mid-load" claim. ENFORCE=false until
+  Session 11.
+- <strong>CASB demo SID:</strong> <code>100201</code> → <strong><code>100601</code></strong> (<code>AnonymousLinkCreated</code>, V39 sandbox base 100600 family).
+  The seed's <code>100500/100501</code> are the Marnix-team bus rules, not the sandbox CASB rules.
+- <strong>Acceptance-tests F4/F8 (Datacenter Access / Firewall Segmentation):</strong> reframed as
+  <strong>Validated-then-removed</strong> — kept the ✅ build-time result, added current-state framing that the
+  DC-LAN-over-overlay path (<code>Internal-DC</code> Network + <code>Datacenter Access</code> policy) was removed in the V34
+  persona migration and deferred; F8's negative isolation half remains valid. Applied to F4, F8, and
+  F15 step 6 + tally, EN+NL.</p>
+<p><strong>CLAUDE.md authority rule fixed:</strong> the project instruction "the implementatiedocument wins over the
+verslag for current state" was inverted to the corrected model — <strong>verslag-confirmed state is ground
+truth; addenda / implementatiedocumenten / plan-documenten are pre-implementation intent and never
+override a verslag for current state.</strong> This is the root cause of the systematic drift this audit
+corrected.</p>
+<p><strong>Files changed:</strong> wiki pages across all domains (EN+NL) per the per-domain tables in
+<code>.agent-memory/audit-tracker.md</code>; <code>CLAUDE.md</code> (authority rule); <code>log.md</code> + <code>log.nl.md</code> (this entry).
+No <code>raw/</code> files were modified. No renames, moves, slug or frontmatter changes.</p>
+<hr />
+<h2 id="2026-06-05-byod-over-translation-cleanup-rigorous-re-audit">2026-06-05 — BYOD + over-translation cleanup + rigorous re-audit<a class="headerlink" href="#2026-06-05-byod-over-translation-cleanup-rigorous-re-audit" title="Permanent link">&para;</a></h2>
+<p><strong>Goal:</strong> Fix all remaining stale "BYOD" references in current-state descriptions, correct
+over-translated Dutch technical terms (~181 instances), then run a full multi-agent re-audit
+of every wiki page against the raw verslagen to verify correctness before deployment.</p>
+<h3 id="phase-1-byod-cleanup-40-stale-references-0">Phase 1: BYOD cleanup (40 stale references → 0)<a class="headerlink" href="#phase-1-byod-cleanup-40-stale-references-0" title="Permanent link">&para;</a></h3>
+<p>All current-state "BYOD client" / "BYOD persona" descriptions replaced with accurate terms
+("overlay client", "managed Windows client", etc.) across 55 EN+NL files.</p>
+<h3 id="phase-2-over-translated-dutch-terms-181-fixes">Phase 2: Over-translated Dutch terms (~181 fixes)<a class="headerlink" href="#phase-2-over-translated-dutch-terms-181-fixes" title="Permanent link">&para;</a></h3>
+<p>English technical terms that were unnecessarily translated into Dutch were restored:
+<code>eindknooppunt</code> → exit node, <code>beleidsregels</code> → policies, <code>handtekeningen</code> → signatures,
+<code>gebeurtenissen</code> → events, <code>drempelwaarde</code> → threshold, <code>naamserver</code> → nameserver,
+<code>zonetransfer</code> → zone transfer, <code>verbindingspooling</code> → connection pooling,
+<code>Luisterpoort</code> → Listen Port, <code>Doelbronnen</code> → Target resources, <code>Toewijzingen</code> → Assignments,
+<code>Voorwaarden</code> → Conditions, <code>Toegangscontroles</code> → Access controls,
+<code>Aanmeldingslogboeken</code> → Sign-in logs, and more.</p>
+<h3 id="phase-3-full-re-audit-4-domain-agents-1-independent-opus-auditor">Phase 3: Full re-audit (4 domain agents + 1 independent Opus auditor)<a class="headerlink" href="#phase-3-full-re-audit-4-domain-agents-1-independent-opus-auditor" title="Permanent link">&para;</a></h3>
+<p>Four parallel verification agents covered all 12 domains + cross-cutting pages, checking every
+wiki claim against the raw verslagen. An independent auditor (Opus model) then cross-checked
+the domain agents' findings.</p>
+<p><strong>Domain agent results (combined 37+ 11 + 12 + 30 checks):</strong>
+- DNS+SWG+DLP+IDS: ALL PASS
+- ZTNA+CA+GroupSync: ALL PASS (37/37)
+- Identity+NATS+CASB+Wazuh: PASS with 3 minor gaps (fixed)
+- SD-WAN+Lab+CrossCutting: 4 discrepancies (fixed)</p>
+<p><strong>Fixes applied from audit:</strong>
+- <code>decisions/sdwan-descoped.md</code> + <code>.nl.md</code> — F15 step 8 is validated (not N/A); VyOS is
+  SASE Gateway with QoS (not "minimal NAT only"); rationale corrected (QoS was reimplemented)
+- <code>overview/architecture.nl.md</code> — missing "SWG identity layer" trust boundary row added (EN/NL parity)
+- <code>decisions/nats-accounts-auth.md</code> + <code>.nl.md</code> — <code>$JS.ACK.&gt;</code> added alongside <code>$JS.API.&gt;</code> for consumers (V32)
+- <code>components/control-daemon.md</code> + <code>.nl.md</code> — explicit scoring weights <code>malware=80</code>, <code>dlp_match=30</code> + V35 test reference
+- <code>components/nats-jetstream.md</code> + <code>.nl.md</code> — 5 JetStream streams table added (V32.13)
+- <strong>Independent auditor false positive (reverted):</strong> auditor flagged <code>security.alert.ids</code> → <code>.ips</code>
+  based on V34's snapshot, but the live nats.conf on the server confirms <code>.ids</code> is the current
+  subject name — the config was updated after V34. Change was applied then reverted.</p>
+<p><strong>Independent auditor summary: 30 PASS, 1 false positive (reverted).</strong> The flagged NATS subject
+discrepancy was based on V34's point-in-time observation; the live server config confirms <code>.ids</code>.</p>
+<p><strong>Verification sweep results:</strong>
+- Over-translated terms: 0 remaining
+- BYOD in current-state: 0 (28 remaining all in historical/evolution framing)
+- Secrets leaked: 0
+- EN↔NL parity: verified across 5 page pairs
+- All IPs, ports, versions, group names consistent cross-page</p>
+<p><strong>Files changed:</strong> 63 wiki pages (EN+NL). No <code>raw/</code> files modified.</p>
+<hr />
+<h2 id="2026-06-05-wazuh-dashboard-airgate-finding-rewrite-new-source-wazuh_db_fixmd">2026-06-05 — Wazuh dashboard airgate finding rewrite (new source: Wazuh_DB_Fix.md)<a class="headerlink" href="#2026-06-05-wazuh-dashboard-airgate-finding-rewrite-new-source-wazuh_db_fixmd" title="Permanent link">&para;</a></h2>
+<p><strong>New source document:</strong> <code>raw/Wazuh_DB_Fix.md</code> (v1.0, 2 juni 2026) — versie-herstel runbook voor de Wazuh-stack na een <code>down -v</code>-incident + versie-skew. Validated 2 juni 2026.</p>
+<p><strong>Root cause corrected:</strong> The existing finding (<code>findings/wazuh-dashboard-airgate.md</code>) had the wrong root cause — it blamed the air-gap CTI-500 (<code>GET /manager/version/check</code>) for the "Status: Offline" redirect. The new source reveals the redirect is caused by an <strong>empty manager UUID</strong> in <code>global.db</code> (wiped by <code>docker compose down -v</code>). The CTI-500 is a separate, cosmetic, non-blocking issue in Wazuh 4.14.5+ (fix #8130).</p>
+<p><strong>Status change:</strong> Finding status updated from "known limitation / workaround" to <strong>resolved</strong> (2 juni 2026), fixed via in-place bump to 4.14.5 GA (no <code>-v</code>), preserving the existing UUID.</p>
+<p><strong>Audit:</strong> Independent Opus auditor agent verified all planned changes against <code>Wazuh_DB_Fix.md</code> before edits were applied. 8 planned edits: all PASS. 2 additional missed files identified by auditor and added to scope.</p>
+<p><strong>Files updated (10):</strong>
+- <code>findings/wazuh-dashboard-airgate.md</code> + <code>.nl.md</code> — complete rewrite: correct root cause (empty UUID), two structural rules, resolution, updated lessons
+- <code>components/wazuh.md</code> + <code>.nl.md</code> — dashboard status updated to "fully operational"; known-issues entry corrected
+- <code>runbooks/11-wazuh.md</code> + <code>.nl.md</code> — gotcha callout updated (resolved); checklist item corrected (app modules no longer gated)
+- <code>index.md</code> + <code>.nl.md</code> — finding blurb corrected (was "hostname resolution issue", now reflects empty UUID cause)</p>
+<p><strong>Source documents ingested:</strong> <code>Wazuh_DB_Fix.md</code> (1 versie-herstel runbook). No <code>raw/</code> files modified.</p>
 
 
 

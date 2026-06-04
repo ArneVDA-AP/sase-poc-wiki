@@ -19,7 +19,7 @@ For CASB Layer 2, the `o365_producer` polls the Office 365 Management Activity A
 
 ## Configuration
 
-- **Dashboard:** `192.168.122.23:5601` (port 443 occupied by NetBird Caddy). Discover interface works fully. App API section unreachable due to air-gap connection check. See [Finding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
+- **Dashboard:** `192.168.122.23:5601` (port 443 occupied by NetBird Caddy). Fully operational (fixed 2 juni 2026). `Error checking updates` CTI-500 remains in air-gap but is cosmetic and non-blocking in 4.14.5+. See [Finding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
 - **pop01 agent:** Enrolled as ID 001 Active. Delivers host feeds (audit, configd, filter, kernel, pkg). Suricata/Squid/c-icap/Unbound excluded from agent feeds — they have NATS producers.
 - **Agent settings:** `intrusion_detection_events=false` + `active_response=false` (double-ingest guard + enforcement guard)
 - **Rule-ID map:**
@@ -39,7 +39,7 @@ For CASB Layer 2, the `o365_producer` polls the Office 365 Management Activity A
 ## Known issues / gotchas
 
 - **glibc x86-64-v2 requirement:** Wazuh indexer requires Haswell+ CPU features. Standard QEMU `kvm64` CPU model crashes. Fix: set QEMU CPU model to `host` in GNS3 node settings. See [Finding: Wazuh CPU glibc](../findings/wazuh-cpu-glibc.md).
-- **Dashboard air-gate:** The dashboard app (Security-Events module, Agents tab) is gated because the manager's internet-dependent `version/check` returns HTTP 500 in the air-gapped sandbox, cascading to a "Status: Offline" determination. The manager API itself is healthy (authenticate/info/stats all return 200). Discover works fully. See [Finding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
+- **Dashboard air-gate (resolved 2 juni 2026):** Root cause was an empty manager UUID in `global.db` (wiped by `docker compose down -v`), not the air-gap CTI check. Fixed via in-place bump to 4.14.5 (no `-v`), preserving the UUID. The `Error checking updates` CTI-500 remains (air-gap) but is non-blocking in 4.14.5+. Never use `down -v` for Wazuh version work. See [Finding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
 - **jq dependency:** Active Response scripts require jq. Installed via `install_deps.sh` entrypoint (V39).
 
 ## Related

@@ -54,7 +54,7 @@ Switch-Site  ──── sitepc01 Ethernet (sitepc01 Site-LAN)
 NAT-Internet ──── mobile01 NIC1     (separate TAP — external network simulation)
 ```
 
-mobile01 is a VMware VM on a team member's laptop — not a GNS3 node. It connects directly via its own network adapter, simulating a real BYOD user outside the GNS3 topology. It reaches the SASE stack exclusively through the NetBird WireGuard tunnel.
+mobile01 is a VMware VM on a team member's laptop — not a GNS3 node. It connects directly via its own network adapter, simulating a real remote user outside the GNS3 topology. It reaches the SASE stack exclusively through the NetBird WireGuard tunnel.
 
 ### IP addressing
 
@@ -79,7 +79,7 @@ mobile01 is a VMware VM on a team member's laptop — not a GNS3 node. It connec
 |------|-----------|------|
 | pop01 | `100.70.154.79` | Data plane, exit node, DNS primary |
 | mgmt01 | `100.70.135.241` | Management plane, WPAD server |
-| mobile01 | `100.70.95.98` | BYOD client |
+| mobile01 | `100.70.95.98` | Remote client (managed Windows) |
 
 ### External access port forwards
 

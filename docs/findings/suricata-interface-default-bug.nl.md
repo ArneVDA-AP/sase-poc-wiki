@@ -10,9 +10,9 @@ tags: [finding, suricata, workaround]
 
 ## Wat er gebeurde
 
-Suricata was geconfigureerd om WAN- en LAN-interfaces te bewaken. vtnet1 (LAN) genereerde geen alerts ondanks dat dc01 verkeer produceerde (apt update, SSH-sessies). Testcases voor regels die op vtnet1 zouden moeten activeren, leverden geen gebeurtenissen op.
+Suricata was geconfigureerd om WAN- en LAN-interfaces te bewaken. vtnet1 (LAN) genereerde geen alerts ondanks dat dc01 verkeer produceerde (apt update, SSH-sessies). Testcases voor regels die op vtnet1 zouden moeten activeren, leverden geen events op.
 
-`procstat -f <PID> | grep bpf` bevestigde dat vtnet1 een BPF-apparaat open had op OS-niveau, maar Suricata stuurde er geen pakketten naartoe — de BPF-descriptor bestond maar produceerde nul gebeurtenissen.
+`procstat -f <PID> | grep bpf` bevestigde dat vtnet1 een BPF-apparaat open had op OS-niveau, maar Suricata stuurde er geen pakketten naartoe — de BPF-descriptor bestond maar produceerde nul events.
 
 ## Oorzaak
 
@@ -43,7 +43,7 @@ configctl template reload OPNsense/IDS
 configctl ids restart
 ```
 
-Na de correctie: `procstat -f <PID> | grep bpf` toont twee BPF-descriptors en vtnet1-gebeurtenissen verschijnen binnen minuten.
+Na de correctie: `procstat -f <PID> | grep bpf` toont twee BPF-descriptors en vtnet1-events verschijnen binnen minuten.
 
 ## Lessen
 

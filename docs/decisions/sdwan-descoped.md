@@ -35,8 +35,8 @@ Site users (sitepc01) will access the datacenter via individual NetBird enrollme
 ## Consequences
 
 - **F12, F13, F14** are marked N/A in all acceptance test matrices. This is an explicit architectural decision, not an implementation gap.
-- **F15 steps 7–8** are N/A for the same reason (step 7 requires sitepc01 with NetBird; step 8 requires QoS on VyOS).
-- **VyOS** remains in the topology but its configuration is minimal — WAN connectivity and NAT only. See [VyOS](../components/vyos.md).
+- **F15 step 7** is N/A (classic IPsec site-to-site descoped). **Step 8** (QoS marking) is validated under the ZT-Branch model (V43 Test #5: DSCP EF classified, 0 drops under load).
+- **VyOS** remains in the topology as SASE Gateway — WAN connectivity, NAT, QoS shaping (DSCP EF/AF41/AF21), and WAN health monitoring. See [VyOS](../components/vyos.md).
 - **sitepc01** reaches the datacenter via individual NetBird enrollment — confirmed enrolled and operational in Verslag43/Verslag44, not via a site-to-site tunnel.
 - The architecture directly aligns with Zscaler's "Zero Trust SD-WAN" model: branches treated as untrusted networks (like cafés), every device authenticates individually, no site-to-site tunnels.
 
@@ -60,7 +60,7 @@ See: [VyOS](../components/vyos.md), [Decision: ZT-SD-WAN Branch](../decisions/zt
 
 **Zscaler alignment.** Descoping aligns the architecture with Zscaler's publicly documented Zero Trust SD-WAN approach: no implicit trust from network location, every site treated as an untrusted network, cloud inspection for all traffic.
 
-**Complexity reduction.** Removing IPsec, uCPE, and QoS reduces the implementation surface and keeps the PoC focused on the SASE security components.
+**Complexity reduction.** Removing IPsec and uCPE reduces the implementation surface. QoS was reimplemented under the ZT-Branch model (see [What was actually built](#what-was-actually-built)).
 
 ## Related
 

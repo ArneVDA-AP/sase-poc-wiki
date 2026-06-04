@@ -280,7 +280,7 @@ The OPNsense WebUI shows "The configuration contains manual overwrites" — this
 
 ## Step 7: Configure NetBird DNS primary nameserver
 
-This step is a **prerequisite for BYOD RPZ protection**. Without it, external queries from mobile01 bypass Unbound entirely.
+This step is a **prerequisite for client RPZ protection**. Without it, external queries from mobile01 bypass Unbound entirely.
 
 NetBird Dashboard → DNS → Nameservers → Add:
 

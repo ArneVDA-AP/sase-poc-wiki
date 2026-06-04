@@ -17,7 +17,7 @@ WPAD/PAC is the mechanism that routes every browser request on mobile01 through 
 4. Browser executes `FindProxyForURL()` for each URL → returns `PROXY 100.70.154.79:3128` (Squid)
 5. All non-internal traffic flows through Squid for inspection
 
-**Why WPAD/PAC and not transparent proxy:** Transparent proxy via `pf rdr` cannot intercept WireGuard-routed traffic on the `wt0` interface — WireGuard is Layer 3 and `pf rdr` does not see ingress on that interface from the kernel's perspective. WPAD/PAC explicit proxy is not a workaround; it is the correct pattern for overlay-based BYOD. See [Decision: WPAD/PAC vs transparent proxy](../decisions/wpad-vs-transparent-proxy.md).
+**Why WPAD/PAC and not transparent proxy:** Transparent proxy via `pf rdr` cannot intercept WireGuard-routed traffic on the `wt0` interface — WireGuard is Layer 3 and `pf rdr` does not see ingress on that interface from the kernel's perspective. WPAD/PAC explicit proxy is not a workaround; it is the correct pattern for overlay-based clients. See [Decision: WPAD/PAC vs transparent proxy](../decisions/wpad-vs-transparent-proxy.md).
 
 **Explicit vs transparent:**
 - Explicit proxy: client knows the proxy address and sends requests directly to it (HTTP `GET http://...` or HTTPS `CONNECT` then the request)

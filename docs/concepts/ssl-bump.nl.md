@@ -9,9 +9,9 @@ tags: [ssl-bump, tls, squid, icap, proxy, sase]
 
 ## Hoe het hier van toepassing is
 
-Zonder SSL Bump zien ClamAV en de Python DLP-server alleen een ondoorzichtige versleutelde stroom — nutteloos voor malwarescanning of DLP. SSL Bump maakt HTTPS-inspectie mogelijk: Squid ontsleutelt elke HTTPS-verbinding, geeft de leesbare body door aan de ICAP-inspectieketen en herencrypteert dan richting de originele server.
+Zonder SSL Bump zien ClamAV en de Python DLP-server alleen een ondoorzichtige versleutelde stroom — nutteloos voor malwarescanning of DLP. SSL Bump maakt HTTPS-inspectie mogelijk: Squid ontsleutelt elke HTTPS-verbinding, geeft de leesbare body door aan de ICAP inspection chain en re-encrypts dan richting de originele server.
 
-De SSL Bump CA voor dit project is `SASE-PoC-CA`, een zelfondertekende root CA geïnstalleerd in de Windows-vertrouwensopslag op mobile01. Zonder dit certificaat verschijnt elke HTTPS-site als een niet-vertrouwde site in de browser.
+De SSL Bump CA voor dit project is `SASE-PoC-CA`, een zelfondertekende root CA geïnstalleerd in de Windows-trust store op mobile01. Zonder dit certificaat verschijnt elke HTTPS-site als een niet-vertrouwde site in de browser.
 
 **TLS-stroom met SSL Bump:**
 
@@ -44,7 +44,7 @@ echo 'http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem \
 
 **ssl-bump op pre-auth-listener** — de kritieke bevinding gedocumenteerd in [Bevinding: pre-auth ssl-bump parameters](../findings/pre-auth-ssl-bump-params.md): als het pre-auth include alleen `http_port 100.70.154.79:3128` heeft (geen ssl-bump-parameters), tunnelt HTTPS-verkeer van NetBird-clients als CONNECT zonder inspectie. De volledige ssl-bump-directive moet in de pre-auth conf staan.
 
-**`--ssl-no-revoke` voor Windows curl.exe-tests** — curl.exe op Windows gebruikt de schannel TLS-stack die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen revocatie-eindpunt, dus dit mislukt. Voeg `--ssl-no-revoke` toe aan alle Windows CLI-testopdrachten die via de proxy gaan.
+**`--ssl-no-revoke` voor Windows curl.exe-tests** — curl.exe op Windows gebruikt de schannel TLS-stack die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen revocation endpoint, dus dit mislukt. Voeg `--ssl-no-revoke` toe aan alle Windows CLI-testopdrachten die via de proxy gaan.
 
 **SSL Bump is niet van toepassing op no-bump-sites** — verkeer naar `login.microsoftonline.com` passeert als een CONNECT-tunnel zonder decodering, precies zoals het zou zijn zonder SSL Bump geconfigureerd.
 

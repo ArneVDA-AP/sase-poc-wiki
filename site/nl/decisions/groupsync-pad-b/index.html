@@ -3572,9 +3572,9 @@
 
 <h1 id="beslissing-groupsync-pad-b-zitadel-verwijdert-entra-id-prefix">Beslissing: GroupSync Pad B — Zitadel verwijdert Entra ID-prefix<a class="headerlink" href="#beslissing-groupsync-pad-b-zitadel-verwijdert-entra-id-prefix" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Geïmplementeerd<br />
-<strong>Datum:</strong> Mei 2026 (Verslag30)</p>
+<strong>Datum:</strong> Mei 2026 (Verslag30–34; Pad B bevestigd voor alle drie persona's in Verslag34)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>Entra ID-groepsnamen dragen een verplicht <code>2ITcsc1A-</code>-prefix opgelegd door een lector-mandaat (de tenant wordt gedeeld over meerdere studentenprojecten). Zo verschijnt de groep voor studenten als <code>2ITcsc1A-Studenten</code> in Entra ID. Dit prefix moet ergens in de synchronisatiepipeline worden afgehandeld, omdat NetBird-toegangspolicies en Squid ACL's werken op groepsnamen — policies die verwijzen naar <code>2ITcsc1A-Studenten</code> in plaats van <code>Studenten</code> zijn moeilijker leesbaar, moeilijker te onderhouden, en propageren het prefix door elk downstream-component (Identity Bridge, NATS-subjects, Squid external ACL-responses).</p>
+<p>Entra ID-groepsnamen dragen een verplicht <code>2ITCSC1A-</code>-prefix opgelegd door een lector-mandaat (de tenant wordt gedeeld over meerdere studentenprojecten). Zo verschijnt de groep voor studenten als <code>2ITCSC1A-Studenten</code> in Entra ID. Dit prefix moet ergens in de synchronisatiepipeline worden afgehandeld, omdat NetBird-toegangspolicies en Squid ACL's werken op groepsnamen — policies die verwijzen naar <code>2ITCSC1A-Studenten</code> in plaats van <code>Studenten</code> zijn moeilijker leesbaar, moeilijker te onderhouden, en propageren het prefix door elk downstream-component (Identity Bridge, NATS-subjects, Squid external ACL-responses).</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3588,25 +3588,24 @@
 <tr>
 <td><strong>Pad A: Prefix overal meenemen</strong></td>
 <td>Geen transformatielogica nodig; namen zijn 1:1 met Entra ID</td>
-<td>Elke policy, ACL en elk NATS-subject moet de volledige prefixed naam gebruiken (<code>2ITcsc1A-Studenten</code>). Vermindert leesbaarheid. Prefix lekt door naar Identity Bridge-mapping, NATS-subjecthiërarchie en Squid ACL-output</td>
+<td>Elke policy, ACL en elk NATS-subject moet de volledige prefixed naam gebruiken (<code>2ITCSC1A-Studenten</code>). Vermindert leesbaarheid. Prefix lekt door naar Identity Bridge-mapping, NATS-subjecthiërarchie en Squid ACL-output</td>
 </tr>
 <tr>
 <td><strong>Pad B: Zitadel verwijdert prefix</strong></td>
 <td>Schone interne namen (<code>Studenten</code>). Policies en ACL's zijn leesbaar. Geen prefix-propagatie door de stack</td>
-<td>Vereist een Zitadel Action om Entra ID GUID naar schone naam te mappen. Mismatch tussen Zitadel-output en NetBird JWT-sync kan lockout veroorzaken</td>
+<td>Vereist dat de bestaande Zitadel Action de groeps-displaynaam-string via een allowlist naar de schone naam mapt. Harde voorwaarde: <code>cloud_displayname</code> moet werken, zodat de JWT-claim de naam <code>2ITCSC1A-Studenten</code> draagt in plaats van een ObjectID-GUID (een GUID staat niet in de allowlist en kan niet naar <code>Studenten</code> gemapt worden). Een mismatch tussen de gemapte naam en wat NetBird/Squid verwachten veroorzaakt een lockout</td>
 </tr>
 </tbody>
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
-<p>Pad B — een Zitadel Action mapt de Entra ID-groeps-GUID naar een schone interne naam, waarbij het <code>2ITcsc1A-</code>-prefix wordt verwijderd. Het prefix bestaat alleen in Entra ID; alle downstream-componenten (Zitadel-claims, NetBird JWT auto-groups, Identity Bridge, NATS-subjects, Squid ACL's) gebruiken de schone naam.</p>
-<p>De primaire reden is leesbaarheid van policies: wanneer een NetBird ACL of Squid-regel verwijst naar <code>Studenten</code>, is het onmiddellijk duidelijk welke groep wordt beheerd. Bij <code>2ITcsc1A-Studenten</code> moet elke lezer het prefix mentaal verwijderen om de beleidsintentie te begrijpen.</p>
+<p>Pad B — de Zitadel Action die al in de OIDC-keten zit mapt de groeps-displaynaam-string naar de schone interne naam (<code>2ITCSC1A-Studenten</code> → <code>Studenten</code>) via een hardgecodeerde <strong>allowlist</strong>, en laat elke groep die niet in de allowlist staat vallen (fail-closed). Het netto-effect is dat het <code>2ITCSC1A-</code>-prefix NetBird nooit bereikt. Dit hangt ervan af dat <code>cloud_displayname</code> is ingeschakeld in het Entra-app-manifest, zodat de <code>groups</code>-claim de displaynaam uitstuurt in plaats van de GUID; die voorwaarde is geverifieerd, en Pad B is bevestigd werkend voor alle drie persona's (Studenten en Admins per Verslag31, Docenten per Verslag34). Het prefix bestaat alleen in Entra ID; alle downstream-componenten (Zitadel-claims, NetBird JWT auto-groups, Identity Bridge, NATS-subjects, Squid ACL's) gebruiken de schone naam.</p>
+<p>De primaire reden is leesbaarheid van policies: wanneer een NetBird ACL of Squid-regel verwijst naar <code>Studenten</code>, is het onmiddellijk duidelijk welke groep wordt beheerd. Bij <code>2ITCSC1A-Studenten</code> moet elke lezer het prefix mentaal verwijderen om de beleidsintentie te begrijpen. Pad B laat ook Addendum J's <code>NETBIRD_POLICY_GROUPS</code>-config (<code>Studenten,Docenten,Admins</code>) al kloppend en hergebruikt een bestaand transformatiepunt in plaats van er een toe te voegen.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>De Zitadel Action moet een allowlist-mapping onderhouden van Entra ID-groeps-GUID's naar schone namen. Het toevoegen van een nieuwe groep in Entra ID vereist het bijwerken van deze mapping.</li>
-<li>Een mismatch tussen de outputgroepsnaam van Zitadel en wat NetBird verwacht in JWT-claims resulteert erin dat peers niet aan de juiste auto-groups worden toegewezen — feitelijk een lockout-scenario.</li>
-<li>Identity Bridge hoeft geen prefix-stripping uit te voeren; het ontvangt reeds schone namen uit het door Zitadel uitgegeven JWT.</li>
-<li>NATS-subjects gebruiken schone groepsnamen (bijv. <code>groupsync.Studenten</code>), wat de subjecthiërarchie leesbaar houdt.</li>
-<li>Als het lector-mandaat de prefixconventie wijzigt, hoeft alleen de Zitadel Action-mapping te worden bijgewerkt — geen downstream-wijzigingen nodig.</li>
+<li>De correctheid van Pad B hangt af van <code>cloud_displayname</code>: als dit ooit stopt met het uitsturen van displaynamen (bijv. omdat de groepen als on-prem-gesynchroniseerd worden behandeld), valt de claim terug op GUID's en matcht de allowlist (gekeyd op de naamstring) niets — elke groep wordt fail-closed weggelaten, en de fragiele fallback zou GUID-matching in ACL's of een GUID→naam-lookup zijn. Dit wordt geverifieerd in de GroupSync <code>cloud_displayname</code>-stap vóór men op Pad B vertrouwt.</li>
+<li>De schone interne naam moet <strong>byte-voor-byte</strong> overeenkomen over de Identity Bridge external ACL, Addendum J's <code>NETBIRD_POLICY_GROUPS</code> en elke NetBird ACL-policy. Een mismatch (hoofdletters, spaties) blokkeert alle betrokken peers met 401 op elke API-request — inclusief de admin — en herstel vereist directe SQLite-interventie op mgmt01 (GitHub #5399).</li>
+<li>Identity Bridge hoeft geen prefix-stripping uit te voeren; het ziet de reeds schone groepsnaam (<code>Studenten</code>) op de peer wanneer het de NetBird-API pollt.</li>
+<li>Als het lector-mandaat de prefixconventie wijzigt, hoeft alleen de strip-logica van de Zitadel Action te worden bijgewerkt — geen downstream-wijzigingen nodig.</li>
 </ul>
 <p>Zie ook: <a href="../../components/zitadel/">Component: Zitadel</a>, <a href="../../components/identity-bridge/">Component: Identity Bridge</a>, <a href="../../components/netbird/">Component: NetBird</a>, <a href="../../concepts/identity-flow/">Concept: Identity Flow</a></p>
 

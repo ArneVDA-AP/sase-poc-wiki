@@ -39,6 +39,18 @@ The dual-write architecture ensures neither path depends on the other. A Wazuh o
 | `identity.peer.disconnected` | Identity Bridge (mgmt01) | Control Daemon |
 | `identity.multi_persona` | Identity Bridge (mgmt01) | Control Daemon (zero-trust anomaly; SIEM rule planned) |
 
+## JetStream streams
+
+Five streams were created (V32, confirmed operational):
+
+| Stream | Subjects | Storage | Max Age | Max Size |
+|--------|----------|---------|---------|----------|
+| SECURITY_ALERTS | `security.alert.*` | file | 168h (7d) | 1 GiB |
+| THREAT_IOC | `threat.ioc.new` | file | 2160h (90d) | 512 MiB |
+| POLICY_UPDATE | `policy.update` | file | 720h (30d) | 256 MiB |
+| SESSION_CONTEXT | `session.context.>` | memory | 24h | 128 MiB |
+| IDENTITY_EVENTS | `identity.>` | file | 168h (7d) | 256 MiB |
+
 ## Integration points
 
 | Interface | Direction | Details |

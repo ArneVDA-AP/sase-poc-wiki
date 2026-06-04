@@ -40,7 +40,7 @@ rpz:
     rpz-log-name: "ioc2rpz-threat-intel"
 ```
 
-Opmerking: `zonefile` verwijst nog steeds naar `/var/unbound/` — dit is correct. Het zonebestandpad is waar Unbound de overgedragen zone opslaat, die het regenereert via zonetransfer. Alleen persistente *configuratie*bestanden moeten in `/usr/local/etc/unbound.opnsense.d/` staan.
+Opmerking: `zonefile` verwijst nog steeds naar `/var/unbound/` — dit is correct. Het zonebestandpad is waar Unbound de overgedragen zone opslaat, die het regenereert via zone transfer. Alleen persistente *configuratie*bestanden moeten in `/usr/local/etc/unbound.opnsense.d/` staan.
 
 ## Lessen
 

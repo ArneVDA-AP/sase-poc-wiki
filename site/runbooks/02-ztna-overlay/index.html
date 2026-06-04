@@ -3896,8 +3896,8 @@
 <li>[ ] Lab environment fully operational (Runbook 01)</li>
 <li>[ ] Entra ID tenant (<code>aplab.be</code>) accessible</li>
 <li>[ ] A5 Educational license active</li>
-<li>[ ] App registration created in Entra ID:</li>
-<li>Client ID: <code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code></li>
+<li>[ ] App registration created in Entra ID (<code>2ITCSC1A-Netbird-Sandbox</code>):</li>
+<li>Client ID: <code>11803ee8-eb15-462c-a286-5415c17a29c6</code></li>
 <li>Tenant ID: <code>23e9bcdc-5cb9-4867-9310-76cc0b462ddc</code></li>
 <li>[ ] mgmt01 has Docker installed and running</li>
 </ul>
@@ -3905,9 +3905,12 @@
 <h2 id="step-1-entra-id-app-registration">Step 1: Entra ID App Registration<a class="headerlink" href="#step-1-entra-id-app-registration" title="Permanent link">&para;</a></h2>
 <p>Create the app registration in Entra ID before deploying NetBird:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Entra ID → App Registrations → New Registration
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  Name: NetBird SASE PoC
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  Name: 2ITCSC1A-Netbird-Sandbox
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  Supported account types: Accounts in this organizational directory only
 </code></pre></div>
+<blockquote>
+<p><strong>App-registration switch (V30).</strong> An earlier iteration reused a shared registration (<code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code>) across the sandbox and the team project, creating hidden coupling. The sandbox now uses its own <code>2ITCSC1A-Netbird-Sandbox</code> registration (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>) — the current value used throughout this runbook.</p>
+</blockquote>
 <p>Note the Client ID and Tenant ID. The redirect URI will be added later (after NetBird deployment, Step 8).</p>
 <hr />
 <h2 id="step-2-hosts-entry-on-mgmt01">Step 2: Hosts entry on mgmt01<a class="headerlink" href="#step-2-hosts-entry-on-mgmt01" title="Permanent link">&para;</a></h2>
@@ -4015,7 +4018,7 @@ See <a href="../../findings/docker-volume-recreation/">Finding: Docker volume re
 <p>Navigate to the Zitadel console:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>https://netbird.sandbox.local/zitadel/ui/console
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>→ Settings → Identity Providers → Add → Microsoft Azure AD
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>→ Client ID: cebe0d74-be9f-49ac-9f35-65f11586c1bb
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>→ Client ID: 11803ee8-eb15-462c-a286-5415c17a29c6
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>→ Client Secret: &lt;from Entra ID app registration&gt;
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>→ Tenant ID: 23e9bcdc-5cb9-4867-9310-76cc0b462ddc
 </code></pre></div>
@@ -4035,6 +4038,9 @@ See <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 <p>Recovery: if <code>config.json</code> is 0 bytes, restore from backup and restart NetBird.</p>
 <hr />
 <h2 id="step-10-create-groups-in-netbird-dashboard">Step 10: Create groups in NetBird Dashboard<a class="headerlink" href="#step-10-create-groups-in-netbird-dashboard" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>⚠️ Superseded by the V34 persona migration (May 2026).</strong> Steps 10–13 below document the <em>original</em> Fase-2 build using <code>SASE-*</code> groups and three ACL policies. That model was replaced: a diagnosis found all connectivity hung on the <code>SASE-*</code> groups while the identity-synced persona groups (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) carried no policies, so group-based quarantine was a no-op. The current state is a <code>Core-Services</code> group (pop01, mgmt01) plus one <code>Personas-to-Core-Services</code> ACL policy (persona groups → <code>Core-Services</code>, <strong>TCP 3128 only</strong>), and the <code>Internal-DC</code> Network + <code>Datacenter-Access</code> policy were removed (DC-LAN-over-overlay deferred to the planned Cosmos session). <strong>For the current build, follow the group/policy model in <a href="../../components/netbird/">Component: NetBird</a>; persona groups are created by identity sync, not by hand (<a href="../08-groupsync/">Runbook 08: GroupSync</a>).</strong> The steps below are retained as historical/evolution reference.</p>
+</blockquote>
 <p>NetBird Dashboard → Peers → create groups:</p>
 <table>
 <thead>
@@ -4102,7 +4108,7 @@ See <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 <a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>Description:  Internet exit node
 <a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>Groups:       SASE-MobileUsers
 </code></pre></div>
-<p>This routes all non-overlay traffic from BYOD clients through pop01 — required for Squid to inspect the traffic.</p>
+<p>This routes all non-overlay traffic from overlay clients through pop01 — required for Squid to inspect the traffic.</p>
 <hr />
 <h2 id="step-13-configure-dc-lan-via-networks">Step 13: Configure DC-LAN via Networks<a class="headerlink" href="#step-13-configure-dc-lan-via-networks" title="Permanent link">&para;</a></h2>
 <p>NetBird Dashboard → Networks → Create Network:</p>
@@ -4137,13 +4143,16 @@ See <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primar
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">netbird</span> <span class="n">status</span>
 <a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="c"># Expected: Connected, X/Y peers, routes active</span>
 <a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
-<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="c"># Datacenter reachable</span>
-<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="nb">Test-NetConnection</span> <span class="n">10</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">100</span> <span class="n">-Port</span> <span class="n">80</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="c"># Proxy reachable (current-state path: persona → Core-Services, TCP 3128)</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="nb">Test-NetConnection</span> <span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span> <span class="n">-Port</span> <span class="n">3128</span>
 <a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="c"># Expected: TcpTestSucceeded: True</span>
 <a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a>
 <a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="c"># Internet via exit node</span>
 <a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="nb">Test-NetConnection</span> <span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span>
 <a id="__codelineno-22-11" name="__codelineno-22-11" href="#__codelineno-22-11"></a><span class="c"># Expected: PingSucceeded: True</span>
+<a id="__codelineno-22-12" name="__codelineno-22-12" href="#__codelineno-22-12"></a>
+<a id="__codelineno-22-13" name="__codelineno-22-13" href="#__codelineno-22-13"></a><span class="c"># (DC-LAN reachability — Test-NetConnection 10.0.0.100 -Port 80 — applies only</span>
+<a id="__codelineno-22-14" name="__codelineno-22-14" href="#__codelineno-22-14"></a><span class="c">#  to the superseded Step 13 build; DC-LAN-over-overlay is deferred, see Step 10 note.)</span>
 </code></pre></div>
 <hr />
 <h2 id="final-verification">Final verification<a class="headerlink" href="#final-verification" title="Permanent link">&para;</a></h2>
@@ -4154,10 +4163,13 @@ See <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primar
 <li>[ ] NetBird Dashboard accessible, peers visible (green = online)</li>
 <li>[ ] <code>netbird status</code> on mobile01 shows "Connected"</li>
 <li>[ ] Ping between overlay IPs: <code>100.70.154.79</code>, <code>100.70.135.241</code>, <code>100.70.95.98</code></li>
-<li>[ ] DC-LAN reachable from mobile01 (<code>10.0.0.100</code>)</li>
+<li>[ ] pop01 proxy reachable from mobile01 (<code>100.70.154.79:3128</code>)</li>
 <li>[ ] Internet reachable from mobile01 via exit node</li>
 <li>[ ] <code>config.json</code> backup created on pop01</li>
 </ul>
+<blockquote>
+<p>DC-LAN reachability (<code>10.0.0.100</code>) is <strong>not</strong> part of current-state validation — the <code>Internal-DC</code> Network was removed in the V34 migration (see Step 10 note).</p>
+</blockquote>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>

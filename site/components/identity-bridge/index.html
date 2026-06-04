@@ -3606,13 +3606,13 @@
 <h2 id="how-it-works-in-this-stack">How it works in this stack<a class="headerlink" href="#how-it-works-in-this-stack" title="Permanent link">&para;</a></h2>
 <p>The Identity Bridge closes the gap between the ZTNA transport layer (NetBird) and the SWG inspection layer (Squid). Without it, Squid sees only overlay IP addresses — it cannot determine which user or persona group is making a request.</p>
 <p>The bridge polls the NetBird Management API (<code>/api/peers</code> + <code>/api/users</code>) every 30 seconds via a service-user PAT with admin role. It builds an in-memory cache mapping overlay IPs to persona groups. Squid queries this cache via <code>external_acl_type</code> for every HTTP request, using the client's overlay IP (<code>%SRC</code>) as the lookup key.</p>
-<p>The response flow: Squid sends <code>&lt;IP&gt; &lt;group&gt;</code> → helper queries <code>GET /member?ip=&lt;overlay_ip&gt;</code> → Identity Bridge returns <code>OK user=&lt;email&gt;</code> or <code>ERR</code> → Squid's persona-ACL fires or falls through.</p>
+<p>The response flow: Squid sends <code>&lt;IP&gt; &lt;group&gt;</code> → helper queries <code>GET /lookup?ip=&lt;overlay_ip&gt;</code> (with the <code>X-Bridge-Secret</code> header) → Identity Bridge returns the peer's full group membership → the helper answers <code>OK user=&lt;email&gt;</code> if the requested group matches, else <code>ERR</code> → Squid's persona-ACL fires or falls through. The bridge itself does not select a persona; persona resolution happens in Squid's <code>http_access</code> order (V31).</p>
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Service user:</strong> <code>identity-bridge</code> with admin role — regular user PATs trigger issue #3127 (stripped JWT-propagated auto-groups from all peers at every poll)</li>
-<li><strong>Cache TTL:</strong> 30s (Squid <code>external_acl_type ttl=30 negative_ttl=10 children-max=5</code>)</li>
-<li><strong>Endpoint:</strong> <code>GET /member?ip=&lt;overlay_ip&gt;</code> — returns persona group or ERR</li>
-<li><strong>Health:</strong> <code>GET /health</code></li>
+<li><strong>Cache TTL:</strong> 30s (Squid <code>external_acl_type ttl=30 negative_ttl=10 concurrency=0</code>)</li>
+<li><strong>Endpoint:</strong> <code>GET /lookup?ip=&lt;overlay_ip&gt;</code> — requires the <code>X-Bridge-Secret</code> header (env <code>LOOKUP_SECRET</code>; fail-secure: an empty secret rejects every request). Returns the peer's full group membership (<code>status</code>/<code>user</code>/<code>groups</code>/<code>os</code>) or ERR</li>
+<li><strong>Health:</strong> <code>GET /health</code> — open, no auth, leaks no identity</li>
 <li><strong>Only connected peers</strong> are cached — disconnected peers fail open to GUI-generated rules</li>
 <li><strong>Fail-open design:</strong> When unreachable, no identity-based ACLs match, traffic falls through to non-identity URL filtering. All other security layers remain active.</li>
 </ul>
@@ -3630,8 +3630,8 @@
 <tr>
 <td>NetBird Management API</td>
 <td>Outbound (poll)</td>
-<td>HTTPS (overlay 100.x.x.x)</td>
-<td><code>/api/peers</code> + <code>/api/users</code>, PAT auth</td>
+<td>HTTP (NetBird Docker network)</td>
+<td><code>/api/peers</code> + <code>/api/users</code> via <code>management:80</code>, service-PAT auth</td>
 </tr>
 <tr>
 <td>Squid external_acl</td>
@@ -3643,7 +3643,7 @@
 <td>NATS JetStream</td>
 <td>Outbound (publish)</td>
 <td>NATS (sase-internal Docker network)</td>
-<td><code>identity.login</code>, <code>identity.group_change</code> subjects</td>
+<td><code>identity.peer.connected</code>, <code>identity.peer.disconnected</code>, <code>identity.multi_persona</code> subjects</td>
 </tr>
 </tbody>
 </table>

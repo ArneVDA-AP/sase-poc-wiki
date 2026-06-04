@@ -25,7 +25,7 @@ tags: [runbook, suricata, ids, hyperscan]
 
 > **Valkuil: Dit moet vóór alles anders gebeuren.** Bij 4 GB (of zelfs 6 GB) crashen ClamAV en Suricata stilzwijgend via FreeBSD's OOM-killer — er worden geen logboekregels geschreven. ClamAV gebruikt ~1,2 GB, Suricata ~760 MB na Hyperscan-compilatie (piekt op ~4 GB tijdens compilatie), Squid ~400 MB. Samen overschrijden ze 6 GB.
 
-Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (`shutdown -h now`), verander het RAM in GNS3-knooppuntinstellingen, herstart.
+Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (`shutdown -h now`), verander het RAM in GNS3 node-instellingen, herstart.
 
 **Verificatie na opstarten:**
 
@@ -110,7 +110,7 @@ OPNsense hergenerert `/var/unbound/suricata.yaml` bij elke GUI Apply. Gebruik in
 vi /usr/local/opnsense/service/templates/OPNsense/IDS/custom.yaml
 ```
 
-> **Valkuil: `interface: default` resolveert naar vtnet0 ALLEEN.** Dit was de oorzaak van een volledige probleemoplossingsessie — vtnet1 had een BPF-apparaat open maar Suricata stuurde er nooit pakketten naartoe. Resultaat: 0 gebeurtenissen van vtnet1 ondanks bevestigde BPF-opname. Elke interface heeft een expliciete declaratie nodig.
+> **Valkuil: `interface: default` resolveert naar vtnet0 ALLEEN.** Dit was de oorzaak van een volledige probleemoplossingsessie — vtnet1 had een BPF-apparaat open maar Suricata stuurde er nooit pakketten naartoe. Resultaat: 0 events van vtnet1 ondanks bevestigde BPF-opname. Elke interface heeft een expliciete declaratie nodig.
 > Zie [Finding: Suricata interface default-fout](../findings/suricata-interface-default-bug.nl.md).
 
 Gebruik deze exacte inhoud — de definitieve werkende versie na de vtnet1-fix:
@@ -187,7 +187,7 @@ Voer deze vier tests uit om vier verschillende detectiecategorieën te bewijzen:
 | 3 | Verdachte User-Agent | `curl.exe -x http://100.70.154.79:3128 -A "BlackSun" http://example.com` | 2008983 | vtnet0 (WAN) |
 | 4 | LAN-verkeer | `apt update` op dc01 | 2013504 | vtnet1 (LAN) |
 
-Controleer of vtnet1-gebeurtenissen bestaan:
+Controleer of vtnet1-events bestaan:
 
 ```bash
 grep '"in_iface":"vtnet1"' /var/log/suricata/eve.json | wc -l
@@ -196,7 +196,7 @@ grep '"in_iface":"vtnet1"' /var/log/suricata/eve.json | wc -l
 
 Controleer OPNsense WebUI → Services → Intrusion Detection → Alerts: zowel WAN- als LAN-meldingen moeten zichtbaar zijn.
 
-**Opmerking over herhaalde tests:** Meerdere curl-verzoeken naar hetzelfde domein kunnen slechts één melding opleveren. Dit is geen drempelwaardefout — Squid hergebruikt upstream TCP-verbindingen (connection pooling), dus Suricata ziet één flow en genereert correct één melding per SID per flow.
+**Opmerking over herhaalde tests:** Meerdere curl-verzoeken naar hetzelfde domein kunnen slechts één melding opleveren. Dit is geen threshold-fout — Squid hergebruikt upstream TCP-verbindingen (connection pooling), dus Suricata ziet één flow en genereert correct één melding per SID per flow.
 
 ---
 

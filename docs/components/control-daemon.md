@@ -21,7 +21,7 @@ The control daemon is the real-time enforcement engine. It subscribes to `securi
 
 ## Configuration
 
-- **Scoring weights:** `proxy_block` removed from scoring (ambient OS noise caused false positives — Windows NCSI/telemetry). IDS events are log-only (C2 beacon response belongs with Zeek/RITA, not bespoke correlation).
+- **Scoring weights:** `malware=80` (single-event — crosses threshold 80 alone), `dlp_match=30` (accruing). `proxy_block` removed from scoring (ambient OS noise caused false positives — Windows NCSI/telemetry). IDS events are log-only (C2 beacon response belongs with Zeek/RITA, not bespoke correlation). Validated in V35: docent1 triggered EICAR → score 80/80 → quarantined within seconds → restored.
 - **Quarantine mechanism:** Strip persona groups from peer → deny-by-default. NOT via a separate deny-group.
 - **Unquarantine:** Restores original groups from Redis backup. Fixed: NetBird returns `peers:null` for empty groups (not `[]`), which crashed unquarantine.
 - **Redis:** Threat score store + session state on `redis:7-alpine`, port 6379 localhost only.

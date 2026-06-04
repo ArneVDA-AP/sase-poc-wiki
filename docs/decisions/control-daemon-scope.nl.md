@@ -27,7 +27,7 @@ De IDS-correlatiebranch is verwijderd uit de Control Daemon. IDS-events van Suri
 
 De malware-branch dekt dezelfde real-time quarantainemogelijkheid met native attributie: wanneer ClamAV malware detecteert in de ICAP-pipeline, resolvet de daemon het overlay IP naar een NetBird-peeridentiteit en voert quarantaine uit. C2 beacon-respons wordt uitgesteld naar Zeek/RITA, dat gedragsanalyse over tijd uitvoert in plaats van single-event correlatie.
 
-Daarnaast zijn `proxy_block`-events verwijderd uit het scoringsmodel. Omgevingsruis van het besturingssysteem (Windows-telemetrie, updatecontroles, certificaatintrekkingsopzoekingen) veroorzaakte frequente proxy-blocks die threat scores opbliezen zonder werkelijke dreigingen aan te duiden, wat leidde tot vals-positieve quarantainetriggers.
+Daarnaast zijn `proxy_block`-events verwijderd uit het scoringsmodel. Omgevingsruis van het besturingssysteem (Windows-telemetrie, updatecontroles, certificate revocation lookups) veroorzaakte frequente proxy-blocks die threat scores opbliezen zonder werkelijke dreigingen aan te duiden, wat leidde tot vals-positieve quarantainetriggers.
 
 ## Gevolgen
 

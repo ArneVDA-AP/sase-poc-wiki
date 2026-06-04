@@ -3718,7 +3718,7 @@
 - <strong>IBAN</strong> — mod-97-controlesomvalidatie
 - <strong>BSN</strong> (Nederlands burgerservicenummer) — 11-proefvalidatie
 - <strong>AWS-toegangssleutels</strong> — regexpatroon <code>AKIA[A-Z0-9]{16}</code></p>
-<p>Als een overeenkomst boven de drempelwaarde wordt gevonden, retourneert de server een ICAP-blokkeerrespons. Squid toont een opgemaakte DLP-blokpagina aan de client (onderscheiden van de generieke Squid 403-pagina).</p>
+<p>Als een overeenkomst boven de threshold wordt gevonden, retourneert de server een ICAP-blokkeerrespons. Squid toont een opgemaakte DLP-blokpagina aan de client (onderscheiden van de generieke Squid 403-pagina).</p>
 <p><strong>Waarom een aparte server voor upload-DLP:</strong> De <code>virus_scan</code> c-icap-service van ClamAV parseert <code>multipart/form-data</code> of URL-gecodeerde POST-bodies niet correct. De c-icap-ontwikkelaar bevestigde deze beperking. POST-gegevens worden als onbewerkte bytes doorgegeven, waardoor DLP-patroonherkenning voor geüploade inhoud onbetrouwbaar is. Zie <a href="../../decisions/two-layer-dlp/">Beslissing: Twee-laags DLP</a>.</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
@@ -3788,13 +3788,19 @@
 <p><strong>Netwerkpad:</strong> pop01 → mgmt01 via <code>192.168.122.0/24</code> (WAN/beheersegment). Dit pad bestaat onafhankelijk van de NetBird-overlay. De DLP-server functioneert ook wanneer de NetBird-tunnel niet actief is.</p>
 <hr />
 <h2 id="nats-integratie">NATS-integratie<a class="headerlink" href="#nats-integratie" title="Permanent link">&para;</a></h2>
-<p>De Python DLP ICAP-server publiceert upload-inspectiegebeurtenissen naar <code>security.alert.dlp</code> op de NATS event bus. Wanneer een DLP-patroonovereenkomst wordt gevonden (Luhn-creditcard, IBAN mod-97, BSN 11-proef, AWS-sleutel), bevat het event: patroontype, aantal overeenkomsten, bron-IP, bestemmings-URL en HTTP-methode. DLP-events dragen bij aan de per-peer threat score. Aangezien de Python DLP-server al op mgmt01 draait (dezelfde host als NATS), publiceert deze rechtstreeks zonder cross-host-connectiviteit.</p>
+<p>De Python DLP ICAP-server publiceert upload-inspection-events naar <code>security.alert.dlp</code> op de NATS event bus. Wanneer een DLP-patroonovereenkomst wordt gevonden (Luhn-creditcard, IBAN mod-97, BSN 11-proef, AWS-sleutel), bevat het event: patroontype, aantal overeenkomsten, bron-IP, bestemmings-URL en HTTP-methode. DLP-events dragen bij aan de per-peer threat score. Aangezien de Python DLP-server al op mgmt01 draait (dezelfde host als NATS), publiceert deze rechtstreeks zonder cross-host-connectiviteit.</p>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
 <p><strong>pyicap Python 3.10+-incompatibiliteit</strong> — zie <a href="../../findings/pyicap-collections-bug/">Bevinding: pyicap collections-bug</a>. De Dockerfile patcht dit automatisch.</p>
 <p><strong>Client-IP verschijnt als "unknown" in DLP-logs</strong> — de server leest <code>X-Client-IP</code> uit <code>self.enc_req_headers</code> (ingekapselde headers), maar Squid stuurt het client-IP als een ICAP-niveauheader toegankelijk via <code>self.headers</code>. Dit is een cosmetisch probleem; blokkering werkt correct.</p>
 <p><strong>Containerlogs in Docker stdout</strong> — voor Wazuh SIEM-integratie, voeg een Docker-logging-driver toe (syslog gericht op Wazuh) of configureer de Wazuh-agent op mgmt01 om containerlogs te bewaken. Dit is een geplande taak voor Fase 4.</p>
-<p><strong>Algoritmische validators hebben drempelwaarden</strong> — één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas drempelwaarden aan in <code>dlp_server.py</code> op basis van de gebruikssituatie.</p>
+<p><strong>Algoritmische validators hebben thresholdn</strong> — één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas thresholdn aan in <code>dlp_server.py</code> op basis van de gebruikssituatie.</p>
+<p><strong>Code review — 10 problemen geïdentificeerd, 3 kritieke fixes toegepast:</strong>
+- <strong>OOM-risico:</strong> De oorspronkelijke code had geen body-groottelimiet — een grote upload kon het containergeheugen uitputten. Fix: uploads &gt; 10 MB worden doorgelaten (fail-open) zonder scanning.
+- <strong>Log-injectie:</strong> De <code>X-Client-IP</code>-headerwaarde werd zonder sanering rechtstreeks naar de loguitvoer geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
+- <strong>Geen uitzonderingsafhandeling:</strong> Uitzonderingen in <code>dlpscan_REQMOD</code> zouden de handler laten crashen zonder respons naar Squid. Fix: scanuitzonderingen resulteren in fail-open (aanvraag passeert).
+- <strong>PyPDF2 → pypdf:</strong> PyPDF2 is end-of-life (niet langer onderhouden). Vervangen door <code>pypdf</code>, de actieve fork.</p>
+<p><strong>Docker-daemon-autostart vereist</strong> — <code>restart: unless-stopped</code> in <code>docker-compose.yml</code> herstart de container alleen als de Docker-daemon draait. Bij een herstart van mgmt01 moet de Docker-daemon ook ingeschakeld zijn voor autostart (<code>systemctl enable docker</code>). Zonder dit start de DLP-container niet na een herstart.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3807,6 +3813,7 @@
 <li><a href="../../findings/pyicap-collections-bug/">Bevinding: pyicap collections-bug</a></li>
 <li><a href="../nats-jetstream/">NATS JetStream</a></li>
 <li><a href="../control-daemon/">Control Daemon</a></li>
+<li><a href="../../runbooks/04-malware-dlp/">Runbook: Malware &amp; DLP-pipeline</a></li>
 </ul>
 
 

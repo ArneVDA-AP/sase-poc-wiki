@@ -3587,7 +3587,7 @@
 
 <h1 id="beslissing-bind-als-tsig-tussenstap">Beslissing: BIND als TSIG-tussenstap<a class="headerlink" href="#beslissing-bind-als-tsig-tussenstap" title="Permanent link">&para;</a></h1>
 <p><strong>Status:</strong> Geïmplementeerd<br />
-<strong>Datum:</strong> April 2026 (Verslag25)</p>
+<strong>Datum:</strong> Maart 2026 (Verslag25)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>ioc2rpz authenticeert zone-transfers met TSIG (Transaction Signature, hmac-sha256). Unbound 1.24.2 ondersteunt het laden van RPZ-zones via zone-transfer (<code>rpz: primary:</code>-directive), maar ondersteunt geen TSIG-authenticatie voor die transfers. Dit is een gedocumenteerde ontbrekende functie in NLnetLabs/unbound GitHub issue #336, open sinds oktober 2020.</p>
 <p>Zonder TSIG-ondersteuning in Unbound kan de zone-transfer van ioc2rpz niet worden geauthenticeerd.</p>

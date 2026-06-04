@@ -3520,7 +3520,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="overview/architecture/">Architectuur</a></td>
-<td>Volledig systeem: nodes, netwerksegmenten, verkeersstromen, inspectiepipeline, vertrouwensgrenzen</td>
+<td>Volledig systeem: nodes, netwerksegmenten, verkeersstromen, inspectiepipeline, trust boundaries</td>
 </tr>
 <tr>
 <td><strong>Componenten</strong></td>
@@ -3660,7 +3660,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="decisions/sdwan-descoped/">SD-WAN geschrapt (F12, F13, F14)</a></td>
-<td>IPsec + QoS + uCPE verwijderd — site-to-site tunnels in strijd met Zero Trust; sitepc01 → NetBird-inschrijving</td>
+<td>Klassiek IPsec + uCPE verwijderd (site-to-site tunnels in strijd met Zero Trust); QoS + failover heringevoerd onder het ZT-Branch-model; sitepc01 → NetBird-inschrijving</td>
 </tr>
 <tr>
 <td><a href="decisions/netbird-service-pat/">NetBird Service PAT</a></td>
@@ -3672,7 +3672,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="decisions/groupsync-pad-b/">GroupSync Pad B</a></td>
-<td>Zitadel verwijdert <code>2ITcsc1A-</code>-prefix — schone persona-groepnamen</td>
+<td>Zitadel verwijdert <code>2ITCSC1A-</code>-prefix — schone persona-groepnamen</td>
 </tr>
 <tr>
 <td><a href="decisions/casb-three-layers/">CASB drie lagen</a></td>
@@ -3780,7 +3780,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="findings/wazuh-dashboard-airgate/">Wazuh dashboard airgate</a></td>
-<td>Dashboard hostnaam-resolutieprobleem bij opstarten</td>
+<td>Dashboard Offline door lege UUID na down -v — opgelost via in-place 4.14.5 GA bump</td>
 </tr>
 <tr>
 <td><a href="findings/netbird-jwt-allow-groups-lockout/">NetBird JWT allow-groups lockout</a></td>

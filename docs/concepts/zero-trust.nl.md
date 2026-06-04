@@ -26,7 +26,7 @@ Alle drie de gates zijn operationeel. Gates 1 en 2 zijn geactiveerd in V40 (CA-p
 - **[NetBird](../components/netbird.md)** — implementeert Zero Trust Network Access: per-peer identiteit via OIDC, cryptografische peer-sleutels, granulaire ACL-policies per resourcegroep. Een gebruiker met toegang tot dc01 kan mgmt01 niet bereiken zonder een apart beleid.
 - **[Entra ID CA / Drie-gate model](../decisions/ca-posture-hybrid.md)** — Gate 1 (identiteitsverificatie) en Gate 2 (apparaatposture) handhaven Zero Trust-principes voordat een tunnel tot stand wordt gebracht.
 - **[Squid](../components/squid.md)** + **[ClamAV](../components/clamav-cicap.md)** + **[Python DLP](../components/python-dlp.md)** — Gate 3: assume-breach-principe, inspecteert al het verkeer ongeacht wie gates 1 en 2 heeft gepasseerd.
-- **[Suricata](../components/suricata.md)** — detectie van laterale beweging op vtnet1 (LAN), het "assume breach"-principe belichamend zelfs voor intern verkeer.
+- **[Suricata](../components/suricata.md)** — detectie van lateral movement op vtnet1 (LAN), het "assume breach"-principe belichamend zelfs voor intern verkeer.
 - **[ioc2rpz/Unbound RPZ](../components/ioc2rpz.md)** — DNS-niveau handhaving: bekende kwaadaardige domeinen worden geblokkeerd voordat een TCP-verbinding wordt opgezet.
 
 ## Belangrijke onderscheidingen

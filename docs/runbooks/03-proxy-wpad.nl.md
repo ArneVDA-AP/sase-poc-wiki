@@ -91,7 +91,7 @@ sudo update-ca-certificates
 sudo netbird service restart
 ```
 
-> **Valkuil: Service-herstart is verplicht na CA-import.** Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded" — de daemon draait met de oude vertrouwensopslag.
+> **Valkuil: Service-herstart is verplicht na CA-import.** Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded" — de daemon draait met de oude trust store.
 
 **Verificatie:** `netbird status` toont Connected, overlay-IP `100.70.135.241`.
 
@@ -173,9 +173,9 @@ nslookup wpad.sandbox.local
 
 ## Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
 
-Onder het V34-personamodel (zie [Component: NetBird](../components/netbird.nl.md)) draagt één allow-beleid alle connectiviteit: **`Personas-to-Core-Services`** — bronnen `Studenten`/`Docenten`/`Admins` → bestemming `Core-Services` (pop01 + mgmt01), protocol TCP 3128. Dit laat elke BYOD-persona-peer de pop01 Squid-proxy bereiken.
+Onder het V34-personamodel (zie [Component: NetBird](../components/netbird.nl.md)) draagt één allow-beleid alle connectiviteit: **`Personas-to-Core-Services`** — sources `Studenten`/`Docenten`/`Admins` → destination `Core-Services` (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.
 
-> **Verouderd:** eerdere builds gebruikten aparte `Admin-Infrastructure`-, `Mobile-to-Services`- en `Datacenter Access`-beleidsregels op `SASE-*`-groepen. Die beleidsregels en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.
+> **Verouderd:** eerdere builds gebruikten aparte `Admin-Infrastructure`-, `Mobile-to-Services`- en `Datacenter Access`-policies op `SASE-*`-groepen. Die policies en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.
 
 **DNS-bereikbaarheidsvalkuil:** een peer die de pop01-naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft, toont `Nameservers: 0/1 Available` in `netbird status`. Zorg dat de groep van de peer een ACL-pad naar `Core-Services` (pop01 Unbound) heeft.
 
@@ -191,7 +191,7 @@ Windows Instellingen → Netwerk en internet → Proxy:
   Handmatige proxy: Uit
 ```
 
-De Caddy root-CA moet al zijn geïmporteerd in de Windows-vertrouwensopslag (gedaan tijdens NetBird-registratie).
+De Caddy root-CA moet al zijn geïmporteerd in de Windows-trust store (gedaan tijdens NetBird-registratie).
 
 ---
 

@@ -3567,7 +3567,7 @@
 <p><strong>Status:</strong> Implemented<br />
 <strong>Date:</strong> May 2026 (Verslag32)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>NATS requires an authentication model to secure access to JetStream streams and consumers. The Identity Bridge and Control Daemon both publish and subscribe to JetStream subjects, requiring <code>$JS.API.&gt;</code> access for stream creation, consumer management, and message acknowledgment. Two authentication models exist in NATS: the simpler <code>authorization{}</code> block (single-account) and the more capable <code>accounts{}</code> block (multi-account with explicit permission grants).</p>
+<p>NATS requires an authentication model to secure access to JetStream streams and consumers. The Control Daemon and the NATS→Wazuh forwarder consume from JetStream, requiring <code>$JS.API.&gt;</code> and <code>$JS.ACK.&gt;</code> access for consumer management and message acknowledgment, while producers (the detection components and the Identity Bridge) only publish to their own subjects plus <code>_INBOX.&gt;</code>. Two authentication models exist in NATS: the simpler <code>authorization{}</code> block (single-account) and the more capable <code>accounts{}</code> block (multi-account with explicit permission grants).</p>
 <h2 id="options-considered">Options considered<a class="headerlink" href="#options-considered" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

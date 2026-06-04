@@ -3738,9 +3738,10 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Controleer of container actief is</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>identity-bridge
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Test het lookup-endpoint direct</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>curl<span class="w"> </span>http://192.168.122.23:&lt;port&gt;/lookup?ip<span class="o">=</span>&lt;bekend-peer-ip&gt;
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Verwacht: JSON-antwoord met personagroepnaam</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Test het lookup-endpoint direct (de X-Bridge-Secret-header is vereist — een kale</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># aanvraag retourneert HTTP 401, fail-secure)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;X-Bridge-Secret: &lt;secret&gt;&quot;</span><span class="w"> </span><span class="s2">&quot;http://192.168.122.23:&lt;port&gt;/lookup?ip=&lt;bekend-peer-ip&gt;&quot;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Verwacht: JSON met het volledige groepslidmaatschap van de peer (status/user/groups/os)</span>
 </code></pre></div>
 <p>De Identity Bridge pollt de NetBird API elke 30 seconden en cachet de IP-naar-groep-mapping in het geheugen. Het eerste antwoord kan tot 30 seconden duren na opstarten terwijl de initiële poll wordt voltooid.</p>
 <hr />
@@ -3804,7 +3805,7 @@
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># Verwacht: 200 OK (toegestaan voor docenten)</span>
 </code></pre></div>
 <blockquote>
-<p><strong>Opmerking:</strong> Om verschillende persona's te testen, moet je inloggen als gebruikers die tot verschillende Entra ID-beveiligingsgroepen behoren (SASE-MobileUsers vs SASE-SiteUsers).</p>
+<p><strong>Opmerking:</strong> Om verschillende persona's te testen, moet je inloggen als gebruikers die tot verschillende Entra ID-beveiligingsgroepen behoren (<code>2ITCSC1A-Studenten</code> vs <code>2ITCSC1A-Docenten</code> vs <code>2ITCSC1A-Admins</code>), die GroupSync mapt naar de interne NetBird-personagroepen Studenten/Docenten/Admins.</p>
 </blockquote>
 <hr />
 <h2 id="eindverificatie">Eindverificatie<a class="headerlink" href="#eindverificatie" title="Permanent link">&para;</a></h2>

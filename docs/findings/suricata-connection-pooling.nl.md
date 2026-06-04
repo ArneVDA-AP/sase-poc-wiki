@@ -1,9 +1,9 @@
 ---
-title: "Bevinding: Suricata vuurt één keer per SID per flow (Squid-verbindingspooling)"
+title: "Bevinding: Suricata vuurt één keer per SID per flow (Squid connection pooling)"
 tags: [suricata, fwaas, squid, finding]
 ---
 
-# Bevinding: Suricata vuurt één keer per SID per flow (Squid-verbindingspooling)
+# Bevinding: Suricata vuurt één keer per SID per flow (Squid connection pooling)
 
 **Component:** [Suricata](../components/suricata.md)  
 **Ernst:** Inzicht — geen bug
@@ -22,7 +22,7 @@ curl.exe -x http://100.70.154.79:3128 http://testmyids.com/
 
 ## Oorzaak
 
-Squid-verbindingspooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow — dit is verwacht gedrag by design, geen onderdrukking.
+Squid connection pooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow — dit is verwacht gedrag by design, geen onderdrukking.
 
 Het aantal alerts in `eve.json` weerspiegelt het aantal afzonderlijke upstream TCP-flows, niet het aantal HTTP-verzoeken van de client.
 
@@ -36,7 +36,7 @@ Geen oplossing nodig — dit is correct gedrag. Voor tests die een nieuwe Surica
 
 ## Lessen
 
-- Houd bij het interpreteren van Suricata-alertaantallen tijdens proxy-gebaseerde tests rekening met Squid-verbindingspooling. Één alert per SID per flow is verwacht en correct.
+- Houd bij het interpreteren van Suricata-alertaantallen tijdens proxy-gebaseerde tests rekening met Squid connection pooling. Één alert per SID per flow is verwacht en correct.
 - Dit heeft geen invloed op productiedetectie: werkelijk afzonderlijke kwaadaardige flows genereren elk hun eigen alert.
 - Onderzocht en bevestigd in Verslag23 (Bevinding 23.6).
 

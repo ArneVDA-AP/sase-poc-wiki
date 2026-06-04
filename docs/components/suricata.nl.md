@@ -5,7 +5,7 @@ tags: [suricata, opnsense, ids, ips, network, firewall, sase]
 
 # Suricata IDS — WAN + LAN-netwerkinspectie
 
-**Rol:** Parallelle netwerklaagsinspsectie op pop01 — detecteert bedreigingen in ruwe pakketstromen op WAN (vtnet0) en LAN (vtnet1) met behulp van handtekeninggebaseerde regels. Complementair aan de ICAP-pijplijn, die HTTP-inhoud inspecteert; Suricata inspecteert netwerkstromen die de proxy volledig omzeilen.  
+**Rol:** Parallelle netwerklaagsinspsectie op pop01 — detecteert bedreigingen in ruwe pakketstromen op WAN (vtnet0) en LAN (vtnet1) met behulp van signature-based rules. Complementair aan de ICAP-pijplijn, die HTTP-inhoud inspecteert; Suricata inspecteert netwerkstromen die de proxy volledig omzeilen.  
 **Versie:** Suricata 7.x (meegeleverd met OPNsense 25.1)  
 **Configuratielocatie:** `/usr/local/opnsense/service/templates/OPNsense/IDS/custom.yaml` (persistente configuratie), `/var/log/suricata/suricata_JJJJMMDD.log`, `/var/log/suricata/eve.json`
 
@@ -15,9 +15,9 @@ tags: [suricata, opnsense, ids, ips, network, firewall, sase]
 
 Suricata draait in PCAP-opnamemodus op pop01 en leest ruwe frames van BPF-apparaten op vtnet0 (WAN) en vtnet1 (LAN). Het stelt TCP-streams opnieuw samen, parseert protocolvelden en vergelijkt met 79.620+ regels uit vier regelsets (ET Open, Abuse.ch URLhaus, SSL Fingerprint Blacklist, SSL IP Blacklist).
 
-**Wat vtnet0 (WAN) ziet:** De opnieuw versleutelde upstream HTTPS-verbindingen van Squid, DNS-query's van de resolver van pop01, overig direct TCP/UDP-verkeer dat de proxy omzeilt. Suricata extraheert TLS-metadata (SNI, JA3/JA4-vingerafdrukken), HTTP-headers in platte tekst (van niet-HTTPS-stromen), DNS-query/response-gegevens en vergelijkt met C2/botnet IP- en domeinhandtekeningen.
+**Wat vtnet0 (WAN) ziet:** De opnieuw versleutelde upstream HTTPS-verbindingen van Squid, DNS-query's van de resolver van pop01, overig direct TCP/UDP-verkeer dat de proxy omzeilt. Suricata extraheert TLS-metadata (SNI, JA3/JA4 fingerprints), HTTP-headers in platte tekst (van niet-HTTPS-stromen), DNS-query/response-gegevens en vergelijkt met C2/botnet IP- en domain signatures.
 
-**Wat vtnet1 (LAN) ziet:** Al het interne DC-LAN-verkeer van dc01 — onversleuteld, alle protocollen. Dit detecteert bedreigingen op het interne segment (laterale beweging, verkenning, software-update-afwijkingen van dc01).
+**Wat vtnet1 (LAN) ziet:** Al het interne DC-LAN-verkeer van dc01 — onversleuteld, alle protocollen. Dit detecteert bedreigingen op het interne segment (lateral movement, verkenning, software-update-afwijkingen van dc01).
 
 **Waarom niet wt0 (NetBird):** WireGuard is een Layer 3 VPN. Verkeer dat via wt0 wordt gerouteerd verschijnt vanuit het perspectief van BPF niet als inkomende frames op die interface. `tcpdump` op wt0 met een TCP-filter toont 0 paketten. Suricata op wt0 zou niets zien. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
 
@@ -54,7 +54,7 @@ Downloaden via Administratie → Download. Na het downloaden zijn regels **niet 
 |----------|--------|
 | ET Open (alle emerging-*-categorieën) | ~79.620 |
 | Abuse.ch URLhaus | malware-distributie |
-| Abuse.ch SSL Fingerprint Blacklist | JA3-vingerafdrukken |
+| Abuse.ch SSL Fingerprint Blacklist | JA3 fingerprints |
 | Abuse.ch SSL IP Blacklist | bekende C2-IP's |
 
 ### Gedifferentieerd drop/alert-beleid
@@ -130,9 +130,9 @@ Vier detectiecategorieën bevestigd na vtnet1-correctie:
 
 | Component | Richting | Wat |
 |-----------|----------|-----|
-| [Squid](squid.md) | parallel | Suricata op vtnet0 ziet de upstreamverbindingen van Squid — opnieuw versleuteld HTTPS; TLS-metadata zichtbaar; XFF-headers onthullen het oorspronkelijke BYOD-client-IP (SID 2031071 toonde `100.70.95.98` van mobile01) |
+| [Squid](squid.md) | parallel | Suricata op vtnet0 ziet de upstreamverbindingen van Squid — opnieuw versleuteld HTTPS; TLS-metadata zichtbaar; XFF-headers onthullen het oorspronkelijke client-IP (SID 2031071 toonde `100.70.95.98` van mobile01) |
 | [NetBird](netbird.md) | HOME_NET-afhankelijkheid | `100.64.0.0/10` moet in HOME_NET staan voor correcte regelevaluatie |
-| [ioc2rpz/RPZ](ioc2rpz.md) | aanvullend | Abuse.ch URLhaus in Suricata-handtekeningen en RPZ-feeds overlappen in bron; Suricata detecteert verbindingen, RPZ voorkomt DNS-resolutie |
+| [ioc2rpz/RPZ](ioc2rpz.md) | aanvullend | Abuse.ch URLhaus in Suricata signatures en RPZ-feeds overlappen in bron; Suricata detecteert verbindingen, RPZ voorkomt DNS-resolutie |
 
 ---
 
@@ -144,13 +144,13 @@ Suricata publiceert IDS-alerts naar de NATS event bus. Een Python-producerscript
 
 ## Bekende problemen / valkuilen
 
-**vtnet1 `interface: default` genereert geen gebeurtenissen** — het gebruik van `interface: default` in custom.yaml resulteert in alleen de primaire opname-interface (vtnet0), niet alle interfaces. vtnet1 had een BPF-apparaat open maar ontving geen paketten. Oplossing: expliciete per-interface-declaraties. Zie [Bevinding: Suricata interface default-bug](../findings/suricata-interface-default-bug.md).
+**vtnet1 `interface: default` genereert geen events** — het gebruik van `interface: default` in custom.yaml resulteert in alleen de primaire opname-interface (vtnet0), niet alle interfaces. vtnet1 had een BPF-apparaat open maar ontving geen paketten. Oplossing: expliciete per-interface-declaraties. Zie [Bevinding: Suricata interface default-bug](../findings/suricata-interface-default-bug.md).
 
 **`sockstat` werkt niet voor Suricata-verificatie** — Suricata gebruikt BPF, geen TCP/UDP-sockets. `sockstat -4 | grep suricata` retourneert niets, ook als Suricata correct draait. Gebruik in plaats daarvan `procstat -f <PID> | grep bpf`.
 
 **Logbestand heeft datumstempel** — `/var/log/suricata/suricata.log` bestaat niet. Het juiste pad is `/var/log/suricata/suricata_JJJJMMDD.log`.
 
-**Squid-verbindingspooling verklaart enkele alerts per test** — wanneer dezelfde testmyids.com-URL meerdere keren via Squid wordt opgevraagd, ziet Suricata slechts één stroom (Squid hergebruikt de upstream TCP-verbinding). Dit genereert één alert per SID per stroom — correct gedrag, geen drempelprobleem.
+**Squid connection pooling verklaart enkele alerts per test** — wanneer dezelfde testmyids.com-URL meerdere keren via Squid wordt opgevraagd, ziet Suricata slechts één stroom (Squid hergebruikt de upstream TCP-verbinding). Dit genereert één alert per SID per stroom — correct gedrag, geen drempelprobleem.
 
 **Netmap IPS mislukt op virtio-NIC's** — zie [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md). Overschakelen naar Netmap zorgt voor nul verwerkte paketten en maakt alle eerder actieve alertactiviteit ongedaan.
 
