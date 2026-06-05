@@ -3567,7 +3567,7 @@
 <p><strong>Status:</strong> Geïmplementeerd<br />
 <strong>Datum:</strong> Mei 2026 (Verslag31)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>Identity Bridge moet de NetBird Management API pollen om groepslidmaatschap van Zitadel te synchroniseren naar NetBird-peergroepen. De voor de hand liggende aanpak is een Personal Access Token (PAT) van een bestaande admingebruiker te gebruiken. NetBird-issue #3127 onthult echter een destructief neveneffect: wanneer de API wordt gepolld met een reguliere gebruikers-PAT, verwijdert het systeem bij elke API-aanroep alle JWT-gepropageerde auto-groups van alle peers die bij die gebruiker horen. Dit verbreekt stilzwijgend groepsgebaseerde beleidstoewijzingen voor de peers van de pollende gebruiker.</p>
+<p>Identity Bridge moet de NetBird Management API pollen om groepslidmaatschap van Zitadel te synchroniseren naar NetBird-peergroepen. De voor de hand liggende aanpak is een Personal Access Token (PAT) van een bestaande admingebruiker te gebruiken. NetBird-issue #3127 onthult echter een destructief neveneffect: wanneer de API wordt gepolld met een reguliere gebruikers-PAT, verwijdert het systeem bij elke API-aanroep alle JWT-gepropageerde auto-groups van alle peers die bij die gebruiker horen. Dit verbreekt stilzwijgend groepsgebaseerde beleidstoewijzingen voor de peers van de gebruiker die pollt.</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

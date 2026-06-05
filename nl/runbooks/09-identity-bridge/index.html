@@ -3749,7 +3749,7 @@
 <p>Configureer Squid op pop01 om de Identity Bridge te gebruiken als external ACL helper voor identiteitsgebaseerde filtering.</p>
 <p>Bewerk de Squid-configuratie en voeg toe:</p>
 <ol>
-<li><strong>External ACL type-definitie:</strong> een helperscript dat de Identity Bridge bevraagt op <code>http://192.168.122.23:&lt;port&gt;/lookup?ip=%SRC</code></li>
+<li><strong>External ACL type-definitie:</strong> een helperscript dat de Identity Bridge queryet op <code>http://192.168.122.23:&lt;port&gt;/lookup?ip=%SRC</code></li>
 <li><strong>ACL-definities</strong> op basis van personagroepen:</li>
 </ol>
 <table>
@@ -3792,7 +3792,7 @@
 </ol>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>tail<span class="w"> </span>-f<span class="w"> </span>/var/log/squid/access.log
 </code></pre></div>
-<p><strong>Verwacht:</strong> Logregels bevatten de identiteitsgroep (Studenten/Docenten/Admins) voor elk verzoek, wat bewijst dat Squid de Identity Bridge succesvol bevraagt voor elke verbinding.</p>
+<p><strong>Verwacht:</strong> Logregels bevatten de identiteitsgroep (Studenten/Docenten/Admins) voor elk verzoek, wat bewijst dat Squid de Identity Bridge succesvol queryet voor elke verbinding.</p>
 <hr />
 <h2 id="stap-5-identiteitsgebaseerde-filtering-testen">Stap 5: Identiteitsgebaseerde filtering testen<a class="headerlink" href="#stap-5-identiteitsgebaseerde-filtering-testen" title="Permanent link">&para;</a></h2>
 <p>Test of beleidshandhaving verschilt per persona:</p>
@@ -3825,7 +3825,7 @@
 <li>[ ] Service user PAT geconfigureerd voor NetBird API-toegang</li>
 <li>[ ] Polling-interval ingesteld (standaard 30s)</li>
 <li>[ ] <code>/lookup?ip=...</code>-endpoint retourneert juiste persona voor bekende peers</li>
-<li>[ ] Squid external_acl_type geconfigureerd om Identity Bridge te bevragen</li>
+<li>[ ] Squid external_acl_type geconfigureerd om Identity Bridge te queryen</li>
 <li>[ ] Squid ACL's gedefinieerd voor Studenten/Docenten/Admins</li>
 <li>[ ] Squid access.log toont identiteitsgroep per verzoek</li>
 <li>[ ] Student geblokkeerd voor ChatGPT (403)</li>

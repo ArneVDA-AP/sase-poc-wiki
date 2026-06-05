@@ -3785,7 +3785,7 @@
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    ↓ RPZ-afgedwongen responses
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Overlay-clients + dc01
 </code></pre></div>
-<p>ioc2rpz is een <strong>zonebron</strong>, geen resolver. Clients vragen ioc2rpz nooit direct. Ze vragen Unbound, dat de RPZ-zone in het geheugen heeft. Geen extra latentie per query.</p>
+<p>ioc2rpz is een <strong>zonebron</strong>, geen resolver. Clients queryen ioc2rpz nooit direct. Ze queryen Unbound, dat de RPZ-zone in het geheugen heeft. Geen extra latency per query.</p>
 <p>BIND bestaat uitsluitend omdat Unbound 1.24.2 TSIG voor zone transfers niet ondersteunt — een ontbrekende functie gedocumenteerd in GitHub NLnetLabs/unbound issue #336 (open sinds oktober 2020). BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en presenteert de zone aan Unbound via loopback zonder authenticatie. Zie <a href="../../decisions/bind-tsig-intermediary/">Beslissing: BIND als TSIG-intermediary</a>.</p>
 <p><strong>NetBird primaire naamserver:</strong> Om RPZ overlay-clients op externe domeinen te beschermen, moeten alle DNS-query's via pop01 Unbound verlopen. De primaire nameserver-instelling van NetBird (overeenkomende domeinen: leeg) bereikt dit. Zonder dit gebruiken clients de standaard-DNS van hun adapter voor niet-interne domeinen, waardoor Unbound volledig wordt omzeild. Zie <a href="../../findings/netbird-primary-nameserver/">Bevinding: NetBird primaire naamserver</a>.</p>
 <hr />

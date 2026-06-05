@@ -3596,7 +3596,7 @@
 <p><strong>Status:</strong> Geïmplementeerd<br />
 <strong>Datum:</strong> Mei-juni 2026 (Verslag41, Verslag43)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>Traditioneel SD-WAN (IPsec site-to-site-tunnels, uCPE, QoS) maakte aanvankelijk deel uit van de architectuur. Herziening v3 (maart 2026) schrapte de klassieke IPsec/uCPE-aanpak (zie <a href="../sdwan-descoped/">Beslissing: SD-WAN geschrapt</a>). De vraag bleef: wat vervangt het branch-connectiviteitsmodel? Simpelweg elk apparaat individueel inschrijven via NetBird is functioneel, maar adresseert geen QoS of failover — twee mogelijkheden die SD-WAN traditioneel biedt.</p>
+<p>Traditioneel SD-WAN (IPsec site-to-site-tunnels, uCPE, QoS) maakte aanvankelijk deel uit van de architectuur. Herziening v3 (maart 2026) schrapte de klassieke IPsec/uCPE-aanpak (zie <a href="../sdwan-descoped/">Beslissing: SD-WAN geschrapt</a>). De vraag bleef: wat vervangt het branch-connectiviteitsmodel? Simpelweg elk apparaat individueel enrollen via NetBird is functioneel, maar adresseert geen QoS of failover — twee mogelijkheden die SD-WAN traditioneel biedt.</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3632,7 +3632,7 @@
 <ul>
 <li><strong>F12-F14 (klassieke IPsec-tests) zijn N.v.t.</strong> Deze tests maten een ander paradigma. De ZT-Branch tests (#5 en #6) zijn het correcte validatiekader voor de geïmplementeerde architectuur.</li>
 <li><strong>VyOS-rol is herdefinieerd:</strong> VyOS site01 is een SASE-gateway met DSCP-markering, geen IPsec-router. De configuratie is <code>tc</code>-gebaseerde QoS + NAT, niet IPsec + BGP.</li>
-<li><strong>Per-apparaat authenticatie is verplicht:</strong> Elk apparaat op Site-LAN moet een eigen NetBird-inschrijving hebben. Er is geen site-niveau vertrouwen — een gecompromitteerd apparaat op Site-LAN verleent geen toegang tot datacenterresources voor andere apparaten.</li>
+<li><strong>Per-apparaat authenticatie is verplicht:</strong> Elk apparaat op Site-LAN moet een eigen NetBird-enrollment hebben. Er is geen site-niveau vertrouwen — een gecompromitteerd apparaat op Site-LAN verleent geen toegang tot datacenterresources voor andere apparaten.</li>
 <li><strong>QoS is alleen site-egress:</strong> DSCP-markering op VyOS is van toepassing op verkeer dat de site verlaat. End-to-end QoS is afhankelijk van tussenliggende netwerkhops die DSCP-markeringen respecteren, wat niet gegarandeerd is op het publieke internet.</li>
 </ul>
 <p>Zie ook: <a href="../sdwan-descoped/">Beslissing: SD-WAN geschrapt</a>, <a href="../../components/vyos/">Component: VyOS</a>, <a href="../../components/netbird/">Component: NetBird</a>, <a href="../../concepts/zero-trust/">Concept: Zero Trust</a></p>

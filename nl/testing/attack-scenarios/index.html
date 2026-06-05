@@ -3745,10 +3745,10 @@
 <tbody>
 <tr>
 <td>A1</td>
-<td>Niet-ingeschreven apparaat probeert DC-LAN-toegang</td>
+<td>Niet-ge-enrolld apparaat probeert DC-LAN-toegang</td>
 <td>Geen route naar 10.0.0.0/24 -- destination unreachable</td>
 <td>F8</td>
-<td><code>ping 10.0.0.100</code> vanaf niet-ingeschreven host</td>
+<td><code>ping 10.0.0.100</code> vanaf niet-ge-enrollde host</td>
 </tr>
 <tr>
 <td>A2</td>
@@ -3920,21 +3920,21 @@
 <tbody>
 <tr>
 <td>E1</td>
-<td>RPZ-geblokkeerd domein opvragen vanaf pop01</td>
+<td>RPZ-geblokkeerd domein queryen vanaf pop01</td>
 <td>NXDOMAIN met aa-vlag</td>
 <td>T-A4</td>
 <td><code>dig @127.0.0.1 &lt;rpz-domain&gt;</code> op pop01</td>
 </tr>
 <tr>
 <td>E2</td>
-<td>RPZ-geblokkeerd domein opvragen vanaf mobile01</td>
+<td>RPZ-geblokkeerd domein queryen vanaf mobile01</td>
 <td>NXDOMAIN via overlay DNS</td>
 <td>T-A5</td>
 <td><code>nslookup &lt;rpz-domain&gt;</code> op mobile01</td>
 </tr>
 <tr>
 <td>E3</td>
-<td>RPZ-geblokkeerd domein opvragen vanaf dc01</td>
+<td>RPZ-geblokkeerd domein queryen vanaf dc01</td>
 <td>NXDOMAIN via DC-LAN</td>
 <td>T-A6</td>
 <td><code>dig @10.0.0.1 &lt;rpz-domain&gt;</code> op dc01</td>

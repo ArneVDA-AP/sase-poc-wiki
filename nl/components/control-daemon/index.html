@@ -3593,7 +3593,7 @@
 
 
 <h1 id="control-daemon">Control Daemon<a class="headerlink" href="#control-daemon" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> Python-daemon op mgmt01 die de NATS event bus consumeert, per-peer threat scores bijhoudt via sliding-window decay, en peers in quarantaine plaatst door ze te verwijderen uit beleiddragende persona-groepen (deny-by-default).<br />
+<p><strong>Rol:</strong> Python-daemon op mgmt01 die de NATS event bus consumeert, per-peer threat scores bijhoudt via sliding-window decay, en peers in quarantaine plaatst door ze te verwijderen uit policy-bearing persona-groepen (deny-by-default).<br />
 <strong>Versie:</strong> Python 3.12 (nats-py &gt;= 2.13.0, redis &gt;= 5.0.0, httpx &gt;= 0.27.0)<br />
 <strong>Configuratielocatie:</strong> <code>config/mgmt01/control-daemon/</code> in de repo (gezaghebbend — Addendum J §J.6.7 is verouderd)</p>
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
@@ -3601,7 +3601,7 @@
 <ol>
 <li><strong>Verrijking:</strong> Koppelt overlay-IP's aan peeridentiteit via een interne <code>identity.&gt;</code> cache (gevuld vanuit Identity Bridge events)</li>
 <li><strong>Scoring:</strong> Dispatcht op het <code>producer</code>-veld (niet het subject). Elk eventtype heeft een configureerbaar gewicht. Scores gebruiken sliding-window decay via Redis sorted sets.</li>
-<li><strong>Beslissing:</strong> Wanneer de score van een peer de quarantainedrempel overschrijdt (standaard: 80), verwijdert de daemon de peer uit alle beleiddragende persona-groepen via de NetBird Groups API. Zonder lidmaatschap van een persona-groep blokkeert deny-by-default alle connectiviteit.</li>
+<li><strong>Beslissing:</strong> Wanneer de score van een peer de quarantainedrempel overschrijdt (standaard: 80), verwijdert de daemon de peer uit alle policy-bearing persona-groepen via de NetBird Groups API. Zonder lidmaatschap van een persona-groep blokkeert deny-by-default alle connectiviteit.</li>
 </ol>
 <p><strong>Huidige staat:</strong> <code>ENFORCE=false</code> (dry-run) tot demovoorbereiding (Sessie 11).</p>
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>

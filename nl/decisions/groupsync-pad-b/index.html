@@ -3574,7 +3574,7 @@
 <p><strong>Status:</strong> Geïmplementeerd<br />
 <strong>Datum:</strong> Mei 2026 (Verslag30–34; Pad B bevestigd voor alle drie persona's in Verslag34)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>Entra ID-groepsnamen dragen een verplicht <code>2ITCSC1A-</code>-prefix opgelegd door een lector-mandaat (de tenant wordt gedeeld over meerdere studentenprojecten). Zo verschijnt de groep voor studenten als <code>2ITCSC1A-Studenten</code> in Entra ID. Dit prefix moet ergens in de synchronisatiepipeline worden afgehandeld, omdat NetBird-toegangspolicies en Squid ACL's werken op groepsnamen — policies die verwijzen naar <code>2ITCSC1A-Studenten</code> in plaats van <code>Studenten</code> zijn moeilijker leesbaar, moeilijker te onderhouden, en propageren het prefix door elk downstream-component (Identity Bridge, NATS-subjects, Squid external ACL-responses).</p>
+<p>Entra ID-groepsnamen dragen een verplicht <code>2ITCSC1A-</code>-prefix opgelegd door een lector-mandaat (de tenant wordt gedeeld over meerdere studentenprojecten). Zo verschijnt de groep voor studenten als <code>2ITCSC1A-Studenten</code> in Entra ID. Dit prefix moet ergens in de synchronisatiepipeline worden afgehandeld, omdat NetBird-toegangspolicies en Squid ACL's werken op groepsnamen. Policies die verwijzen naar <code>2ITCSC1A-Studenten</code> in plaats van <code>Studenten</code> zijn moeilijker leesbaar en moeilijker te onderhouden. Bovendien propageert het prefix dan door elk downstream-component (Identity Bridge, NATS-subjects, Squid external ACL-responses).</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
 <table>
 <thead>

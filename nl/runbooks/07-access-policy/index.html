@@ -2517,15 +2517,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optioneel-niet-uitgerold-stap-3-netbird-posture-check-aanmaken-defense-in-depth" class="md-nav__link">
+  <a href="#optioneel-niet-gedeployd-stap-3-netbird-posture-check-aanmaken-defense-in-depth" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [OPTIONEEL — NIET UITGEROLD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)
+        [OPTIONEEL — NIET GEDEPLOYD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[OPTIONEEL — NIET UITGEROLD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)">
+    <nav class="md-nav" aria-label="[OPTIONEEL — NIET GEDEPLOYD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2578,10 +2578,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optioneel-niet-uitgerold-stap-4-posturecontrole-koppelen-aan-acl-policies" class="md-nav__link">
+  <a href="#optioneel-niet-gedeployd-stap-4-posturecontrole-koppelen-aan-acl-policies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [OPTIONEEL — NIET UITGEROLD] Stap 4: Posturecontrole koppelen aan ACL policies
+        [OPTIONEEL — NIET GEDEPLOYD] Stap 4: Posturecontrole koppelen aan ACL policies
       
     </span>
   </a>
@@ -3781,15 +3781,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optioneel-niet-uitgerold-stap-3-netbird-posture-check-aanmaken-defense-in-depth" class="md-nav__link">
+  <a href="#optioneel-niet-gedeployd-stap-3-netbird-posture-check-aanmaken-defense-in-depth" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [OPTIONEEL — NIET UITGEROLD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)
+        [OPTIONEEL — NIET GEDEPLOYD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[OPTIONEEL — NIET UITGEROLD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)">
+    <nav class="md-nav" aria-label="[OPTIONEEL — NIET GEDEPLOYD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3842,10 +3842,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#optioneel-niet-uitgerold-stap-4-posturecontrole-koppelen-aan-acl-policies" class="md-nav__link">
+  <a href="#optioneel-niet-gedeployd-stap-4-posturecontrole-koppelen-aan-acl-policies" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [OPTIONEEL — NIET UITGEROLD] Stap 4: Posturecontrole koppelen aan ACL policies
+        [OPTIONEEL — NIET GEDEPLOYD] Stap 4: Posturecontrole koppelen aan ACL policies
       
     </span>
   </a>
@@ -4008,7 +4008,7 @@
 <strong>Vereisten:</strong> Alle voorgaande runbooks afgerond (volledige SASE-stack operationeel)
 <strong>Status:</strong> Geïmplementeerd (Verslag40) — Gate 1: 5 CA policies (3 Aan, 2 Report-only); Gate 2: Intune device compliance operationeel; Gate 3 volledig operationeel.</p>
 <blockquote>
-<p><strong>Gates 1 en 2 zijn geïmplementeerd (Verslag40).</strong> Gate 1 = vijf Conditional Access-policies: MFA Required (Aan), Block Legacy Auth (Aan), Risk-Based Block (Aan), Geo-Block alleen België (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). De twee Report-only-policies blijven zo tot de demo-voorbereiding (Sessie 11). Gate 2 = Intune device compliance (<code>2ITCSC1A-SASE-Windows-Compliance</code>), attestatie-gebaseerd — dit is de uitgerolde apparaat-gate, <strong>niet</strong> NetBird-posturecontroles (die een optionele, niet-uitgerolde defense-in-depth-laag blijven). Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.</p>
+<p><strong>Gates 1 en 2 zijn geïmplementeerd (Verslag40).</strong> Gate 1 = vijf Conditional Access-policies: MFA Required (Aan), Block Legacy Auth (Aan), Risk-Based Block (Aan), Geo-Block alleen België (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). De twee Report-only-policies blijven zo tot de demo-voorbereiding (Sessie 11). Gate 2 = Intune device compliance (<code>2ITCSC1A-SASE-Windows-Compliance</code>), attestatie-gebaseerd — dit is de gedeployde apparaat-gate, <strong>niet</strong> NetBird-posturecontroles (die een optionele, niet-gedeployde defense-in-depth-laag blijven). Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.</p>
 </blockquote>
 <hr />
 <h2 id="vereistenchecklist">Vereistenchecklist<a class="headerlink" href="#vereistenchecklist" title="Permanent link">&para;</a></h2>
@@ -4177,9 +4177,9 @@
 <li>[ ] Een NetBird-login door die student toont <code>2ITCSC1A-SASE-Require-Compliant-Device → Report-only: Success</code> in de CA-aanmeldingstab</li>
 </ul>
 <hr />
-<h2 id="optioneel-niet-uitgerold-stap-3-netbird-posture-check-aanmaken-defense-in-depth">[OPTIONEEL — NIET UITGEROLD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)<a class="headerlink" href="#optioneel-niet-uitgerold-stap-3-netbird-posture-check-aanmaken-defense-in-depth" title="Permanent link">&para;</a></h2>
+<h2 id="optioneel-niet-gedeployd-stap-3-netbird-posture-check-aanmaken-defense-in-depth">[OPTIONEEL — NIET GEDEPLOYD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)<a class="headerlink" href="#optioneel-niet-gedeployd-stap-3-netbird-posture-check-aanmaken-defense-in-depth" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Niet uitgerold.</strong> Met beheerde apparaten dekt Intune-naleving (Stap 2) het apparaatpostuur al via attestatie. De NetBird-posturecontrole hieronder is een <em>optionele</em> defense-in-depth-laag — onafhankelijke timing (tunnel-bouw) en mechanisme (client-side controle). Het werd <strong>niet</strong> uitgerold in de sandbox; de stappen blijven als ontwerpreferentie.</p>
+<p><strong>Niet gedeployd.</strong> Met beheerde apparaten dekt Intune-naleving (Stap 2) het apparaatpostuur al via attestatie. De NetBird-posturecontrole hieronder is een <em>optionele</em> defense-in-depth-laag — onafhankelijke timing (tunnel-bouw) en mechanisme (client-side controle). Het werd <strong>niet</strong> gedeployd in de sandbox; de stappen blijven als ontwerpreferentie.</p>
 </blockquote>
 <p>NetBird Dashboard → Access Control → Posture Checks → Create Posture Check</p>
 <p><strong>Naam:</strong> <code>SASE-PoC-Compliance</code>
@@ -4207,7 +4207,7 @@
 </code></pre></div>
 <p>Dit is defense-in-depth naast de CA-geoblokkering (verschillende GeoIP-databases compenseren elkaars fouten). Zie <a href="../../decisions/ca-posture-hybrid/">Beslissing: CA + Posture hybride</a>.</p>
 <hr />
-<h2 id="optioneel-niet-uitgerold-stap-4-posturecontrole-koppelen-aan-acl-policies">[OPTIONEEL — NIET UITGEROLD] Stap 4: Posturecontrole koppelen aan ACL policies<a class="headerlink" href="#optioneel-niet-uitgerold-stap-4-posturecontrole-koppelen-aan-acl-policies" title="Permanent link">&para;</a></h2>
+<h2 id="optioneel-niet-gedeployd-stap-4-posturecontrole-koppelen-aan-acl-policies">[OPTIONEEL — NIET GEDEPLOYD] Stap 4: Posturecontrole koppelen aan ACL policies<a class="headerlink" href="#optioneel-niet-gedeployd-stap-4-posturecontrole-koppelen-aan-acl-policies" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>NetBird Dashboard → Access Control → Policies
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>→ Selecteer het relevante beleid (Personas-to-Core-Services)
 <a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>→ Tab: Posture Checks
@@ -4482,7 +4482,7 @@
 <tr>
 <td>GeoIP niet 100% nauwkeurig</td>
 <td>IP-geolocatiedatabases bevatten fouten</td>
-<td>Alleen Geo-Block (Gate 1, CA); de optionele NetBird-geocontrole (andere DB) is niet uitgerold</td>
+<td>Alleen Geo-Block (Gate 1, CA); de optionele NetBird-geocontrole (andere DB) is niet gedeployd</td>
 </tr>
 <tr>
 <td>C2-beaconing via WireGuard-tunnel</td>
@@ -4490,14 +4490,14 @@
 <td>Endpoint Detection + Suricata (ziet WireGuard als versleuteld UDP)</td>
 </tr>
 <tr>
-<td>NetBird-posture niet uitgerold</td>
+<td>NetBird-posture niet gedeployd</td>
 <td>Intune-attestatie dekt apparaatpostuur niet-spoofbaar; de client-side <code>process_check</code> is spoofbaar (een dummy-binary op het pad voldoet)</td>
-<td>Rol NetBird-posture (Stappen 3-4) alleen uit als onbeheerde/BYOD-apparaten opnieuw in scope komen</td>
+<td>Deploy NetBird-posture (Stappen 3-4) alleen als onbeheerde/BYOD-apparaten opnieuw in scope komen</td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>Dekkingsopmerking:</strong> Met Intune-attestatie uitgerold als Gate 2 is het grootste hiaat in het BYOD-tijdperk-plan — eindpuntattestatie die procesgebaseerd en spoofbaar was — gedicht: Intune rapporteert de werkelijke apparaatstatus niet-spoofbaar. De voornaamste resterende hiaten ten opzichte van commerciële SASE (Zscaler ZPA, Netskope Private Access) zijn Continuous Access Evaluation (CAE) en per-sessie continu postuur in plaats van evaluatie bij authenticatie.</p>
+<p><strong>Dekkingsopmerking:</strong> Met Intune-attestatie gedeployd als Gate 2 is het grootste hiaat in het BYOD-tijdperk-plan — eindpuntattestatie die procesgebaseerd en spoofbaar was — gedicht: Intune rapporteert de werkelijke apparaatstatus niet-spoofbaar. De voornaamste resterende hiaten ten opzichte van commerciële SASE (Zscaler ZPA, Netskope Private Access) zijn Continuous Access Evaluation (CAE) en per-sessie continu postuur in plaats van evaluatie bij authenticatie.</p>
 </blockquote>
 <p>Zie <a href="../../concepts/zero-trust/">Concept: Zero Trust</a> voor de volledige analyse van het drie-gates-model.</p>
 <hr />

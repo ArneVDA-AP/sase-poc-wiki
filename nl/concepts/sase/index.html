@@ -3664,9 +3664,9 @@
 <h2 id="casb-drie-lagenmodel">CASB drie-lagenmodel<a class="headerlink" href="#casb-drie-lagenmodel" title="Permanent link">&para;</a></h2>
 <p>De CASB-implementatie omvat drie handhavingslagen, elk voor een andere tijdshorizon:</p>
 <ul>
-<li><strong>Laag 1 — Inline (Squid forward proxy):</strong> Identiteitsgebaseerde URL-filtering en DLP op elk HTTP/HTTPS-verzoek. Squid bevraagt de Identity Bridge voor de persona-groep van de gebruiker en past gedifferentieerde policies toe (bv. Studenten geblokkeerd op ChatGPT; Docenten toegestaan). Operationeel sinds V31.</li>
+<li><strong>Laag 1 — Inline (Squid forward proxy):</strong> Identiteitsgebaseerde URL-filtering en DLP op elk HTTP/HTTPS-verzoek. Squid queryet de Identity Bridge voor de persona-groep van de gebruiker en past gedifferentieerde policies toe (bv. Studenten geblokkeerd op ChatGPT; Docenten toegestaan). Operationeel sinds V31.</li>
 <li><strong>Laag 2 — API-mode (Wazuh + M365 Management Activity API):</strong> Pollt SharePoint/OneDrive audit-events op beleidsschendingen (anonieme shares, externe shares). Wazuh custom rules (100600-familie) detecteren schendingen; Active Response scripts intrekken deellinks via Microsoft Graph API. Operationeel sinds V39.</li>
-<li><strong>Laag 3 — Real-time event-driven (NATS + Control Daemon):</strong> Alle detectiesilo's publiceren events naar de NATS-bus. De control daemon houdt per peer een threat score bij met sliding-window decay. Wanneer een peer de quarantainedrempel overschrijdt, wordt deze uit de policy-dragende persona-groepen verwijderd — deny-by-default blokkeert alle connectiviteit. Operationeel sinds V35.</li>
+<li><strong>Laag 3 — Real-time event-driven (NATS + Control Daemon):</strong> Alle detectiesilo's publiceren events naar de NATS-bus. De control daemon houdt per peer een threat score bij met sliding-window decay. Wanneer een peer de quarantainedrempel overschrijdt, wordt deze uit de policy-bearing persona-groepen verwijderd — deny-by-default blokkeert alle connectiviteit. Operationeel sinds V35.</li>
 </ul>
 <p>Zie: <a href="../../decisions/casb-three-layers/">Beslissing: CASB drie lagen</a></p>
 

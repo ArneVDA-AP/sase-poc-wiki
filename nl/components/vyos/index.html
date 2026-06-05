@@ -3795,12 +3795,12 @@
 <h1 id="vyos-sase-gateway-site01">VyOS — SASE-gateway (site01)<a class="headerlink" href="#vyos-sase-gateway-site01" title="Permanent link">&para;</a></h1>
 <p><strong>Rol:</strong> SASE-gateway voor de remote site — biedt WAN-connectiviteit en NAT voor het Site-LAN, invulling gevend aan de SD-WAN-pijler via een Zero Trust Branch-model. Equivalent aan een Zscaler Zero Trust Branch edge-appliance.<br />
 <strong>Versie:</strong> VyOS rolling 2026.02.16<br />
-<strong>Status:</strong> ✅ Operationeel — site01 op <code>192.168.122.33</code>, sitepc01 (Tiny11) ingeschreven in sandbox<br />
+<strong>Status:</strong> ✅ Operationeel — site01 op <code>192.168.122.33</code>, sitepc01 (Tiny11) ge-enrolld in sandbox<br />
 <strong>Configuratielocatie:</strong> <code>/etc/vyos/config.boot</code> op site01</p>
 <hr />
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>VyOS draait als <code>site01</code> met twee interfaces: eth0 op het WAN-segment (<code>192.168.122.33</code>) en eth1 op het Site-LAN (<code>172.16.10.1/24</code>). De verantwoordelijkheden zijn bewust beperkt tot connectiviteit — het fungeert als NAT-gateway zodat apparaten op het Site-LAN het internet kunnen bereiken, maar het handhaaft zelf geen beveiligingsbeleid.</p>
-<p>De branch volgt een <strong>Zero Trust Branch-model</strong>: de gehele site wordt behandeld als een niet-vertrouwde locatie, niet anders dan een Wi-Fi-netwerk in een koffiebar. Er zijn geen IPsec-tunnels tussen site01 en pop01. In plaats daarvan draait sitepc01 een <a href="../netbird/">NetBird</a>-client en treedt toe tot de WireGuard-overlay met een identiteitsgebaseerde verbinding, exact hetzelfde pad volgend als elke mobiele gebruiker. Alle beveiligingsinspectie vindt plaats op de PoP, niet aan de branch-rand.</p>
+<p>De branch volgt een <strong>Zero Trust Branch-model</strong>: de gehele site wordt behandeld als een niet-vertrouwde locatie, niet anders dan een Wi-Fi-netwerk in een koffiebar. Er zijn geen IPsec-tunnels tussen site01 en pop01. In plaats daarvan draait sitepc01 een <a href="../netbird/">NetBird</a>-client en treedt toe tot de WireGuard-overlay met een identiteitsgebaseerde verbinding, en volgt exact hetzelfde pad als elke mobiele gebruiker. Alle beveiligingsinspectie vindt plaats op de PoP, niet aan de branch-rand.</p>
 <p>Dit weerspiegelt de Zero Trust SD-WAN-architectuur van Zscaler, waarbij de branch-appliance ruwe connectiviteit biedt terwijl de Zero Trust Exchange (hier: de SWG-keten van pop01) inspectie en beleidshandhaving verzorgt.</p>
 <p><strong>IP-adressering:</strong></p>
 <table>
@@ -3877,7 +3877,7 @@
 <li><strong>Verkeerspad sitepc01:</strong> sitepc01 → NAT via site01 → NetBird-overlay → pop01 (SWG-inspectie) voor Default/Allow-verkeer. Dit is hetzelfde pad dat mobile01 volgt — er bestaat geen branch-specifieke tunnel. Teams Optimize-media neemt in plaats daarvan het split-tunnel-pad rechtstreeks via eth0 (zie QoS hierboven).</li>
 <li><strong>Site-LAN-segment:</strong> <code>172.16.10.0/24</code>. sitepc01 zit op <code>172.16.10.10</code> met site01 als default gateway. Het draagt ook een tijdelijke tweede NIC op het WAN-segment (<code>192.168.122.50</code>), gebruikt als setup-/RDP-steiger — te verwijderen zodra overlay-RDP bewezen is.</li>
 <li><strong>Geen directe WireGuard-tunnel</strong> tussen site01 en pop01. Alle beveiligingshandhaving is gecentraliseerd op de PoP.</li>
-<li><strong>Identiteit sitepc01 (twee onafhankelijke lagen):</strong> ingeschreven in NetBird als <code>docent1</code> (Docenten-persona); afzonderlijk Entra ID joined en Intune enrolled via <code>student1</code>, het enige Intune-gelicenseerde sandbox-account (<code>docent1</code>/<code>admin1</code> zijn bewust ongelicenseerd). Gedocumenteerd in V44.</li>
+<li><strong>Identiteit sitepc01 (twee onafhankelijke lagen):</strong> ge-enrolld in NetBird als <code>docent1</code> (Docenten-persona); afzonderlijk Entra ID joined en Intune enrolled via <code>student1</code>, het enige Intune-gelicenseerde sandbox-account (<code>docent1</code>/<code>admin1</code> zijn bewust ongelicenseerd). Gedocumenteerd in V44.</li>
 <li><strong>NetBird-coördinatie:</strong> sitepc01 gebruikt de <a href="../netbird/">NetBird</a>-client om toe te treden tot de overlay, geauthenticeerd via Entra ID.</li>
 </ul>
 <hr />
