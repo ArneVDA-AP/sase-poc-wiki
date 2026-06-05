@@ -89,7 +89,7 @@ De weigeringsregels voor blokkeerlijsten staan voor alle toestemmingsregels. Squ
 
 Squid publiceert proxy access events naar de NATS event bus op mgmt01. Een Python-producerscript op pop01 tailed `access.log` en publiceert gestructureerde events naar `security.alert.proxy`. Events bevatten: bron-IP (overlay), bestemmings-URL, HTTP-methode, responscode, ACL-beslissing en identiteitsgroep (via external_acl). Deze events voeden zowel de [Control Daemon](control-daemon.md) (realtime threat scoring) als [Wazuh](wazuh.md) SIEM (forensische analyse).
 
-Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `external_acl_type`: voor elk verzoek bevraagt een helper `http://192.168.122.23:<port>/lookup?ip=%SRC` om het overlay-IP om te zetten naar een Entra ID-personagroep. Dit maakt identiteitsgebaseerde URL-filtering mogelijk (bijv. Studenten geblokkeerd voor ChatGPT, Docenten toegestaan).
+Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `external_acl_type`: voor elk verzoek queryet een helper `http://192.168.122.23:<port>/lookup?ip=%SRC` om het overlay-IP om te zetten naar een Entra ID-personagroep. Dit maakt identiteitsgebaseerde URL-filtering mogelijk (bijv. Studenten geblokkeerd voor ChatGPT, Docenten toegestaan).
 
 ---
 

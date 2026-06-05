@@ -9,9 +9,9 @@ tags: [ioc2rpz, dns, rpz, network, sase]
 
 ## Hoe het hier van toepassing is
 
-RPZ onderschept op het vroegst mogelijke punt in de bedreigingslevenscyclus: naamresolutie. Als een client de hostnaam van een bekende C2-server probeert op te lossen, retourneert Unbound NXDOMAIN — de TCP-verbinding start nooit, ongeacht poort of protocol.
+RPZ onderschept op het vroegst mogelijke punt in de bedreigingslevenscyclus: naamresolutie. Als een client de hostnaam van een bekende C2-server probeert te resolven, retourneert Unbound NXDOMAIN — de TCP-verbinding start nooit, ongeacht poort of protocol.
 
-De RPZ-zone in deze stack bevat ~71 767 records uit twee Abuse.ch-feeds (URLhaus + ThreatFox), bijgewerkt door ioc2rpz uit live threat intelligence-feeds. Wanneer een client een hostnaam opvraagt die overeenkomt met een RPZ-record, vervangt Unbound de geconfigureerde actie (NXDOMAIN) in plaats van het echte antwoord te retourneren.
+De RPZ-zone in deze stack bevat ~71 767 records uit twee Abuse.ch-feeds (URLhaus + ThreatFox), bijgewerkt door ioc2rpz uit live threat intelligence-feeds. Wanneer een client een hostnaam queryet die overeenkomt met een RPZ-record, vervangt Unbound de geconfigureerde actie (NXDOMAIN) in plaats van het echte antwoord te retourneren.
 
 **Zone-transferketen:**
 

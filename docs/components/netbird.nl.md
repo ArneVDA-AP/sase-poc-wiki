@@ -54,7 +54,7 @@ netbird.sandbox.local {
 }
 ```
 
-Voeg een Docker-netwerkalias toe zodat interne containers de hostnaam kunnen oplossen:
+Voeg een Docker-netwerkalias toe zodat interne containers de hostnaam kunnen resolven:
 
 ```yaml
 services:
@@ -75,7 +75,7 @@ Controleer of `management.json` verwijst naar `netbird.sandbox.local`, niet naar
 
 ### Hosts-vermeldingen
 
-Elke machine die communiceert met NetBird moet de hostnaam kunnen oplossen:
+Elke machine die communiceert met NetBird moet de hostnaam kunnen resolven:
 
 | Machine | Methode |
 |---------|---------|
@@ -110,7 +110,7 @@ Voeg de door Zitadel gegenereerde omleidings-URI toe aan de Entra ID-app-registr
 | `Admins` | admin-persona-peers | Administratieve gebruikers (JWT auto-groep) |
 | `All` | elke peer | NetBird ingebouwde auto-groep |
 
-Alleen `Core-Services` wordt handmatig aangemaakt. De persona-groepen (`Studenten`/`Docenten`/`Admins`) worden **niet** in het dashboard aangemaakt — een JWT-groep materialiseert pas als NetBird-groep wanneer een peer met die `groups`-claim voor het eerst verbindt; inschrijving *is* de groepssynchronisatie (geen aparte stap).
+Alleen `Core-Services` wordt handmatig aangemaakt. De persona-groepen (`Studenten`/`Docenten`/`Admins`) worden **niet** in het dashboard aangemaakt — een JWT-groep materialiseert pas als NetBird-groep wanneer een peer met die `groups`-claim voor het eerst verbindt; enrollment *is* de groepssynchronisatie (geen aparte stap).
 
 > **Groepsmigratie (V34, mei 2026).** De oorspronkelijke Fase-2-build gebruikte `SASE-Admins`, `SASE-MobileUsers`, `SASE-Services` en `SASE-InternalResources`. Een diagnose toonde dat **alle** NetBird ACL-connectiviteit op de `SASE-*`-groepen hing, terwijl de persona-groepen **nul** beleid droegen — quarantaine-per-groep (een peer uit zijn persona-groep verwijderen) zou dus een no-op zijn geweest. De migratie verplaatste alle connectiviteit naar het persona-model + `Core-Services` en verwijderde elke `SASE-*`-groep en -beleid. Het persona-model hieronder is de huidige staat; het `SASE-*`-model is verouderd.
 
@@ -129,7 +129,7 @@ Dit ene beleid is de volledige allow-list onder deny-by-default. Het laat elke p
 Netwerk: 0.0.0.0/0, Routing Peer: pop01, Distribution Groups: Studenten, Docenten, Admins
 ```
 
-Het exit node blijft bestaan zodat persona-groepverkeer (Studenten/Docenten/Admins) via pop01 naar buiten gaat. Het exit node van NetBird is **alles-of-niets** — het kan geen destination ranges selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, duwt een Intune-Remediation (`2ITCSC1A-Route-Remediation`) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.
+Het exit node blijft bestaan zodat persona-groepverkeer (Studenten/Docenten/Admins) via pop01 naar buiten gaat. Het exit node van NetBird is **alles-of-niets** — het kan geen destination ranges selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, pusht een Intune-Remediation (`2ITCSC1A-Route-Remediation`) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.
 
 **DC-LAN (10.0.0.0/8) over de overlay — uitgesteld.** Het oorspronkelijke `Internal-DC`-netwerk (ACL-bewust) en zijn `Datacenter-Access`-beleid zijn **verwijderd in de V34-migratie**; er is geen actief DC-LAN-over-overlay-pad in de huidige sandbox. Het opnieuw introduceren van datacenterbereikbaarheid is uitgesteld tot de geplande Cosmos-app-gateway-sessie. De ontwerpredenering hieronder blijft behouden voor wanneer dat werk wordt hervat.
 
@@ -186,7 +186,7 @@ De identiteitsketen loopt van Entra ID via Zitadel naar NetBird:
 NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:
 
 - **Producer:** De [Identity Bridge](identity-bridge.md) (die afhankelijk is van de NetBird Management API) publiceert identity events naar `identity.peer.connected`, `identity.peer.disconnected` en `identity.multi_persona` (zero-trust-anomalie) wanneer peers verbinden, verbreken of in meer dan één personagroep verschijnen.
-- **Handhavingsdoelwit:** De [Control Daemon](control-daemon.md) gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit beleidsdragende personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All->All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.
+- **Handhavingsdoelwit:** De [Control Daemon](control-daemon.md) gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit policy-bearing personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All->All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.
 
 ---
 

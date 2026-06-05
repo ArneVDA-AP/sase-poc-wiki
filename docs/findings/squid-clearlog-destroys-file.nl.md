@@ -16,7 +16,7 @@ Dit leidde tot een langdurige probleemoplossingssessie voor een probleem dat nie
 
 ## Oorzaak
 
-De WebUI-knop "Logboek wissen" verwijdert het logbestand in plaats van het af te kappen. Na verwijdering blijft Squid draaien maar schrijft naar een niet-bestaande bestandsdescriptor, wat geen loguitvoer oplevert. Het logbestand wordt pas opnieuw aangemaakt wanneer Squid herstart.
+De WebUI-knop "Logboek wissen" verwijdert het logbestand in plaats van het af te kappen. Na verwijdering blijft Squid draaien maar schrijft naar een niet-bestaande bestandsdescriptor, wat geen log output oplevert. Het logbestand wordt pas opnieuw aangemaakt wanneer Squid herstart.
 
 ## Oplossing / workaround
 
@@ -35,5 +35,5 @@ Dit zorgt ervoor dat Squid het logbestand opnieuw aanmaakt bij het opstarten.
 ## Lessen
 
 - Gebruik nooit de WebUI-knop "Logboek wissen" voor Squid — kapt altijd af vanuit de shell
-- Wanneer proxytests geen loguitvoer tonen: controleer eerst of het logbestand bestaat (`ls -la /var/log/squid/access.log`) vóór de aanname dat de proxy kapot is
+- Wanneer proxytests geen log output tonen: controleer eerst of het logbestand bestaat (`ls -la /var/log/squid/access.log`) vóór de aanname dat de proxy kapot is
 - Loggerelateerde problemen kunnen onderliggende problemen maskeren — verifieer altijd dat het logbestand bestaat vóór het starten van proxy-diagnose

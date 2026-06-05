@@ -5,7 +5,7 @@ tags: [suricata, opnsense, ids, ips, network, firewall, sase]
 
 # Suricata IDS — WAN + LAN-netwerkinspectie
 
-**Rol:** Parallelle netwerklaagsinspsectie op pop01 — detecteert bedreigingen in ruwe pakketstromen op WAN (vtnet0) en LAN (vtnet1) met behulp van signature-based rules. Complementair aan de ICAP-pijplijn, die HTTP-inhoud inspecteert; Suricata inspecteert netwerkstromen die de proxy volledig omzeilen.  
+**Rol:** Parallelle network-layer inspectie op pop01 — detecteert bedreigingen in ruwe pakketstromen op WAN (vtnet0) en LAN (vtnet1) met behulp van signature-based rules. Complementair aan de ICAP-pijplijn, die HTTP-inhoud inspecteert; Suricata inspecteert netwerkstromen die de proxy volledig omzeilen.  
 **Versie:** Suricata 7.x (meegeleverd met OPNsense 25.1)  
 **Configuratielocatie:** `/usr/local/opnsense/service/templates/OPNsense/IDS/custom.yaml` (persistente configuratie), `/var/log/suricata/suricata_JJJJMMDD.log`, `/var/log/suricata/eve.json`
 
@@ -21,9 +21,9 @@ Suricata draait in PCAP-opnamemodus op pop01 en leest ruwe frames van BPF-appara
 
 **Waarom niet wt0 (NetBird):** WireGuard is een Layer 3 VPN. Verkeer dat via wt0 wordt gerouteerd verschijnt vanuit het perspectief van BPF niet als inkomende frames op die interface. `tcpdump` op wt0 met een TCP-filter toont 0 paketten. Suricata op wt0 zou niets zien. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
 
-**IDS-modus, niet IPS:** Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge) — virtio-NIC's in QEMU hebben geen van deze. Zelfs `sysctl dev.netmap.admode=2` (geëmuleerde Netmap-modus) loste dit niet op — geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete `pf divert-to`-firewallregels (`pfctl -s rules | grep divert` retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert-beleidstabel is geconfigureerd en gereed voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie [Beslissing: IDS vs. IPS](../decisions/ids-vs-ips.md) en [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
+**IDS-modus, niet IPS:** Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge) — virtio-NIC's in QEMU hebben geen van deze. Zelfs `sysctl dev.netmap.admode=2` (geëmuleerde Netmap-modus) loste dit niet op — geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete `pf divert-to`-firewallregels (`pfctl -s rules | grep divert` retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert-beleidstabel staat klaar voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie [Beslissing: IDS vs. IPS](../decisions/ids-vs-ips.md) en [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
 
-**RAM-vereiste:** Suricata + ClamAV + Squid gelijktijdig uitvoeren vereist **minimaal 8 GB RAM** op pop01. Hyperscan-patrooncompilatie van ET Open-regels piekt op ~4 GB RSS. Bij 6 GB beëindigt de OOM-killer services stilzwijgend zonder loguitvoer.
+**RAM-vereiste:** Suricata + ClamAV + Squid gelijktijdig uitvoeren vereist **minimaal 8 GB RAM** op pop01. Hyperscan-patrooncompilatie van ET Open-regels piekt op ~4 GB RSS. Bij 6 GB beëindigt de OOM-killer services stilzwijgend zonder log output.
 
 ---
 

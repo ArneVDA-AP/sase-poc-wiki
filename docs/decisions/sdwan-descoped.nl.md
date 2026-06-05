@@ -30,14 +30,14 @@ De implementatie hiervan zou vereisen: een IPsec-tunnel op VyOS, een NetBird-con
 
 SD-WAN-tests F12, F13 en F14 zijn geschrapt. VyOS blijft in de topologie als de site01 WAN-gateway en NAT-apparaat voor Site-LAN, maar is niet geconfigureerd als IPsec-router of uCPE NetBird-host.
 
-Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird-inschrijving — hetzelfde mechanisme als mobile01 — in plaats van via een site-to-site-tunnel.
+Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird-enrollment — hetzelfde mechanisme als mobile01 — in plaats van via een site-to-site-tunnel.
 
 ## Gevolgen
 
 - **F12, F13, F14** zijn als N.v.t. gemarkeerd in alle acceptatietestmatrices. Dit is een expliciete architectuurbeslissing, geen implementatieleemte.
 - **F15-stap 7** is N.v.t. (klassiek IPsec site-to-site geschrapt). **Stap 8** (QoS-markering) is gevalideerd onder het ZT-Branch model (V43 Test #5: DSCP EF geclassificeerd, 0 drops onder last).
 - **VyOS** blijft in de topologie als SASE-gateway — WAN-connectiviteit, NAT, QoS-shaping (DSCP EF/AF41/AF21) en WAN health monitoring. Zie [VyOS](../components/vyos.md).
-- **sitepc01** bereikt het datacenter via individuele NetBird-inschrijving — bevestigd ingeschreven en operationeel in Verslag43/Verslag44, niet via een site-to-site-tunnel.
+- **sitepc01** bereikt het datacenter via individuele NetBird-enrollment — bevestigd ge-enrolld en operationeel in Verslag43/Verslag44, niet via een site-to-site-tunnel.
 - De architectuur sluit direct aan op het "Zero Trust SD-WAN"-model van Zscaler: vestigingen behandeld als niet-vertrouwde netwerken (zoals cafés), elk apparaat authenticeert individueel, geen site-to-site-tunnels.
 
 ## Wat er daadwerkelijk gebouwd is

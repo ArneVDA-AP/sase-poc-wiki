@@ -5,7 +5,7 @@ tags: [identity, entra-id, zitadel, netbird, squid, identity-bridge, zero-trust]
 
 # Concept: Identity Flow — Entra ID tot Squid
 
-**Definitie:** De volledige identiteitspropagatie-keten die het Entra ID-groepslidmaatschap van een gebruiker transporteert vanuit de Microsoft-clouddirectory, door vier tussenliggende systemen, tot aan de per-request toegangsbeslissingen van de Squid-proxy.
+**Definitie:** De keten die Entra ID-groepslidmaatschap van een gebruiker propageert van de Microsoft-clouddirectory, via vier tussensystemen, naar de per-request toegangsbeslissingen in Squid.
 
 ## Hoe het hier van toepassing is
 
@@ -28,7 +28,7 @@ Identity Bridge (mgmt01 Docker, FastAPI)
   | Bouwt in-memory cache: {overlay_ip -> {email, groups[], os}}
   v
 Squid (pop01, external_acl)
-  | Per verzoek: helper bevraagt Identity Bridge met %SRC (overlay-IP)
+  | Per verzoek: helper queryet Identity Bridge met %SRC (overlay-IP)
   | Retourneert persona-groep -> ACL evalueert per-groep-beleid
   v
 Per-request identiteitsgebaseerde filtering
@@ -78,7 +78,7 @@ Dit is bewust: Gate 3 (SWG-pijplijn — inhoudsinspectie, malwarescanning, DLP) 
 - **[Zitadel](../components/zitadel.md)** — OIDC-broker, Action 1 (allowlist-mapt de groeps-weergavenaam-string naar de schone naam) en Action 2 (JWT group injection)
 - **[NetBird](../components/netbird.md)** — JWT group sync leest de `groups`-claim en maakt auto_groups per persona aan
 - **[Identity Bridge](../components/identity-bridge.md)** — pollt NetBird API, bouwt overlay IP-naar-groep-cache, bedient Squid-lookups
-- **[Squid](../components/squid.md)** — external_acl bevraagt Identity Bridge per verzoek, dwingt persona-gebaseerd filterbeleid af
+- **[Squid](../components/squid.md)** — external_acl queryet Identity Bridge per verzoek, dwingt persona-gebaseerd filterbeleid af
 - **[Entra ID CA](../decisions/ca-posture-hybrid.md)** — Gate 1 Conditional Access-beleid geevalueerd tijdens de OIDC-stroom
 
 ## Belangrijke onderscheidingen

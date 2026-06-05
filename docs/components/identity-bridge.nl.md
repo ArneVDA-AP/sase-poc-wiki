@@ -13,9 +13,9 @@ tags: [identity-bridge, netbird, squid, entra-id, fastapi, zero-trust]
 
 De Identity Bridge overbrugt de kloof tussen de ZTNA-transportlaag (NetBird) en de SWG-inspectielaag (Squid). Zonder deze bridge ziet Squid enkel overlay-IP-adressen en kan het niet bepalen welke gebruiker of persona-groep een verzoek indient.
 
-De bridge pollt de NetBird Management API (`/api/peers` + `/api/users`) elke 30 seconden via een service-user PAT met admin-rol. Het bouwt een in-memory cache op die overlay-IP's koppelt aan persona-groepen. Squid bevraagt deze cache via `external_acl_type` bij elk HTTP-verzoek, met het overlay-IP van de client (`%SRC`) als opzoeksleutel.
+De bridge pollt de NetBird Management API (`/api/peers` + `/api/users`) elke 30 seconden via een service-user PAT met admin-rol. Het bouwt een in-memory cache op die overlay-IP's koppelt aan persona-groepen. Squid queryet deze cache via `external_acl_type` bij elk HTTP-verzoek, met het overlay-IP van de client (`%SRC`) als opzoeksleutel.
 
-De antwoordstroom: Squid stuurt `<IP> <group>` → helper bevraagt `GET /lookup?ip=<overlay_ip>` (met de `X-Bridge-Secret`-header) → Identity Bridge retourneert het volledige groepslidmaatschap van de peer → de helper antwoordt `OK user=<email>` als de gevraagde groep matcht, anders `ERR` → Squid's persona-ACL wordt geactiveerd of valt door. De bridge selecteert zelf geen persona; persona-resolutie gebeurt in de `http_access`-volgorde van Squid (V31).
+De antwoordstroom: Squid stuurt `<IP> <group>` → helper queryet `GET /lookup?ip=<overlay_ip>` (met de `X-Bridge-Secret`-header) → Identity Bridge retourneert het volledige groepslidmaatschap van de peer → de helper antwoordt `OK user=<email>` als de gevraagde groep matcht, anders `ERR` → Squid's persona-ACL wordt geactiveerd of valt door. De bridge selecteert zelf geen persona; persona-resolutie gebeurt in de `http_access`-volgorde van Squid (V31).
 
 ## Configuratie
 

@@ -30,7 +30,7 @@ De c-icap-ontwikkelaar bevestigde dat `virus_scan` `multipart/form-data` niet co
 
 - Python DLP-container (`/opt/dlp-icap/` op mgmt01) moet actief zijn voor upload-DLP om te functioneren
 - `bypass=on` in Squid's ICAP-configuratie voor de Python DLP-service: als de container uitvalt, gaan uploads door (fail-open). ClamAV blijft actief voor downloadscanning
-- Alleen POST/PUT/PATCH-aanvragen worden naar Python DLP gerouteerd — GET-aanvragen bevatten geen door gebruikers geüploade inhoud en ze toevoegen verhoogt alleen de latentie
+- Alleen POST/PUT/PATCH-aanvragen worden naar Python DLP gerouteerd — GET-aanvragen bevatten geen door gebruikers geüploade inhoud en ze toevoegen verhoogt alleen de latency
 - ClamAV YARA-regels bieden download-DLP (matching na bestandsdecompositie, dus `.docx`-uitpakken werkt); Python DLP biedt upload-DLP met volledige algoritmische validatie
 - pyicap-bibliotheek vereist een Python 3.10+-compatibiliteitspatch in de Dockerfile — zie [Bevinding: pyicap collections bug](../findings/pyicap-collections-bug.md)
 

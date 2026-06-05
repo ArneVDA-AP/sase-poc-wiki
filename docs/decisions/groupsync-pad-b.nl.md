@@ -10,7 +10,7 @@ tags: [decision, groupsync, zitadel, entra-id, netbird]
 
 ## Context
 
-Entra ID-groepsnamen dragen een verplicht `2ITCSC1A-`-prefix opgelegd door een lector-mandaat (de tenant wordt gedeeld over meerdere studentenprojecten). Zo verschijnt de groep voor studenten als `2ITCSC1A-Studenten` in Entra ID. Dit prefix moet ergens in de synchronisatiepipeline worden afgehandeld, omdat NetBird-toegangspolicies en Squid ACL's werken op groepsnamen — policies die verwijzen naar `2ITCSC1A-Studenten` in plaats van `Studenten` zijn moeilijker leesbaar, moeilijker te onderhouden, en propageren het prefix door elk downstream-component (Identity Bridge, NATS-subjects, Squid external ACL-responses).
+Entra ID-groepsnamen dragen een verplicht `2ITCSC1A-`-prefix opgelegd door een lector-mandaat (de tenant wordt gedeeld over meerdere studentenprojecten). Zo verschijnt de groep voor studenten als `2ITCSC1A-Studenten` in Entra ID. Dit prefix moet ergens in de synchronisatiepipeline worden afgehandeld, omdat NetBird-toegangspolicies en Squid ACL's werken op groepsnamen. Policies die verwijzen naar `2ITCSC1A-Studenten` in plaats van `Studenten` zijn moeilijker leesbaar en moeilijker te onderhouden. Bovendien propageert het prefix dan door elk downstream-component (Identity Bridge, NATS-subjects, Squid external ACL-responses).
 
 ## Overwogen opties
 

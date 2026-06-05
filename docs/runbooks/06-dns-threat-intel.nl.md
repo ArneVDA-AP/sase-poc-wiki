@@ -21,7 +21,7 @@ tags: [runbook, ioc2rpz, rpz, bind, unbound, dns]
 
 ---
 
-## Stap 1: ioc2rpz + GUI uitrollen op mgmt01
+## Stap 1: ioc2rpz + GUI deployen op mgmt01
 
 **Los eerst poortconflicten op.** Op mgmt01 wordt poort 53 geclaimd door `systemd-resolved` en de NetBird DNS-relay. Bind ioc2rpz aan het beheer-IP `192.168.122.23`.
 

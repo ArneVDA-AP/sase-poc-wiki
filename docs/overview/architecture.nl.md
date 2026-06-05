@@ -13,7 +13,7 @@ Deze pagina beschrijft de volledige architectuur van de SASE PoC: nodes, netwerk
 
 Het project verwerpt het traditionele perimetermodel waarbij vertrouwen voortkomt uit netwerkpositie. In het traditionele model beschermt een firewall één grens; iedereen binnenin is vertrouwd. Dit werkt niet voor Atlascollege: 4 000 gebruikers op beheerde Windows-apparaten die vanuit thuis, cafés en treinen werken — er is geen "binnenste" meer.
 
-In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats **op de PoP** (Point of Presence) — de edge-node tussen clients en internet. Vertrouwen wordt bepaald door drie onafhankelijk geëvalueerde factoren:
+In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats **op de PoP** (Point of Presence) — de edge-node tussen clients en internet. De PoP evalueert vertrouwen op basis van drie onafhankelijke factoren:
 
 1. **Identiteit** — wie ben je? (Entra ID + MFA)
 2. **Apparaatposture** — wat is de toestand van je apparaat? (Intune-conformiteit + Entra ID CA)
@@ -86,7 +86,7 @@ Een bewuste architecturale splitsing die commerciële SASE weerspiegelt:
 ```
 mobile01
   │ ① DNS-opzoeking: wpad.sandbox.local → 100.70.135.241 (mgmt01)
-  │   (via NetBird primaire nameserver → pop01 Unbound → RPZ-controle → opgelost)
+  │   (via NetBird primaire nameserver → pop01 Unbound → RPZ-controle → geresolved)
   │
   │ ② PAC-bestand opgehaald: http://wpad.sandbox.local/wpad.dat (Caddy op mgmt01)
   │   Resultaat: PROXY 100.70.154.79:3128 voor al het externe verkeer
@@ -96,7 +96,7 @@ mobile01
   ▼
 pop01 Squid (pre-auth listener, ssl-bump)
   │
-  ├── Identity Bridge lookup: external_acl bevraagt mgmt01 met overlay-IP (%SRC)
+  ├── Identity Bridge lookup: external_acl queryet mgmt01 met overlay-IP (%SRC)
   │     → retourneert Entra ID persona-groep (Studenten/Docenten/Admins)
   │     → persona-ACL bepaalt policybeslissing (identiteitsgebaseerde filtering)
   ├── URL-filtercontrole (UT1 / handmatige blacklist) → 403 indien geblokkeerd
@@ -120,7 +120,7 @@ mobile01 of dc01
 pop01 Unbound (poort 53, respip-module actief)
   │ RPZ-controle: staat het domein in threat-intel.rpz.sase?
   ├── Ja → NXDOMAIN (autoritatief, aa-vlag)
-  └── Nee → doorsturen naar upstream DNS → antwoord teruggestuurd
+  └── Nee → forwarden naar upstream DNS → antwoord teruggestuurd
 ```
 
 ### 5.3 Zone-transferketen (threat intelligence-updatepad)
@@ -210,7 +210,7 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 | NetBird ACL-policies | Welke peer welke resource kan bereiken | NetBird management |
 | Unbound RPZ | DNS-niveau domein toestaan/weigeren | pop01 Unbound |
 | OPNsense pf | Stateful firewall (basisbeveiliging) | pop01 |
-| SWG-identiteitslaag | Squid bevraagt Identity Bridge voor persona-groep — identiteitsgebaseerde filtering per gebruiker (Studenten/Docenten/Admins) | pop01 Squid → mgmt01 Identity Bridge |
+| SWG-identiteitslaag | Squid queryet Identity Bridge voor persona-groep — identiteitsgebaseerde filtering per gebruiker (Studenten/Docenten/Admins) | pop01 Squid → mgmt01 Identity Bridge |
 | DC-LAN-uitgaand verkeer | Geen SWG-inspectie — gerouteerd door OPNsense, niet via proxy | pop01 vtnet1 gateway |
 
 ---

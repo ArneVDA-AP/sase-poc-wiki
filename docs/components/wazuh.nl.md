@@ -20,7 +20,7 @@ Voor CASB Laag 2 pollt de `o365_producer` de Office 365 Management Activity API 
 ## Configuratie
 
 - **Dashboard:** `192.168.122.23:5601` (poort 443 bezet door NetBird Caddy). Volledig operationeel (opgelost 2 juni 2026). `Error checking updates` CTI-500 blijft aanwezig in air-gap maar is cosmetisch en non-blocking in 4.14.5+. Zie [Bevinding: Wazuh dashboard air-gate](../findings/wazuh-dashboard-airgate.md).
-- **pop01-agent:** Ingeschreven als ID 001 Active. Levert host-feeds (audit, configd, filter, kernel, pkg). Suricata/Squid/c-icap/Unbound uitgesloten van agent-feeds — deze hebben NATS-producers.
+- **pop01-agent:** Ge-enrolld als ID 001 Active. Levert host-feeds (audit, configd, filter, kernel, pkg). Suricata/Squid/c-icap/Unbound uitgesloten van agent-feeds — deze hebben NATS-producers.
 - **Agent-instellingen:** `intrusion_detection_events=false` + `active_response=false` (dubbel-ingest-bescherming + handhavingsbescherming)
 - **Rule-ID-overzicht:**
   - 100500–100540: Busproducers (proxy/IDS/DLP/malware/DNS-RPZ)

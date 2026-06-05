@@ -32,7 +32,7 @@ Unbound (pop01, poort 53, respip-module)
 Overlay-clients + dc01
 ```
 
-ioc2rpz is een **zonebron**, geen resolver. Clients vragen ioc2rpz nooit direct. Ze vragen Unbound, dat de RPZ-zone in het geheugen heeft. Geen extra latentie per query.
+ioc2rpz is een **zonebron**, geen resolver. Clients queryen ioc2rpz nooit direct. Ze queryen Unbound, dat de RPZ-zone in het geheugen heeft. Geen extra latency per query.
 
 BIND bestaat uitsluitend omdat Unbound 1.24.2 TSIG voor zone transfers niet ondersteunt — een ontbrekende functie gedocumenteerd in GitHub NLnetLabs/unbound issue #336 (open sinds oktober 2020). BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en presenteert de zone aan Unbound via loopback zonder authenticatie. Zie [Beslissing: BIND als TSIG-intermediary](../decisions/bind-tsig-intermediary.md).
 

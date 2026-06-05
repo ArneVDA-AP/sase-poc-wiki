@@ -15,7 +15,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
-| A1 | Niet-ingeschreven apparaat probeert DC-LAN-toegang | Geen route naar 10.0.0.0/24 -- destination unreachable | F8 | `ping 10.0.0.100` vanaf niet-ingeschreven host |
+| A1 | Niet-ge-enrolld apparaat probeert DC-LAN-toegang | Geen route naar 10.0.0.0/24 -- destination unreachable | F8 | `ping 10.0.0.100` vanaf niet-ge-enrollde host |
 | A2 | NetBird-login via Entra ID | OIDC-flow voltooid, tunnel actief, peer in juiste groep | F1, F2 | `netbird up` gevolgd door browser SSO |
 | A3 | Niet-conform apparaat logt in | Conditional Access blokkeert (report-only tot demo) | F3 | Apparaatcompliance aanpassen in Intune |
 
@@ -52,9 +52,9 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
-| E1 | RPZ-geblokkeerd domein opvragen vanaf pop01 | NXDOMAIN met aa-vlag | T-A4 | `dig @127.0.0.1 <rpz-domain>` op pop01 |
-| E2 | RPZ-geblokkeerd domein opvragen vanaf mobile01 | NXDOMAIN via overlay DNS | T-A5 | `nslookup <rpz-domain>` op mobile01 |
-| E3 | RPZ-geblokkeerd domein opvragen vanaf dc01 | NXDOMAIN via DC-LAN | T-A6 | `dig @10.0.0.1 <rpz-domain>` op dc01 |
+| E1 | RPZ-geblokkeerd domein queryen vanaf pop01 | NXDOMAIN met aa-vlag | T-A4 | `dig @127.0.0.1 <rpz-domain>` op pop01 |
+| E2 | RPZ-geblokkeerd domein queryen vanaf mobile01 | NXDOMAIN via overlay DNS | T-A5 | `nslookup <rpz-domain>` op mobile01 |
+| E3 | RPZ-geblokkeerd domein queryen vanaf dc01 | NXDOMAIN via DC-LAN | T-A6 | `dig @10.0.0.1 <rpz-domain>` op dc01 |
 
 ### Eventgestuurde handhaving (NATS)
 

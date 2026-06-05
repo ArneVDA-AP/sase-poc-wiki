@@ -10,7 +10,7 @@ tags: [decision, sd-wan, vyos, netbird, zero-trust]
 
 ## Context
 
-Traditioneel SD-WAN (IPsec site-to-site-tunnels, uCPE, QoS) maakte aanvankelijk deel uit van de architectuur. Herziening v3 (maart 2026) schrapte de klassieke IPsec/uCPE-aanpak (zie [Beslissing: SD-WAN geschrapt](sdwan-descoped.md)). De vraag bleef: wat vervangt het branch-connectiviteitsmodel? Simpelweg elk apparaat individueel inschrijven via NetBird is functioneel, maar adresseert geen QoS of failover — twee mogelijkheden die SD-WAN traditioneel biedt.
+Traditioneel SD-WAN (IPsec site-to-site-tunnels, uCPE, QoS) maakte aanvankelijk deel uit van de architectuur. Herziening v3 (maart 2026) schrapte de klassieke IPsec/uCPE-aanpak (zie [Beslissing: SD-WAN geschrapt](sdwan-descoped.md)). De vraag bleef: wat vervangt het branch-connectiviteitsmodel? Simpelweg elk apparaat individueel enrollen via NetBird is functioneel, maar adresseert geen QoS of failover — twee mogelijkheden die SD-WAN traditioneel biedt.
 
 ## Overwogen opties
 
@@ -36,7 +36,7 @@ Spoor-1-contract acceptatiecriteria B1-B4 zijn volledig gesloten op basis van de
 
 - **F12-F14 (klassieke IPsec-tests) zijn N.v.t.** Deze tests maten een ander paradigma. De ZT-Branch tests (#5 en #6) zijn het correcte validatiekader voor de geïmplementeerde architectuur.
 - **VyOS-rol is herdefinieerd:** VyOS site01 is een SASE-gateway met DSCP-markering, geen IPsec-router. De configuratie is `tc`-gebaseerde QoS + NAT, niet IPsec + BGP.
-- **Per-apparaat authenticatie is verplicht:** Elk apparaat op Site-LAN moet een eigen NetBird-inschrijving hebben. Er is geen site-niveau vertrouwen — een gecompromitteerd apparaat op Site-LAN verleent geen toegang tot datacenterresources voor andere apparaten.
+- **Per-apparaat authenticatie is verplicht:** Elk apparaat op Site-LAN moet een eigen NetBird-enrollment hebben. Er is geen site-niveau vertrouwen — een gecompromitteerd apparaat op Site-LAN verleent geen toegang tot datacenterresources voor andere apparaten.
 - **QoS is alleen site-egress:** DSCP-markering op VyOS is van toepassing op verkeer dat de site verlaat. End-to-end QoS is afhankelijk van tussenliggende netwerkhops die DSCP-markeringen respecteren, wat niet gegarandeerd is op het publieke internet.
 
 Zie ook: [Beslissing: SD-WAN geschrapt](sdwan-descoped.md), [Component: VyOS](../components/vyos.md), [Component: NetBird](../components/netbird.md), [Concept: Zero Trust](../concepts/zero-trust.md)

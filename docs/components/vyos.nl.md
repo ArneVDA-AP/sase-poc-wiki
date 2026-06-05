@@ -7,7 +7,7 @@ tags: [network, sase, sd-wan, nat, zero-trust]
 
 **Rol:** SASE-gateway voor de remote site — biedt WAN-connectiviteit en NAT voor het Site-LAN, invulling gevend aan de SD-WAN-pijler via een Zero Trust Branch-model. Equivalent aan een Zscaler Zero Trust Branch edge-appliance.  
 **Versie:** VyOS rolling 2026.02.16  
-**Status:** ✅ Operationeel — site01 op `192.168.122.33`, sitepc01 (Tiny11) ingeschreven in sandbox  
+**Status:** ✅ Operationeel — site01 op `192.168.122.33`, sitepc01 (Tiny11) ge-enrolld in sandbox  
 **Configuratielocatie:** `/etc/vyos/config.boot` op site01
 
 ---
@@ -16,7 +16,7 @@ tags: [network, sase, sd-wan, nat, zero-trust]
 
 VyOS draait als `site01` met twee interfaces: eth0 op het WAN-segment (`192.168.122.33`) en eth1 op het Site-LAN (`172.16.10.1/24`). De verantwoordelijkheden zijn bewust beperkt tot connectiviteit — het fungeert als NAT-gateway zodat apparaten op het Site-LAN het internet kunnen bereiken, maar het handhaaft zelf geen beveiligingsbeleid.
 
-De branch volgt een **Zero Trust Branch-model**: de gehele site wordt behandeld als een niet-vertrouwde locatie, niet anders dan een Wi-Fi-netwerk in een koffiebar. Er zijn geen IPsec-tunnels tussen site01 en pop01. In plaats daarvan draait sitepc01 een [NetBird](netbird.md)-client en treedt toe tot de WireGuard-overlay met een identiteitsgebaseerde verbinding, exact hetzelfde pad volgend als elke mobiele gebruiker. Alle beveiligingsinspectie vindt plaats op de PoP, niet aan de branch-rand.
+De branch volgt een **Zero Trust Branch-model**: de gehele site wordt behandeld als een niet-vertrouwde locatie, niet anders dan een Wi-Fi-netwerk in een koffiebar. Er zijn geen IPsec-tunnels tussen site01 en pop01. In plaats daarvan draait sitepc01 een [NetBird](netbird.md)-client en treedt toe tot de WireGuard-overlay met een identiteitsgebaseerde verbinding, en volgt exact hetzelfde pad als elke mobiele gebruiker. Alle beveiligingsinspectie vindt plaats op de PoP, niet aan de branch-rand.
 
 Dit weerspiegelt de Zero Trust SD-WAN-architectuur van Zscaler, waarbij de branch-appliance ruwe connectiviteit biedt terwijl de Zero Trust Exchange (hier: de SWG-keten van pop01) inspectie en beleidshandhaving verzorgt.
 
@@ -104,7 +104,7 @@ Een health-check-script (`/config/scripts/wan-health-check.sh`) draait op een Vy
 - **Verkeerspad sitepc01:** sitepc01 → NAT via site01 → NetBird-overlay → pop01 (SWG-inspectie) voor Default/Allow-verkeer. Dit is hetzelfde pad dat mobile01 volgt — er bestaat geen branch-specifieke tunnel. Teams Optimize-media neemt in plaats daarvan het split-tunnel-pad rechtstreeks via eth0 (zie QoS hierboven).
 - **Site-LAN-segment:** `172.16.10.0/24`. sitepc01 zit op `172.16.10.10` met site01 als default gateway. Het draagt ook een tijdelijke tweede NIC op het WAN-segment (`192.168.122.50`), gebruikt als setup-/RDP-steiger — te verwijderen zodra overlay-RDP bewezen is.
 - **Geen directe WireGuard-tunnel** tussen site01 en pop01. Alle beveiligingshandhaving is gecentraliseerd op de PoP.
-- **Identiteit sitepc01 (twee onafhankelijke lagen):** ingeschreven in NetBird als `docent1` (Docenten-persona); afzonderlijk Entra ID joined en Intune enrolled via `student1`, het enige Intune-gelicenseerde sandbox-account (`docent1`/`admin1` zijn bewust ongelicenseerd). Gedocumenteerd in V44.
+- **Identiteit sitepc01 (twee onafhankelijke lagen):** ge-enrolld in NetBird als `docent1` (Docenten-persona); afzonderlijk Entra ID joined en Intune enrolled via `student1`, het enige Intune-gelicenseerde sandbox-account (`docent1`/`admin1` zijn bewust ongelicenseerd). Gedocumenteerd in V44.
 - **NetBird-coördinatie:** sitepc01 gebruikt de [NetBird](netbird.md)-client om toe te treden tot de overlay, geauthenticeerd via Entra ID.
 
 ---

@@ -22,7 +22,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **F5** | URL-filtering | SWG | ✅ Gevalideerd |
 | **F6** | SSL-Bump-inspectie | SWG | ✅ Gevalideerd |
 | **F7** | Malwaredetectie (ClamAV) | SWG | ✅ Gevalideerd |
-| **F8** | Firewall-segmentatie | FWaaS | ✅ Gevalideerd — DC-LAN-isolatie blijft gelden (niet-ingeschreven = geen route); positief ACL-pad verwijderd in V34 |
+| **F8** | Firewall-segmentatie | FWaaS | ✅ Gevalideerd — DC-LAN-isolatie blijft gelden (niet-ge-enrolld = geen route); positief ACL-pad verwijderd in V34 |
 | **F9** | Suricata-alertgeneratie | FWaaS | ✅ Gevalideerd (uitgebreid voorbij oorspronkelijke definitie) |
 | **F10** | Centrale logaggregatie (SIEM) | SIEM | ✅ Operationeel — Wazuh + NATS-forwarder + pop01-agent |
 | **F11** | CASB-alert en herstel | CASB | ✅ Functioneel — Wazuh + M365 Management Activity API + Active Response |
@@ -120,10 +120,10 @@ Zie [NetBird](../components/netbird.md), [Beslissing: Zitadel als IdP-broker](..
 
 **Poort 2 — Intune-apparaatnaleving:** Nalevingsbeleid dwingt OS-versie, Defender AV + firewall ingeschakeld, en realtime-beveiliging actief af.
 
-Ingeschreven apparaten:
+Ge-enrollde apparaten:
 
-- **mobile01** — ingeschreven als `2ITCSC1A-MOB-1`, conform
-- **sitepc01** — ingeschreven in NetBird als `docent1` (Docenten); afzonderlijk Entra joined + Intune-ingeschreven via `student1` (het enige Intune-gelicentieerde sandbox-account)
+- **mobile01** — ge-enrolld als `2ITCSC1A-MOB-1`, conform
+- **sitepc01** — ge-enrolld in NetBird als `docent1` (Docenten); afzonderlijk Entra joined + Intune-ge-enrolld via `student1` (het enige Intune-gelicentieerde sandbox-account)
 
 Twee policies blijven in report-only-modus (geo-blokkering, conform apparaat) tot de demo om lockout tijdens testen te vermijden.
 
@@ -135,7 +135,7 @@ Zie [Beslissing: CA + Posture hybride](../decisions/ca-posture-hybrid.md).
 
 ### F4 — Datacentertoegang via ZTNA
 
-**✅ Gevalideerd bij opbouw (mei 2026); het pad is nadien verwijderd in V34.** Op het moment van validatie was DC-LAN (10.0.0.0/24) bereikbaar via het NetBird Networks-mechanisme: een host die niet bij NetBird was ingeschreven had geen route naar dit subnet, ongeacht IP-connectiviteit, terwijl een ingeschreven peer met het ACL-beleid `Datacenter Access` het wél kon bereiken.
+**✅ Gevalideerd bij opbouw (mei 2026); het pad is nadien verwijderd in V34.** Op het moment van validatie was DC-LAN (10.0.0.0/24) bereikbaar via het NetBird Networks-mechanisme: een host die niet bij NetBird was ge-enrolld had geen route naar dit subnet, ongeacht IP-connectiviteit, terwijl een ge-enrollde peer met het ACL-beleid `Datacenter Access` het wél kon bereiken.
 
 ```powershell
 # mobile01 (PowerShell) — zoals getest in mei 2026
@@ -213,14 +213,14 @@ Zie [ClamAV/c-icap](../components/clamav-cicap.md).
 
 ### F8 — Firewall-segmentatie
 
-**✅ Gevalideerd.** De kern-segmentatie-eigenschap — een niet-ingeschreven apparaat heeft geen route naar DC-LAN (10.0.0.0/24) — geldt onafhankelijk van enig overlay-toegangspad en blijft vandaag waar.
+**✅ Gevalideerd.** De kern-segmentatie-eigenschap — een niet-ge-enrolld apparaat heeft geen route naar DC-LAN (10.0.0.0/24) — geldt onafhankelijk van enig overlay-toegangspad en blijft vandaag waar.
 
 Gevalideerd door contrast (mei 2026, toen het positieve pad nog bestond):
 
 - mobile01 **zonder** NetBird: `ping 10.0.0.100` → Bestemming onbereikbaar (geen route) — *nog steeds waar*
 - mobile01 **met** NetBird + het `Datacenter Access`-beleid: `Test-NetConnection 10.0.0.100 -Port 80` → `TcpTestSucceeded: True` via `wt0` — *positief pad verwijderd in V34*
 
-**Architectuurnoot:** DC-LAN gebruikte NetBird Networks (niet Network Routes). Het positieve pad vereiste zowel overlay-inschrijving als lidmaatschap van de groep `SASE-InternalResources`; zowel het `Internal-DC` Network als die groep zijn verwijderd in de V34-personamigratie (zie [runbook 02](../runbooks/02-ztna-overlay.md)). De negatieve isolatie-eigenschap — niet-ingeschreven = geen route — blijft ongewijzigd.
+**Architectuurnoot:** DC-LAN gebruikte NetBird Networks (niet Network Routes). Het positieve pad vereiste zowel overlay-enrollment als lidmaatschap van de groep `SASE-InternalResources`; zowel het `Internal-DC` Network als die groep zijn verwijderd in de V34-personamigratie (zie [runbook 02](../runbooks/02-ztna-overlay.md)). De negatieve isolatie-eigenschap — niet-ge-enrolld = geen route — blijft ongewijzigd.
 
 Zie [NetBird](../components/netbird.md).
 
@@ -374,7 +374,7 @@ Zie [ioc2rpz](../components/ioc2rpz.md), [RPZ](../concepts/rpz.md).
 
 ### T-A10 — Identity Bridge: overlay-IP naar personagroepresolutie
 
-Test dat de Identity Bridge overlay-IP's correct vertaalt naar Entra ID-personagroepen. Valideert door het `/lookup`-eindpunt te bevragen met een bekend overlay-IP en te controleren dat de teruggegeven groep overeenkomt met de verwachte persona.
+Test dat de Identity Bridge overlay-IP's correct vertaalt naar Entra ID-personagroepen. Valideert door het `/lookup`-eindpunt te queryen met een bekend overlay-IP en te controleren dat de teruggegeven groep overeenkomt met de verwachte persona.
 
 ---
 
@@ -392,7 +392,7 @@ Test dreigingsscoreaccumulatie en quarantaine. Valideert door meerdere gemiddeld
 
 ### T-A13 — Wazuh SIEM: NATS event ingestion + dashboardquery
 
-Test NATS-naar-Wazuh event ingestion. Valideert door een detection event te triggeren en vervolgens het Wazuh Discover-dashboard te bevragen naar het event met correcte velden.
+Test NATS-naar-Wazuh event ingestion. Valideert door een detection event te triggeren en vervolgens het Wazuh Discover-dashboard te queryen naar het event met correcte velden.
 
 ---
 
@@ -425,7 +425,7 @@ Graph API-tenantmachtigingen bevestigd op 1 april 2026 (beheerdertoestemming ver
 | 4 | Downloadt EICAR → Geblokkeerd | ✅ Gevalideerd (F7) |
 | 5 | Bezoekt testmyids.com → Alert in IDS | ✅ Gevalideerd (F9-1) |
 | 6 | Opent datacentersite → Geslaagd | ✅ Gevalideerd bij opbouw (F4); DC-LAN-over-overlay-pad verwijderd in V34, uitgesteld |
-| 7 | Sitegebruiker pingt datacenter via tunnel | ✖ N.v.t. — klassieke IPsec site-to-site geschrapt; de ZT-Branch gebruikt in plaats daarvan per-apparaat NetBird-inschrijving |
+| 7 | Sitegebruiker pingt datacenter via tunnel | ✖ N.v.t. — klassieke IPsec site-to-site geschrapt; de ZT-Branch gebruikt in plaats daarvan per-apparaat NetBird-enrollment |
 | 8 | QoS-markering zichtbaar op VyOS | ✅ Gevalideerd — DSCP-markering zichtbaar via `tc` op VyOS eth0 (V43 Test #5: EF geclassificeerd, 0 drops onder last) |
 | 9 | Managementdashboard toont alle services UP | ✅ Operationeel (Wazuh SIEM geïmplementeerd) |
 

@@ -10,7 +10,7 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 **Vereisten:** Alle voorgaande runbooks afgerond (volledige SASE-stack operationeel)
 **Status:** Geïmplementeerd (Verslag40) — Gate 1: 5 CA policies (3 Aan, 2 Report-only); Gate 2: Intune device compliance operationeel; Gate 3 volledig operationeel.
 
-> **Gates 1 en 2 zijn geïmplementeerd (Verslag40).** Gate 1 = vijf Conditional Access-policies: MFA Required (Aan), Block Legacy Auth (Aan), Risk-Based Block (Aan), Geo-Block alleen België (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). De twee Report-only-policies blijven zo tot de demo-voorbereiding (Sessie 11). Gate 2 = Intune device compliance (`2ITCSC1A-SASE-Windows-Compliance`), attestatie-gebaseerd — dit is de uitgerolde apparaat-gate, **niet** NetBird-posturecontroles (die een optionele, niet-uitgerolde defense-in-depth-laag blijven). Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.
+> **Gates 1 en 2 zijn geïmplementeerd (Verslag40).** Gate 1 = vijf Conditional Access-policies: MFA Required (Aan), Block Legacy Auth (Aan), Risk-Based Block (Aan), Geo-Block alleen België (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). De twee Report-only-policies blijven zo tot de demo-voorbereiding (Sessie 11). Gate 2 = Intune device compliance (`2ITCSC1A-SASE-Windows-Compliance`), attestatie-gebaseerd — dit is de gedeployde apparaat-gate, **niet** NetBird-posturecontroles (die een optionele, niet-gedeployde defense-in-depth-laag blijven). Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.
 
 ---
 
@@ -211,9 +211,9 @@ Drie effectieve controles blijven over na het schrappen van de encryptie/boot-in
 
 ---
 
-## [OPTIONEEL — NIET UITGEROLD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)
+## [OPTIONEEL — NIET GEDEPLOYD] Stap 3: NetBird Posture Check aanmaken (defense-in-depth)
 
-> **Niet uitgerold.** Met beheerde apparaten dekt Intune-naleving (Stap 2) het apparaatpostuur al via attestatie. De NetBird-posturecontrole hieronder is een *optionele* defense-in-depth-laag — onafhankelijke timing (tunnel-bouw) en mechanisme (client-side controle). Het werd **niet** uitgerold in de sandbox; de stappen blijven als ontwerpreferentie.
+> **Niet gedeployd.** Met beheerde apparaten dekt Intune-naleving (Stap 2) het apparaatpostuur al via attestatie. De NetBird-posturecontrole hieronder is een *optionele* defense-in-depth-laag — onafhankelijke timing (tunnel-bouw) en mechanisme (client-side controle). Het werd **niet** gedeployd in de sandbox; de stappen blijven als ontwerpreferentie.
 
 NetBird Dashboard → Access Control → Posture Checks → Create Posture Check
 
@@ -255,7 +255,7 @@ Dit is defense-in-depth naast de CA-geoblokkering (verschillende GeoIP-databases
 
 ---
 
-## [OPTIONEEL — NIET UITGEROLD] Stap 4: Posturecontrole koppelen aan ACL policies
+## [OPTIONEEL — NIET GEDEPLOYD] Stap 4: Posturecontrole koppelen aan ACL policies
 
 ```
 NetBird Dashboard → Access Control → Policies
@@ -349,11 +349,11 @@ Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat de per
 | Admins-persona onder geen enkel CA-beleid | `2itcsc1a_admin1` is het enige admins-lid en is de break-glass-uitsluiting op elk beleid (B40.6) | Voeg een tweede admin-account toe om de admins-persona onder CA te brengen |
 | docent1/admin1 niet gedekt door Beleid 5 | Bewust ongelicenseerd gelaten; Beleid 5 is studenten-only gescoped om een lockout te voorkomen (B40.20) | Licenseer docenten/admins voor Intune om Gate 2 naar die persona's uit te breiden |
 | Geen Continuous Access Evaluation (CAE) | Gate 2 herevalueert bij authenticatie en op Intune's periodieke cyclus, niet continu per sessie | Schakel CAE in voor near-real-time intrekking |
-| GeoIP niet 100% nauwkeurig | IP-geolocatiedatabases bevatten fouten | Alleen Geo-Block (Gate 1, CA); de optionele NetBird-geocontrole (andere DB) is niet uitgerold |
+| GeoIP niet 100% nauwkeurig | IP-geolocatiedatabases bevatten fouten | Alleen Geo-Block (Gate 1, CA); de optionele NetBird-geocontrole (andere DB) is niet gedeployd |
 | C2-beaconing via WireGuard-tunnel | Een gecompromitteerd apparaat kan de WireGuard-tunnel (UDP 51820) als C2-beaconingkanaal gebruiken — buiten Squid's zichtbereik | Endpoint Detection + Suricata (ziet WireGuard als versleuteld UDP) |
-| NetBird-posture niet uitgerold | Intune-attestatie dekt apparaatpostuur niet-spoofbaar; de client-side `process_check` is spoofbaar (een dummy-binary op het pad voldoet) | Rol NetBird-posture (Stappen 3-4) alleen uit als onbeheerde/BYOD-apparaten opnieuw in scope komen |
+| NetBird-posture niet gedeployd | Intune-attestatie dekt apparaatpostuur niet-spoofbaar; de client-side `process_check` is spoofbaar (een dummy-binary op het pad voldoet) | Deploy NetBird-posture (Stappen 3-4) alleen als onbeheerde/BYOD-apparaten opnieuw in scope komen |
 
-> **Dekkingsopmerking:** Met Intune-attestatie uitgerold als Gate 2 is het grootste hiaat in het BYOD-tijdperk-plan — eindpuntattestatie die procesgebaseerd en spoofbaar was — gedicht: Intune rapporteert de werkelijke apparaatstatus niet-spoofbaar. De voornaamste resterende hiaten ten opzichte van commerciële SASE (Zscaler ZPA, Netskope Private Access) zijn Continuous Access Evaluation (CAE) en per-sessie continu postuur in plaats van evaluatie bij authenticatie.
+> **Dekkingsopmerking:** Met Intune-attestatie gedeployd als Gate 2 is het grootste hiaat in het BYOD-tijdperk-plan — eindpuntattestatie die procesgebaseerd en spoofbaar was — gedicht: Intune rapporteert de werkelijke apparaatstatus niet-spoofbaar. De voornaamste resterende hiaten ten opzichte van commerciële SASE (Zscaler ZPA, Netskope Private Access) zijn Continuous Access Evaluation (CAE) en per-sessie continu postuur in plaats van evaluatie bij authenticatie.
 
 Zie [Concept: Zero Trust](../concepts/zero-trust.nl.md) voor de volledige analyse van het drie-gates-model.
 

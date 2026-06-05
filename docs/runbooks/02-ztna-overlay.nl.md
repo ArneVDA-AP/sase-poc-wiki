@@ -26,7 +26,7 @@ tags: [runbook, netbird, zitadel, entra-id, wireguard, ztna]
 
 ## Stap 1: Entra ID App-registratie
 
-Maak de app-registratie aan in Entra ID vóór het uitrollen van NetBird:
+Maak de app-registratie aan in Entra ID vóór het deployen van NetBird:
 
 ```
 Entra ID → App Registrations → New Registration

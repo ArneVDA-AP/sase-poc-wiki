@@ -50,8 +50,8 @@ De PoC vervangt het perimetermodel door een SASE-stack waarbij:
 
 De CASB-implementatie omvat drie handhavingslagen, elk voor een andere tijdshorizon:
 
-- **Laag 1 — Inline (Squid forward proxy):** Identiteitsgebaseerde URL-filtering en DLP op elk HTTP/HTTPS-verzoek. Squid bevraagt de Identity Bridge voor de persona-groep van de gebruiker en past gedifferentieerde policies toe (bv. Studenten geblokkeerd op ChatGPT; Docenten toegestaan). Operationeel sinds V31.
+- **Laag 1 — Inline (Squid forward proxy):** Identiteitsgebaseerde URL-filtering en DLP op elk HTTP/HTTPS-verzoek. Squid queryet de Identity Bridge voor de persona-groep van de gebruiker en past gedifferentieerde policies toe (bv. Studenten geblokkeerd op ChatGPT; Docenten toegestaan). Operationeel sinds V31.
 - **Laag 2 — API-mode (Wazuh + M365 Management Activity API):** Pollt SharePoint/OneDrive audit-events op beleidsschendingen (anonieme shares, externe shares). Wazuh custom rules (100600-familie) detecteren schendingen; Active Response scripts intrekken deellinks via Microsoft Graph API. Operationeel sinds V39.
-- **Laag 3 — Real-time event-driven (NATS + Control Daemon):** Alle detectiesilo's publiceren events naar de NATS-bus. De control daemon houdt per peer een threat score bij met sliding-window decay. Wanneer een peer de quarantainedrempel overschrijdt, wordt deze uit de policy-dragende persona-groepen verwijderd — deny-by-default blokkeert alle connectiviteit. Operationeel sinds V35.
+- **Laag 3 — Real-time event-driven (NATS + Control Daemon):** Alle detectiesilo's publiceren events naar de NATS-bus. De control daemon houdt per peer een threat score bij met sliding-window decay. Wanneer een peer de quarantainedrempel overschrijdt, wordt deze uit de policy-bearing persona-groepen verwijderd — deny-by-default blokkeert alle connectiviteit. Operationeel sinds V35.
 
 Zie: [Beslissing: CASB drie lagen](../decisions/casb-three-layers.md)

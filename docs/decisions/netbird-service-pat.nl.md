@@ -10,7 +10,7 @@ tags: [decision, netbird, identity-bridge, api]
 
 ## Context
 
-Identity Bridge moet de NetBird Management API pollen om groepslidmaatschap van Zitadel te synchroniseren naar NetBird-peergroepen. De voor de hand liggende aanpak is een Personal Access Token (PAT) van een bestaande admingebruiker te gebruiken. NetBird-issue #3127 onthult echter een destructief neveneffect: wanneer de API wordt gepolld met een reguliere gebruikers-PAT, verwijdert het systeem bij elke API-aanroep alle JWT-gepropageerde auto-groups van alle peers die bij die gebruiker horen. Dit verbreekt stilzwijgend groepsgebaseerde beleidstoewijzingen voor de peers van de pollende gebruiker.
+Identity Bridge moet de NetBird Management API pollen om groepslidmaatschap van Zitadel te synchroniseren naar NetBird-peergroepen. De voor de hand liggende aanpak is een Personal Access Token (PAT) van een bestaande admingebruiker te gebruiken. NetBird-issue #3127 onthult echter een destructief neveneffect: wanneer de API wordt gepolld met een reguliere gebruikers-PAT, verwijdert het systeem bij elke API-aanroep alle JWT-gepropageerde auto-groups van alle peers die bij die gebruiker horen. Dit verbreekt stilzwijgend groepsgebaseerde beleidstoewijzingen voor de peers van de gebruiker die pollt.
 
 ## Overwogen opties
 

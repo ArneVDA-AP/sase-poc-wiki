@@ -130,7 +130,7 @@ Klik met rechts op elke node → Configure → General settings:
 | mgmt01 (Ubuntu) | 16384 MB | 4 | 1 | Docker-stack |
 | dc01 (Ubuntu) | 4096 MB | 2 | 1 | Datacentersimulatie |
 | site01 (VyOS) | 1024 MB | 1 | 2 (eth0, eth1) | SD-WAN-gateway |
-| sitepc01 (Tiny11) | 4096 MB | 2 | 1 | Tiny11 / Windows 11 — overlay-ingeschreven (docent1) |
+| sitepc01 (Tiny11) | 4096 MB | 2 | 1 | Tiny11 / Windows 11 — overlay-ge-enrolld (docent1) |
 
 > **Valkuil: pop01 heeft 8 GB nodig, niet 4 GB.** Het handboek schrijft 4 GB voor, maar ClamAV (~1,2 GB) + Suricata (~760 MB + 4 GB Hyperscan-compilatiepiek) + Squid (~400 MB) gelijktijdig overschrijden 6 GB. Bij 4 GB beëindigt de OOM-killer van FreeBSD processen zonder logboekregels te schrijven.
 > Zie [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.nl.md) voor geheugenanalyse.

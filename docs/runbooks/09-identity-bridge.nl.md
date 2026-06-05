@@ -64,7 +64,7 @@ Configureer Squid op pop01 om de Identity Bridge te gebruiken als external ACL h
 
 Bewerk de Squid-configuratie en voeg toe:
 
-1. **External ACL type-definitie:** een helperscript dat de Identity Bridge bevraagt op `http://192.168.122.23:<port>/lookup?ip=%SRC`
+1. **External ACL type-definitie:** een helperscript dat de Identity Bridge queryet op `http://192.168.122.23:<port>/lookup?ip=%SRC`
 2. **ACL-definities** op basis van personagroepen:
 
 | ACL-naam | Personagroep | Toegangsniveau |
@@ -92,7 +92,7 @@ squid -k reconfigure
 tail -f /var/log/squid/access.log
 ```
 
-**Verwacht:** Logregels bevatten de identiteitsgroep (Studenten/Docenten/Admins) voor elk verzoek, wat bewijst dat Squid de Identity Bridge succesvol bevraagt voor elke verbinding.
+**Verwacht:** Logregels bevatten de identiteitsgroep (Studenten/Docenten/Admins) voor elk verzoek, wat bewijst dat Squid de Identity Bridge succesvol queryet voor elke verbinding.
 
 ---
 
@@ -137,7 +137,7 @@ End-to-end-validatie:
 - [ ] Service user PAT geconfigureerd voor NetBird API-toegang
 - [ ] Polling-interval ingesteld (standaard 30s)
 - [ ] `/lookup?ip=...`-endpoint retourneert juiste persona voor bekende peers
-- [ ] Squid external_acl_type geconfigureerd om Identity Bridge te bevragen
+- [ ] Squid external_acl_type geconfigureerd om Identity Bridge te queryen
 - [ ] Squid ACL's gedefinieerd voor Studenten/Docenten/Admins
 - [ ] Squid access.log toont identiteitsgroep per verzoek
 - [ ] Student geblokkeerd voor ChatGPT (403)

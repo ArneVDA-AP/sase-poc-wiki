@@ -63,7 +63,7 @@ adaptation_access svc_dlp_req deny all
 
 Belangrijke ontwerpkeuzes:
 - `bypass=on` — als de DLP-container niet beschikbaar is, passeert verkeer zonder inspectie (fail-open). ClamAV-malwarescanning blijft actief. Een DLP-storing blokkeert geen legitiem zakelijk verkeer.
-- Alleen POST/PUT/PATCH — GET-verzoeken bevatten geen uploads; ze door DLP routeren voegt alleen latentie toe zonder voordeel.
+- Alleen POST/PUT/PATCH — GET-verzoeken bevatten geen uploads; ze door DLP routeren voegt alleen latency toe zonder voordeel.
 - Pre-auth include — overleeft GUI-wijzigingen en Squid-updates.
 
 Na het aanmaken van dit bestand: `configctl proxy restart`.
@@ -110,7 +110,7 @@ De Python DLP ICAP-server publiceert upload-inspection-events naar `security.ale
 
 **Code review — 10 problemen geïdentificeerd, 3 kritieke fixes toegepast:**
 - **OOM-risico:** De oorspronkelijke code had geen body-groottelimiet — een grote upload kon het containergeheugen uitputten. Fix: uploads > 10 MB worden doorgelaten (fail-open) zonder scanning.
-- **Log-injectie:** De `X-Client-IP`-headerwaarde werd zonder sanering rechtstreeks naar de loguitvoer geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
+- **Log-injectie:** De `X-Client-IP`-headerwaarde werd zonder sanering rechtstreeks naar de log output geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
 - **Geen uitzonderingsafhandeling:** Uitzonderingen in `dlpscan_REQMOD` zouden de handler laten crashen zonder respons naar Squid. Fix: scanuitzonderingen resulteren in fail-open (aanvraag passeert).
 - **PyPDF2 → pypdf:** PyPDF2 is end-of-life (niet langer onderhouden). Vervangen door `pypdf`, de actieve fork.
 

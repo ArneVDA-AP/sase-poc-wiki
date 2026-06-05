@@ -136,7 +136,7 @@ Mitigatie: voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01 — FreeBS
 
 **ubridge learning bridge beperkt verkeerzichtbaarheid** — Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort — niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet. Dit heeft impact op elke toekomstige Zeek/RITA-uitrol: valideer met `tcpdump -i ens3 -n host 8.8.8.8` op mgmt01 vóór uitrol.
 
-**sitepc01 draait nu Tiny11 (Windows 11)** — aanvankelijk aangemaakt als een lege node (geen OS), werd het later geïmporteerd als een Tiny11-image en ingeschreven in de NetBird-overlay als `docent1` (Entra ID joined + Intune enrolled). Het is operationeel actief.
+**sitepc01 draait nu Tiny11 (Windows 11)** — aanvankelijk aangemaakt als een lege node (geen OS), werd het later geïmporteerd als een Tiny11-image en ge-enrolld in de NetBird-overlay als `docent1` (Entra ID joined + Intune enrolled). Het is operationeel actief.
 
 ---
 

@@ -21,7 +21,7 @@ OPNsense biedt twee IPS-activeringsroutes: Netmap (native kernel bypass) en Dive
 | Optie | Voor | Tegen |
 |-------|------|-------|
 | **IDS (PCAP-modus)** | Werkt op virtio-NIC's; geen NIC-driververeisten; stabiel | Kan verkeer niet in realtime droppen; bedreiging wordt gedetecteerd, niet geblokkeerd |
-| **IPS via Netmap** | Echt pakketten droppen; laagste latentie inline-modus | Vereist NIC-drivers met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge). QEMU virtio-NIC's hebben geen Netmap-ondersteuning. Wanneer ingeschakeld: Suricata verwerkt 0 pakketten. |
+| **IPS via Netmap** | Echt pakketten droppen; laagste latency inline-modus | Vereist NIC-drivers met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge). QEMU virtio-NIC's hebben geen Netmap-ondersteuning. Wanneer ingeschakeld: Suricata verwerkt 0 pakketten. |
 | **IPS via Divert** | Geen speciale NIC-drivers vereist | Vereist expliciete `pf divert-to`-firewallregels; niet geconfigureerd in deze stack |
 
 ## Beslissing

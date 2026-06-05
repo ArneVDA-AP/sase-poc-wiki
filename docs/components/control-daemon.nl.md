@@ -5,7 +5,7 @@ tags: [control-daemon, nats, netbird, quarantine, threat-scoring]
 
 # Control Daemon
 
-**Rol:** Python-daemon op mgmt01 die de NATS event bus consumeert, per-peer threat scores bijhoudt via sliding-window decay, en peers in quarantaine plaatst door ze te verwijderen uit beleiddragende persona-groepen (deny-by-default).  
+**Rol:** Python-daemon op mgmt01 die de NATS event bus consumeert, per-peer threat scores bijhoudt via sliding-window decay, en peers in quarantaine plaatst door ze te verwijderen uit policy-bearing persona-groepen (deny-by-default).  
 **Versie:** Python 3.12 (nats-py >= 2.13.0, redis >= 5.0.0, httpx >= 0.27.0)  
 **Configuratielocatie:** `config/mgmt01/control-daemon/` in de repo (gezaghebbend — Addendum J §J.6.7 is verouderd)
 
@@ -15,7 +15,7 @@ De control daemon is de real-time handhavingsmotor. Het abonneert zich op `secur
 
 1. **Verrijking:** Koppelt overlay-IP's aan peeridentiteit via een interne `identity.>` cache (gevuld vanuit Identity Bridge events)
 2. **Scoring:** Dispatcht op het `producer`-veld (niet het subject). Elk eventtype heeft een configureerbaar gewicht. Scores gebruiken sliding-window decay via Redis sorted sets.
-3. **Beslissing:** Wanneer de score van een peer de quarantainedrempel overschrijdt (standaard: 80), verwijdert de daemon de peer uit alle beleiddragende persona-groepen via de NetBird Groups API. Zonder lidmaatschap van een persona-groep blokkeert deny-by-default alle connectiviteit.
+3. **Beslissing:** Wanneer de score van een peer de quarantainedrempel overschrijdt (standaard: 80), verwijdert de daemon de peer uit alle policy-bearing persona-groepen via de NetBird Groups API. Zonder lidmaatschap van een persona-groep blokkeert deny-by-default alle connectiviteit.
 
 **Huidige staat:** `ENFORCE=false` (dry-run) tot demovoorbereiding (Sessie 11).
 
