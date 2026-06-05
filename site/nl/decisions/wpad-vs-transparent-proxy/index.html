@@ -3614,7 +3614,7 @@
 <li>mobile01 moet worden geconfigureerd met de PAC-bestand URL (handmatig via Windows-instellingen → Proxy → "Installatiescript gebruiken")</li>
 <li>Niet-browserapplicaties die de systeemproxyinstelling negeren, omzeilen Squid (gedeeltelijk gecompenseerd door Suricata op vtnet0)</li>
 <li>Squid moet luisteren op het NetBird overlay-IP (<code>100.70.154.79:3128</code>) via pre-auth include, niet via de GUI</li>
-<li>Caddy op mgmt01 serveert het PAC-bestand; de DNS-naam <code>wpad.sandbox.local</code> wordt opgelost via NetBird Custom DNS Zone</li>
+<li>Caddy op mgmt01 serveert het PAC-bestand; de DNS-naam <code>wpad.sandbox.local</code> wordt geresolved via NetBird Custom DNS Zone</li>
 </ul>
 <p>Zie ook: <a href="../../findings/wt0-pf-rdr-limitation/">Bevinding: wt0 pf rdr beperking</a>, <a href="../../findings/pre-auth-ssl-bump-params/">Bevinding: pre-auth ssl-bump parameters</a></p>
 

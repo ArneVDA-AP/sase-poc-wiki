@@ -3651,7 +3651,7 @@
 
 
 <h1 id="concept-identity-flow-entra-id-tot-squid">Concept: Identity Flow — Entra ID tot Squid<a class="headerlink" href="#concept-identity-flow-entra-id-tot-squid" title="Permanent link">&para;</a></h1>
-<p><strong>Definitie:</strong> De volledige identiteitspropagatie-keten die het Entra ID-groepslidmaatschap van een gebruiker transporteert vanuit de Microsoft-clouddirectory, door vier tussenliggende systemen, tot aan de per-request toegangsbeslissingen van de Squid-proxy.</p>
+<p><strong>Definitie:</strong> De keten die Entra ID-groepslidmaatschap van een gebruiker propageert van de Microsoft-clouddirectory, via vier tussensystemen, naar de per-request toegangsbeslissingen in Squid.</p>
 <h2 id="hoe-het-hier-van-toepassing-is">Hoe het hier van toepassing is<a class="headerlink" href="#hoe-het-hier-van-toepassing-is" title="Permanent link">&para;</a></h2>
 <p>In een commercieel SASE-product (Zscaler, Netskope) stuurt de agent identiteitsheaders mee met elk verzoek — identiteitspropagatie is een ingebouwde functie van de client-naar-cloud-tunnel. In deze PoC bestrijkt geen enkel component het volledige pad van authenticatie tot per-request filtering. In plaats daarvan verloopt identiteitspropagatie via een multi-hop-keten waarbij elk systeem groepslidmaatschap doorgeeft aan het volgende:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Entra ID (aplab.be)
@@ -3670,7 +3670,7 @@
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>  | Bouwt in-memory cache: {overlay_ip -&gt; {email, groups[], os}}
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>  v
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Squid (pop01, external_acl)
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>  | Per verzoek: helper bevraagt Identity Bridge met %SRC (overlay-IP)
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>  | Per verzoek: helper queryet Identity Bridge met %SRC (overlay-IP)
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>  | Retourneert persona-groep -&gt; ACL evalueert per-groep-beleid
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>  v
 <a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>Per-request identiteitsgebaseerde filtering
@@ -3733,7 +3733,7 @@
 <li><strong><a href="../../components/zitadel/">Zitadel</a></strong> — OIDC-broker, Action 1 (allowlist-mapt de groeps-weergavenaam-string naar de schone naam) en Action 2 (JWT group injection)</li>
 <li><strong><a href="../../components/netbird/">NetBird</a></strong> — JWT group sync leest de <code>groups</code>-claim en maakt auto_groups per persona aan</li>
 <li><strong><a href="../../components/identity-bridge/">Identity Bridge</a></strong> — pollt NetBird API, bouwt overlay IP-naar-groep-cache, bedient Squid-lookups</li>
-<li><strong><a href="../../components/squid/">Squid</a></strong> — external_acl bevraagt Identity Bridge per verzoek, dwingt persona-gebaseerd filterbeleid af</li>
+<li><strong><a href="../../components/squid/">Squid</a></strong> — external_acl queryet Identity Bridge per verzoek, dwingt persona-gebaseerd filterbeleid af</li>
 <li><strong><a href="../../decisions/ca-posture-hybrid/">Entra ID CA</a></strong> — Gate 1 Conditional Access-beleid geevalueerd tijdens de OIDC-stroom</li>
 </ul>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>

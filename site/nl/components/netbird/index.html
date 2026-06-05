@@ -3841,7 +3841,7 @@
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    # ... bestaande reverse_proxy-configuratie
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>}
 </code></pre></div>
-<p>Voeg een Docker-netwerkalias toe zodat interne containers de hostnaam kunnen oplossen:</p>
+<p>Voeg een Docker-netwerkalias toe zodat interne containers de hostnaam kunnen resolven:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">services</span><span class="p">:</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">caddy</span><span class="p">:</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">networks</span><span class="p">:</span>
@@ -3855,7 +3855,7 @@
 </code></pre></div>
 <p>Controleer of <code>management.json</code> verwijst naar <code>netbird.sandbox.local</code>, niet naar bare IP's.</p>
 <h3 id="hosts-vermeldingen">Hosts-vermeldingen<a class="headerlink" href="#hosts-vermeldingen" title="Permanent link">&para;</a></h3>
-<p>Elke machine die communiceert met NetBird moet de hostnaam kunnen oplossen:</p>
+<p>Elke machine die communiceert met NetBird moet de hostnaam kunnen resolven:</p>
 <table>
 <thead>
 <tr>
@@ -3925,7 +3925,7 @@
 </tr>
 </tbody>
 </table>
-<p>Alleen <code>Core-Services</code> wordt handmatig aangemaakt. De persona-groepen (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) worden <strong>niet</strong> in het dashboard aangemaakt — een JWT-groep materialiseert pas als NetBird-groep wanneer een peer met die <code>groups</code>-claim voor het eerst verbindt; inschrijving <em>is</em> de groepssynchronisatie (geen aparte stap).</p>
+<p>Alleen <code>Core-Services</code> wordt handmatig aangemaakt. De persona-groepen (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) worden <strong>niet</strong> in het dashboard aangemaakt — een JWT-groep materialiseert pas als NetBird-groep wanneer een peer met die <code>groups</code>-claim voor het eerst verbindt; enrollment <em>is</em> de groepssynchronisatie (geen aparte stap).</p>
 <blockquote>
 <p><strong>Groepsmigratie (V34, mei 2026).</strong> De oorspronkelijke Fase-2-build gebruikte <code>SASE-Admins</code>, <code>SASE-MobileUsers</code>, <code>SASE-Services</code> en <code>SASE-InternalResources</code>. Een diagnose toonde dat <strong>alle</strong> NetBird ACL-connectiviteit op de <code>SASE-*</code>-groepen hing, terwijl de persona-groepen <strong>nul</strong> beleid droegen — quarantaine-per-groep (een peer uit zijn persona-groep verwijderen) zou dus een no-op zijn geweest. De migratie verplaatste alle connectiviteit naar het persona-model + <code>Core-Services</code> en verwijderde elke <code>SASE-*</code>-groep en -beleid. Het persona-model hieronder is de huidige staat; het <code>SASE-*</code>-model is verouderd.</p>
 </blockquote>
@@ -3937,7 +3937,7 @@
 <p><strong>Exit node (internetverkeer)</strong> — via Netwerkroutes:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Netwerk: 0.0.0.0/0, Routing Peer: pop01, Distribution Groups: Studenten, Docenten, Admins
 </code></pre></div></p>
-<p>Het exit node blijft bestaan zodat persona-groepverkeer (Studenten/Docenten/Admins) via pop01 naar buiten gaat. Het exit node van NetBird is <strong>alles-of-niets</strong> — het kan geen destination ranges selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, duwt een Intune-Remediation (<code>2ITCSC1A-Route-Remediation</code>) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.</p>
+<p>Het exit node blijft bestaan zodat persona-groepverkeer (Studenten/Docenten/Admins) via pop01 naar buiten gaat. Het exit node van NetBird is <strong>alles-of-niets</strong> — het kan geen destination ranges selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, pusht een Intune-Remediation (<code>2ITCSC1A-Route-Remediation</code>) die routes rechtstreeks op de client — een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert.</p>
 <p><strong>DC-LAN (10.0.0.0/8) over de overlay — uitgesteld.</strong> Het oorspronkelijke <code>Internal-DC</code>-netwerk (ACL-bewust) en zijn <code>Datacenter-Access</code>-beleid zijn <strong>verwijderd in de V34-migratie</strong>; er is geen actief DC-LAN-over-overlay-pad in de huidige sandbox. Het opnieuw introduceren van datacenterbereikbaarheid is uitgesteld tot de geplande Cosmos-app-gateway-sessie. De ontwerpredenering hieronder blijft behouden voor wanneer dat werk wordt hervat.</p>
 <blockquote>
 <p><strong>Netwerken vs. Netwerkroutes (ontwerpredenering, voor het uitgestelde DC-LAN-werk):</strong> Netwerkroutes omzeilen ACL-beleid standaard. Netwerken vereisen groepkoppeling by design. DC-LAN zou Netwerken moeten gebruiken voor zero-trust-correctheid; het exit node moet Netwerkroutes gebruiken (NetBird-beperking voor 0.0.0.0/0).</p>
@@ -4005,7 +4005,7 @@
 <p>NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:</p>
 <ul>
 <li><strong>Producer:</strong> De <a href="../identity-bridge/">Identity Bridge</a> (die afhankelijk is van de NetBird Management API) publiceert identity events naar <code>identity.peer.connected</code>, <code>identity.peer.disconnected</code> en <code>identity.multi_persona</code> (zero-trust-anomalie) wanneer peers verbinden, verbreken of in meer dan één personagroep verschijnen.</li>
-<li><strong>Handhavingsdoelwit:</strong> De <a href="../control-daemon/">Control Daemon</a> gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit beleidsdragende personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All-&gt;All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.</li>
+<li><strong>Handhavingsdoelwit:</strong> De <a href="../control-daemon/">Control Daemon</a> gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit policy-bearing personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All-&gt;All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.</li>
 </ul>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>

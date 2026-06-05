@@ -4188,7 +4188,7 @@
 <td><strong>F8</strong></td>
 <td>Firewall-segmentatie</td>
 <td>FWaaS</td>
-<td>✅ Gevalideerd — DC-LAN-isolatie blijft gelden (niet-ingeschreven = geen route); positief ACL-pad verwijderd in V34</td>
+<td>✅ Gevalideerd — DC-LAN-isolatie blijft gelden (niet-ge-enrolld = geen route); positief ACL-pad verwijderd in V34</td>
 </tr>
 <tr>
 <td><strong>F9</strong></td>
@@ -4424,17 +4424,17 @@
 </tbody>
 </table>
 <p><strong>Poort 2 — Intune-apparaatnaleving:</strong> Nalevingsbeleid dwingt OS-versie, Defender AV + firewall ingeschakeld, en realtime-beveiliging actief af.</p>
-<p>Ingeschreven apparaten:</p>
+<p>Ge-enrollde apparaten:</p>
 <ul>
-<li><strong>mobile01</strong> — ingeschreven als <code>2ITCSC1A-MOB-1</code>, conform</li>
-<li><strong>sitepc01</strong> — ingeschreven in NetBird als <code>docent1</code> (Docenten); afzonderlijk Entra joined + Intune-ingeschreven via <code>student1</code> (het enige Intune-gelicentieerde sandbox-account)</li>
+<li><strong>mobile01</strong> — ge-enrolld als <code>2ITCSC1A-MOB-1</code>, conform</li>
+<li><strong>sitepc01</strong> — ge-enrolld in NetBird als <code>docent1</code> (Docenten); afzonderlijk Entra joined + Intune-ge-enrolld via <code>student1</code> (het enige Intune-gelicentieerde sandbox-account)</li>
 </ul>
 <p>Twee policies blijven in report-only-modus (geo-blokkering, conform apparaat) tot de demo om lockout tijdens testen te vermijden.</p>
 <p><strong>Kritieke voorwaarde:</strong> Controleer MFA-registratie op het testaccount voordat CA policies worden geactiveerd. Zonder eerdere MFA-instelling triggert de eerste aanmelding een onherstelbare "MFA vereist maar niet geconfigureerd"-blokkering, waardoor het account ontoegankelijk wordt.</p>
 <p>Zie <a href="../../decisions/ca-posture-hybrid/">Beslissing: CA + Posture hybride</a>.</p>
 <hr />
 <h3 id="f4-datacentertoegang-via-ztna">F4 — Datacentertoegang via ZTNA<a class="headerlink" href="#f4-datacentertoegang-via-ztna" title="Permanent link">&para;</a></h3>
-<p><strong>✅ Gevalideerd bij opbouw (mei 2026); het pad is nadien verwijderd in V34.</strong> Op het moment van validatie was DC-LAN (10.0.0.0/24) bereikbaar via het NetBird Networks-mechanisme: een host die niet bij NetBird was ingeschreven had geen route naar dit subnet, ongeacht IP-connectiviteit, terwijl een ingeschreven peer met het ACL-beleid <code>Datacenter Access</code> het wél kon bereiken.</p>
+<p><strong>✅ Gevalideerd bij opbouw (mei 2026); het pad is nadien verwijderd in V34.</strong> Op het moment van validatie was DC-LAN (10.0.0.0/24) bereikbaar via het NetBird Networks-mechanisme: een host die niet bij NetBird was ge-enrolld had geen route naar dit subnet, ongeacht IP-connectiviteit, terwijl een ge-enrollde peer met het ACL-beleid <code>Datacenter Access</code> het wél kon bereiken.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c"># mobile01 (PowerShell) — zoals getest in mei 2026</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">Test-NetConnection</span> <span class="n">10</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">100</span> <span class="n">-Port</span> <span class="n">80</span>
 </code></pre></div>
@@ -4484,13 +4484,13 @@
 <p>Zie <a href="../../components/clamav-cicap/">ClamAV/c-icap</a>.</p>
 <hr />
 <h3 id="f8-firewall-segmentatie">F8 — Firewall-segmentatie<a class="headerlink" href="#f8-firewall-segmentatie" title="Permanent link">&para;</a></h3>
-<p><strong>✅ Gevalideerd.</strong> De kern-segmentatie-eigenschap — een niet-ingeschreven apparaat heeft geen route naar DC-LAN (10.0.0.0/24) — geldt onafhankelijk van enig overlay-toegangspad en blijft vandaag waar.</p>
+<p><strong>✅ Gevalideerd.</strong> De kern-segmentatie-eigenschap — een niet-ge-enrolld apparaat heeft geen route naar DC-LAN (10.0.0.0/24) — geldt onafhankelijk van enig overlay-toegangspad en blijft vandaag waar.</p>
 <p>Gevalideerd door contrast (mei 2026, toen het positieve pad nog bestond):</p>
 <ul>
 <li>mobile01 <strong>zonder</strong> NetBird: <code>ping 10.0.0.100</code> → Bestemming onbereikbaar (geen route) — <em>nog steeds waar</em></li>
 <li>mobile01 <strong>met</strong> NetBird + het <code>Datacenter Access</code>-beleid: <code>Test-NetConnection 10.0.0.100 -Port 80</code> → <code>TcpTestSucceeded: True</code> via <code>wt0</code> — <em>positief pad verwijderd in V34</em></li>
 </ul>
-<p><strong>Architectuurnoot:</strong> DC-LAN gebruikte NetBird Networks (niet Network Routes). Het positieve pad vereiste zowel overlay-inschrijving als lidmaatschap van de groep <code>SASE-InternalResources</code>; zowel het <code>Internal-DC</code> Network als die groep zijn verwijderd in de V34-personamigratie (zie <a href="../../runbooks/02-ztna-overlay/">runbook 02</a>). De negatieve isolatie-eigenschap — niet-ingeschreven = geen route — blijft ongewijzigd.</p>
+<p><strong>Architectuurnoot:</strong> DC-LAN gebruikte NetBird Networks (niet Network Routes). Het positieve pad vereiste zowel overlay-enrollment als lidmaatschap van de groep <code>SASE-InternalResources</code>; zowel het <code>Internal-DC</code> Network als die groep zijn verwijderd in de V34-personamigratie (zie <a href="../../runbooks/02-ztna-overlay/">runbook 02</a>). De negatieve isolatie-eigenschap — niet-ge-enrolld = geen route — blijft ongewijzigd.</p>
 <p>Zie <a href="../../components/netbird/">NetBird</a>.</p>
 <hr />
 <h3 id="f9-suricata-alertgeneratie">F9 — Suricata-alertgeneratie<a class="headerlink" href="#f9-suricata-alertgeneratie" title="Permanent link">&para;</a></h3>
@@ -4704,7 +4704,7 @@
 <p>Zie <a href="../../components/ioc2rpz/">ioc2rpz</a>, <a href="../../concepts/rpz/">RPZ</a>.</p>
 <hr />
 <h3 id="t-a10-identity-bridge-overlay-ip-naar-personagroepresolutie">T-A10 — Identity Bridge: overlay-IP naar personagroepresolutie<a class="headerlink" href="#t-a10-identity-bridge-overlay-ip-naar-personagroepresolutie" title="Permanent link">&para;</a></h3>
-<p>Test dat de Identity Bridge overlay-IP's correct vertaalt naar Entra ID-personagroepen. Valideert door het <code>/lookup</code>-eindpunt te bevragen met een bekend overlay-IP en te controleren dat de teruggegeven groep overeenkomt met de verwachte persona.</p>
+<p>Test dat de Identity Bridge overlay-IP's correct vertaalt naar Entra ID-personagroepen. Valideert door het <code>/lookup</code>-eindpunt te queryen met een bekend overlay-IP en te controleren dat de teruggegeven groep overeenkomt met de verwachte persona.</p>
 <hr />
 <h3 id="t-a11-nats-eventbus-cross-component-event-delivery">T-A11 — NATS-eventbus: cross-component event delivery<a class="headerlink" href="#t-a11-nats-eventbus-cross-component-event-delivery" title="Permanent link">&para;</a></h3>
 <p>Test end-to-end event delivery van een producent (bijv. Suricata) via NATS naar zowel de Control Daemon als Wazuh. Valideert door een Suricata-alert te triggeren en te controleren dat het event verschijnt in zowel NATS-monitoring als Wazuh.</p>
@@ -4713,7 +4713,7 @@
 <p>Test dreigingsscoreaccumulatie en quarantaine. Valideert door meerdere gemiddeld-ernstige events te sturen voor dezelfde client, de Redis-score toename te observeren, en te verifiëren dat de peer wordt verwijderd uit personagroepen wanneer de threshold wordt overschreden.</p>
 <hr />
 <h3 id="t-a13-wazuh-siem-nats-event-ingestion-dashboardquery">T-A13 — Wazuh SIEM: NATS event ingestion + dashboardquery<a class="headerlink" href="#t-a13-wazuh-siem-nats-event-ingestion-dashboardquery" title="Permanent link">&para;</a></h3>
-<p>Test NATS-naar-Wazuh event ingestion. Valideert door een detection event te triggeren en vervolgens het Wazuh Discover-dashboard te bevragen naar het event met correcte velden.</p>
+<p>Test NATS-naar-Wazuh event ingestion. Valideert door een detection event te triggeren en vervolgens het Wazuh Discover-dashboard te queryen naar het event met correcte velden.</p>
 <hr />
 <h2 id="operationele-tests-voorheen-gepland">Operationele tests — voorheen gepland<a class="headerlink" href="#operationele-tests-voorheen-gepland" title="Permanent link">&para;</a></h2>
 <h3 id="f10-centrale-logaggregatie-siem">F10 — Centrale logaggregatie (SIEM)<a class="headerlink" href="#f10-centrale-logaggregatie-siem" title="Permanent link">&para;</a></h3>
@@ -4771,7 +4771,7 @@
 <tr>
 <td>7</td>
 <td>Sitegebruiker pingt datacenter via tunnel</td>
-<td>✖ N.v.t. — klassieke IPsec site-to-site geschrapt; de ZT-Branch gebruikt in plaats daarvan per-apparaat NetBird-inschrijving</td>
+<td>✖ N.v.t. — klassieke IPsec site-to-site geschrapt; de ZT-Branch gebruikt in plaats daarvan per-apparaat NetBird-enrollment</td>
 </tr>
 <tr>
 <td>8</td>

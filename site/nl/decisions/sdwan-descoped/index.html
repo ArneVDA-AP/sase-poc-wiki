@@ -3669,13 +3669,13 @@
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>SD-WAN-tests F12, F13 en F14 zijn geschrapt. VyOS blijft in de topologie als de site01 WAN-gateway en NAT-apparaat voor Site-LAN, maar is niet geconfigureerd als IPsec-router of uCPE NetBird-host.</p>
-<p>Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird-inschrijving — hetzelfde mechanisme als mobile01 — in plaats van via een site-to-site-tunnel.</p>
+<p>Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird-enrollment — hetzelfde mechanisme als mobile01 — in plaats van via een site-to-site-tunnel.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>F12, F13, F14</strong> zijn als N.v.t. gemarkeerd in alle acceptatietestmatrices. Dit is een expliciete architectuurbeslissing, geen implementatieleemte.</li>
 <li><strong>F15-stap 7</strong> is N.v.t. (klassiek IPsec site-to-site geschrapt). <strong>Stap 8</strong> (QoS-markering) is gevalideerd onder het ZT-Branch model (V43 Test #5: DSCP EF geclassificeerd, 0 drops onder last).</li>
 <li><strong>VyOS</strong> blijft in de topologie als SASE-gateway — WAN-connectiviteit, NAT, QoS-shaping (DSCP EF/AF41/AF21) en WAN health monitoring. Zie <a href="../../components/vyos/">VyOS</a>.</li>
-<li><strong>sitepc01</strong> bereikt het datacenter via individuele NetBird-inschrijving — bevestigd ingeschreven en operationeel in Verslag43/Verslag44, niet via een site-to-site-tunnel.</li>
+<li><strong>sitepc01</strong> bereikt het datacenter via individuele NetBird-enrollment — bevestigd ge-enrolld en operationeel in Verslag43/Verslag44, niet via een site-to-site-tunnel.</li>
 <li>De architectuur sluit direct aan op het "Zero Trust SD-WAN"-model van Zscaler: vestigingen behandeld als niet-vertrouwde netwerken (zoals cafés), elk apparaat authenticeert individueel, geen site-to-site-tunnels.</li>
 </ul>
 <h2 id="wat-er-daadwerkelijk-gebouwd-is">Wat er daadwerkelijk gebouwd is<a class="headerlink" href="#wat-er-daadwerkelijk-gebouwd-is" title="Permanent link">&para;</a></h2>
