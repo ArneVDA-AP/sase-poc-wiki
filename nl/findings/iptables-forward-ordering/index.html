@@ -2383,7 +2383,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2523,7 +2523,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3607,8 +3607,8 @@
 <p><strong>Component:</strong> <a href="../../components/gns3/">GNS3</a>, <a href="../../components/ioc2rpz/">ioc2rpz</a><br />
 <strong>Ernst:</strong> Valkuil</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>Poortdoorsturing ACCEPT-regels werden toegevoegd aan de FORWARD-keten op de GNS3-host met <code>iptables -A FORWARD</code> (toevoegen). De poortdoorsturingen werkten niet: paketten werden gedropt ondanks dat overeenkomende regels aanwezig leken.</p>
-<p><code>iptables -L FORWARD --line-numbers</code> toonde de ACCEPT-regels op positie 24+, terwijl de <code>LIBVIRT_FWI</code>-keten op positie 22 stond met een REJECT-beleid.</p>
+<p>Port forwarding ACCEPT-regels werden toegevoegd aan de FORWARD-keten op de GNS3-host met <code>iptables -A FORWARD</code> (toevoegen). De port forwards werkten niet: paketten werden gedropt ondanks dat overeenkomende regels aanwezig leken.</p>
+<p><code>iptables -L FORWARD --line-numbers</code> toonde de ACCEPT-regels op positie 24+, terwijl de <code>LIBVIRT_FWI</code>-keten op positie 22 stond met een REJECT policy.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p>libvirt installeert zijn eigen FORWARD-ketenregels die een REJECT bevatten voor verkeer dat niet door libvirt wordt beheerd. Wanneer regels worden toegevoegd (<code>-A FORWARD</code>), worden ze geplaatst na de libvirt REJECT-keten. De eerste overeenkomende regel wint: het REJECT van libvirt activeert vóór de ACCEPT-regel wordt bereikt.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
@@ -3617,7 +3617,7 @@
 </code></pre></div>
 <p><code>-I FORWARD 1</code> voegt in op positie 1 (vóór alle bestaande regels, inclusief de REJECT van libvirt).</p>
 <p>Hetzelfde principe geldt voor alle ACCEPT-regels die bedoeld zijn om naast libvirt te werken:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># GUI-poortdoorsturingen voor pop01, mgmt01, site01</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># GUI port forwards for pop01, mgmt01, site01</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>iptables<span class="w"> </span>-I<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span><span class="m">192</span>.168.122.13<span class="w"> </span>-j<span class="w"> </span>ACCEPT
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>iptables<span class="w"> </span>-I<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span><span class="m">192</span>.168.122.23<span class="w"> </span>-j<span class="w"> </span>ACCEPT
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>iptables<span class="w"> </span>-I<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span><span class="m">192</span>.168.122.33<span class="w"> </span>-j<span class="w"> </span>ACCEPT
@@ -3627,7 +3627,7 @@
 <li>Gebruik bij het toevoegen van FORWARD-regels op een host met libvirt altijd <code>-I FORWARD 1</code> (invoegen bovenaan), nooit <code>-A FORWARD</code> (toevoegen)</li>
 <li>Diagnose: <code>iptables -L FORWARD --line-numbers</code> om regelposities en de libvirt-ketenlocatie te zien</li>
 <li>De REJECT-regel van libvirt is by design: het voorkomt dat onbeheerd verkeer libvirt-netwerken kruist</li>
-<li>Deze iptables-regels zijn <strong>niet persistent over reboots</strong> van de GNS3-host. Installeer <code>netfilter-persistent</code> (<code>apt install iptables-persistent</code>) en draai <code>netfilter-persistent save</code> na het toevoegen van regels. Zonder dit gaan alle poortdoorsturingen en FORWARD-regels verloren bij een reboot</li>
+<li>Deze iptables-regels zijn <strong>niet persistent over reboots</strong> van de GNS3-host. Installeer <code>netfilter-persistent</code> (<code>apt install iptables-persistent</code>) en draai <code>netfilter-persistent save</code> na het toevoegen van regels. Zonder dit gaan alle port forwards en FORWARD-regels verloren bij een reboot</li>
 </ul>
 
 

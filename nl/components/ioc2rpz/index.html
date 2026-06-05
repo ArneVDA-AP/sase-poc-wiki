@@ -2560,7 +2560,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2700,7 +2700,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3812,7 +3812,7 @@
 
 
 <h1 id="ioc2rpz-bind-unbound-dns-threat-intelligence">ioc2rpz + BIND + Unbound: DNS-threat intelligence<a class="headerlink" href="#ioc2rpz-bind-unbound-dns-threat-intelligence" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> Proactieve DNS-blokkering van bekende kwaadaardige domeinen. ioc2rpz aggregeert threat intelligence-feeds (URLhaus, ThreatFox) in een RPZ-zone; BIND fungeert als TSIG-geauthenticeerde intermediary; Unbound dwingt het RPZ-beleid af voor alle DNS-query's van overlay-clients en DC-LAN-nodes.<br />
+<p><strong>Rol:</strong> Proactieve DNS-blokkering van bekende kwaadaardige domeinen. ioc2rpz aggregeert threat intelligence-feeds (URLhaus, ThreatFox) in een RPZ-zone; BIND fungeert als TSIG-geauthenticeerde intermediary; Unbound dwingt de RPZ policy af voor alle DNS-query's van overlay-clients en DC-LAN-nodes.<br />
 <strong>Status:</strong> ✅ Volledig operationeel (71.767 RPZ-records uit twee feeds, gevalideerd vanaf drie testpunten).<br />
 <strong>Configuratielocaties:</strong>
 - ioc2rpz: <code>/opt/ioc2rpz/</code> op mgmt01 (Docker)
@@ -3887,9 +3887,9 @@
 </code></pre></div>
 <p>Zie <a href="../../findings/ioc2rpz-gui-js-bug/">Bevinding: ioc2rpz GUI JS-bug</a>.</p>
 <h3 id="bind-os-bind-op-pop01">BIND (os-bind) op pop01<a class="headerlink" href="#bind-os-bind-op-pop01" title="Permanent link">&para;</a></h3>
-<p>Plugin installeren: Systeem → Firmware → Plugins → <code>os-bind</code>.</p>
-<p><strong>ACL:</strong> Maak <code>loopback_only</code> (<code>127.0.0.1/32</code>) aan vóór het configureren van algemene instellingen.</p>
-<p><strong>Algemene instellingen:</strong>
+<p>Plugin installeren: System → Firmware → Plugins → <code>os-bind</code>.</p>
+<p><strong>ACL:</strong> Maak <code>loopback_only</code> (<code>127.0.0.1/32</code>) aan vóór het configureren van General Settings.</p>
+<p><strong>General Settings:</strong>
 - Listen IPs: <code>127.0.0.1</code>, Listen Port: <code>53530</code>
 - DNS-doorstuurservers: (leeg), Recursie: geen, Transfer toestaan: <code>loopback_only</code></p>
 <p><strong>Secundaire zone:</strong>
@@ -3979,11 +3979,11 @@
 <p>DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via <code>security.alert.dns</code>. Wanneer Unbound's RPZ-module NXDOMAIN retourneert voor een threat-intelligence-domein, wordt het event gepubliceerd met: opgevraagd domein, client-IP en de RPZ-zone die overeenkomt. Deze events dragen bij aan de per-peer threat score. Herhaalde RPZ-hits van een enkele client kunnen duiden op malware die probeert C2-infrastructuur te bereiken, wat quarantaine door de <a href="../control-daemon/">Control Daemon</a> kan activeren.</p>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
-<p><strong>iptables FORWARD-regelvolgorde:</strong> gebruik bij het toevoegen van poortdoorsturingen voor GUI-toegang op de GNS3-host altijd <code>-I FORWARD 1</code>. Toevoegen (<code>-A</code>) plaatst de regel na de REJECT-keten van libvirt. Zie <a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a>.</p>
+<p><strong>iptables FORWARD-regelvolgorde:</strong> gebruik bij het toevoegen van port forwards voor GUI-toegang op de GNS3-host altijd <code>-I FORWARD 1</code>. Toevoegen (<code>-A</code>) plaatst de regel na de REJECT-keten van libvirt. Zie <a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a>.</p>
 <p><strong>ioc2rpz.gui JS-aanmeldbug:</strong> upstream-bug in <code>io2auth.js</code>. Pas de sed-correctie toe na elke containeropbouw. Zie <a href="../../findings/ioc2rpz-gui-js-bug/">Bevinding: ioc2rpz GUI JS-bug</a>.</p>
 <p><strong>DNS NOTIFY bereikt BIND niet:</strong> ioc2rpz stuurt NOTIFY naar <code>192.168.122.13:53</code> (Unbound-poort), niet <code>53530</code> (BIND-poort). BIND ontdekt updates alleen bij de volgende SOA-poll (3600 s). Handmatige activering: <code>rndc retransfer threat-intel.rpz.sase</code>. Voeg in productie een <code>pf rdr</code>-regel toe die poort-53 NOTIFY van <code>192.168.122.23</code> doorstuurt naar poort 53530.</p>
 <p><strong>OPNsense Unbound WebUI toont "handmatige overschrijvingen"-waarschuwing.</strong> Dit is verwacht en onschadelijk. Het rpz.conf overschrijft module-config, wat OPNsense detecteert. Documenteer dit in operationele runbooks zodat beheerders hier niet door verrast worden.</p>
-<p><strong>TSIG-sleutel moet gekoppeld zijn aan RPZ-zone in ioc2rpz:</strong> de sleutel moet expliciet worden geselecteerd in GUI → Configuratie → RPZ-zones. Als leeg gelaten (<code>tkeys: [""]</code>), ontvangt BIND TSIG-fouten (<code>tsig indicates error</code>) bij elke AXFR-poging.</p>
+<p><strong>TSIG-sleutel moet gekoppeld zijn aan RPZ-zone in ioc2rpz:</strong> de sleutel moet expliciet worden geselecteerd in GUI → Configuration → RPZ-zones. Als leeg gelaten (<code>tkeys: [""]</code>), ontvangt BIND TSIG-fouten (<code>tsig indicates error</code>) bij elke AXFR-poging.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

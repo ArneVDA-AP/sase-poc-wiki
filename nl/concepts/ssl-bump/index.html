@@ -2477,7 +2477,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2617,7 +2617,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3642,7 +3642,7 @@
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s1">  dynamic_cert_mem_cache_size=10MB generate-host-certificates=on&#39;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>&gt;<span class="w"> </span>/usr/local/etc/squid/pre-auth/netbird-listener.conf
 </code></pre></div>
-<p><strong>No-bump-lijst</strong> (sites uitgesloten van SSL-inspectie). De Microsoft control plane-endpoints moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de conform-apparaatcontrole:
+<p><strong>No-bump-lijst</strong> (sites uitgesloten van SSL-inspectie). De Microsoft control plane-endpoints moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de compliant-device check:
 - <code>login.microsoftonline.com</code> (<strong>verplicht</strong>): als Squid de Microsoft-aanmeldingspagina bumpt, wordt de Entra ID OIDC-stroom die door NetBird wordt gebruikt gebroken. Alle clientauthenticatie zou mislukken.
 - <code>.microsoftonline.com</code>: dekt <code>device.login.microsoftonline.com</code> en de overige auth-subdomeinen die de kale FQDN niet dekt.
 - <code>.microsoft.com</code>: dekt de <code>manage.microsoft.com</code>-enrollmentfamilie.

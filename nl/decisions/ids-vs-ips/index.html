@@ -2477,7 +2477,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2617,7 +2617,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3646,9 +3646,9 @@
 </tbody>
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
-<p>IDS-modus (PCAP), met de drop/alert-beleidstabel geconfigureerd en klaar voor IPS-activering bij implementatie op fysieke hardware.</p>
+<p>IDS-modus (PCAP), met de drop/alert policy table geconfigureerd en klaar voor IPS-activering bij implementatie op fysieke hardware.</p>
 <p>Netmap IPS werd getest en bevestigd niet-functioneel op virtio-NIC's. Wanneer Netmap IPS werd geactiveerd: Suricata rapporteerde 0 verwerkte pakketten en alle eerdere alertactiviteit stopte. Terugkeren naar PCAP IDS herstelde de normale werking. (Verslag23, Bevinding 23.3/23.4/23.5)</p>
-<p>De gedifferentieerde beleidstabel (drop vs. alert per categorie) is geconfigureerd in OPNsense. Op fysieke hardware met ondersteunde NIC's vereist overschakelen naar IPS-modus alleen het inschakelen van de IPS-schakelaar; de policies zijn al correct.</p>
+<p>De gedifferentieerde policy table (drop vs. alert per categorie) is geconfigureerd in OPNsense. Op fysieke hardware met ondersteunde NIC's vereist overschakelen naar IPS-modus alleen het inschakelen van de IPS-schakelaar; de policies zijn al correct.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Suricata detecteert en waarschuwt, maar blokkeert geen verkeer in realtime in de huidige sandbox</li>

@@ -2488,7 +2488,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2628,7 +2628,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3646,12 +3646,12 @@
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>Wazuh voorziet in forensische logging en API-mode CASB-handhaving. Het werkt op een dual-write-architectuur: detectiecomponenten schrijven naar logbestanden (Wazuh-agent leest deze uit) EN publiceren naar NATS (control daemon consumeert) onafhankelijk van elkaar. Geen van beide paden is afhankelijk van het andere.</p>
 <p>De NATS→Wazuh forwarder is een aparte Docker-container (een durable PULL-consumer, DeliverPolicy.NEW, AckPolicy.EXPLICIT) die <code>security.alert.&gt;</code> events van de NATS-bus consumeert en ze als NDJSON naar het gedeelde <code>wazuh_nats_ingest</code>-volume schrijft (<code>/ingest/security_alerts.json</code>). De Wazuh manager tailt dat bestand via een <code>&lt;localfile&gt;&lt;log_format&gt;json&lt;/log_format&gt;&lt;/localfile&gt;</code>-blok; aangepaste Wazuh-regels parseren, classificeren en indexeren de events vervolgens. (Rechtstreeks naar de manager-socket schrijven en naar de Wazuh-API posten zijn beide geëvalueerd en verworpen; de localfile-JSON-tail is het werkende ingestiepad.)</p>
-<p>Voor CASB Laag 2 pollt de <code>o365_producer</code> de Office 365 Management Activity API en publiceert SharePoint-auditevents naar NATS (<code>security.alert.casb</code>). De Wazuh-regelfamilie 100600 detecteert beleidsovertredingen (anonieme link-aanmaak, anyone-scope deellinks, gast-sharing). Active Response-scripts (<code>sharepoint_remediate.sh</code>, <code>guest_remediate.sh</code>) trekken deellinks in via de Microsoft Graph API, achter een ENFORCE-gate die standaard op detect-only staat. De revoke-keten is bewezen tot HTTP-204 via een offline stub; live intrekking tegen een echt OneDrive-bestand wacht op provisioning van een testaccount (een externe Microsoft-afhankelijkheid).</p>
+<p>Voor CASB Laag 2 pollt de <code>o365_producer</code> de Office 365 Management Activity API en publiceert SharePoint-auditevents naar NATS (<code>security.alert.casb</code>). De Wazuh-regelfamilie 100600 detecteert policy violations (anonieme link-aanmaak, anyone-scope deellinks, gast-sharing). Active Response-scripts (<code>sharepoint_remediate.sh</code>, <code>guest_remediate.sh</code>) trekken deellinks in via de Microsoft Graph API, achter een ENFORCE-gate die standaard op detect-only staat. De revoke-keten is bewezen tot HTTP-204 via een offline stub; live intrekking tegen een echt OneDrive-bestand wacht op provisioning van een testaccount (een externe Microsoft-afhankelijkheid).</p>
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Dashboard:</strong> <code>192.168.122.23:5601</code> (poort 443 bezet door NetBird Caddy). Volledig operationeel (opgelost 2 juni 2026). <code>Error checking updates</code> CTI-500 blijft aanwezig in air-gap maar is cosmetisch en non-blocking in 4.14.5+. Zie <a href="../../findings/wazuh-dashboard-airgate/">Bevinding: Wazuh dashboard air-gate</a>.</li>
 <li><strong>pop01-agent:</strong> Ge-enrolld als ID 001 Active. Levert host-feeds (audit, configd, filter, kernel, pkg). Suricata/Squid/c-icap/Unbound uitgesloten van agent-feeds; deze hebben NATS-producers.</li>
-<li><strong>Agent-instellingen:</strong> <code>intrusion_detection_events=false</code> + <code>active_response=false</code> (dubbel-ingest-bescherming + handhavingsbescherming)</li>
+<li><strong>Agent settings:</strong> <code>intrusion_detection_events=false</code> + <code>active_response=false</code> (dubbel-ingest-bescherming + handhavingsbescherming)</li>
 <li><strong>Rule-ID-overzicht:</strong></li>
 <li>100500–100540: Busproducers (proxy/IDS/DLP/malware/DNS-RPZ)</li>
 <li>100600-familie: M365/CASB</li>
@@ -3691,7 +3691,7 @@
 </table>
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>glibc x86-64-v2-vereiste:</strong> Wazuh indexer vereist Haswell+ CPU-features. Het standaard QEMU <code>kvm64</code> CPU-model crasht. Oplossing: stel het QEMU CPU-model in op <code>host</code> in de GNS3-node-instellingen. Zie <a href="../../findings/wazuh-cpu-glibc/">Bevinding: Wazuh CPU glibc</a>.</li>
+<li><strong>glibc x86-64-v2-vereiste:</strong> Wazuh indexer vereist Haswell+ CPU-features. Het standaard QEMU <code>kvm64</code> CPU-model crasht. Oplossing: stel het QEMU CPU-model in op <code>host</code> in de GNS3 node settings. Zie <a href="../../findings/wazuh-cpu-glibc/">Bevinding: Wazuh CPU glibc</a>.</li>
 <li><strong>Dashboard air-gate (opgelost 2 juni 2026):</strong> De werkelijke oorzaak was een lege manager-UUID in <code>global.db</code> (gewist door <code>docker compose down -v</code>), niet de air-gap CTI-controle. Opgelost via in-place bump naar 4.14.5 (zonder <code>-v</code>), waardoor de UUID bewaard bleef. De <code>Error checking updates</code> CTI-500 blijft (air-gap) maar is non-blocking in 4.14.5+. Gebruik nooit <code>down -v</code> voor Wazuh versie-werk. Zie <a href="../../findings/wazuh-dashboard-airgate/">Bevinding: Wazuh dashboard air-gate</a>.</li>
 <li><strong>jq-afhankelijkheid:</strong> Active Response-scripts vereisen jq. Geinstalleerd via <code>install_deps.sh</code> entrypoint (V39).</li>
 </ul>

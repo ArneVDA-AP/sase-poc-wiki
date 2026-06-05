@@ -2601,7 +2601,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2741,7 +2741,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3897,7 +3897,7 @@
 <p>In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats <strong>op de PoP</strong> (Point of Presence), de edge-node tussen clients en internet. De PoP evalueert vertrouwen op basis van drie onafhankelijke factoren:</p>
 <ol>
 <li><strong>Identiteit:</strong> wie ben je? (Entra ID + MFA)</li>
-<li><strong>Apparaatposture:</strong> wat is de toestand van je apparaat? (Intune-conformiteit + Entra ID CA)</li>
+<li><strong>Device posture:</strong> wat is de toestand van je apparaat? (Intune compliance + Entra ID CA)</li>
 <li><strong>Inhoud:</strong> wat verstuur je? (SWG-inspectiepipeline)</li>
 </ol>
 <p>Dit is het <a href="../../concepts/zero-trust/">Zero Trust drie-gate model</a>.</p>
@@ -4076,12 +4076,12 @@
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  │   - CA Policy 2: Geo-blokkering (alleen België), Report-only
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  │   - CA Policy 3: Legacy-auth geblokkeerd ✅
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  │   - CA Policy 4: Risico-gebaseerde blokkering ✅
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  │   - CA Policy 5: Conform apparaat vereist, Report-only
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  │   - CA Policy 5: Compliant device vereist, Report-only
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  │ OIDC-token ontvangen
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  │
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>  │ Gate 2: Intune-apparaatconformiteit evalueert (✅ operationeel)
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>  │ Gate 2: Intune device compliance evalueert (✅ operationeel)
 <a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>  │   - OS-versie, Defender AV + firewall, real-time protection
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>  │   - mobile01 enrolled als 2ITCSC1A-MOB-1, conform
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>  │   - mobile01 enrolled als 2ITCSC1A-MOB-1, compliant
 <a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>  │ WireGuard-tunnelonderhandeling met pop01
 <a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>  │ WireGuard-tunnel actief, ACL-policies toegepast
 <a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>  ▼
@@ -4257,7 +4257,7 @@
 <tbody>
 <tr>
 <td>WireGuard-tunnelopbouw</td>
-<td>Identiteit (OIDC) + apparaatposture (Intune-conformiteit)</td>
+<td>Identiteit (OIDC) + device posture (Intune compliance)</td>
 <td>pop01 wt0</td>
 </tr>
 <tr>
@@ -4347,7 +4347,7 @@
 </tr>
 <tr>
 <td>Gate 2, Apparaat</td>
-<td><a href="../../components/intune-endpoint-enforcement/">Intune-apparaatconformiteit</a></td>
+<td><a href="../../components/intune-endpoint-enforcement/">Intune device compliance</a></td>
 <td>Bij authenticatie + continu (8u-cyclus)</td>
 <td>✅ Operationeel (Report-only tot demo)</td>
 </tr>

@@ -803,10 +803,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#gui-instellingen" class="md-nav__link">
+  <a href="#gui-settings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GUI-instellingen
+        GUI settings
       
     </span>
   </a>
@@ -825,10 +825,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gedifferentieerd-dropalert-beleid" class="md-nav__link">
+  <a href="#gedifferentieerd-dropalert-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Gedifferentieerd drop/alert-beleid
+        Gedifferentieerd drop/alert policy
       
     </span>
   </a>
@@ -2560,7 +2560,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2700,7 +2700,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3624,10 +3624,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#gui-instellingen" class="md-nav__link">
+  <a href="#gui-settings" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GUI-instellingen
+        GUI settings
       
     </span>
   </a>
@@ -3646,10 +3646,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#gedifferentieerd-dropalert-beleid" class="md-nav__link">
+  <a href="#gedifferentieerd-dropalert-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Gedifferentieerd drop/alert-beleid
+        Gedifferentieerd drop/alert policy
       
     </span>
   </a>
@@ -3807,12 +3807,12 @@
 <p><strong>Wat vtnet0 (WAN) ziet:</strong> De opnieuw versleutelde upstream HTTPS-verbindingen van Squid, DNS-query's van de resolver van pop01, overig direct TCP/UDP-verkeer dat de proxy omzeilt. Suricata extraheert TLS-metadata (SNI, JA3/JA4 fingerprints), HTTP-headers in platte tekst (van niet-HTTPS-stromen), DNS-query/response-gegevens en vergelijkt met C2/botnet IP- en domain signatures.</p>
 <p><strong>Wat vtnet1 (LAN) ziet:</strong> Al het interne DC-LAN-verkeer van dc01 (onversleuteld, alle protocollen). Dit detecteert bedreigingen op het interne segment (lateral movement, verkenning, software-update-afwijkingen van dc01).</p>
 <p><strong>Waarom niet wt0 (NetBird).</strong> WireGuard is een Layer 3 VPN. Verkeer dat via wt0 wordt gerouteerd verschijnt vanuit het perspectief van BPF niet als inkomende frames op die interface. <code>tcpdump</code> op wt0 met een TCP-filter toont 0 paketten. Suricata op wt0 zou niets zien. Zie <a href="../../findings/wt0-pf-rdr-limitation/">Bevinding: wt0 pf rdr-beperking</a> en <a href="../../decisions/suricata-wan-lan/">Beslissing: Suricata WAN+LAN</a>.</p>
-<p><strong>IDS-modus, niet IPS:</strong> Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge); virtio-NIC's in QEMU hebben geen van deze. Zelfs <code>sysctl dev.netmap.admode=2</code> (geëmuleerde Netmap-modus) loste dit niet op: geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete <code>pf divert-to</code>-firewallregels (<code>pfctl -s rules | grep divert</code> retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert-beleidstabel staat klaar voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie <a href="../../decisions/ids-vs-ips/">Beslissing: IDS vs. IPS</a> en <a href="../../findings/suricata-netmap-virtio/">Bevinding: Suricata Netmap/virtio</a>.</p>
+<p><strong>IDS-modus, niet IPS:</strong> Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge); virtio-NIC's in QEMU hebben geen van deze. Zelfs <code>sysctl dev.netmap.admode=2</code> (geëmuleerde Netmap-modus) loste dit niet op: geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete <code>pf divert-to</code>-firewallregels (<code>pfctl -s rules | grep divert</code> retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert policy table staat klaar voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie <a href="../../decisions/ids-vs-ips/">Beslissing: IDS vs. IPS</a> en <a href="../../findings/suricata-netmap-virtio/">Bevinding: Suricata Netmap/virtio</a>.</p>
 <p><strong>RAM-vereiste:</strong> Suricata + ClamAV + Squid gelijktijdig uitvoeren vereist <strong>minimaal 8 GB RAM</strong> op pop01. Hyperscan-patrooncompilatie van ET Open-regels piekt op ~4 GB RSS. Bij 6 GB beëindigt de OOM-killer services stilzwijgend zonder log output.</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
-<h3 id="gui-instellingen">GUI-instellingen<a class="headerlink" href="#gui-instellingen" title="Permanent link">&para;</a></h3>
-<p>Services → Intrusion Detection → Administratie → Instellingen:</p>
+<h3 id="gui-settings">GUI settings<a class="headerlink" href="#gui-settings" title="Permanent link">&para;</a></h3>
+<p>Services → Intrusion Detection → Administration → Settings:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Ingeschakeld:       ✔
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>IPS-modus:          ☐  (IDS)
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Promiscue modus:    ✔
@@ -3823,7 +3823,7 @@
 <p><code>100.64.0.0/10</code> in HOME_NET is cruciaal: NetBird-client-IP's vallen in het CGNAT-bereik. Zonder dit item behandelt Suricata NetBird-peers als externe hosts en worden regels met <code>$HOME_NET</code> onjuist geactiveerd.</p>
 <p><strong>Hyperscan-selectie:</strong> Controleer of SSE4.2 beschikbaar is voordat u Hyperscan selecteert. Gebruik <code>dmesg | grep -i features</code> en zoek naar <code>SSE4.2</code> in Features2. <code>sysctl hw.model</code> op QEMU-VM's toont een generieke string en is niet betrouwbaar.</p>
 <h3 id="regelsets">Regelsets<a class="headerlink" href="#regelsets" title="Permanent link">&para;</a></h3>
-<p>Downloaden via Administratie → Download. Na het downloaden zijn regels <strong>niet automatisch actief</strong>: ga naar Administratie → Regels en schakel alle regelbestanden afzonderlijk in.</p>
+<p>Downloaden via Administration → Download. Na het downloaden zijn regels <strong>niet automatisch actief</strong>: ga naar Administration → Rules en schakel alle regelbestanden afzonderlijk in.</p>
 <table>
 <thead>
 <tr>
@@ -3850,8 +3850,8 @@
 </tr>
 </tbody>
 </table>
-<h3 id="gedifferentieerd-dropalert-beleid">Gedifferentieerd drop/alert-beleid<a class="headerlink" href="#gedifferentieerd-dropalert-beleid" title="Permanent link">&para;</a></h3>
-<p>Via Administratie → Beleid. Geconfigureerd en gereed voor IPS-activering:</p>
+<h3 id="gedifferentieerd-dropalert-policy">Gedifferentieerd drop/alert policy<a class="headerlink" href="#gedifferentieerd-dropalert-policy" title="Permanent link">&para;</a></h3>
+<p>Via Administration → Policies. Geconfigureerd en gereed voor IPS-activering:</p>
 <table>
 <thead>
 <tr>

@@ -2477,7 +2477,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2617,7 +2617,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3641,7 +3641,7 @@
 <p><strong>PAC-bestand moet DIRECT retourneren voor overlay-IP's:</strong> als het PAC-bestand <code>PROXY ...</code> retourneerde voor <code>100.64.0.0/10</code> (het NetBird overlay-subnet), zouden browseraanvragen naar de NetBird-beheerconsole via Squid worden gerouteerd, wat een routeringslus zou veroorzaken. Het PAC-bestand moet overlay- en interne subnetten expliciet uitsluiten.</p>
 <p><strong>WPAD dekt alleen browser-HTTP/HTTPS:</strong> applicaties die de systeemproxyinstelling niet lezen (veel niet-browserapps, commandoregeltools) omzeilen Squid volledig. Suricata's netwerklaaginspectie op vtnet0 compenseert gedeeltelijk door afwijkingen in directe verbindingen te detecteren.</p>
 <p><strong>WPAD-autodiscovery werkt niet met NetBird NRPT:</strong> NetBird stelt het zoekdomein <code>sandbox.local</code> in via NRPT (Name Resolution Policy Table) op uitsluitend de <code>wt0</code>-adapter, niet globaal. <code>Get-DnsClientGlobalSetting</code> op mobile01 toont een lege <code>SuffixSearchList</code>. Omdat Windows de globale suffixlijst gebruikt voor WPAD-autodiscovery, wordt autodiscovery niet geactiveerd voor het zoekdomein op adapterniveau van NetBird.</p>
-<p><strong>mobile01 is handmatig geconfigureerd:</strong> Windows-instellingen → Proxy → "InstallatieScript gebruiken" → URL: <code>http://wpad.sandbox.local/wpad.dat</code>. In een productie-uitrol bij Atlascollege zou WPAD worden gedistribueerd via <strong>DHCP-optie 252</strong>, die de PAC-URL rechtstreeks naar clients pusht zonder DNS-afhankelijkheid of gebruikersactie. Alternatieven zijn Group Policy of Intune MDM-beleid.</p>
+<p><strong>mobile01 is handmatig geconfigureerd:</strong> Windows Settings → Proxy → "Use setup script" → URL: <code>http://wpad.sandbox.local/wpad.dat</code>. In een productie-uitrol bij Atlascollege zou WPAD worden gedistribueerd via <strong>DHCP-optie 252</strong>, die de PAC-URL rechtstreeks naar clients pusht zonder DNS-afhankelijkheid of gebruikersactie. Alternatieven zijn Group Policy of Intune MDM policy.</p>
 <h2 id="bronnen">Bronnen<a class="headerlink" href="#bronnen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>Doc1_Squid_WPAD_PAC.md</code> §1–2 (WPAD/PAC-architectuur, PAC-bestand, waarom geen transparante proxy)</li>

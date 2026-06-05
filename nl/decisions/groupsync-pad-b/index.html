@@ -2477,7 +2477,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2617,7 +2617,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3646,7 +3646,7 @@
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>Pad B: de Zitadel Action die al in de OIDC-keten zit mapt de groeps-displaynaam-string naar de schone interne naam (<code>2ITCSC1A-Studenten</code> → <code>Studenten</code>) via een hardgecodeerde <strong>allowlist</strong>, en laat elke groep die niet in de allowlist staat vallen (fail-closed). Het netto-effect is dat het <code>2ITCSC1A-</code>-prefix NetBird nooit bereikt. Dit hangt ervan af dat <code>cloud_displayname</code> is ingeschakeld in het Entra-app-manifest, zodat de <code>groups</code>-claim de displaynaam uitstuurt in plaats van de GUID; die voorwaarde is geverifieerd, en Pad B is bevestigd werkend voor alle drie persona's (Studenten en Admins per Verslag31, Docenten per Verslag34). Het prefix bestaat alleen in Entra ID; alle downstream-componenten (Zitadel-claims, NetBird JWT auto-groups, Identity Bridge, NATS-subjects, Squid ACL's) gebruiken de schone naam.</p>
-<p>De primaire reden is leesbaarheid van policies: wanneer een NetBird ACL of Squid-regel verwijst naar <code>Studenten</code>, is het onmiddellijk duidelijk welke groep wordt beheerd. Bij <code>2ITCSC1A-Studenten</code> moet elke lezer het prefix mentaal verwijderen om de beleidsintentie te begrijpen. Pad B laat ook Addendum J's <code>NETBIRD_POLICY_GROUPS</code>-config (<code>Studenten,Docenten,Admins</code>) al kloppend en hergebruikt een bestaand transformatiepunt in plaats van er een toe te voegen.</p>
+<p>De primaire reden is leesbaarheid van policies: wanneer een NetBird ACL of Squid-regel verwijst naar <code>Studenten</code>, is het onmiddellijk duidelijk welke groep wordt beheerd. Bij <code>2ITCSC1A-Studenten</code> moet elke lezer het prefix mentaal verwijderen om de policy intent te begrijpen. Pad B laat ook Addendum J's <code>NETBIRD_POLICY_GROUPS</code>-config (<code>Studenten,Docenten,Admins</code>) al kloppend en hergebruikt een bestaand transformatiepunt in plaats van er een toe te voegen.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>De correctheid van Pad B hangt af van <code>cloud_displayname</code>: als dit ooit stopt met het uitsturen van displaynamen (bijv. omdat de groepen als on-prem-gesynchroniseerd worden behandeld), valt de claim terug op GUID's en matcht de allowlist (gekeyd op de naamstring) niets: elke groep wordt fail-closed weggelaten, en de fragiele fallback zou GUID-matching in ACL's of een GUID→naam-lookup zijn. Dit wordt geverifieerd in de GroupSync <code>cloud_displayname</code>-stap vóór men op Pad B vertrouwt.</li>

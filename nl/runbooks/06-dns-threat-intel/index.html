@@ -2565,7 +2565,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2705,7 +2705,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3931,14 +3931,14 @@ Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWAR
 <h2 id="stap-5-bind-920-installeren-op-pop01">Stap 5: BIND 9.20 installeren op pop01<a class="headerlink" href="#stap-5-bind-920-installeren-op-pop01" title="Permanent link">&para;</a></h2>
 <p>Via System → Firmware → Plugins: installeer <code>os-bind</code>. Na installatie: Services → BIND verschijnt in het menu.</p>
 <blockquote>
-<p><strong>Valkuil: Maak de ACL aan vóór Algemene Instellingen.</strong> Het ACL-dropdown in Algemene Instellingen toont alleen ACL's die al bestaan. Als je eerst Algemene Instellingen configureert, is het ACL-dropdown leeg.</p>
+<p><strong>Valkuil: Maak de ACL aan vóór General Settings.</strong> Het ACL-dropdown in General Settings toont alleen ACL's die al bestaan. Als je eerst General Settings configureert, is het ACL-dropdown leeg.</p>
 </blockquote>
 <p><strong>ACL:</strong> Services → BIND → Access Control List:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>Naam:     loopback_only
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>Netwerken: 127.0.0.1/32
 </code></pre></div></p>
 <p>Navigeer weg en terug (GUI-dropdown quirk).</p>
-<p><strong>Algemene instellingen:</strong>
+<p><strong>General Settings:</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>BIND Daemon inschakelen: aangevinkt
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>Listen IPs:           127.0.0.1
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>Listen Port:           53530
