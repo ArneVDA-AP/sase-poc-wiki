@@ -3560,7 +3560,7 @@
 <p><strong>Component:</strong> <a href="../../components/squid/">Squid</a><br />
 <strong>Ernst:</strong> Valkuil</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>Na het klikken op "Logboek wissen" (→ "dit logboek leegmaken?") in Services → Squid Web Proxy → Diagnostics → Access Log verdween het toegangslog volledig. Volgende proxytests toonden geen logvermeldingen, wat suggereerde dat de proxy niet werkte — maar die werkte correct.</p>
+<p>Na het klikken op "Logboek wissen" (→ "dit logboek leegmaken?") in Services → Squid Web Proxy → Diagnostics → Access Log verdween het toegangslog volledig. Volgende proxytests toonden geen logvermeldingen, wat suggereerde dat de proxy niet werkte, maar die werkte correct.</p>
 <p>Dit leidde tot een langdurige probleemoplossingssessie voor een probleem dat niet bestond.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p>De WebUI-knop "Logboek wissen" verwijdert het logbestand in plaats van het af te kappen. Na verwijdering blijft Squid draaien maar schrijft naar een niet-bestaande bestandsdescriptor, wat geen log output oplevert. Het logbestand wordt pas opnieuw aangemaakt wanneer Squid herstart.</p>
@@ -3574,9 +3574,9 @@
 <p>Dit zorgt ervoor dat Squid het logbestand opnieuw aanmaakt bij het opstarten.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Gebruik nooit de WebUI-knop "Logboek wissen" voor Squid — kapt altijd af vanuit de shell</li>
+<li>Gebruik nooit de WebUI-knop "Logboek wissen" voor Squid; kapt altijd af vanuit de shell</li>
 <li>Wanneer proxytests geen log output tonen: controleer eerst of het logbestand bestaat (<code>ls -la /var/log/squid/access.log</code>) vóór de aanname dat de proxy kapot is</li>
-<li>Loggerelateerde problemen kunnen onderliggende problemen maskeren — verifieer altijd dat het logbestand bestaat vóór het starten van proxy-diagnose</li>
+<li>Loggerelateerde problemen kunnen onderliggende problemen maskeren; verifieer altijd dat het logbestand bestaat vóór het starten van proxy-diagnose</li>
 </ul>
 
 

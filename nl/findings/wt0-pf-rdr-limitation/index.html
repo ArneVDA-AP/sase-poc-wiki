@@ -3570,8 +3570,8 @@
 <p>Transparante proxy via <code>pf rdr</code> werd geconfigureerd om TCP-verkeer op de <code>wt0</code>-interface (NetBird WireGuard) te onderscheppen en door te sturen naar Squid. Verkeer van mobile01 via de NetBird-tunnel werd niet onderschept.</p>
 <p><code>tcpdump -i wt0 -n 'tcp'</code> toonde 0 paketten terwijl mobile01 actief aan het browsen was.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>WireGuard creëert een Layer 3 gerouteerde interface. Verkeer dat via <code>wt0</code> wordt gerouteerd verschijnt vanuit het perspectief van de packet filter niet als inkomende frames op die interface. <code>pf rdr</code> werkt op inkomend verkeer — het kan via WireGuard doorgestuurd verkeer niet zien en dus ook niet omleiden.</p>
-<p>Dit is een gedocumenteerde, bekende beperking. OPNsense GitHub issue #3857 — gesloten als "not planned".</p>
+<p>WireGuard creëert een Layer 3 gerouteerde interface. Verkeer dat via <code>wt0</code> wordt gerouteerd verschijnt vanuit het perspectief van de packet filter niet als inkomende frames op die interface. <code>pf rdr</code> werkt op inkomend verkeer: het kan via WireGuard doorgestuurd verkeer niet zien en dus ook niet omleiden.</p>
+<p>Dit is een gedocumenteerde, bekende beperking. OPNsense GitHub issue #3857, gesloten als "not planned".</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p>Overgeschakeld naar expliciete proxymodus met WPAD/PAC. Het PAC-bestand op <code>http://wpad.sandbox.local/wpad.dat</code> instrueert de browser om verkeer rechtstreeks naar <code>PROXY 100.70.154.79:3128</code> te sturen. Geen <code>pf rdr</code>-regel nodig.</p>
 <p>Zie <a href="../../decisions/wpad-vs-transparent-proxy/">Beslissing: WPAD/PAC vs. transparante proxy</a>.</p>

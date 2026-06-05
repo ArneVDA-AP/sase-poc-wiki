@@ -3562,7 +3562,7 @@
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>De handleiding (v4 §27.1) suggereerde StevenBlack unified hosts als Remote ACL-bron voor URL-filtering. Na configuratie laadde OPNsense Remote ACL de lijst niet en toonde Squid geen blokkeerlijstvermeldingen.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>StevenBlack is een <code>hosts</code>-bestand: vermeldingen in het formaat <code>0.0.0.0 ads.example.com</code>. De Remote ACL-functie van OPNsense verwacht een tar.gz-archief met domeinlijsten in Squid ACL-formaat (één domein per regel). De formaten zijn incompatibel — OPNsense kan een hostsbestand niet parsen als een Squid ACL-lijst.</p>
+<p>StevenBlack is een <code>hosts</code>-bestand: vermeldingen in het formaat <code>0.0.0.0 ads.example.com</code>. De Remote ACL-functie van OPNsense verwacht een tar.gz-archief met domeinlijsten in Squid ACL-formaat (één domein per regel). De formaten zijn incompatibel: OPNsense kan een hostsbestand niet parsen als een Squid ACL-lijst.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p>Gebruik UT1 Toulouse (<code>dsi.ut-capitole.fr/blacklists</code>) in plaats daarvan. UT1 is de de-facto standaard voor op Squid gebaseerde categoriefiltering en wordt native ondersteund door OPNsense. Het distribueert tar.gz-archieven in Squid ACL-formaat met categorieën (gambling, malware, phishing, adult) die rechtstreeks aansluiten op de ACL-interface van OPNsense.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>

@@ -33,7 +33,7 @@
     
     
       
-        <title>Concept: SSL Bump — HTTPS-interceptie - Security Project Wiki</title>
+        <title>Concept: SSL Bump (HTTPS-interceptie) - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Concept: SSL Bump — HTTPS-interceptie
+              Concept: SSL Bump (HTTPS-interceptie)
             
           </span>
         </div>
@@ -3577,10 +3577,10 @@
 
 
 
-<h1 id="concept-ssl-bump-https-interceptie">Concept: SSL Bump — HTTPS-interceptie<a class="headerlink" href="#concept-ssl-bump-https-interceptie" title="Permanent link">&para;</a></h1>
-<p><strong>Definitie:</strong> Het mechanisme van Squid om HTTPS-verkeer te ontsleutelen door op te treden als TLS man-in-the-middle — het herondertekent servercertificaten on the fly met behulp van een lokale CA die door clients wordt vertrouwd, waardoor inhoudsinspectie van anders ondoorzichtig versleuteld verkeer mogelijk is.</p>
+<h1 id="concept-ssl-bump-https-interceptie">Concept: SSL Bump (HTTPS-interceptie)<a class="headerlink" href="#concept-ssl-bump-https-interceptie" title="Permanent link">&para;</a></h1>
+<p><strong>Definitie:</strong> Het mechanisme van Squid om HTTPS-verkeer te ontsleutelen door op te treden als TLS man-in-the-middle: het herondertekent servercertificaten on the fly met behulp van een lokale CA die door clients wordt vertrouwd, waardoor inhoudsinspectie van anders ondoorzichtig versleuteld verkeer mogelijk is.</p>
 <h2 id="hoe-het-hier-van-toepassing-is">Hoe het hier van toepassing is<a class="headerlink" href="#hoe-het-hier-van-toepassing-is" title="Permanent link">&para;</a></h2>
-<p>Zonder SSL Bump zien ClamAV en de Python DLP-server alleen een ondoorzichtige versleutelde stroom — nutteloos voor malwarescanning of DLP. SSL Bump maakt HTTPS-inspectie mogelijk: Squid ontsleutelt elke HTTPS-verbinding, geeft de leesbare body door aan de ICAP inspection chain en re-encrypts dan richting de originele server.</p>
+<p>Zonder SSL Bump zien ClamAV en de Python DLP-server alleen een ondoorzichtige versleutelde stroom (nutteloos voor malwarescanning of DLP). SSL Bump maakt HTTPS-inspectie mogelijk: Squid ontsleutelt elke HTTPS-verbinding, geeft de leesbare body door aan de ICAP inspection chain en re-encrypts dan richting de originele server.</p>
 <p>De SSL Bump CA voor dit project is <code>SASE-PoC-CA</code>, een zelfondertekende root CA geïnstalleerd in de Windows-trust store op mobile01. Zonder dit certificaat verschijnt elke HTTPS-site als een niet-vertrouwde site in de browser.</p>
 <p><strong>TLS-stroom met SSL Bump:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mobile01 (browser) &lt;-&gt; Squid pop01 &lt;-&gt; Internet (originele server)
@@ -3590,19 +3590,19 @@
 </code></pre></div>
 <p>Squid genereert een per-site-certificaat ondertekend door <code>SASE-PoC-CA</code>, en vervangt daarmee het echte certificaat van de originele server. De browser ziet een geldig certificaat (vertrouwd via de geïnstalleerde CA) en detecteert de interceptie niet.</p>
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
-<p><strong><a href="../../components/squid/">Squid</a></strong> — voert SSL Bump uit op beide listeners. De LAN-listener krijgt ssl-bump-parameters via de OPNsense GUI. De NetBird-overlay-listener (<code>100.70.154.79:3128</code>) vereist ssl-bump-parameters in het pre-auth include-bestand — zonder deze tunnelt verkeer door als CONNECT zonder inspectie:</p>
+<p><strong><a href="../../components/squid/">Squid</a>:</strong> voert SSL Bump uit op beide listeners. De LAN-listener krijgt ssl-bump-parameters via de OPNsense GUI. De NetBird-overlay-listener (<code>100.70.154.79:3128</code>) vereist ssl-bump-parameters in het pre-auth include-bestand; zonder deze tunnelt verkeer door als CONNECT zonder inspectie:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem \</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s1">  dynamic_cert_mem_cache_size=10MB generate-host-certificates=on&#39;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>&gt;<span class="w"> </span>/usr/local/etc/squid/pre-auth/netbird-listener.conf
 </code></pre></div>
-<p><strong>No-bump-lijst</strong> — sites uitgesloten van SSL-inspectie:
-- <code>login.microsoftonline.com</code> — <strong>verplicht</strong>: als Squid de Microsoft-aanmeldingspagina bumpt, wordt de Entra ID OIDC-stroom die door NetBird wordt gebruikt gebroken. Alle clientauthenticatie zou mislukken.
-- <code>.microsoft.com</code>, <code>.paypal.com</code>, <code>.apple.com</code> — demonstratieve uitzonderingen</p>
-<p><strong><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></strong> en <strong><a href="../../components/python-dlp/">Python DLP</a></strong> — afhankelijk van SSL Bump om leesbare bodies te ontvangen. Zonder SSL Bump kunnen ze geen HTTPS-inhoud inspecteren.</p>
+<p><strong>No-bump-lijst</strong> (sites uitgesloten van SSL-inspectie):
+- <code>login.microsoftonline.com</code> (<strong>verplicht</strong>): als Squid de Microsoft-aanmeldingspagina bumpt, wordt de Entra ID OIDC-stroom die door NetBird wordt gebruikt gebroken. Alle clientauthenticatie zou mislukken.
+- <code>.microsoft.com</code>, <code>.paypal.com</code>, <code>.apple.com</code> (demonstratieve uitzonderingen)</p>
+<p><strong><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></strong> en <strong><a href="../../components/python-dlp/">Python DLP</a>:</strong> afhankelijk van SSL Bump om leesbare bodies te ontvangen. Zonder SSL Bump kunnen ze geen HTTPS-inhoud inspecteren.</p>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
-<p><strong>ssl-bump op pre-auth-listener</strong> — de kritieke bevinding gedocumenteerd in <a href="../../findings/pre-auth-ssl-bump-params/">Bevinding: pre-auth ssl-bump parameters</a>: als het pre-auth include alleen <code>http_port 100.70.154.79:3128</code> heeft (geen ssl-bump-parameters), tunnelt HTTPS-verkeer van NetBird-clients als CONNECT zonder inspectie. De volledige ssl-bump-directive moet in de pre-auth conf staan.</p>
-<p><strong><code>--ssl-no-revoke</code> voor Windows curl.exe-tests</strong> — curl.exe op Windows gebruikt de schannel TLS-stack die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen revocation endpoint, dus dit mislukt. Voeg <code>--ssl-no-revoke</code> toe aan alle Windows CLI-testopdrachten die via de proxy gaan.</p>
-<p><strong>SSL Bump is niet van toepassing op no-bump-sites</strong> — verkeer naar <code>login.microsoftonline.com</code> passeert als een CONNECT-tunnel zonder decodering, precies zoals het zou zijn zonder SSL Bump geconfigureerd.</p>
+<p><strong>ssl-bump op pre-auth-listener:</strong> de kritieke bevinding gedocumenteerd in <a href="../../findings/pre-auth-ssl-bump-params/">Bevinding: pre-auth ssl-bump parameters</a>: als het pre-auth include alleen <code>http_port 100.70.154.79:3128</code> heeft (geen ssl-bump-parameters), tunnelt HTTPS-verkeer van NetBird-clients als CONNECT zonder inspectie. De volledige ssl-bump-directive moet in de pre-auth conf staan.</p>
+<p><strong><code>--ssl-no-revoke</code> voor Windows curl.exe-tests:</strong> curl.exe op Windows gebruikt de schannel TLS-stack die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen revocation endpoint, dus dit mislukt. Voeg <code>--ssl-no-revoke</code> toe aan alle Windows CLI-testopdrachten die via de proxy gaan.</p>
+<p><strong>SSL Bump is niet van toepassing op no-bump-sites:</strong> verkeer naar <code>login.microsoftonline.com</code> passeert als een CONNECT-tunnel zonder decodering, precies zoals het zou zijn zonder SSL Bump geconfigureerd.</p>
 <h2 id="bronnen">Bronnen<a class="headerlink" href="#bronnen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>raw/Doc1_Squid_WPAD_PAC.md</code> §2 (SSL Bump-configuratie, no-bump-lijst)</li>

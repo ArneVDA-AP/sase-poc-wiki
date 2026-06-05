@@ -2381,7 +2381,7 @@
   <a href="#stap-0-ram-controleren-minimaal-8-gb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 0: RAM controleren — minimaal 8 GB
+        Stap 0: RAM controleren (minimaal 8 GB)
       
     </span>
   </a>
@@ -3562,7 +3562,7 @@
   <a href="#stap-0-ram-controleren-minimaal-8-gb" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 0: RAM controleren — minimaal 8 GB
+        Stap 0: RAM controleren (minimaal 8 GB)
       
     </span>
   </a>
@@ -3719,9 +3719,9 @@
 
 <h1 id="runbook-ids">Runbook: IDS<a class="headerlink" href="#runbook-ids" title="Permanent link">&para;</a></h1>
 <p><strong>Bron:</strong> <code>raw/Doc3_Suricata_IDS.md</code>
-<strong>Node(s):</strong> pop01 (OPNsense — vtnet0 WAN + vtnet1 LAN)
+<strong>Node(s):</strong> pop01 (OPNsense, vtnet0 WAN + vtnet1 LAN)
 <strong>Vereisten:</strong> <a href="../03-proxy-wpad/">Runbook 03: Proxy &amp; WPAD</a> afgerond (Squid operationeel)
-<strong>Status:</strong> Operationeel (IDS-modus — IPS gereed voor fysieke hardware)</p>
+<strong>Status:</strong> Operationeel (IDS-modus; IPS gereed voor fysieke hardware)</p>
 <hr />
 <h2 id="vereistenchecklist">Vereistenchecklist<a class="headerlink" href="#vereistenchecklist" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3731,9 +3731,9 @@
 <li>[ ] Squid en ClamAV draaien al</li>
 </ul>
 <hr />
-<h2 id="stap-0-ram-controleren-minimaal-8-gb">Stap 0: RAM controleren — minimaal 8 GB<a class="headerlink" href="#stap-0-ram-controleren-minimaal-8-gb" title="Permanent link">&para;</a></h2>
+<h2 id="stap-0-ram-controleren-minimaal-8-gb">Stap 0: RAM controleren (minimaal 8 GB)<a class="headerlink" href="#stap-0-ram-controleren-minimaal-8-gb" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Valkuil: Dit moet vóór alles anders gebeuren.</strong> Bij 4 GB (of zelfs 6 GB) crashen ClamAV en Suricata stilzwijgend via FreeBSD's OOM-killer — er worden geen logboekregels geschreven. ClamAV gebruikt ~1,2 GB, Suricata ~760 MB na Hyperscan-compilatie (piekt op ~4 GB tijdens compilatie), Squid ~400 MB. Samen overschrijden ze 6 GB.</p>
+<p><strong>Valkuil: Dit moet vóór alles anders gebeuren.</strong> Bij 4 GB (of zelfs 6 GB) crashen ClamAV en Suricata stilzwijgend via FreeBSD's OOM-killer; er worden geen logboekregels geschreven. ClamAV gebruikt ~1,2 GB, Suricata ~760 MB na Hyperscan-compilatie (piekt op ~4 GB tijdens compilatie), Squid ~400 MB. Samen overschrijden ze 6 GB.</p>
 </blockquote>
 <p>Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (<code>shutdown -h now</code>), verander het RAM in GNS3 node-instellingen, herstart.</p>
 <p><strong>Verificatie na opstarten:</strong></p>
@@ -3743,7 +3743,7 @@
 </code></pre></div>
 <hr />
 <h2 id="stap-1-sse42-cpu-ondersteuning-controleren">Stap 1: SSE4.2 CPU-ondersteuning controleren<a class="headerlink" href="#stap-1-sse42-cpu-ondersteuning-controleren" title="Permanent link">&para;</a></h2>
-<p>Hyperscan vereist SSE4.2. Gebruik niet <code>sysctl hw.model</code> — dit toont "QEMU Virtual CPU" wat niet informatief is.</p>
+<p>Hyperscan vereist SSE4.2. Gebruik niet <code>sysctl hw.model</code>; dit toont "QEMU Virtual CPU" wat niet informatief is.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>dmesg<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>features
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Zoek naar: SSE4.2 in de Features2-regel</span>
 </code></pre></div>
@@ -3752,7 +3752,7 @@
 <h2 id="stap-2-suricata-configureren-via-gui">Stap 2: Suricata configureren via GUI<a class="headerlink" href="#stap-2-suricata-configureren-via-gui" title="Permanent link">&para;</a></h2>
 <p>Services → Intrusion Detection → Administration → Settings:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Ingeschakeld:      aangevinkt
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>IPS-modus:         niet aangevinkt  (IDS — zie opmerking hieronder)
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>IPS-modus:         niet aangevinkt  (IDS, zie opmerking hieronder)
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Promiscuous mode:  aangevinkt
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Pattern matcher:   Hyperscan
 <a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>Interfaces:        WAN, LAN
@@ -3762,7 +3762,7 @@
 <p><strong>Valkuil: <code>100.64.0.0/10</code> MOET in HOME_NET staan.</strong> NetBird-peer-IP's gebruiken het CGNAT-bereik (100.64.x.x). Zonder dit subnet beschouwt Suricata NetBird-clients als externe hosts en worden regels die <code>$HOME_NET</code> gebruiken niet correct geactiveerd.</p>
 <p><strong>Valkuil: Promiscuous mode is essentieel op vtnet1 (LAN).</strong> Zonder dit ziet de NIC alleen frames die bestemd zijn voor het MAC-adres van pop01. Verkeer van dc01 bestemd voor andere bestemmingen zou onzichtbaar zijn.</p>
 </blockquote>
-<p><strong>Waarom IDS en niet IPS:</strong> Netmap IPS vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel <code>igb</code>, <code>ixgbe</code>). De virtio-NIC's in QEMU/GNS3 hebben geen Netmap-stuurprogramma — alle worker-threads verwerken nul pakketten. Het drop/alert-beleid is geconfigureerd en gereed voor IPS-activering op fysieke hardware met compatibele NIC's. Zie <a href="../../decisions/ids-vs-ips/">Beslissing: IDS vs IPS</a>.</p>
+<p><strong>Waarom IDS en niet IPS:</strong> Netmap IPS vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel <code>igb</code>, <code>ixgbe</code>). De virtio-NIC's in QEMU/GNS3 hebben geen Netmap-stuurprogramma; alle worker-threads verwerken nul pakketten. Het drop/alert-beleid is geconfigureerd en gereed voor IPS-activering op fysieke hardware met compatibele NIC's. Zie <a href="../../decisions/ids-vs-ips/">Beslissing: IDS vs IPS</a>.</p>
 <hr />
 <h2 id="stap-3-regelsets-downloaden-en-inschakelen">Stap 3: Regelsets downloaden en inschakelen<a class="headerlink" href="#stap-3-regelsets-downloaden-en-inschakelen" title="Permanent link">&para;</a></h2>
 <p>Via Administration → Download, selecteer en klik op "Download &amp; Update Rules":</p>
@@ -3798,23 +3798,23 @@
 <hr />
 <h2 id="stap-4-gedifferentieerd-beleid-aanmaken">Stap 4: Gedifferentieerd beleid aanmaken<a class="headerlink" href="#stap-4-gedifferentieerd-beleid-aanmaken" title="Permanent link">&para;</a></h2>
 <p>Via Administration → Policies:</p>
-<p><strong>Beleid 1 — Drop (hoge betrouwbaarheid, altijd kwaadaardig):</strong>
+<p><strong>Beleid 1: Drop (hoge betrouwbaarheid, altijd kwaadaardig):</strong>
 - Categorieën: emerging-malware, emerging-exploit, emerging-worm, emerging-botcc, emerging-botcc.portgrouped, compromised, drop, ciarmy, Threatview_CS-C2, alle Abuse.ch-feeds
 - Actie: Drop, Nieuwe actie: Drop</p>
-<p><strong>Beleid 2 — Alert (risico op valse positieven):</strong>
+<p><strong>Beleid 2: Alert (risico op valse positieven):</strong>
 - Categorieën: tor, emerging-info, emerging-policy, emerging-dns, emerging-web_client, emerging-web_server, emerging-misc, emerging-games, emerging-chat, emerging-p2p, emerging-attack_response
 - Actie: Alert, Nieuwe actie: Alert</p>
-<p>Opmerking: <code>emerging-attack_response</code> is ingesteld op Alert — dit maakt testvalidatie met SID 2100498 mogelijk.</p>
+<p>Opmerking: <code>emerging-attack_response</code> is ingesteld op Alert; dit maakt testvalidatie met SID 2100498 mogelijk.</p>
 <hr />
 <h2 id="stap-5-customyaml-aanmaken-voor-expliciete-per-interface-pcap">Stap 5: custom.yaml aanmaken voor expliciete per-interface PCAP<a class="headerlink" href="#stap-5-customyaml-aanmaken-voor-expliciete-per-interface-pcap" title="Permanent link">&para;</a></h2>
 <p>OPNsense hergenerert <code>/var/unbound/suricata.yaml</code> bij elke GUI Apply. Gebruik in plaats daarvan het persistente aangepaste configuratiepad:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vi<span class="w"> </span>/usr/local/opnsense/service/templates/OPNsense/IDS/custom.yaml
 </code></pre></div>
 <blockquote>
-<p><strong>Valkuil: <code>interface: default</code> resolveert naar vtnet0 ALLEEN.</strong> Dit was de oorzaak van een volledige probleemoplossingsessie — vtnet1 had een BPF-apparaat open maar Suricata stuurde er nooit pakketten naartoe. Resultaat: 0 events van vtnet1 ondanks bevestigde BPF-opname. Elke interface heeft een expliciete declaratie nodig.
+<p><strong>Valkuil: <code>interface: default</code> resolveert naar vtnet0 ALLEEN.</strong> Dit was de oorzaak van een volledige probleemoplossingsessie: vtnet1 had een BPF-apparaat open maar Suricata stuurde er nooit pakketten naartoe. Resultaat: 0 events van vtnet1 ondanks bevestigde BPF-opname. Elke interface heeft een expliciete declaratie nodig.
 Zie <a href="../../findings/suricata-interface-default-bug/">Finding: Suricata interface default-fout</a>.</p>
 </blockquote>
-<p>Gebruik deze exacte inhoud — de definitieve werkende versie na de vtnet1-fix:</p>
+<p>Gebruik deze exacte inhoud (de definitieve werkende versie na de vtnet1-fix):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">pcap</span><span class="p">:</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">interface</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vtnet0</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="nt">checksum-checks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span>
@@ -3855,14 +3855,14 @@ Zie <a href="../../findings/suricata-interface-default-bug/">Finding: Suricata i
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Controleer BPF-opname:</span>
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>procstat<span class="w"> </span>-f<span class="w"> </span>&lt;PID&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>bpf
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># Moet bpf0, bpf1 tonen — één per geconfigureerde interface</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># Moet bpf0, bpf1 tonen (één per geconfigureerde interface)</span>
 </code></pre></div>
 <blockquote>
 <p><strong>Valkuil: Logbestand heeft datumstempel.</strong> Het pad is <code>/var/log/suricata/suricata_JJJJMMDD.log</code>, niet <code>suricata.log</code>.</p>
 </blockquote>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>cat<span class="w"> </span>/var/log/suricata/suricata_<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-30
 </code></pre></div>
-<p><strong>RAM-piek tijdens Hyperscan-compilatie:</strong> CPU stijgt naar 143%+ gedurende 1-2 minuten bij opstarten. Dit is normaal — wacht tot de compilatie klaar is.</p>
+<p><strong>RAM-piek tijdens Hyperscan-compilatie:</strong> CPU stijgt naar 143%+ gedurende 1-2 minuten bij opstarten. Dit is normaal; wacht tot de compilatie klaar is.</p>
 <hr />
 <h2 id="eindverificatie">Eindverificatie<a class="headerlink" href="#eindverificatie" title="Permanent link">&para;</a></h2>
 <p>Voer deze vier tests uit om vier verschillende detectiecategorieën te bewijzen:</p>
@@ -3887,7 +3887,7 @@ Zie <a href="../../findings/suricata-interface-default-bug/">Finding: Suricata i
 <tr>
 <td>2</td>
 <td>DNS-anomalieën</td>
-<td>Automatisch — DNS .biz TLD-queries vanuit pop01</td>
+<td>Automatisch, DNS .biz TLD-queries vanuit pop01</td>
 <td>2027863</td>
 <td>vtnet0 (WAN)</td>
 </tr>
@@ -3912,7 +3912,7 @@ Zie <a href="../../findings/suricata-interface-default-bug/">Finding: Suricata i
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># Moet &gt; 0 zijn</span>
 </code></pre></div>
 <p>Controleer OPNsense WebUI → Services → Intrusion Detection → Alerts: zowel WAN- als LAN-meldingen moeten zichtbaar zijn.</p>
-<p><strong>Opmerking over herhaalde tests:</strong> Meerdere curl-verzoeken naar hetzelfde domein kunnen slechts één melding opleveren. Dit is geen threshold-fout — Squid hergebruikt upstream TCP-verbindingen (connection pooling), dus Suricata ziet één flow en genereert correct één melding per SID per flow.</p>
+<p><strong>Opmerking over herhaalde tests:</strong> Meerdere curl-verzoeken naar hetzelfde domein kunnen slechts één melding opleveren. Dit is geen threshold-fout. Squid hergebruikt upstream TCP-verbindingen (connection pooling), dus Suricata ziet één flow en genereert correct één melding per SID per flow.</p>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>
 <ul>

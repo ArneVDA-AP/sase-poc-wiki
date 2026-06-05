@@ -33,7 +33,7 @@
     
     
       
-        <title>Python DLP ICAP-server — Upload-DLP-laag 2 - Security Project Wiki</title>
+        <title>Python DLP ICAP-server: Upload-DLP-laag 2 - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Python DLP ICAP-server — Upload-DLP-laag 2
+              Python DLP ICAP-server: Upload-DLP-laag 2
             
           </span>
         </div>
@@ -3706,18 +3706,18 @@
 
 
 
-<h1 id="python-dlp-icap-server-upload-dlp-laag-2">Python DLP ICAP-server — Upload-DLP-laag 2<a class="headerlink" href="#python-dlp-icap-server-upload-dlp-laag-2" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> ICAP REQMOD-service op mgmt01 — scant HTTP-verzoekbodies (uploads, formulierinzendingen) op gevoelige gegevens: creditcardnummers (Luhn), IBAN (mod-97), BSN (11-proef), AWS-toegangssleutels. Blokkeert POST/PUT/PATCH-verzoeken die overeenkomsten bevatten.<br />
+<h1 id="python-dlp-icap-server-upload-dlp-laag-2">Python DLP ICAP-server: Upload-DLP-laag 2<a class="headerlink" href="#python-dlp-icap-server-upload-dlp-laag-2" title="Permanent link">&para;</a></h1>
+<p><strong>Rol:</strong> ICAP REQMOD-service op mgmt01 die HTTP-verzoekbodies (uploads, formulierinzendingen) scant op gevoelige gegevens: creditcardnummers (Luhn), IBAN (mod-97), BSN (11-proef), AWS-toegangssleutels. Blokkeert POST/PUT/PATCH-verzoeken die overeenkomsten bevatten.<br />
 <strong>Versie:</strong> Aangepaste Python 3.11, pyicap (gepatcht), Dockerfile op mgmt01<br />
 <strong>Configuratielocatie:</strong> <code>/opt/dlp-icap/</code> op mgmt01, <code>/usr/local/etc/squid/pre-auth/dlp-icap.conf</code> op pop01</p>
 <hr />
 <h2 id="werking-in-deze-stack">Werking in deze stack<a class="headerlink" href="#werking-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>De Python DLP-server draait als Docker-container op mgmt01 en luistert op <code>192.168.122.23:1345</code>. Squid op pop01 routeert POST-, PUT- en PATCH-verzoeken naar deze server via ICAP REQMOD voordat ze naar het internet worden doorgestuurd.</p>
 <p>De server ontvangt de volledige HTTP-verzoekbody, parseert <code>multipart/form-data</code>-inhoud correct (een mogelijkheid die ClamAV/c-icap mist) en past algoritmische validators toe:
-- <strong>Creditcards</strong> — Luhn-algoritme (valideert controlecijfer, niet alleen formaat)
-- <strong>IBAN</strong> — mod-97-controlesomvalidatie
-- <strong>BSN</strong> (Nederlands burgerservicenummer) — 11-proefvalidatie
-- <strong>AWS-toegangssleutels</strong> — regexpatroon <code>AKIA[A-Z0-9]{16}</code></p>
+- <strong>Creditcards:</strong> Luhn-algoritme (valideert controlecijfer, niet alleen formaat)
+- <strong>IBAN:</strong> mod-97-controlesomvalidatie
+- <strong>BSN</strong> (Nederlands burgerservicenummer): 11-proefvalidatie
+- <strong>AWS-toegangssleutels:</strong> regexpatroon <code>AKIA[A-Z0-9]{16}</code></p>
 <p>Als een overeenkomst boven de threshold wordt gevonden, retourneert de server een ICAP-blokkeerrespons. Squid toont een opgemaakte DLP-blokpagina aan de client (onderscheiden van de generieke Squid 403-pagina).</p>
 <p><strong>Waarom een aparte server voor upload-DLP:</strong> De <code>virus_scan</code> c-icap-service van ClamAV parseert <code>multipart/form-data</code> of URL-gecodeerde POST-bodies niet correct. De c-icap-ontwikkelaar bevestigde deze beperking. POST-gegevens worden als onbewerkte bytes doorgegeven, waardoor DLP-patroonherkenning voor geüploade inhoud onbetrouwbaar is. Zie <a href="../../decisions/two-layer-dlp/">Beslissing: Twee-laags DLP</a>.</p>
 <hr />
@@ -3747,16 +3747,16 @@
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>adaptation_access<span class="w"> </span>svc_dlp_req<span class="w"> </span><span class="no">deny</span><span class="w"> </span><span class="no">all</span>
 </code></pre></div>
 <p>Belangrijke ontwerpkeuzes:
-- <code>bypass=on</code> — als de DLP-container niet beschikbaar is, passeert verkeer zonder inspectie (fail-open). ClamAV-malwarescanning blijft actief. Een DLP-storing blokkeert geen legitiem zakelijk verkeer.
-- Alleen POST/PUT/PATCH — GET-verzoeken bevatten geen uploads; ze door DLP routeren voegt alleen latency toe zonder voordeel.
-- Pre-auth include — overleeft GUI-wijzigingen en Squid-updates.</p>
+- <code>bypass=on</code>: als de DLP-container niet beschikbaar is, passeert verkeer zonder inspectie (fail-open). ClamAV-malwarescanning blijft actief. Een DLP-storing blokkeert geen legitiem zakelijk verkeer.
+- Alleen POST/PUT/PATCH: GET-verzoeken bevatten geen uploads; ze door DLP routeren voegt alleen latency toe zonder voordeel.
+- Pre-auth include: overleeft GUI-wijzigingen en Squid-updates.</p>
 <p>Na het aanmaken van dit bestand: <code>configctl proxy restart</code>.</p>
 <h3 id="verbindingscontrole-vanaf-pop01">Verbindingscontrole vanaf pop01<a class="headerlink" href="#verbindingscontrole-vanaf-pop01" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;OPTIONS icap://192.168.122.23:1345/dlpscan ICAP/1.0\r\nHost: 192.168.122.23\r\n\r\n&quot;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>nc<span class="w"> </span>-w<span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="m">192</span>.168.122.23<span class="w"> </span><span class="m">1345</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Verwacht: ICAP/1.0 200 OK, Methods: REQMOD</span>
 </code></pre></div>
-<p>Gebruik <code>printf</code>, niet <code>echo -e</code> — FreeBSD's <code>/bin/sh</code> interpreteert <code>-e</code> niet als escape-vlag, waardoor <code>\r\n</code> letterlijk wordt verzonden.</p>
+<p>Gebruik <code>printf</code>, niet <code>echo -e</code>. FreeBSD's <code>/bin/sh</code> interpreteert <code>-e</code> niet als escape-vlag, waardoor <code>\r\n</code> letterlijk wordt verzonden.</p>
 <hr />
 <h2 id="integratiepunten">Integratiepunten<a class="headerlink" href="#integratiepunten" title="Permanent link">&para;</a></h2>
 <table>
@@ -3791,16 +3791,16 @@
 <p>De Python DLP ICAP-server publiceert upload-inspection-events naar <code>security.alert.dlp</code> op de NATS event bus. Wanneer een DLP-patroonovereenkomst wordt gevonden (Luhn-creditcard, IBAN mod-97, BSN 11-proef, AWS-sleutel), bevat het event: patroontype, aantal overeenkomsten, bron-IP, bestemmings-URL en HTTP-methode. DLP-events dragen bij aan de per-peer threat score. Aangezien de Python DLP-server al op mgmt01 draait (dezelfde host als NATS), publiceert deze rechtstreeks zonder cross-host-connectiviteit.</p>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
-<p><strong>pyicap Python 3.10+-incompatibiliteit</strong> — zie <a href="../../findings/pyicap-collections-bug/">Bevinding: pyicap collections-bug</a>. De Dockerfile patcht dit automatisch.</p>
-<p><strong>Client-IP verschijnt als "unknown" in DLP-logs</strong> — de server leest <code>X-Client-IP</code> uit <code>self.enc_req_headers</code> (ingekapselde headers), maar Squid stuurt het client-IP als een ICAP-niveauheader toegankelijk via <code>self.headers</code>. Dit is een cosmetisch probleem; blokkering werkt correct.</p>
-<p><strong>Containerlogs in Docker stdout</strong> — voor Wazuh SIEM-integratie, voeg een Docker-logging-driver toe (syslog gericht op Wazuh) of configureer de Wazuh-agent op mgmt01 om containerlogs te bewaken. Dit is een geplande taak voor Fase 4.</p>
-<p><strong>Algoritmische validators hebben thresholdn</strong> — één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas thresholdn aan in <code>dlp_server.py</code> op basis van de gebruikssituatie.</p>
-<p><strong>Code review — 10 problemen geïdentificeerd, 3 kritieke fixes toegepast:</strong>
-- <strong>OOM-risico:</strong> De oorspronkelijke code had geen body-groottelimiet — een grote upload kon het containergeheugen uitputten. Fix: uploads &gt; 10 MB worden doorgelaten (fail-open) zonder scanning.
-- <strong>Log-injectie:</strong> De <code>X-Client-IP</code>-headerwaarde werd zonder sanering rechtstreeks naar de log output geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
+<p><strong>pyicap Python 3.10+-incompatibiliteit:</strong> zie <a href="../../findings/pyicap-collections-bug/">Bevinding: pyicap collections-bug</a>. De Dockerfile patcht dit automatisch.</p>
+<p><strong>Client-IP verschijnt als "unknown" in DLP-logs:</strong> de server leest <code>X-Client-IP</code> uit <code>self.enc_req_headers</code> (ingekapselde headers), maar Squid stuurt het client-IP als een ICAP-niveauheader toegankelijk via <code>self.headers</code>. Dit is een cosmetisch probleem; blokkering werkt correct.</p>
+<p><strong>Containerlogs in Docker stdout:</strong> voor Wazuh SIEM-integratie, voeg een Docker-logging-driver toe (syslog gericht op Wazuh) of configureer de Wazuh-agent op mgmt01 om containerlogs te bewaken. Dit is een geplande taak voor Fase 4.</p>
+<p><strong>Algoritmische validators hebben thresholdn:</strong> één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas thresholdn aan in <code>dlp_server.py</code> op basis van de gebruikssituatie.</p>
+<p><strong>Code review (10 problemen geïdentificeerd, 3 kritieke fixes toegepast):</strong>
+- <strong>OOM-risico:</strong> De oorspronkelijke code had geen body-groottelimiet. Een grote upload kon het containergeheugen uitputten. Fix: uploads &gt; 10 MB worden doorgelaten (fail-open) zonder scanning.
+- <strong>Log-injectie:</strong> De <code>X-Client-IP</code>-headerwaarde werd zonder sanering rechtstreeks naar de log-output geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
 - <strong>Geen uitzonderingsafhandeling:</strong> Uitzonderingen in <code>dlpscan_REQMOD</code> zouden de handler laten crashen zonder respons naar Squid. Fix: scanuitzonderingen resulteren in fail-open (aanvraag passeert).
 - <strong>PyPDF2 → pypdf:</strong> PyPDF2 is end-of-life (niet langer onderhouden). Vervangen door <code>pypdf</code>, de actieve fork.</p>
-<p><strong>Docker-daemon-autostart vereist</strong> — <code>restart: unless-stopped</code> in <code>docker-compose.yml</code> herstart de container alleen als de Docker-daemon draait. Bij een herstart van mgmt01 moet de Docker-daemon ook ingeschakeld zijn voor autostart (<code>systemctl enable docker</code>). Zonder dit start de DLP-container niet na een herstart.</p>
+<p><strong>Docker-daemon-autostart vereist:</strong> <code>restart: unless-stopped</code> in <code>docker-compose.yml</code> herstart de container alleen als de Docker-daemon draait. Bij een herstart van mgmt01 moet de Docker-daemon ook ingeschakeld zijn voor autostart (<code>systemctl enable docker</code>). Zonder dit start de DLP-container niet na een herstart.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

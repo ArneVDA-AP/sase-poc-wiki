@@ -3681,14 +3681,14 @@
 
 
 <h1 id="runbook-identity-bridge">Runbook: Identity Bridge<a class="headerlink" href="#runbook-identity-bridge" title="Permanent link">&para;</a></h1>
-<p><strong>Node(s):</strong> mgmt01 (Docker — Identity Bridge-container), pop01 (Squid external ACL)
+<p><strong>Node(s):</strong> mgmt01 (Docker, Identity Bridge-container), pop01 (Squid external ACL)
 <strong>Vereisten:</strong> <a href="../02-ztna-overlay/">Runbook 02: ZTNA Overlay</a> afgerond (NetBird operationeel), <a href="../08-groupsync/">Runbook 08: GroupSync</a> afgerond
 <strong>Status:</strong> Operationeel</p>
 <hr />
 <h2 id="vereistenchecklist">Vereistenchecklist<a class="headerlink" href="#vereistenchecklist" title="Permanent link">&para;</a></h2>
 <ul>
 <li>[ ] NetBird-overlay operationeel (<a href="../02-ztna-overlay/">Runbook 02</a>)</li>
-<li>[ ] GroupSync afgerond — personagroepen (Studenten/Docenten/Admins) gevuld in NetBird (<a href="../08-groupsync/">Runbook 08</a>)</li>
+<li>[ ] GroupSync afgerond; personagroepen (Studenten/Docenten/Admins) gevuld in NetBird (<a href="../08-groupsync/">Runbook 08</a>)</li>
 <li>[ ] Docker geïnstalleerd op mgmt01</li>
 <li>[ ] NetBird service user PAT beschikbaar voor API-authenticatie</li>
 </ul>
@@ -3738,7 +3738,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Controleer of container actief is</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span>ps<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>identity-bridge
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Test het lookup-endpoint direct (de X-Bridge-Secret-header is vereist — een kale</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Test het lookup-endpoint direct (de X-Bridge-Secret-header is vereist; een kale</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># aanvraag retourneert HTTP 401, fail-secure)</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;X-Bridge-Secret: &lt;secret&gt;&quot;</span><span class="w"> </span><span class="s2">&quot;http://192.168.122.23:&lt;port&gt;/lookup?ip=&lt;bekend-peer-ip&gt;&quot;</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Verwacht: JSON met het volledige groepslidmaatschap van de peer (status/user/groups/os)</span>

@@ -33,7 +33,7 @@
     
     
       
-        <title>Concept: DLP — Data Loss Prevention - Security Project Wiki</title>
+        <title>Concept: DLP (Data Loss Prevention) - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Concept: DLP — Data Loss Prevention
+              Concept: DLP (Data Loss Prevention)
             
           </span>
         </div>
@@ -3577,28 +3577,28 @@
 
 
 
-<h1 id="concept-dlp-data-loss-prevention">Concept: DLP — Data Loss Prevention<a class="headerlink" href="#concept-dlp-data-loss-prevention" title="Permanent link">&para;</a></h1>
-<p><strong>Definitie:</strong> Controles die de exfiltratie van gevoelige gegevens detecteren en blokkeren — creditcardnummers, IBAN's, nationale ID's, vertrouwelijkheidsmarkeringen — terwijl ze een inspectiepunt passeren.</p>
+<h1 id="concept-dlp-data-loss-prevention">Concept: DLP (Data Loss Prevention)<a class="headerlink" href="#concept-dlp-data-loss-prevention" title="Permanent link">&para;</a></h1>
+<p><strong>Definitie:</strong> Controles die de exfiltratie van gevoelige gegevens detecteren en blokkeren (creditcardnummers, IBAN's, nationale ID's, vertrouwelijkheidsmarkeringen) terwijl ze een inspectiepunt passeren.</p>
 <h2 id="hoe-het-hier-van-toepassing-is">Hoe het hier van toepassing is<a class="headerlink" href="#hoe-het-hier-van-toepassing-is" title="Permanent link">&para;</a></h2>
 <p>DLP werkt op twee lagen in deze stack, elk met een andere verkeersrichting en inhoudstype:</p>
-<p><strong>Laag 1 — Downloads (ClamAV RESPMOD):</strong><br />
+<p><strong>Laag 1, Downloads (ClamAV RESPMOD):</strong><br />
 ClamAV onderschept HTTP-antwoorden (downloads, webpagina-bodies) via ICAP RESPMOD. Het gebruikt:
-- <code>StructuredDataDetection</code> — Luhn-gevalideerde creditcardnummers (drempel: 3+ per bestand)
-- YARA-regels — IBAN-patronen, BSN 9-cijferige clusters, AWS-toegangssleutelformaat, vertrouwelijkheidsmarkeringen (CONFIDENTIAL, VERTROUWELIJK, GEHEIM, DO NOT DISTRIBUTE)</p>
-<p>De bestandsdecompositiemotor van ClamAV pakt containers uit vóór scanning — een YARA-regel die overeenkomt met "VERTROUWELIJK" zal activeren op een <code>.docx</code>-bestand omdat ClamAV de ZIP uitpakt en <code>word/document.xml</code> direct scant.</p>
-<p><strong>Laag 2 — Uploads (Python DLP REQMOD):</strong><br />
+- <code>StructuredDataDetection</code>: Luhn-gevalideerde creditcardnummers (drempel: 3+ per bestand)
+- YARA-regels: IBAN-patronen, BSN 9-cijferige clusters, AWS-toegangssleutelformaat, vertrouwelijkheidsmarkeringen (CONFIDENTIAL, VERTROUWELIJK, GEHEIM, DO NOT DISTRIBUTE)</p>
+<p>De bestandsdecompositiemotor van ClamAV pakt containers uit vóór scanning. Een YARA-regel die overeenkomt met "VERTROUWELIJK" zal activeren op een <code>.docx</code>-bestand omdat ClamAV de ZIP uitpakt en <code>word/document.xml</code> direct scant.</p>
+<p><strong>Laag 2, Uploads (Python DLP REQMOD):</strong><br />
 De Python DLP-server onderschept POST/PUT/PATCH-aanvraagbodies via ICAP REQMOD. Het parseert <code>multipart/form-data</code> correct (wat ClamAV niet kan) en past algoritmische validators toe:
-- Creditcards — Luhn-algoritme (valideert het controlecijfer, niet alleen het patroonformaat)
-- IBAN — mod-97-controlesomvalidatie
-- BSN (burgerservicenummer) — 11-proefvalidatie
-- AWS-toegangssleutels — <code>AKIA[A-Z0-9]{16}</code> regex</p>
+- Creditcards: Luhn-algoritme (valideert het controlecijfer, niet alleen het patroonformaat)
+- IBAN: mod-97-controlesomvalidatie
+- BSN (burgerservicenummer): 11-proefvalidatie
+- AWS-toegangssleutels: <code>AKIA[A-Z0-9]{16}</code> regex</p>
 <p>Wanneer een overeenkomst de drempel overschrijdt, retourneert de server een blokantwoord. Squid toont een gestijlde DLP-blokpagina die verschilt van zijn generieke 403-pagina.</p>
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
-<p><strong><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></strong> — DLP Laag 1, downloadpad. YARA-regels in <code>/var/db/clamav/dlp_custom.yar</code>. StructuredDataDetection in <code>/usr/local/etc/clamd.conf</code>. ICAP RESPMOD op <code>127.0.0.1:1344</code>.</p>
-<p><strong><a href="../../components/python-dlp/">Python DLP</a></strong> — DLP Laag 2, uploadpad. Docker-container op mgmt01, ICAP REQMOD op <code>192.168.122.23:1345</code>. Squid routeert alleen POST/PUT/PATCH naar deze service (GET-aanvragen bevatten geen door gebruikers geüploade inhoud).</p>
-<p><strong><a href="../../components/squid/">Squid</a></strong> — de ICAP-client die beide lagen orkestreert. Routeert aanvragen naar Python DLP (REQMOD) en antwoorden naar ClamAV (RESPMOD).</p>
+<p><strong><a href="../../components/clamav-cicap/">ClamAV/c-icap</a>:</strong> DLP Laag 1, downloadpad. YARA-regels in <code>/var/db/clamav/dlp_custom.yar</code>. StructuredDataDetection in <code>/usr/local/etc/clamd.conf</code>. ICAP RESPMOD op <code>127.0.0.1:1344</code>.</p>
+<p><strong><a href="../../components/python-dlp/">Python DLP</a>:</strong> DLP Laag 2, uploadpad. Docker-container op mgmt01, ICAP REQMOD op <code>192.168.122.23:1345</code>. Squid routeert alleen POST/PUT/PATCH naar deze service (GET-aanvragen bevatten geen door gebruikers geüploade inhoud).</p>
+<p><strong><a href="../../components/squid/">Squid</a>:</strong> de ICAP-client die beide lagen orkestreert. Routeert aanvragen naar Python DLP (REQMOD) en antwoorden naar ClamAV (RESPMOD).</p>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
-<p><strong>Algoritmische validatie vs patroonherkenning:</strong> YARA-regels in ClamAV matchen formaatpatronen — ze detecteren <em>kandidaat</em>-IBAN's of BSN's maar valideren geen controlesommen. De Python DLP-server past volledige algoritmische validatie toe (mod-97, 11-proef, Luhn). Valse-positiefpercentages verschillen significant: ClamAV Laag 1 kan sommige accidentele overeenkomsten markeren; Python DLP Laag 2 markeert alleen wiskundig geldige waarden.</p>
+<p><strong>Algoritmische validatie vs patroonherkenning:</strong> YARA-regels in ClamAV matchen formaatpatronen: ze detecteren <em>kandidaat</em>-IBAN's of BSN's, maar valideren geen controlesommen. De Python DLP-server past volledige algoritmische validatie toe (mod-97, 11-proef, Luhn). Valse-positiefpercentages verschillen significant: ClamAV Laag 1 kan sommige accidentele overeenkomsten markeren; Python DLP Laag 2 markeert alleen wiskundig geldige waarden.</p>
 <p><strong>Upload vs download DLP:</strong> De twee lagen bestrijken verschillende bedreigingsvectoren. Het downloaden van een bestand met gevoelige gegevens (bijv. een bedrijfsdocument per ongeluk geüpload naar een publieke share) wordt gedekt door ClamAV. Het actief exfiltreren van gegevens via een webformulierupload of API-aanroep wordt gedekt door de Python DLP-server.</p>
 <p><strong><code>bypass=on</code> voor Python DLP:</strong> Squid is geconfigureerd met <code>bypass=on</code> voor de Python DLP-service. Als de mgmt01-container onbereikbaar is, gaan uploads door. ClamAV-scanning (downloads) wordt niet omzeild. Dit is een bewuste beschikbaarheidsafweging: DLP-storingen mogen legitiem bedrijfsverkeer niet blokkeren.</p>
 <p><strong>ClamAV kan multipart/form-data niet parsen:</strong> De c-icap <code>virus_scan</code>-service ontvangt POST-bodies als ruwe bytes. Zonder correcte multipart-parsing is DLP-patroonherkenning op veldwaarden in formulierverzendingen onbetrouwbaar. Dit is de kernreden waarom een aparte Python ICAP-server bestaat. Zie <a href="../../decisions/two-layer-dlp/">Beslissing: Twee-laags DLP</a>.</p>

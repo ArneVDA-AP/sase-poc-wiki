@@ -3587,7 +3587,7 @@
 
 <h1 id="bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-connection-pooling">Bevinding: Suricata vuurt één keer per SID per flow (Squid connection pooling)<a class="headerlink" href="#bevinding-suricata-vuurt-een-keer-per-sid-per-flow-squid-connection-pooling" title="Permanent link">&para;</a></h1>
 <p><strong>Component:</strong> <a href="../../components/suricata/">Suricata</a><br />
-<strong>Ernst:</strong> Inzicht — geen bug</p>
+<strong>Ernst:</strong> Inzicht (geen bug)</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>Tijdens F9-validatietests genereerden meerdere <code>curl.exe</code>-verzoeken naar dezelfde bestemming via de Squid-proxy slechts één Suricata-alert per SID, ongeacht het aantal verzonden verzoeken. Dit leek aanvankelijk op alertonderdrukking of een Suricata-configuratieprobleem.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c"># mobile01 — drie keer herhaald</span>
@@ -3597,10 +3597,10 @@
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c"># Resultaat: slechts één SID 2100498-alert in eve.json</span>
 </code></pre></div>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>Squid connection pooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow — dit is verwacht gedrag by design, geen onderdrukking.</p>
+<p>Squid connection pooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow. Dit is verwacht gedrag by design, geen onderdrukking.</p>
 <p>Het aantal alerts in <code>eve.json</code> weerspiegelt het aantal afzonderlijke upstream TCP-flows, niet het aantal HTTP-verzoeken van de client.</p>
 <h2 id="oplossing">Oplossing<a class="headerlink" href="#oplossing" title="Permanent link">&para;</a></h2>
-<p>Geen oplossing nodig — dit is correct gedrag. Voor tests die een nieuwe Suricata-alert vereisen voor dezelfde SID:</p>
+<p>Geen oplossing nodig; dit is correct gedrag. Voor tests die een nieuwe Suricata-alert vereisen voor dezelfde SID:</p>
 <ul>
 <li>Gebruik een andere bestemmingshost per testrun</li>
 <li>Wacht tot de upstream Squid-inactieve time-out verstrijkt, waardoor de gepoolde verbinding wordt gesloten</li>

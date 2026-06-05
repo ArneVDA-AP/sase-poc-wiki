@@ -3600,14 +3600,14 @@
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p>Twee afzonderlijke problemen combineerden zich:</p>
 <p><strong>1. Lege manager-UUID (oorzaak van de Offline-redirect)</strong><br />
-<code>docker compose down -v</code> wist named Docker volumes, inclusief <code>global.db</code>. Op een nieuwe <code>global.db</code> is de manager-UUID leeg (<code>"uuid": ""</code>). De <code>POST /api/check-api</code> van het dashboard retourneert HTTP 500 — "Could not obtain manager UUID"; het dashboard interpreteert dit als een offline manager, zet "Status: Offline" en gate't alle app-modules achter de API-configuratie-redirect.</p>
+<code>docker compose down -v</code> wist named Docker volumes, inclusief <code>global.db</code>. Op een nieuwe <code>global.db</code> is de manager-UUID leeg (<code>"uuid": ""</code>). De <code>POST /api/check-api</code> van het dashboard retourneert HTTP 500 ("Could not obtain manager UUID"); het dashboard interpreteert dit als een offline manager, zet "Status: Offline" en gate't alle app-modules achter de API-configuratie-redirect.</p>
 <p><strong>2. Versie-skew (oorzaak van agent-ontkoppeling)</strong><br />
 De OPNsense-plugin <code>os-wazuh-agent</code> levert een vaste agent-versie (4.14.5). De compatibiliteitsregel van Wazuh vereist <strong>manager ≥ agent</strong>. Door de manager te downgraden naar 4.14.3 belandde hij onder de agent, wat enrollment-weigering veroorzaakte en de <code>(4101)</code> versie-waarschuwing in de agent-logs.</p>
-<p><strong>Belangrijk:</strong> <code>GET /manager/version/check</code> → HTTP 500 ("Error checking updates") wordt veroorzaakt door de air-gap die het CTI-update-endpoint blokkeert, maar het is een <em>apart</em> probleem van de Offline-redirect. In Wazuh 4.14.5 (fix #8130) is deze controle non-blocking — het veroorzaakt <strong>niet</strong> de Offline-redirect. De redirect wordt uitsluitend veroorzaakt door de lege UUID.</p>
+<p><strong>Belangrijk:</strong> <code>GET /manager/version/check</code> → HTTP 500 ("Error checking updates") wordt veroorzaakt door de air-gap die het CTI-update-endpoint blokkeert, maar het is een <em>apart</em> probleem van de Offline-redirect. In Wazuh 4.14.5 (fix #8130) is deze controle non-blocking; het veroorzaakt <strong>niet</strong> de Offline-redirect. De redirect wordt uitsluitend veroorzaakt door de lege UUID.</p>
 <h2 id="twee-structurele-regels">Twee structurele regels<a class="headerlink" href="#twee-structurele-regels" title="Permanent link">&para;</a></h2>
-<p><strong>Regel 1 — De agent-versie bepaalt de manager-ondergrens.</strong><br />
+<p><strong>Regel 1: De agent-versie bepaalt de manager-ondergrens.</strong><br />
 De OPNsense-plugin pint de agent-versie (momenteel 4.14.5). Een FreeBSD-package downgraden is brick-risk. Houd manager altijd ≥ agent. Controleer de agent-versie vóór elke manager-versiewijziging.</p>
-<p><strong>Regel 2 — Versie-werk = in-place tag-aanpassing, nooit <code>down -v</code>.</strong><br />
+<p><strong>Regel 2: Versie-werk = in-place tag-aanpassing, nooit <code>down -v</code>.</strong><br />
 <code>docker compose down -v</code> vernietigt named volumes: UUID (<code>global.db</code>), agent-registratie (<code>client.keys</code>) en geïndexeerde alerts. Gebruik voor versie-werk: tag aanpassen in <code>docker-compose.yml</code>, <code>docker compose pull</code>, daarna <code>docker compose up -d</code> (zonder <code>-v</code>). De UUID en agent-registratie blijven bewaard.</p>
 <h2 id="oplossing">Oplossing<a class="headerlink" href="#oplossing" title="Permanent link">&para;</a></h2>
 <p>Opgelost op 2 juni 2026 via in-place bump naar Wazuh 4.14.5 GA (zonder <code>-v</code>), waardoor de <code>global.db</code>-UUID van de 4.14.3-run bewaard bleef. De pop01-agent nam opnieuw deel en toont Active. De dashboard-app laadt zonder redirect.</p>
@@ -3621,7 +3621,7 @@ De OPNsense-plugin pint de agent-versie (momenteel 4.14.5). Een FreeBSD-package 
 <li>De "Status: Offline"-redirect wordt veroorzaakt door een <strong>lege manager-UUID</strong>, niet door DNS of de air-gap CTI-controle. Verifieer met <code>GET /manager/info</code> (Dev Tools in het dashboard) vóór je connectiviteitsproblemen gaat onderzoeken.</li>
 <li><code>docker compose down -v</code> is destructief voor Wazuh: UUID en agent-registratie zitten in named volumes, niet in bind-mounts. Gebruik altijd <code>docker compose up -d</code> (zonder <code>-v</code>) voor versie-werk.</li>
 <li>De CTI-500 ("Error checking updates") is cosmetisch in Wazuh 4.14.5+ en kan genegeerd worden in air-gapped deployments.</li>
-<li>De OPNsense agent-versie bepaalt de manager-ondergrens — zet de manager nooit onder de agent-versie.</li>
+<li>De OPNsense agent-versie bepaalt de manager-ondergrens; zet de manager nooit onder de agent-versie.</li>
 </ul>
 
 

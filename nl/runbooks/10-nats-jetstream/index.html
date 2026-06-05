@@ -3859,7 +3859,7 @@
 
 
 <h1 id="runbook-nats-jetstream-event-bus">Runbook: NATS JetStream Event Bus<a class="headerlink" href="#runbook-nats-jetstream-event-bus" title="Permanent link">&para;</a></h1>
-<p><strong>Node(s):</strong> mgmt01 (Docker — NATS + Redis + Control Daemon), pop01 (producers)
+<p><strong>Node(s):</strong> mgmt01 (Docker, NATS + Redis + Control Daemon), pop01 (producers)
 <strong>Vereisten:</strong> Docker op mgmt01, SSH-toegang tot pop01, Python 3 op pop01
 <strong>Status:</strong> Operationeel</p>
 <hr />
@@ -3879,7 +3879,7 @@
 <p>Voeg de volgende services toe aan de Docker Compose-stack op mgmt01:</p>
 <p><strong>NATS 2.14.1:</strong></p>
 <ul>
-<li>Pin de versie expliciet — gebruik niet <code>:latest</code></li>
+<li>Pin de versie expliciet; gebruik niet <code>:latest</code></li>
 <li>Configureer met het <code>accounts{}</code>-auth-model (niet <code>authorization{}</code>)</li>
 <li>Stel poort 4222 (clientverbindingen) beschikbaar op <code>192.168.122.23</code></li>
 <li>Stel poort 8222 (monitoring) beschikbaar op <code>192.168.122.23</code></li>
@@ -3959,9 +3959,9 @@
 <ul>
 <li>Geïntegreerd in de Identity Bridge-service (<a href="../09-identity-bridge/">Runbook 09</a>)</li>
 <li>Publiceert naar subjects:</li>
-<li><code>identity.peer.connected</code> — wanneer een peer verbindt met de overlay</li>
-<li><code>identity.peer.disconnected</code> — wanneer een peer de verbinding verbreekt</li>
-<li><code>identity.multi_persona</code> — wanneer een peer in meer dan één personagroep wordt waargenomen (zero-trust-anomalie)</li>
+<li><code>identity.peer.connected</code>: wanneer een peer verbindt met de overlay</li>
+<li><code>identity.peer.disconnected</code>: wanneer een peer de verbinding verbreekt</li>
+<li><code>identity.multi_persona</code>: wanneer een peer in meer dan één personagroep wordt waargenomen (zero-trust-anomalie)</li>
 </ul>
 <hr />
 <h2 id="stap-6-control-daemon-deployen-op-mgmt01">Stap 6: Control Daemon deployen op mgmt01<a class="headerlink" href="#stap-6-control-daemon-deployen-op-mgmt01" title="Permanent link">&para;</a></h2>
@@ -3969,8 +3969,8 @@
 <ol>
 <li>Deploy als Docker-container op mgmt01</li>
 <li>Configureer abonnementen:</li>
-<li><code>security.alert.&gt;</code> — durable consumer, <code>DeliverPolicy.NEW</code> (overleeft herstart, geen replay van historische events)</li>
-<li><code>identity.&gt;</code> — ephemeral consumer, <code>DeliverPolicy.ALL</code> (herbouwt de in-memory identiteitsmap bij elke start)</li>
+<li><code>security.alert.&gt;</code>: durable consumer, <code>DeliverPolicy.NEW</code> (overleeft herstart, geen replay van historische events)</li>
+<li><code>identity.&gt;</code>: ephemeral consumer, <code>DeliverPolicy.ALL</code> (herbouwt de in-memory identiteitsmap bij elke start)</li>
 <li>Configureer Redis-verbinding voor threat score-opslag</li>
 </ol>
 <p><strong>Threat scoring:</strong></p>

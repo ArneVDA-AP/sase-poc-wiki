@@ -3555,7 +3555,7 @@
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>Na het toevoegen van een nieuwe volume-mount aan de <code>caddy</code>-service in <code>docker-compose.yml</code> maakte het uitvoeren van <code>docker compose restart caddy</code> de nieuwe mount niet zichtbaar in de container. Het verwachte bestandspad was niet toegankelijk en de service bleef zich gedragen alsof de wijziging niet had plaatsgevonden.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p><code>docker compose restart</code> stuurt SIGTERM dan SIGKILL naar het containerproces en herstart het — maar hergebruikt de bestaande containerconfiguratie, inclusief de volume-mounts die aanwezig waren toen de container voor het eerst werd aangemaakt. Nieuwe volume-mounts in <code>docker-compose.yml</code> worden alleen toegepast wanneer de container opnieuw wordt aangemaakt.</p>
+<p><code>docker compose restart</code> stuurt SIGTERM dan SIGKILL naar het containerproces en herstart het, maar hergebruikt de bestaande containerconfiguratie, inclusief de volume-mounts die aanwezig waren toen de container voor het eerst werd aangemaakt. Nieuwe volume-mounts in <code>docker-compose.yml</code> worden alleen toegepast wanneer de container opnieuw wordt aangemaakt.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p>Gebruik <code>docker compose up -d &lt;service&gt;</code> in plaats van <code>docker compose restart &lt;service&gt;</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>caddy
@@ -3563,9 +3563,9 @@
 <p><code>docker compose up -d</code> detecteert dat de containerconfiguratie is gewijzigd (door de nieuwe volume-mount) en maakt de container opnieuw aan met de bijgewerkte configuratie.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li><code>docker compose restart</code> ≠ "configuratiewijzigingen toepassen" — het herstart alleen de bestaande container</li>
+<li><code>docker compose restart</code> ≠ "configuratiewijzigingen toepassen"; het herstart alleen de bestaande container</li>
 <li><code>docker compose up -d</code> past configuratiewijzigingen toe door containers opnieuw aan te maken waar nodig</li>
-<li>Dit is een veelvoorkomend Docker Compose-misverstand dat aanzienlijke debugtijd verspilt — wanneer een configuratiewijziging niet van kracht lijkt te zijn, probeer altijd <code>up -d</code> vóór de aanname dat de configuratie fout is</li>
+<li>Dit is een veelvoorkomend Docker Compose-misverstand dat aanzienlijke debugtijd verspilt. Wanneer een configuratiewijziging niet van kracht lijkt te zijn, probeer altijd <code>up -d</code> vóór de aanname dat de configuratie fout is</li>
 </ul>
 
 

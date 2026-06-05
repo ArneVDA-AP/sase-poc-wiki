@@ -3586,9 +3586,9 @@
 
 
 <h1 id="concept-zero-trust">Concept: Zero Trust<a class="headerlink" href="#concept-zero-trust" title="Permanent link">&para;</a></h1>
-<p><strong>Definitie:</strong> Een beveiligingsmodel waarbij geen enkele gebruiker of apparaat standaard wordt vertrouwd, ongeacht netwerklocatie — toegang vereist continue verificatie van identiteit, apparaatstatus en aanvraaginhoud bij elke stap.</p>
+<p><strong>Definitie:</strong> Een beveiligingsmodel waarbij geen enkele gebruiker of apparaat standaard wordt vertrouwd, ongeacht netwerklocatie. Toegang vereist continue verificatie van identiteit, apparaatstatus en aanvraaginhoud bij elke stap.</p>
 <h2 id="hoe-het-hier-van-toepassing-is">Hoe het hier van toepassing is<a class="headerlink" href="#hoe-het-hier-van-toepassing-is" title="Permanent link">&para;</a></h2>
-<p>Traditionele VPN verleent netwerktoegang — eenmaal geauthenticeerd kunnen gebruikers alle resources bereiken achter de tunnel. Zero Trust vervangt dit door drie orthogonale verificatielagen, elk werkend op een ander punt in de verbindingslevenscyclus:</p>
+<p>Traditionele VPN verleent netwerktoegang: eenmaal geauthenticeerd kunnen gebruikers alle resources bereiken achter de tunnel. Zero Trust vervangt dit door drie orthogonale verificatielagen, elk werkend op een ander punt in de verbindingslevenscyclus:</p>
 <table>
 <thead>
 <tr>
@@ -3620,18 +3620,18 @@
 </tbody>
 </table>
 <p>Alle drie de gates zijn operationeel. Gates 1 en 2 zijn geactiveerd in V40 (CA-policies) en V40 (Intune-conformiteit). Sommige policies staan op Report-only in afwachting van demo-voorbereiding (Sessie 11).</p>
-<p><strong>Waarom gates aanvullend zijn, niet redundant:</strong> Gate 1 (CA) dwingt MFA af en evalueert aanmeldingsrisico — maar identiteit alleen zegt niets over de beveiligingsstatus van het apparaat. Gate 2 (Intune-conformiteit) attesteert OS-versie, antivirus en firewall — maar kan gestolen-inloggegevenrisico niet evalueren of MFA afdwingen. Geen enkele gate kan de andere vervangen. Gate 3 vangt bedreigingen in de inhoud op die beide gates omzeilen.</p>
+<p><strong>Waarom gates aanvullend zijn, niet redundant:</strong> Gate 1 (CA) dwingt MFA af en evalueert aanmeldingsrisico, maar identiteit alleen zegt niets over de beveiligingsstatus van het apparaat. Gate 2 (Intune-conformiteit) attesteert OS-versie, antivirus en firewall, maar kan gestolen-inloggegevenrisico niet evalueren of MFA afdwingen. Geen enkele gate kan de andere vervangen. Gate 3 vangt bedreigingen in de inhoud op die beide gates omzeilen.</p>
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong><a href="../../components/netbird/">NetBird</a></strong> — implementeert Zero Trust Network Access: per-peer identiteit via OIDC, cryptografische peer-sleutels, granulaire ACL-policies per resourcegroep. Een gebruiker met toegang tot dc01 kan mgmt01 niet bereiken zonder een apart beleid.</li>
-<li><strong><a href="../../decisions/ca-posture-hybrid/">Entra ID CA / Drie-gate model</a></strong> — Gate 1 (identiteitsverificatie) en Gate 2 (apparaatposture) handhaven Zero Trust-principes voordat een tunnel tot stand wordt gebracht.</li>
-<li><strong><a href="../../components/squid/">Squid</a></strong> + <strong><a href="../../components/clamav-cicap/">ClamAV</a></strong> + <strong><a href="../../components/python-dlp/">Python DLP</a></strong> — Gate 3: assume-breach-principe, inspecteert al het verkeer ongeacht wie gates 1 en 2 heeft gepasseerd.</li>
-<li><strong><a href="../../components/suricata/">Suricata</a></strong> — detectie van lateral movement op vtnet1 (LAN), het "assume breach"-principe belichamend zelfs voor intern verkeer.</li>
-<li><strong><a href="../../components/ioc2rpz/">ioc2rpz/Unbound RPZ</a></strong> — DNS-niveau handhaving: bekende kwaadaardige domeinen worden geblokkeerd voordat een TCP-verbinding wordt opgezet.</li>
+<li><strong><a href="../../components/netbird/">NetBird</a>:</strong> implementeert Zero Trust Network Access: per-peer identiteit via OIDC, cryptografische peer-sleutels, granulaire ACL-policies per resourcegroep. Een gebruiker met toegang tot dc01 kan mgmt01 niet bereiken zonder een apart beleid.</li>
+<li><strong><a href="../../decisions/ca-posture-hybrid/">Entra ID CA / Drie-gate model</a>:</strong> Gate 1 (identiteitsverificatie) en Gate 2 (apparaatposture) handhaven Zero Trust-principes voordat een tunnel tot stand wordt gebracht.</li>
+<li><strong><a href="../../components/squid/">Squid</a></strong> + <strong><a href="../../components/clamav-cicap/">ClamAV</a></strong> + <strong><a href="../../components/python-dlp/">Python DLP</a>:</strong> Gate 3, assume-breach-principe, inspecteert al het verkeer ongeacht wie gates 1 en 2 heeft gepasseerd.</li>
+<li><strong><a href="../../components/suricata/">Suricata</a>:</strong> detectie van lateral movement op vtnet1 (LAN), het "assume breach"-principe belichamend zelfs voor intern verkeer.</li>
+<li><strong><a href="../../components/ioc2rpz/">ioc2rpz/Unbound RPZ</a>:</strong> DNS-niveau handhaving; bekende kwaadaardige domeinen worden geblokkeerd voordat een TCP-verbinding wordt opgezet.</li>
 </ul>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
-<p><strong>Zero Trust vs VPN:</strong> VPN geeft netwerktoegang; Zero Trust geeft resourcetoegang. NetBird implementeert dit via WireGuard-mesh + ACL-policies — elke resource heeft zijn eigen expliciet beleid, en peers die geen beleid hebben kunnen niet eens routeren naar die resource.</p>
-<p><strong>Zero Trust-principes (Microsoft-framework) — expliciete gate-mapping:</strong>
+<p><strong>Zero Trust vs VPN:</strong> VPN geeft netwerktoegang; Zero Trust geeft resourcetoegang. NetBird implementeert dit via WireGuard-mesh + ACL-policies: elke resource heeft zijn eigen expliciet beleid, en peers die geen beleid hebben kunnen niet eens routeren naar die resource.</p>
+<p><strong>Zero Trust-principes (Microsoft-framework), expliciete gate-mapping:</strong>
 - <em>Verify Explicitly (identiteit)</em> → Gate 1: Entra ID CA evalueert wie de gebruiker is (MFA, aanmeldingsrisico, geolocatie)
 - <em>Verify Explicitly (apparaat)</em> → Gate 2: Intune-apparaatconformiteit attesteert wat het apparaat is (OS-versie, Defender AV, firewall); NetBird posture checks blijven optionele defense-in-depth
 - <em>Use Least Privilege</em> → NetBird ACL-policies per resourcegroep
@@ -3648,17 +3648,17 @@
 </thead>
 <tbody>
 <tr>
-<td>Gate 1 — Identiteit</td>
+<td>Gate 1, Identiteit</td>
 <td>Entra ID Conditional Access (5 policies)</td>
 <td>✅ Operationeel</td>
 </tr>
 <tr>
-<td>Gate 2 — Apparaat</td>
+<td>Gate 2, Apparaat</td>
 <td>Intune-apparaatconformiteit</td>
 <td>✅ Operationeel (Report-only tot demo)</td>
 </tr>
 <tr>
-<td>Gate 3 — Inhoud</td>
+<td>Gate 3, Inhoud</td>
 <td>Squid + ClamAV + Python DLP + Suricata + Unbound RPZ</td>
 <td>✅ Operationeel</td>
 </tr>

@@ -3595,7 +3595,7 @@
 <h1 id="control-daemon">Control Daemon<a class="headerlink" href="#control-daemon" title="Permanent link">&para;</a></h1>
 <p><strong>Rol:</strong> Python-daemon op mgmt01 die de NATS event bus consumeert, per-peer threat scores bijhoudt via sliding-window decay, en peers in quarantaine plaatst door ze te verwijderen uit policy-bearing persona-groepen (deny-by-default).<br />
 <strong>Versie:</strong> Python 3.12 (nats-py &gt;= 2.13.0, redis &gt;= 5.0.0, httpx &gt;= 0.27.0)<br />
-<strong>Configuratielocatie:</strong> <code>config/mgmt01/control-daemon/</code> in de repo (gezaghebbend — Addendum J §J.6.7 is verouderd)</p>
+<strong>Configuratielocatie:</strong> <code>config/mgmt01/control-daemon/</code> in de repo (gezaghebbend; Addendum J §J.6.7 is verouderd)</p>
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>De control daemon is de real-time handhavingsmotor. Het abonneert zich op <code>security.alert.&gt;</code> en <code>identity.&gt;</code> op de NATS-bus en verwerkt events in drie fasen:</p>
 <ol>
@@ -3606,11 +3606,11 @@
 <p><strong>Huidige staat:</strong> <code>ENFORCE=false</code> (dry-run) tot demovoorbereiding (Sessie 11).</p>
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Scoring-gewichten:</strong> <code>malware=80</code> (single-event — overschrijdt drempel 80 alleen), <code>dlp_match=30</code> (accumulerend). <code>proxy_block</code> verwijderd uit scoring (ambient OS-ruis veroorzaakte false positives — Windows NCSI/telemetry). IDS-events zijn enkel log (C2 beacon response hoort bij Zeek/RITA, niet bij eigen correlatie). Gevalideerd in V35: docent1 triggerde EICAR → score 80/80 → gequarantaineerd binnen enkele seconden → hersteld.</li>
+<li><strong>Scoring-gewichten:</strong> <code>malware=80</code> (single-event, overschrijdt drempel 80 alleen), <code>dlp_match=30</code> (accumulerend). <code>proxy_block</code> verwijderd uit scoring (ambient OS-ruis veroorzaakte false positives, Windows NCSI/telemetry). IDS-events zijn enkel log (C2 beacon response hoort bij Zeek/RITA, niet bij eigen correlatie). Gevalideerd in V35: docent1 triggerde EICAR → score 80/80 → gequarantaineerd binnen enkele seconden → hersteld.</li>
 <li><strong>Quarantainemechanisme:</strong> Strip persona-groepen van peer → deny-by-default. NIET via een aparte deny-groep.</li>
 <li><strong>Dequarantaine:</strong> Herstelt originele groepen vanuit Redis-backup. Opgelost: NetBird retourneert <code>peers:null</code> voor lege groepen (niet <code>[]</code>), wat dequarantaine deed crashen.</li>
 <li><strong>Redis:</strong> Threat score opslag + sessiestatus op <code>redis:7-alpine</code>, poort 6379 enkel localhost.</li>
-<li><strong>Beleidsgroepen:</strong> <code>NETBIRD_POLICY_GROUPS=Studenten,Docenten,Admins</code> — enkel deze worden gestript tijdens quarantaine. Infrastructuurgroepen zijn structureel onaantastbaar.</li>
+<li><strong>Beleidsgroepen:</strong> <code>NETBIRD_POLICY_GROUPS=Studenten,Docenten,Admins</code> (enkel deze worden gestript tijdens quarantaine). Infrastructuurgroepen zijn structureel onaantastbaar.</li>
 </ul>
 <h2 id="integratiepunten">Integratiepunten<a class="headerlink" href="#integratiepunten" title="Permanent link">&para;</a></h2>
 <table>

@@ -33,7 +33,7 @@
     
     
       
-        <title>Concept: SASE — Secure Access Service Edge - Security Project Wiki</title>
+        <title>Concept: SASE (Secure Access Service Edge) - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Concept: SASE — Secure Access Service Edge
+              Concept: SASE (Secure Access Service Edge)
             
           </span>
         </div>
@@ -3585,15 +3585,15 @@
 
 
 
-<h1 id="concept-sase-secure-access-service-edge">Concept: SASE — Secure Access Service Edge<a class="headerlink" href="#concept-sase-secure-access-service-edge" title="Permanent link">&para;</a></h1>
-<p><strong>Definitie:</strong> Een framework dat netwerktransport (WAN Edge) en beveiligingsdiensten (SSE) samenvoegt in één cloud-native stack die op de edge wordt geleverd — waar de gebruiker is — in plaats van in een centraal datacenter.</p>
+<h1 id="concept-sase-secure-access-service-edge">Concept: SASE (Secure Access Service Edge)<a class="headerlink" href="#concept-sase-secure-access-service-edge" title="Permanent link">&para;</a></h1>
+<p><strong>Definitie:</strong> Een framework dat netwerktransport (WAN Edge) en beveiligingsdiensten (SSE) samenvoegt in één cloud-native stack die op de edge wordt geleverd (waar de gebruiker is) in plaats van in een centraal datacenter.</p>
 <h2 id="hoe-het-hier-van-toepassing-is">Hoe het hier van toepassing is<a class="headerlink" href="#hoe-het-hier-van-toepassing-is" title="Permanent link">&para;</a></h2>
-<p>Dit project implementeert een SASE-proof-of-concept voor Atlascollege: 4 000 gebruikers op beheerde Windows-apparaten die verbinding maken vanaf willekeurige locaties, met Microsoft 365 als kern-applicatieplatform. Het traditionele perimetermodel (firewall + VPN = vertrouwd) werkt niet onder deze omstandigheden — studenten bevinden zich nooit "binnen de muren."</p>
+<p>Dit project implementeert een SASE-proof-of-concept voor Atlascollege: 4 000 gebruikers op beheerde Windows-apparaten die verbinding maken vanaf willekeurige locaties, met Microsoft 365 als kern-applicatieplatform. Het traditionele perimetermodel (firewall + VPN = vertrouwd) werkt niet onder deze omstandigheden: studenten bevinden zich nooit "binnen de muren."</p>
 <p>De PoC vervangt het perimetermodel door een SASE-stack waarbij:
 - <strong>Transport</strong> een WireGuard-overlay (NetBird) is in plaats van een campus-VPN
 - <strong>Identiteit</strong> Entra ID (Microsoft) is in plaats van netwerklocatie
 - <strong>Inspectie</strong> plaatsvindt op pop01 (de PoP/edge-node) bij elke aanvraag, niet aan een datacentervergrenzing</p>
-<p><strong>Control plane / Data plane-splitsing</strong> — een bewuste architecturale keuze:
+<p><strong>Control plane / Data plane-splitsing</strong> (een bewuste architecturale keuze):
 - <strong>mgmt01</strong> = management plane: distribueert configuratie (WPAD), beheert identiteit (Zitadel/Entra ID), aggregeert threat intelligence (ioc2rpz), draait Docker-services
 - <strong>pop01</strong> = data plane: inspecteert al het verkeer (Squid, ClamAV, Suricata), handhaaft DNS-beleid (Unbound RPZ), termineert WireGuard-tunnels (wt0)</p>
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
@@ -3620,21 +3620,21 @@
 <td>✅ Operationeel</td>
 </tr>
 <tr>
-<td><strong>CASB (Laag 1 — Inline)</strong></td>
+<td><strong>CASB (Laag 1, Inline)</strong></td>
 <td>Netskope CASB</td>
-<td>Squid + Identity Bridge — identiteitsgebaseerde URL-filtering + DLP-pipeline</td>
+<td>Squid + Identity Bridge, identiteitsgebaseerde URL-filtering + DLP-pipeline</td>
 <td>✅ Operationeel</td>
 </tr>
 <tr>
-<td><strong>CASB (Laag 2 — API)</strong></td>
+<td><strong>CASB (Laag 2, API)</strong></td>
 <td>Defender for Cloud Apps</td>
 <td>Wazuh + M365 Management Activity API + Graph API Active Response</td>
 <td>✅ Operationeel</td>
 </tr>
 <tr>
-<td><strong>CASB (Laag 3 — Real-time)</strong></td>
+<td><strong>CASB (Laag 3, Real-time)</strong></td>
 <td>Netskope Real-time</td>
-<td>NATS JetStream + Control Daemon — cross-component threat scoring + quarantaine</td>
+<td>NATS JetStream + Control Daemon, cross-component threat scoring + quarantaine</td>
 <td>✅ Operationeel</td>
 </tr>
 <tr>
@@ -3652,8 +3652,8 @@
 </tbody>
 </table>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
-<p><strong>SASE vs SSE:</strong> SSE (Security Service Edge) is de beveiligingsgerichte subset van SASE — ZTNA + SWG + CASB. SASE voegt de WAN Edge-component (SD-WAN) toe. Dit project implementeert SSE volledig en SD-WAN gedeeltelijk.</p>
-<p><strong>PoC vs productie:</strong> Commerciële SASE gebruikt single-pass inspection engines — TLS-decodering, URL-filtering, DLP en malwarescanning in één doorgang. Deze stack is een seriële keten (Squid decodeert → ICAP naar Python DLP → ICAP naar ClamAV → re-encrypts). Inspectiebereik is equivalent; architectuur is geoptimaliseerd voor duidelijkheid boven doorvoer.</p>
+<p><strong>SASE vs SSE:</strong> SSE (Security Service Edge) is de beveiligingsgerichte subset van SASE: ZTNA + SWG + CASB. SASE voegt de WAN Edge-component (SD-WAN) toe. Dit project implementeert SSE volledig en SD-WAN gedeeltelijk.</p>
+<p><strong>PoC vs productie:</strong> Commerciële SASE gebruikt single-pass inspection engines: TLS-decodering, URL-filtering, DLP en malwarescanning in één doorgang. Deze stack is een seriële keten (Squid decodeert → ICAP naar Python DLP → ICAP naar ClamAV → re-encrypts). Inspectiebereik is equivalent; architectuur is geoptimaliseerd voor duidelijkheid boven doorvoer.</p>
 <p><strong>Identiteit vs netwerkpositie:</strong> De fundamentele verschuiving is dat toegangsbeslissingen gebaseerd zijn op <em>wie de gebruiker is</em> en <em>welk apparaat ze gebruiken</em>, niet <em>waar ze zich op het netwerk bevinden</em>. NetBird ACL-policies, Entra ID CA en de ICAP-inspectiepipeline handhaven dit gezamenlijk.</p>
 <h2 id="bronnen">Bronnen<a class="headerlink" href="#bronnen" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3664,9 +3664,9 @@
 <h2 id="casb-drie-lagenmodel">CASB drie-lagenmodel<a class="headerlink" href="#casb-drie-lagenmodel" title="Permanent link">&para;</a></h2>
 <p>De CASB-implementatie omvat drie handhavingslagen, elk voor een andere tijdshorizon:</p>
 <ul>
-<li><strong>Laag 1 — Inline (Squid forward proxy):</strong> Identiteitsgebaseerde URL-filtering en DLP op elk HTTP/HTTPS-verzoek. Squid queryet de Identity Bridge voor de persona-groep van de gebruiker en past gedifferentieerde policies toe (bv. Studenten geblokkeerd op ChatGPT; Docenten toegestaan). Operationeel sinds V31.</li>
-<li><strong>Laag 2 — API-mode (Wazuh + M365 Management Activity API):</strong> Pollt SharePoint/OneDrive audit-events op beleidsschendingen (anonieme shares, externe shares). Wazuh custom rules (100600-familie) detecteren schendingen; Active Response scripts intrekken deellinks via Microsoft Graph API. Operationeel sinds V39.</li>
-<li><strong>Laag 3 — Real-time event-driven (NATS + Control Daemon):</strong> Alle detectiesilo's publiceren events naar de NATS-bus. De control daemon houdt per peer een threat score bij met sliding-window decay. Wanneer een peer de quarantainedrempel overschrijdt, wordt deze uit de policy-bearing persona-groepen verwijderd — deny-by-default blokkeert alle connectiviteit. Operationeel sinds V35.</li>
+<li><strong>Laag 1, Inline (Squid forward proxy):</strong> Identiteitsgebaseerde URL-filtering en DLP op elk HTTP/HTTPS-verzoek. Squid queryet de Identity Bridge voor de persona-groep van de gebruiker en past gedifferentieerde policies toe (bv. Studenten geblokkeerd op ChatGPT; Docenten toegestaan). Operationeel sinds V31.</li>
+<li><strong>Laag 2, API-mode (Wazuh + M365 Management Activity API):</strong> Pollt SharePoint/OneDrive audit-events op beleidsschendingen (anonieme shares, externe shares). Wazuh custom rules (100600-familie) detecteren schendingen; Active Response scripts intrekken deellinks via Microsoft Graph API. Operationeel sinds V39.</li>
+<li><strong>Laag 3, Real-time event-driven (NATS + Control Daemon):</strong> Alle detectiesilo's publiceren events naar de NATS-bus. De control daemon houdt per peer een threat score bij met sliding-window decay. Wanneer een peer de quarantainedrempel overschrijdt, wordt deze uit de policy-bearing persona-groepen verwijderd; deny-by-default blokkeert alle connectiviteit. Operationeel sinds V35.</li>
 </ul>
 <p>Zie: <a href="../../decisions/casb-three-layers/">Beslissing: CASB drie lagen</a></p>
 

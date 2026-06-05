@@ -3630,14 +3630,14 @@
 
 
 <h1 id="beslissing-klassiek-ipsecucpe-sd-wan-vervangen-door-zero-trust-branch-model">Beslissing: Klassiek IPsec/uCPE SD-WAN vervangen door Zero Trust Branch model<a class="headerlink" href="#beslissing-klassiek-ipsecucpe-sd-wan-vervangen-door-zero-trust-branch-model" title="Permanent link">&para;</a></h1>
-<p><strong>Status:</strong> Geïmplementeerd — anders dan oorspronkelijk gepland (ZT-Branch model)<br />
+<p><strong>Status:</strong> Geïmplementeerd (anders dan oorspronkelijk gepland; ZT-Branch model)<br />
 <strong>Datum:</strong> maart 2026 (Herziening v3), bevestigd april 2026 (Research SD-WAN-sessie)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>Het oorspronkelijke Handboek bevatte drie SD-WAN-acceptatietests:</p>
 <ul>
-<li><strong>F12</strong> — IPsec-tunnelverbinding tussen site01 en het datacenter</li>
-<li><strong>F13</strong> — QoS-verkeersclassificatie op VyOS</li>
-<li><strong>F14</strong> — Datacentertoegang van sitegebruikers via de SD-WAN-tunnel</li>
+<li><strong>F12:</strong> IPsec-tunnelverbinding tussen site01 en het datacenter</li>
+<li><strong>F13:</strong> QoS-verkeersclassificatie op VyOS</li>
+<li><strong>F14:</strong> Datacentertoegang van sitegebruikers via de SD-WAN-tunnel</li>
 </ul>
 <p>De implementatie hiervan zou vereisen: een IPsec-tunnel op VyOS, een NetBird-container op VyOS als uCPE (customer premises equipment) host, en VyOS QoS-configuratie. Alle drie werden uitgesteld en vervolgens expliciet geschrapt.</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
@@ -3669,21 +3669,21 @@
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>SD-WAN-tests F12, F13 en F14 zijn geschrapt. VyOS blijft in de topologie als de site01 WAN-gateway en NAT-apparaat voor Site-LAN, maar is niet geconfigureerd als IPsec-router of uCPE NetBird-host.</p>
-<p>Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird-enrollment — hetzelfde mechanisme als mobile01 — in plaats van via een site-to-site-tunnel.</p>
+<p>Sitegebruikers (sitepc01) zullen het datacenter bereiken via individuele NetBird-enrollment (hetzelfde mechanisme als mobile01) in plaats van via een site-to-site-tunnel.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>F12, F13, F14</strong> zijn als N.v.t. gemarkeerd in alle acceptatietestmatrices. Dit is een expliciete architectuurbeslissing, geen implementatieleemte.</li>
 <li><strong>F15-stap 7</strong> is N.v.t. (klassiek IPsec site-to-site geschrapt). <strong>Stap 8</strong> (QoS-markering) is gevalideerd onder het ZT-Branch model (V43 Test #5: DSCP EF geclassificeerd, 0 drops onder last).</li>
-<li><strong>VyOS</strong> blijft in de topologie als SASE-gateway — WAN-connectiviteit, NAT, QoS-shaping (DSCP EF/AF41/AF21) en WAN health monitoring. Zie <a href="../../components/vyos/">VyOS</a>.</li>
-<li><strong>sitepc01</strong> bereikt het datacenter via individuele NetBird-enrollment — bevestigd ge-enrolld en operationeel in Verslag43/Verslag44, niet via een site-to-site-tunnel.</li>
+<li><strong>VyOS</strong> blijft in de topologie als SASE-gateway: WAN-connectiviteit, NAT, QoS-shaping (DSCP EF/AF41/AF21) en WAN health monitoring. Zie <a href="../../components/vyos/">VyOS</a>.</li>
+<li><strong>sitepc01</strong> bereikt het datacenter via individuele NetBird-enrollment (bevestigd ge-enrolld en operationeel in Verslag43/Verslag44), niet via een site-to-site-tunnel.</li>
 <li>De architectuur sluit direct aan op het "Zero Trust SD-WAN"-model van Zscaler: vestigingen behandeld als niet-vertrouwde netwerken (zoals cafés), elk apparaat authenticeert individueel, geen site-to-site-tunnels.</li>
 </ul>
 <h2 id="wat-er-daadwerkelijk-gebouwd-is">Wat er daadwerkelijk gebouwd is<a class="headerlink" href="#wat-er-daadwerkelijk-gebouwd-is" title="Permanent link">&para;</a></h2>
 <p>Het oorspronkelijke IPsec/uCPE SD-WAN is vervangen door een Zero Trust Branch model dat aansluit bij Zscaler/Netskope ZT-SD-WAN-principes:</p>
 <ul>
 <li><strong>VyOS site01</strong> fungeert als SASE-gateway op Site-LAN (172.16.10.0/24)</li>
-<li><strong>DSCP EF marking</strong> op eth0 via <code>tc</code> — bewezen in Test #5 (V43: 0 drops onder last voor EF-klasse vs 26 drops + 17k overlimits voor bulk)</li>
-<li><strong>Failover-detectie</strong> CRITICAL &lt; 30s — bewezen in Test #6 (V43)</li>
+<li><strong>DSCP EF marking</strong> op eth0 via <code>tc</code>, bewezen in Test #5 (V43: 0 drops onder last voor EF-klasse vs 26 drops + 17k overlimits voor bulk)</li>
+<li><strong>Failover-detectie</strong> CRITICAL &lt; 30s, bewezen in Test #6 (V43)</li>
 <li><strong>sitepc01</strong> (Tiny11/Windows 11) operationeel op Site-LAN achter VyOS, dual-NIC</li>
 <li><strong>Spoor-1-contract</strong> B1–B4 volledig gesloten (V43)</li>
 </ul>

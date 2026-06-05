@@ -3581,7 +3581,7 @@
 <tr>
 <td><strong><code>authorization{}</code> (single-account)</strong></td>
 <td>Eenvoudigere configuratie; minder regels in <code>nats-server.conf</code></td>
-<td>Weigert JetStream API-operaties op <code>$JS.API.&gt;</code> stilzwijgend. Geen foutmeldingen — operaties falen simpelweg zonder uitleg. Empirisch bevestigd als niet-functioneel voor JetStream</td>
+<td>Weigert JetStream API-operaties op <code>$JS.API.&gt;</code> stilzwijgend. Geen foutmeldingen; operaties falen simpelweg zonder uitleg. Empirisch bevestigd als niet-functioneel voor JetStream</td>
 </tr>
 <tr>
 <td><strong><code>accounts{}</code> (multi-account)</strong></td>
@@ -3598,7 +3598,7 @@
 <li>Alle NATS-gebruikers moeten worden gedefinieerd binnen benoemde accounts in <code>nats-server.conf</code>. Het top-level <code>authorization{}</code>-blok kan niet naast <code>accounts{}</code> worden gebruikt.</li>
 <li>Secrets (wachtwoorden/tokens van gebruikers) worden geïnjecteerd via omgevingsvariabele-interpolatie met hex-gecodeerde waarden, niet base64. NATS ondersteunt <code>$ENV_VAR</code>-syntax in het configuratiebestand.</li>
 <li>Het toevoegen van een nieuwe NATS-client vereist het definiëren van de gebruiker binnen het juiste account en het expliciet toekennen van subject-niveau permissies.</li>
-<li>Het <code>accounts{}</code>-model biedt account-niveau isolatie als bijkomend voordeel — als toekomstige componenten gescheiden permissiedomeinen nodig hebben, kunnen extra accounts worden toegevoegd zonder herstructurering.</li>
+<li>Het <code>accounts{}</code>-model biedt account-niveau isolatie als bijkomend voordeel: als toekomstige componenten gescheiden permissiedomeinen nodig hebben, kunnen extra accounts worden toegevoegd zonder herstructurering.</li>
 </ul>
 <p>Zie ook: <a href="../../components/nats-jetstream/">Component: NATS</a>, <a href="../../components/identity-bridge/">Component: Identity Bridge</a>, <a href="../../components/control-daemon/">Component: Control Daemon</a></p>
 

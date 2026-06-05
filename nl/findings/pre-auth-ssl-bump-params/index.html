@@ -3569,7 +3569,7 @@
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>Na het toevoegen van een Squid-listener op het NetBird-overlay-IP via pre-auth include (<code>http_port 100.70.154.79:3128</code>) werd HTTPS-verkeer van mobile01 via de proxy niet onderschept door ClamAV of de DLP-server. Het verkeer leek door te gaan zonder inspectie.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>Het pre-auth include-bestand bevatte alleen de kale <code>http_port</code>-directive zonder ssl-bump-parameters. Zonder <code>ssl-bump cert=... generate-host-certificates=on</code> verwerkt Squid HTTPS als een ondoorzichtige <code>CONNECT</code>-tunnel — het stuurt versleutelde bytes door zonder te decrypteren. ICAP-services ontvangen nooit inhoud om te inspecteren.</p>
+<p>Het pre-auth include-bestand bevatte alleen de kale <code>http_port</code>-directive zonder ssl-bump-parameters. Zonder <code>ssl-bump cert=... generate-host-certificates=on</code> verwerkt Squid HTTPS als een ondoorzichtige <code>CONNECT</code>-tunnel: het stuurt versleutelde bytes door zonder te decrypteren. ICAP-services ontvangen nooit inhoud om te inspecteren.</p>
 <p>De OPNsense-GUI voegt ssl-bump-parameters alleen toe aan de door hem gegenereerde listener (het LAN-IP). De GUI heeft geen kennis van het pre-auth include-bestand.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p>Het pre-auth include-bestand moet de volledige ssl-bump-directive bevatten:</p>
@@ -3580,9 +3580,9 @@
 </code></pre></div>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Elke <code>http_port</code>-directive die SSL Bump nodig heeft, moet expliciet de ssl-bump-parameters bevatten — er is geen overerving van andere listeners</li>
+<li>Elke <code>http_port</code>-directive die SSL Bump nodig heeft, moet expliciet de ssl-bump-parameters bevatten; er is geen overerving van andere listeners</li>
 <li>Het pre-auth include-bestand is niet zichtbaar in <code>squid -k parse</code>-uitvoer (dat toont alleen het hoofdbestand), maar het is wel geladen en actief</li>
-<li>Na elke wijziging van de pre-auth include is <code>configctl proxy restart</code> vereist — niet een GUI-toepassen</li>
+<li>Na elke wijziging van de pre-auth include is <code>configctl proxy restart</code> vereist, niet een GUI-toepassen</li>
 </ul>
 
 

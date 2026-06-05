@@ -3572,7 +3572,7 @@
 </code></pre></div></p>
 <p>Squid logde ICAP-verbindingsfouten en DLP-scanning was niet functioneel.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>De <code>pyicap</code>-bibliotheek op PyPI gebruikt <code>collections.Callable</code> — een attribuut dat was verouderd in Python 3.3 en verwijderd in Python 3.10. Het Docker-image gebruikt Python 3.11, waardoor de import mislukt bij het eerste ICAP-verzoek.</p>
+<p>De <code>pyicap</code>-bibliotheek op PyPI gebruikt <code>collections.Callable</code>, een attribuut dat was verouderd in Python 3.3 en verwijderd in Python 3.10. Het Docker-image gebruikt Python 3.11, waardoor de import mislukt bij het eerste ICAP-verzoek.</p>
 <p>De bug bevindt zich in het geïnstalleerde <code>pyicap.py</code> site-package, niet in de projectcode. Het PyPI-pakket is niet bijgewerkt om <code>collections.abc.Callable</code> te gebruiken.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p>pyicap patchen tijdens de Docker-build met sed:</p>
@@ -3583,7 +3583,7 @@
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span>/usr/local/lib/python3.11/site-packages/pyicap.py
 </code></pre></div>
 <p>De twee sed-opdrachten: (1) <code>import collections.abc</code> toevoegen naast het bestaande <code>import collections</code>, (2) alle gebruiken van <code>collections.Callable</code> vervangen door <code>collections.abc.Callable</code>.</p>
-<p>Deze patch maakt deel uit van de Dockerfile en wordt automatisch toegepast bij elke build — geen handmatige tussenkomst vereist na containeropbouw.</p>
+<p>Deze patch maakt deel uit van de Dockerfile en wordt automatisch toegepast bij elke build; geen handmatige tussenkomst vereist na containeropbouw.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Externe bibliotheken worden mogelijk niet bijgehouden om brekende Python API-wijzigingen bij te houden</li>

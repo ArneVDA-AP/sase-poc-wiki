@@ -3567,9 +3567,9 @@
 <p><strong>Component:</strong> <a href="../../components/netbird/">NetBird</a><br />
 <strong>Ernst:</strong> Blokkerend</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>Het "JWT allow groups"-veld in het NetBird Dashboard (Settings -&gt; Groups) werd ingevuld met een groepsnaam die niet overeenkwam met enige JWT-claimwaarde. Het resultaat was onmiddellijk en totaal: ALLE gebruikers kregen 401 Unauthorized. De volledige NetBird-deployment werd ontoegankelijk — geen enkele gebruiker kon authenticeren, geen enkele peer kon verbinden, en het dashboard zelf werd onbruikbaar om de fout te corrigeren.</p>
+<p>Het "JWT allow groups"-veld in het NetBird Dashboard (Settings -&gt; Groups) werd ingevuld met een groepsnaam die niet overeenkwam met enige JWT-claimwaarde. Het resultaat was onmiddellijk en totaal: ALLE gebruikers kregen 401 Unauthorized. De volledige NetBird-deployment werd ontoegankelijk: geen enkele gebruiker kon authenticeren, geen enkele peer kon verbinden, en het dashboard zelf werd onbruikbaar om de fout te corrigeren.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>NetBird controleert de JWT <code>groups</code>-claim tegen de allow list bij elke authenticatiepoging. Het veld werkt als een <strong>whitelist</strong>, niet als een filter: als de allow list niet leeg is en geen enkele groep in de JWT van de gebruiker overeenkomt met een entry in de lijst, wordt authenticatie geweigerd. Er is geen "soft fail" of respijtperiode — de lockout is onmiddellijk en geldt voor alle gebruikers, inclusief administrators.</p>
+<p>NetBird controleert de JWT <code>groups</code>-claim tegen de allow list bij elke authenticatiepoging. Het veld werkt als een <strong>whitelist</strong>, niet als een filter: als de allow list niet leeg is en geen enkele groep in de JWT van de gebruiker overeenkomt met een entry in de lijst, wordt authenticatie geweigerd. Er is geen "soft fail" of respijtperiode: de lockout is onmiddellijk en geldt voor alle gebruikers, inclusief administrators.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p><strong>Preventie:</strong> Laat het veld <strong>leeg</strong> (= geen filtering, alle JWT groups worden gesynchroniseerd). Vul het alleen in als je zeker bent dat de waarden exact overeenkomen met wat in de JWT <code>groups</code>-claim staat.</p>
 <p><strong>Herstel van lockout:</strong> Directe SQLite-toegang op de management-container is vereist:</p>
@@ -3582,9 +3582,9 @@
 </code></pre></div>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Test JWT group sync eerst met het allow-veld leeg — vul het pas in na bevestiging van de exacte claimwaarden</li>
-<li>De veldnaam "JWT allow groups" is misleidend — het functioneert als een strikte whitelist, niet als een permissief filter</li>
-<li>Herstel vereist toegang op databaseniveau, wat niet altijd direct beschikbaar is in alle deploymentscenario's — heb altijd een back-upplan voordat je deze instelling wijzigt</li>
+<li>Test JWT group sync eerst met het allow-veld leeg; vul het pas in na bevestiging van de exacte claimwaarden</li>
+<li>De veldnaam "JWT allow groups" is misleidend: het functioneert als een strikte whitelist, niet als een permissief filter</li>
+<li>Herstel vereist toegang op databaseniveau, wat niet altijd direct beschikbaar is in alle deploymentscenario's; heb altijd een back-upplan voordat je deze instelling wijzigt</li>
 <li>Referentie: NetBird issue #5399, v0.62-documentatie</li>
 </ul>
 

@@ -3569,9 +3569,9 @@
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>Het pollen van de NetBird Management API met een reguliere gebruiker-PAT verwijderde JWT-gepropageerde auto-groups van ALLE peers van die gebruiker bij elke API-aanroep. Groups verdwenen van peers binnen seconden na het starten van de Identity Bridge. Peer-routing en ACL-policies die afhankelijk waren van die groups braken onmiddellijk.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>NetBird interpreteert een API-aanroep zonder JWT group-context als "geen groups meer aanwezig" en verwijdert gepropageerde groups van de peers van de aanroepende gebruiker. Een PAT draagt alleen de API-authenticatie-identiteit, niet de originele JWT-claims — dus de group-context ontbreekt. De management server verzoent het groepslidmaatschap van de gebruiker bij elke geauthenticeerde API-interactie, en een interactie zonder JWT groups resulteert in het verwijderen van groups.</p>
+<p>NetBird interpreteert een API-aanroep zonder JWT group-context als "geen groups meer aanwezig" en verwijdert gepropageerde groups van de peers van de aanroepende gebruiker. Een PAT draagt alleen de API-authenticatie-identiteit, niet de originele JWT-claims, dus de group-context ontbreekt. De management server verzoent het groepslidmaatschap van de gebruiker bij elke geauthenticeerde API-interactie, en een interactie zonder JWT groups resulteert in het verwijderen van groups.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
-<p>Gebruik een <strong>service-user</strong> met een admin-role PAT voor alle Identity Bridge API-polling. Service users hebben geen JWT groups en geen eigen peers — het verwijdereffect kan niet optreden omdat er geen gepropageerde groups zijn om te verzoenen en geen peers om te beïnvloeden.</p>
+<p>Gebruik een <strong>service-user</strong> met een admin-role PAT voor alle Identity Bridge API-polling. Service users hebben geen JWT groups en geen eigen peers; het verwijdereffect kan niet optreden omdat er geen gepropageerde groups zijn om te verzoenen en geen peers om te beïnvloeden.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a># NetBird Dashboard → Users → Service Users → Create
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a># Role: admin
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a># Genereer PAT → gebruik in Identity Bridge config
@@ -3579,7 +3579,7 @@
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Admin-role service accounts zijn het correcte patroon voor API-polling in NetBird CE self-hosted wanneer JWT group sync actief is</li>
-<li>Reguliere gebruiker-PATs zijn ongeschikt voor geautomatiseerde API-toegang in omgevingen met JWT group-propagatie — het neveneffect is destructief en stil</li>
+<li>Reguliere gebruiker-PATs zijn ongeschikt voor geautomatiseerde API-toegang in omgevingen met JWT group-propagatie: het neveneffect is destructief en stil</li>
 <li>Gerelateerd aan NetBird issue #3127</li>
 </ul>
 

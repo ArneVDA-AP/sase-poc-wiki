@@ -3574,11 +3574,11 @@
 <tr>
 <td><strong>EVE-NG</strong></td>
 <td>Handboek-gespecificeerd; webinterface (geen clientinstallatie)</td>
-<td>Één webinterface — twee gebruikers die dezelfde node bewerken blokkeren elkaar; OVA-imageformaat incompatibel met QCOW2 (OPNsense/VyOS native formaat)</td>
+<td>Één webinterface, twee gebruikers die dezelfde node bewerken blokkeren elkaar; OVA-imageformaat incompatibel met QCOW2 (OPNsense/VyOS native formaat)</td>
 </tr>
 <tr>
 <td><strong>GNS3</strong></td>
-<td>Client-server-model — meerdere GUI-clients, dezelfde server; ondersteunt QCOW2/IMG/ISO native; multi-user gelijktijdig</td>
+<td>Client-server-model, meerdere GUI-clients op dezelfde server; ondersteunt QCOW2/IMG/ISO native; multi-user gelijktijdig</td>
 <td>Vereist installatie van desktop GUI-client op de laptop van elk teamlid</td>
 </tr>
 </tbody>
@@ -3586,13 +3586,13 @@
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>GNS3, draaiend als een systemd-service op een Ubuntu 24.04 VM (poc-1a, <code>10.158.10.67</code>) binnen Proxmox.</p>
 <p>De multi-user-vereiste was de beslissende factor. Met vier teamleden die elk verantwoordelijk zijn voor een ander component, was sequentiële toegang (de beperking van EVE-NG) onpraktisch. Het client-server-model van GNS3 stelt alle vier leden in staat tegelijk verbinding te maken met dezelfde server op <code>10.158.10.67:3080</code> en onafhankelijk aan hun VMs te werken.</p>
-<p>Het QCOW2-formaatcompatibiliteit was een secundaire factor — OPNsense, VyOS en Ubuntu 24.04 Server distribueren allemaal QCOW2 als primair formaat. De OVA-importvereiste van EVE-NG zou formaatconversie hebben vereist.</p>
+<p>Het QCOW2-formaatcompatibiliteit was een secundaire factor: OPNsense, VyOS en Ubuntu 24.04 Server distribueren allemaal QCOW2 als primair formaat. De OVA-importvereiste van EVE-NG zou formaatconversie hebben vereist.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>GNS3 draait op Ubuntu 24.04 VM (geneste QEMU/KVM) — vereist Proxmox CPU <code>type = host</code> voor VMX/SVM-doorgifte</li>
-<li>libvirt-standaardnetwerk (<code>virbr0</code>, <code>192.168.122.0/24</code>) dient als WAN-segment en biedt NAT — de EVE-NG iptables NAT-procedures uit het handboek zijn niet van toepassing</li>
+<li>GNS3 draait op Ubuntu 24.04 VM (geneste QEMU/KVM), vereist Proxmox CPU <code>type = host</code> voor VMX/SVM-doorgifte</li>
+<li>libvirt-standaardnetwerk (<code>virbr0</code>, <code>192.168.122.0/24</code>) dient als WAN-segment en biedt NAT. De EVE-NG iptables NAT-procedures uit het handboek zijn niet van toepassing</li>
 <li>Handboek verwijst naar <code>192.168.100.0/24</code> als WAN-subnet; in deze sandbox is het <code>192.168.122.0/24</code> (libvirt standaard)</li>
-<li>GNS3 "Stop node" = QEMU SIGKILL — OPNsense moet worden afgesloten via <code>shutdown -h now</code> voordat GNS3 de node stopt (FreeBSD UFS soft-updates riskeert bestandssysteemcorruptie bij onregelmatige afsluiting)</li>
+<li>GNS3 "Stop node" = QEMU SIGKILL. OPNsense moet worden afgesloten via <code>shutdown -h now</code> voordat GNS3 de node stopt (FreeBSD UFS soft-updates riskeert bestandssysteemcorruptie bij onregelmatige afsluiting)</li>
 <li>De EVE-NG-specifieke procedures uit het handboek (IP-forwarding, NAT-setup, OVA-imports) zijn allemaal vervangen door de GNS3-equivalenten gedocumenteerd in Addendum C</li>
 </ul>
 <p>Zie ook: <a href="../../components/gns3/">Component: GNS3</a></p>

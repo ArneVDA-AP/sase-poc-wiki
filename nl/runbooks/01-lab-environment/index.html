@@ -3695,7 +3695,7 @@
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>IP:     10.158.10.67 (DHCP-reservering op VLAN labo158)
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Gebruiker: admin-1a
 </code></pre></div>
-<p>Stel het Proxmox CPU-type in op <code>host</code> — dit stuurt VMX/SVM-instructies door naar de VM, wat vereist is voor geneste QEMU binnen GNS3.</p>
+<p>Stel het Proxmox CPU-type in op <code>host</code>; dit stuurt VMX/SVM-instructies door naar de VM, wat vereist is voor geneste QEMU binnen GNS3.</p>
 <p><strong>Verificatie:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>egrep<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;(vmx|svm)&#39;</span><span class="w"> </span>/proc/cpuinfo
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Moet &gt; 0 zijn</span>
@@ -3713,7 +3713,7 @@
 <p>Tijdens de installatie: beantwoord <strong>Ja</strong> op beide dialoogvensters (pakketopname + wireshark).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>kvm,libvirt,ubridge,wireshark<span class="w"> </span>admin-1a
 </code></pre></div>
-<p>Activeer het libvirt standaardnetwerk — dit levert het WAN-segment (<code>192.168.122.0/24</code>) met NAT:</p>
+<p>Activeer het libvirt standaardnetwerk; dit levert het WAN-segment (<code>192.168.122.0/24</code>) met NAT:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sudo<span class="w"> </span>virsh<span class="w"> </span>net-start<span class="w"> </span>default
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sudo<span class="w"> </span>virsh<span class="w"> </span>net-autostart<span class="w"> </span>default
 </code></pre></div>
@@ -3785,7 +3785,7 @@
 </tr>
 </tbody>
 </table>
-<p><code>mobile01</code> (Windows 11) draait als VMware VM op de laptop van een teamlid — het is <strong>geen</strong> GNS3-node. Het maakt uitsluitend verbinding via de NetBird WireGuard-tunnel.</p>
+<p><code>mobile01</code> (Windows 11) draait als VMware VM op de laptop van een teamlid; het is <strong>geen</strong> GNS3-node. Het maakt uitsluitend verbinding via de NetBird WireGuard-tunnel.</p>
 <p><strong>Bekabeling:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>NAT-Internet ──── Switch-WAN        (WAN-segment, 192.168.122.0/24)
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>Switch-WAN   ──── pop01  vtnet0     (WAN-interface)
@@ -3816,7 +3816,7 @@
 <td>8192 MB</td>
 <td>2</td>
 <td>3 (vtnet0, vtnet1, vtnet2)</td>
-<td><strong>8 GB vereist</strong> — zie waarschuwing hieronder</td>
+<td><strong>8 GB vereist</strong>, zie waarschuwing hieronder</td>
 </tr>
 <tr>
 <td>mgmt01 (Ubuntu)</td>
@@ -3844,7 +3844,7 @@
 <td>4096 MB</td>
 <td>2</td>
 <td>1</td>
-<td>Tiny11 / Windows 11 — overlay-ge-enrolld (docent1)</td>
+<td>Tiny11 / Windows 11, overlay-ge-enrolld (docent1)</td>
 </tr>
 </tbody>
 </table>
@@ -3970,7 +3970,7 @@ Zie <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 </tr>
 <tr>
 <td><code>Fase3-Security-Complete</code></td>
-<td>Gepland — na volledige beveiligingsstack</td>
+<td>Gepland, na volledige beveiligingsstack</td>
 </tr>
 </tbody>
 </table>

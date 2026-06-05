@@ -33,7 +33,7 @@
     
     
       
-        <title>ClamAV + c-icap — Malware-scanning en DLP-laag 1 - Security Project Wiki</title>
+        <title>ClamAV + c-icap: Malware-scanning en DLP-laag 1 - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ClamAV + c-icap — Malware-scanning en DLP-laag 1
+              ClamAV + c-icap: Malware-scanning en DLP-laag 1
             
           </span>
         </div>
@@ -3742,23 +3742,23 @@
 
 
 
-<h1 id="clamav-c-icap-malware-scanning-en-dlp-laag-1">ClamAV + c-icap — Malware-scanning en DLP-laag 1<a class="headerlink" href="#clamav-c-icap-malware-scanning-en-dlp-laag-1" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> ICAP RESPMOD-service op pop01 — scant alle HTTP-responses (downloads) op malware signatures, DLP-gevoelige inhoud (creditcards via StructuredDataDetection) en aangepaste patronen (YARA-regels voor IBAN, BSN, CONFIDENTIAL-labels en AWS-sleutels).<br />
+<h1 id="clamav-c-icap-malware-scanning-en-dlp-laag-1">ClamAV + c-icap: Malware-scanning en DLP-laag 1<a class="headerlink" href="#clamav-c-icap-malware-scanning-en-dlp-laag-1" title="Permanent link">&para;</a></h1>
+<p><strong>Rol:</strong> ICAP RESPMOD-service op pop01 die alle HTTP-responses (downloads) scant op malware signatures, DLP-gevoelige inhoud (creditcards via StructuredDataDetection) en aangepaste patronen (YARA-regels voor IBAN, BSN, CONFIDENTIAL-labels en AWS-sleutels).<br />
 <strong>Versie:</strong> ClamAV 1.x (meegeleverd met OPNsense <code>os-clamav</code>), c-icap (meegeleverd met <code>os-c-icap</code>)<br />
 <strong>Configuratielocatie:</strong> <code>/usr/local/etc/clamd.conf</code> (ClamAV), <code>/var/log/cicap/cicap_JJJJMMDD.log</code> (c-icap-logs)</p>
 <hr />
 <h2 id="werking-in-deze-stack">Werking in deze stack<a class="headerlink" href="#werking-in-deze-stack" title="Permanent link">&para;</a></h2>
-<p>ClamAV draait als daemon (<code>clamd</code>) op pop01 en ontvangt bestanden van c-icap voor scanning. c-icap is het ICAP-serverproces waarmee Squid communiceert. Wanneer Squid een response van het internet ontvangt (een gedownload bestand, een webpagina-body), stuurt het een kopie naar c-icap via ICAP RESPMOD. c-icap extraheert de body, geeft deze door aan ClamAV voor scanning en retourneert ofwel <code>ICAP/1.0 204 No Content</code> (schoon — Squid laat het door) of een doorverwijzing naar een blokpagina (infectie/DLP-overeenkomst — Squid retourneert 403).</p>
-<p><strong>Waarom RESPMOD en niet REQMOD voor ClamAV:</strong> De <code>virus_scan</code>-service van ClamAV verwerkt HTTP-responsebodies correct. POST-verzoekbodies (formuliergegevens, bestandsuploads) gebruiken <code>multipart/form-data</code>-codering, die c-icap's <code>virus_scan</code> niet correct parseert — geüploade inhoud wordt als onbewerkte bytes aan ClamAV doorgegeven, waardoor DLP-patroonherkenning onbetrouwbaar is. Voor upload-scanning, zie <a href="../python-dlp/">Python DLP</a>. Zie <a href="../../decisions/two-layer-dlp/">Beslissing: Twee-laags DLP</a>.</p>
-<p><strong>DLP-laag 1 — wat ClamAV detecteert:</strong>
-- <strong>Malware signatures</strong> — 3,6 miljoen+ uit ClamAV's officiële databases (daily, main, bytecode)
-- <strong>StructuredDataDetection (SDD)</strong> — Luhn-gevalideerde creditcarddetectie (threshold: 3+ geldige kaartnummers per bestand)
-- <strong>YARA-regels</strong> — vier aangepaste regels geladen uit <code>/var/db/clamav/dlp_custom.yar</code>:
-  - <code>DLP_Confidential_Label</code> — "CONFIDENTIAL", "VERTROUWELIJK", "GEHEIM", "DO NOT DISTRIBUTE" (hoofdletterongevoelig)
-  - <code>DLP_IBAN_Pattern</code> — NL-, DE- en BE-IBAN-formaatpatronen
-  - <code>DLP_BSN_Candidate</code> — 9-cijferige reeksen in clusters (threshold &gt;2)
-  - <code>DLP_AWS_AccessKey</code> — patroon <code>AKIA[A-Z0-9]{16}</code></p>
-<p>YARA-regels worden uitgevoerd <em>na</em> de bestandsdecompressie-engine van ClamAV — een regel die overeenkomt met "CONFIDENTIAL" wordt geactiveerd op een <code>.docx</code>-bestand omdat ClamAV de ZIP-container uitpakt en de binnenste <code>word/document.xml</code> scant. Dit is een significant voordeel ten opzichte van het scannen van onbewerkte bytes.</p>
+<p>ClamAV draait als daemon (<code>clamd</code>) op pop01 en ontvangt bestanden van c-icap voor scanning. c-icap is het ICAP-serverproces waarmee Squid communiceert. Wanneer Squid een response van het internet ontvangt (een gedownload bestand, een webpagina-body), stuurt het een kopie naar c-icap via ICAP RESPMOD. c-icap extraheert de body, geeft deze door aan ClamAV voor scanning en retourneert ofwel <code>ICAP/1.0 204 No Content</code> (schoon, Squid laat het door) of een doorverwijzing naar een blokpagina (infectie/DLP-overeenkomst, Squid retourneert 403).</p>
+<p><strong>Waarom RESPMOD en niet REQMOD voor ClamAV:</strong> De <code>virus_scan</code>-service van ClamAV verwerkt HTTP-responsebodies correct. POST-verzoekbodies (formuliergegevens, bestandsuploads) gebruiken <code>multipart/form-data</code>-codering, die c-icap's <code>virus_scan</code> niet correct parseert: geüploade inhoud wordt als onbewerkte bytes aan ClamAV doorgegeven, waardoor DLP-patroonherkenning onbetrouwbaar is. Voor upload-scanning, zie <a href="../python-dlp/">Python DLP</a>. Zie <a href="../../decisions/two-layer-dlp/">Beslissing: Twee-laags DLP</a>.</p>
+<p><strong>DLP-laag 1 (wat ClamAV detecteert):</strong>
+- <strong>Malware signatures:</strong> 3,6 miljoen+ uit ClamAV's officiële databases (daily, main, bytecode)
+- <strong>StructuredDataDetection (SDD):</strong> Luhn-gevalideerde creditcarddetectie (threshold: 3+ geldige kaartnummers per bestand)
+- <strong>YARA-regels:</strong> vier aangepaste regels geladen uit <code>/var/db/clamav/dlp_custom.yar</code>:
+  - <code>DLP_Confidential_Label</code>: "CONFIDENTIAL", "VERTROUWELIJK", "GEHEIM", "DO NOT DISTRIBUTE" (hoofdletterongevoelig)
+  - <code>DLP_IBAN_Pattern</code>: NL-, DE- en BE-IBAN-formaatpatronen
+  - <code>DLP_BSN_Candidate</code>: 9-cijferige reeksen in clusters (threshold &gt;2)
+  - <code>DLP_AWS_AccessKey</code>: patroon <code>AKIA[A-Z0-9]{16}</code></p>
+<p>YARA-regels worden uitgevoerd <em>na</em> de bestandsdecompressie-engine van ClamAV: een regel die overeenkomt met "CONFIDENTIAL" wordt geactiveerd op een <code>.docx</code>-bestand omdat ClamAV de ZIP-container uitpakt en de binnenste <code>word/document.xml</code> scant. Dit is een significant voordeel ten opzichte van het scannen van onbewerkte bytes.</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <h3 id="clamav-c-icap-inschakelen">ClamAV + c-icap inschakelen<a class="headerlink" href="#clamav-c-icap-inschakelen" title="Permanent link">&para;</a></h3>
@@ -3766,14 +3766,14 @@
 <p>Configureren via Services → ClamAV Antivirus:
 - ClamAV inschakelen: ✔
 - Scannen op bestandstypen: Tekstbestanden, Binaire bestanden, Uitvoerbare bestanden, Archieven, GIF, JPEG, Office
-- 204-responses toestaan: ✔ (prestaties — geen kopie van body bij schoon resultaat)</p>
+- 204-responses toestaan: ✔ (prestaties, geen kopie van body bij schoon resultaat)</p>
 <p>De GUI heeft <strong>geen</strong> "Scanmodus"- of "Poort"-veld (in tegenstelling tot oudere handleidingbeschrijvingen). Modus wordt geconfigureerd aan de Squid-kant; poort 1344 is de vaste standaard.</p>
 <h3 id="squid-icap-integratie">Squid ICAP-integratie<a class="headerlink" href="#squid-icap-integratie" title="Permanent link">&para;</a></h3>
 <p>Via Services → Squid Web Proxy → Antivirus (ICAP):
 - ICAP-host: <code>127.0.0.1</code>
 - ICAP-poort: <code>1344</code>
 - ICAP-service: <code>virus_scan</code></p>
-<p><strong>Belangrijk:</strong> Na elke ICAP-configuratiewijziging <code>configctl proxy restart</code> uitvoeren — een GUI-"Toepassen" alleen activeert ICAP niet in de actieve Squid-daemon.</p>
+<p><strong>Belangrijk:</strong> Na elke ICAP-configuratiewijziging <code>configctl proxy restart</code> uitvoeren. Een GUI-"Toepassen" alleen activeert ICAP niet in de actieve Squid-daemon.</p>
 <h3 id="structureddatadetection">StructuredDataDetection<a class="headerlink" href="#structureddatadetection" title="Permanent link">&para;</a></h3>
 <p>In <code>/usr/local/etc/clamd.conf</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">StructuredDataDetection yes</span>
@@ -3821,7 +3821,7 @@
 <a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="s">EOF</span>
 <a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>clamdscan<span class="w"> </span>--reload
 </code></pre></div>
-<p>YARA-bestanden in <code>/var/db/clamav/</code> worden automatisch geladen door ClamAV. Overeenkomsten verschijnen met het <code>.UNOFFICIAL</code>-achtervoegsel in de logs — dit is normaal voor aangepaste regels.</p>
+<p>YARA-bestanden in <code>/var/db/clamav/</code> worden automatisch geladen door ClamAV. Overeenkomsten verschijnen met het <code>.UNOFFICIAL</code>-achtervoegsel in de logs; dit is normaal voor aangepaste regels.</p>
 <hr />
 <h2 id="integratiepunten">Integratiepunten<a class="headerlink" href="#integratiepunten" title="Permanent link">&para;</a></h2>
 <table>
@@ -3846,28 +3846,28 @@
 <tr>
 <td><a href="../suricata/">Suricata</a></td>
 <td>parallel</td>
-<td>Beide draaien op pop01; geen interactie — verschillende inspectiedomeinen</td>
+<td>Beide draaien op pop01; geen interactie, verschillende inspectiedomeinen</td>
 </tr>
 </tbody>
 </table>
-<p><strong>ICAP is Squid-globaal:</strong> De ICAP-serviceconfiguratie is automatisch van toepassing op alle Squid-listeners — zowel de LAN-listener als de pre-auth NetBird-overlay-listener. Per-listener ICAP-configuratie is niet nodig. Dit verschilt van SSL Bump, dat per <code>http_port</code>-directive moet worden opgegeven.</p>
+<p><strong>ICAP is Squid-globaal:</strong> De ICAP-serviceconfiguratie is automatisch van toepassing op alle Squid-listeners (zowel de LAN-listener als de pre-auth NetBird-overlay-listener). Per-listener ICAP-configuratie is niet nodig. Dit verschilt van SSL Bump, dat per <code>http_port</code>-directive moet worden opgegeven.</p>
 <hr />
 <h2 id="nats-integratie">NATS-integratie<a class="headerlink" href="#nats-integratie" title="Permanent link">&para;</a></h2>
-<p>ClamAV/c-icap-detection events worden gepubliceerd naar de NATS event bus via <code>security.alert.malware</code>. Wanneer c-icap malware detecteert (virus signature match, YARA-regelovereenkomst of SDD-threshold violation), wordt het event gepubliceerd met: detectietype, signature name, bron-IP en opgevraagde URL. Deze events dragen bij aan de per-peer threat score die wordt bijgehouden door de <a href="../control-daemon/">Control Daemon</a>.</p>
+<p>ClamAV/c-icap-detectie-events worden gepubliceerd naar de NATS event bus via <code>security.alert.malware</code>. Wanneer c-icap malware detecteert (virus signature match, YARA-regelovereenkomst of SDD-threshold violation), wordt het event gepubliceerd met: detectietype, signature name, bron-IP en opgevraagde URL. Deze events dragen bij aan de per-peer threat score die wordt bijgehouden door de <a href="../control-daemon/">Control Daemon</a>.</p>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
-<p><strong>GUI-timeout bij eerste database-download</strong> — de ClamAV signature download (~300 MB) duurt langer dan de GUI-timeout. De download gaat op de achtergrond door. Controleer met <code>freshclam --verbose</code>.</p>
-<p><strong><code>database.clamav.net</code> retourneert 403 bij directe HTTP-verzoeken</strong> — het CDN vereist de freshclam-useragent. Een 403 van de server bevestigt dat TCP/TLS correct werkt; het is geen firewallprobleem.</p>
-<p><strong>Opstartwaarschuwingen van c-icap zijn cosmetisch</strong> — berichten zoals <code>WARNING: Can not check the used c-icap release to build service virus_scan.so</code> hebben alleen betrekking op verificatie van de buildversie, niet op de runtimefunctionaliteit.</p>
-<p><strong>c-icap-logpad is niet voor de hand liggend</strong> — logs staan in <code>/var/log/cicap/cicap_JJJJMMDD.log</code>, niet in <code>/var/log/c-icap/server.log</code>.</p>
-<p><strong>YARA-regels valideren niet algoritmisch</strong> — <code>DLP_IBAN_Pattern</code> herkent het formaat maar voert geen mod-97-controlesomvalidatie uit. <code>DLP_BSN_Candidate</code> herkent 9-cijferige clusters maar voert geen 11-proef uit. Valse positieven zijn mogelijk. De <a href="../python-dlp/">Python DLP-server</a> op het uploadpad voert wel algoritmische validatie uit.</p>
-<p><strong><code>--ssl-no-revoke</code> vereist voor curl.exe-tests</strong> — curl.exe op Windows gebruikt de schannel TLS-stack, die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen revocation endpoint, waardoor dit mislukt. Voeg <code>--ssl-no-revoke</code> toe aan alle CLI-testopdrachten.</p>
-<p><strong>Handleiding gebruikt <code>/squid_clamav</code> als ICAP-servicepad</strong> — oudere handleidingversies specificeren <code>icap://localhost:1344/squid_clamav</code>. Het correcte servicepad op de c-icap-installatie van OPNsense is <code>/virus_scan</code>. Het handleidingpad gebruiken geeft ICAP 404.</p>
-<p><strong>YARA-persistentie na OPNsense-firmware-updates</strong> — YARA-bestanden in <code>/var/db/clamav/</code> overleven OPNsense-updates zolang ze niet in door updates beheerde mappen staan. Controleer na een firmware-update of <code>dlp_custom.yar</code> nog aanwezig is en <code>clamdscan --reload</code> zonder fout voltooit.</p>
-<p><strong>ClamAV/ICAP-bereikbeperkingen</strong> — ClamAV kan alleen verkeer inspecteren dat via Squid stroomt. Het volgende verkeer wordt NIET geïnspecteerd:
-- Sites op de SSL Bump no-bump-lijst (bijv. <code>.microsoft.com</code>) — versleutelde bytes passeren zonder decryptie
-- Clients die geen WPAD/PAC gebruiken of de proxyinstelling hebben uitgeschakeld — hun verkeer omzeilt Squid volledig
-- Niet-HTTP-protocollen (SSH, SMB, DNS naar externe servers) — afgehandeld door Suricata, niet ClamAV</p>
+<p><strong>GUI-timeout bij eerste database-download:</strong> de ClamAV signature download (~300 MB) duurt langer dan de GUI-timeout. De download gaat op de achtergrond door. Controleer met <code>freshclam --verbose</code>.</p>
+<p><strong><code>database.clamav.net</code> retourneert 403 bij directe HTTP-verzoeken:</strong> het CDN vereist de freshclam-useragent. Een 403 van de server bevestigt dat TCP/TLS correct werkt; het is geen firewallprobleem.</p>
+<p><strong>Opstartwaarschuwingen van c-icap zijn cosmetisch.</strong> Berichten zoals <code>WARNING: Can not check the used c-icap release to build service virus_scan.so</code> hebben alleen betrekking op verificatie van de buildversie, niet op de runtimefunctionaliteit.</p>
+<p><strong>c-icap-logpad is niet voor de hand liggend:</strong> logs staan in <code>/var/log/cicap/cicap_JJJJMMDD.log</code>, niet in <code>/var/log/c-icap/server.log</code>.</p>
+<p><strong>YARA-regels valideren niet algoritmisch.</strong> <code>DLP_IBAN_Pattern</code> herkent het formaat maar voert geen mod-97-controlesomvalidatie uit. <code>DLP_BSN_Candidate</code> herkent 9-cijferige clusters maar voert geen 11-proef uit. Valse positieven zijn mogelijk. De <a href="../python-dlp/">Python DLP-server</a> op het uploadpad voert wel algoritmische validatie uit.</p>
+<p><strong><code>--ssl-no-revoke</code> vereist voor curl.exe-tests:</strong> curl.exe op Windows gebruikt de schannel TLS-stack, die CRL/OCSP-verificatie probeert op het SSL Bump-certificaat. Zelfondertekende CA's hebben geen revocation endpoint, waardoor dit mislukt. Voeg <code>--ssl-no-revoke</code> toe aan alle CLI-testopdrachten.</p>
+<p><strong>Handleiding gebruikt <code>/squid_clamav</code> als ICAP-servicepad:</strong> oudere handleidingversies specificeren <code>icap://localhost:1344/squid_clamav</code>. Het correcte servicepad op de c-icap-installatie van OPNsense is <code>/virus_scan</code>. Het handleidingpad gebruiken geeft ICAP 404.</p>
+<p><strong>YARA-persistentie na OPNsense-firmware-updates:</strong> YARA-bestanden in <code>/var/db/clamav/</code> overleven OPNsense-updates zolang ze niet in door updates beheerde mappen staan. Controleer na een firmware-update of <code>dlp_custom.yar</code> nog aanwezig is en <code>clamdscan --reload</code> zonder fout voltooit.</p>
+<p><strong>ClamAV/ICAP-bereikbeperkingen:</strong> ClamAV kan alleen verkeer inspecteren dat via Squid stroomt. Het volgende verkeer wordt NIET geïnspecteerd:
+- Sites op de SSL Bump no-bump-lijst (bijv. <code>.microsoft.com</code>): versleutelde bytes passeren zonder decryptie
+- Clients die geen WPAD/PAC gebruiken of de proxyinstelling hebben uitgeschakeld: hun verkeer omzeilt Squid volledig
+- Niet-HTTP-protocollen (SSH, SMB, DNS naar externe servers): afgehandeld door Suricata, niet ClamAV</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
