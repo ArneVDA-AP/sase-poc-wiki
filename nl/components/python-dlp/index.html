@@ -570,6 +570,8 @@
       
         
       
+        
+      
     
     
     
@@ -1158,6 +1160,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2268,6 +2298,8 @@
       
         
       
+        
+      
     
     
     
@@ -2632,6 +2664,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2650,6 +2710,8 @@
       
         
           
+        
+      
         
       
         
@@ -3351,6 +3413,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3745,11 +3835,13 @@
 <p><strong>Netwerkpad:</strong> pop01 → mgmt01 via <code>192.168.122.0/24</code> (WAN/beheersegment). Dit pad bestaat onafhankelijk van de NetBird-overlay. De DLP-server functioneert ook wanneer de NetBird-tunnel niet actief is.</p>
 <hr />
 <h2 id="nats-integratie">NATS-integratie<a class="headerlink" href="#nats-integratie" title="Permanent link">&para;</a></h2>
-<p>De Python DLP ICAP-server publiceert upload-inspection-events naar <code>security.alert.dlp</code> op de NATS event bus. Wanneer een DLP-patroonovereenkomst wordt gevonden (Luhn-creditcard, IBAN mod-97, BSN 11-proef, AWS-sleutel), bevat het event: patroontype, aantal overeenkomsten, bron-IP, bestemmings-URL en HTTP-methode. DLP-events dragen bij aan de per-peer threat score. Aangezien de Python DLP-server al op mgmt01 draait (dezelfde host als NATS), publiceert deze rechtstreeks zonder cross-host-connectiviteit.</p>
+<p>De Python DLP ICAP-server publiceert upload-inspection-events naar <code>security.alert.dlp</code> op de NATS event bus. Wanneer een DLP-patroonovereenkomst wordt gevonden (Luhn-creditcard, IBAN mod-97, BSN 11-proef, AWS-sleutel), bevat het event: patroontype, gemaskeerd overeenkomstdetail, het overlay-IP van de client, bestemmings-URL en HTTP-methode. DLP-events dragen bij aan de per-peer threat score. Aangezien de Python DLP-server al op mgmt01 draait (dezelfde host als NATS), publiceert deze rechtstreeks zonder cross-host-connectiviteit.</p>
+<p>De hook zit in de REQMOD-handler op een positieve match, vlak na de bestaande blok-logregel, zodat enkel geblokkeerde uploads een event opleveren. De overtredingsdetails zijn op dat punt al gemaskeerd (bijv. <code>Creditcard: 4532****0366</code>), waardoor het event geen ruwe PII draagt.</p>
+<p><strong>De ICAP-server is threaded en blokkerend (<code>socketserver.ThreadingMixIn</code>) terwijl nats-py asyncio is.</strong> Publiceren loopt via een threadveilige <code>NatsPublisher</code> met een persistente asyncio-loop en NATS-connectie op een achtergrond-thread. De <code>publish()</code>-aanroep van de handler geeft het event aan een begrensde queue en keert meteen terug; de achtergrond-loop draint de queue en voert de <code>js.publish</code> uit. Een volle queue laat het event vallen en logt het, maar blokkeert nooit. De blokkeer/passeer-beslissing wacht dus nooit op NATS: als de bus traag of onbereikbaar is, keert de 403 alsnog op tijd terug.</p>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
 <p><strong>pyicap Python 3.10+-incompatibiliteit:</strong> zie <a href="../../findings/pyicap-collections-bug/">Bevinding: pyicap collections-bug</a>. De Dockerfile patcht dit automatisch.</p>
-<p><strong>Client-IP verschijnt als "unknown" in DLP-logs:</strong> de server leest <code>X-Client-IP</code> uit <code>self.enc_req_headers</code> (ingekapselde headers), maar Squid stuurt het client-IP als een ICAP-niveauheader toegankelijk via <code>self.headers</code>. Dit is een cosmetisch probleem; blokkering werkt correct.</p>
+<p><strong>Overlay-IP van de client is beschikbaar in DLP-logs en events:</strong> voor REQMOD-verzoeken stuurt Squid de <code>X-Client-IP</code> ICAP-header mee, en de server leest die om de overtreding aan een echt overlay-IP toe te schrijven (bijv. <code>100.70.120.49</code>), geen placeholder. Dit is hetzelfde overlay-IP dat de <a href="../identity-bridge/">Identity Bridge</a> op een Entra ID-persona mapt, waardoor DLP-events direct aan een peer toe te schrijven zijn.</p>
 <p><strong>Containerlogs in Docker stdout:</strong> voor Wazuh SIEM-integratie, voeg een Docker-logging-driver toe (syslog gericht op Wazuh) of configureer de Wazuh-agent op mgmt01 om containerlogs te bewaken. Dit is een geplande taak voor Fase 4.</p>
 <p><strong>Algoritmische validators hebben thresholdn:</strong> één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas thresholdn aan in <code>dlp_server.py</code> op basis van de gebruikssituatie.</p>
 <p><strong>Code review (10 problemen geïdentificeerd, 3 kritieke fixes toegepast):</strong>

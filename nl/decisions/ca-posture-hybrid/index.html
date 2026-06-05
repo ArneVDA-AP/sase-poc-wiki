@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2229,6 +2259,8 @@
       
         
       
+        
+      
     
     
     
@@ -2593,6 +2625,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2611,6 +2671,8 @@
       
         
           
+        
+      
         
       
         
@@ -3312,6 +3374,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3610,7 +3700,7 @@
 <p>Beheerde-apparaat <strong>drie-gate model</strong> (Verslag40):</p>
 <ul>
 <li><strong>Gate 1 (Identiteit):</strong> Entra ID Conditional Access (5 policies, authenticatietijdstip)</li>
-<li><strong>Gate 2 (Apparaat):</strong> Intune-apparaatconformiteit (attestatie-gebaseerd postuur, geëvalueerd bij authenticatie via CA Policy 5 en op Intune's periodieke cyclus)</li>
+<li><strong>Gate 2 (Apparaat):</strong> Intune-apparaatconformiteit (attestatie-gebaseerd postuur, geëvalueerd bij authenticatie via CA Policy 5 en op Intune's periodieke cyclus). De endpoint-config-kant van diezelfde beheerde-apparaatbasis is <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a>.</li>
 <li><strong>Gate 3 (Inhoud):</strong> SWG-pipeline (Squid SSL-Bump + ClamAV + DLP + Unbound RPZ, elke aanvraag)</li>
 </ul>
 <p>NetBird posture checks blijven <em>beschikbaar</em> als een optionele, onafhankelijke defense-in-depth-laag (andere timing, namelijk tunnel-bouw, en ander mechanisme, namelijk client-side controle), maar werden <strong>niet gedeployd</strong>: met beheerde apparaten dekt Intune-conformiteit de apparaatpostuureis van de rubric al via attestatie in plaats van een spoofbare procescontrole.</p>
@@ -3681,7 +3771,7 @@
 <li>Gate 1 (Entra ID CA) en Gate 2 (Intune-conformiteit) zijn beide live sinds Verslag40: vier CA-policies die handhaven (MFA, legacy-auth-blokkering, risico-blokkering) plus Policy 5 (conform apparaat) en Geo-Block op Report-only tot demo. Gate 3 (SWG-pipeline) werkt onafhankelijk van identiteit/apparaat bij elke aanvraag, dus alle drie de gates zijn operationeel, niet alleen Gate 3</li>
 <li>Activering van Gate 1 vereist MFA-pre-registratie voor testaccounts vóór het inschakelen van policies (niet-geregistreerde MFA veroorzaakt een lus die zelfs de verificatiesessie blokkeert)</li>
 <li>De admins-persona valt onder geen enkele CA-policy: <code>2itcsc1a_admin1</code> is het enige lid en is de break-glass-uitsluiting op elke policy, dus deze is bewust ongereguleerd om uitsluiting te voorkomen</li>
-<li>Intune Gate 2 is afhankelijk van het un-bumped bereikbaar zijn van de Microsoft control plane: <code>*.microsoftonline.com</code> en <code>enterpriseregistration.windows.net</code> staan op de Squid splice/no-bump-lijst, anders breken apparaatregistratie en de conform-apparaatcontrole (Policy 5)</li>
+<li>Intune Gate 2 is afhankelijk van het un-bumped bereikbaar zijn van de Microsoft control plane: <code>*.microsoftonline.com</code>, <code>enterpriseregistration.windows.net</code>, <code>.microsoftazuread-sso.com</code> en <code>.live.com</code> staan op de Squid splice/no-bump-lijst, anders breken apparaatregistratie en de conform-apparaatcontrole (Policy 5)</li>
 <li><strong>Optionele NetBird posture-laag (niet gedeployd):</strong> waren NetBird posture checks als apparaat-gate gebruikt, dan zou de OS-controle de kernelversie lezen (<code>10.0.19041</code> = Windows 10 2004, de eerste met de native WireGuard-kernelmodule) en zou de AV-controle een <code>process_check</code> zijn die alleen verifieert dat een binary op een pad bestaat (spoofbaar, en blind voor of definities actueel zijn of real-time scanning actief is). Intune-attestatie (Gate 2, minimum OS <code>10.0.22000.0</code>) vervangt dit; diepe inhouds-/endpointbescherming is Gate 3 (ClamAV)</li>
 </ul>
 <p>Zie ook: <a href="../../components/netbird/">Component: NetBird</a>, <a href="../../concepts/zero-trust/">Concept: Zero Trust</a></p>

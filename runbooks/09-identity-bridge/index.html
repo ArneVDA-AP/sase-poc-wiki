@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2115,6 +2145,8 @@
       
         
       
+        
+      
     
     
     
@@ -2626,6 +2658,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2644,6 +2704,8 @@
       
         
           
+        
+      
         
       
         
@@ -3345,6 +3407,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3752,13 +3842,13 @@
 <p><strong>Expected:</strong> Log entries include the identity group (Studenten/Docenten/Admins) for each request, proving that Squid successfully queries the Identity Bridge for every connection.</p>
 <hr />
 <h2 id="step-5-test-identity-based-filtering">Step 5: Test identity-based filtering<a class="headerlink" href="#step-5-test-identity-based-filtering" title="Permanent link">&para;</a></h2>
-<p>Test that policy enforcement differs by persona:</p>
+<p>Test that policy enforcement differs by persona. Use <code>deepai.org</code> as the demonstrator: it is not in the UT1 category blacklist, so the only thing that can block it is the persona ACL, which makes the difference observable. AI-chat domains such as <code>chatgpt.com</code> are in UT1 and are blocked for <em>both</em> personas by the category filter (which runs before the persona rule), so they show "blocked for everyone" and cannot demonstrate differentiation.</p>
 <p><strong>Student (restricted):</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-x<span class="w"> </span>http://100.70.154.79:3128<span class="w"> </span>https://chatgpt.com
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-x<span class="w"> </span>http://100.70.154.79:3128<span class="w"> </span>https://deepai.org
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># Expected: 403 Forbidden (blocked for students)</span>
 </code></pre></div>
 <p><strong>Teacher (standard):</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-x<span class="w"> </span>http://100.70.154.79:3128<span class="w"> </span>https://chatgpt.com
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-x<span class="w"> </span>http://100.70.154.79:3128<span class="w"> </span>https://deepai.org
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># Expected: 200 OK (allowed for teachers)</span>
 </code></pre></div>
 <blockquote>
@@ -3770,10 +3860,10 @@
 <ol>
 <li><code>netbird up</code> as a student user → NetBird Dashboard shows Studenten group</li>
 <li>Identity Bridge <code>/lookup</code> returns "Studenten" for that user's overlay IP</li>
-<li><code>curl -x http://100.70.154.79:3128 https://chatgpt.com</code> → 403</li>
+<li><code>curl -x http://100.70.154.79:3128 https://deepai.org</code> → 403</li>
 <li><code>netbird up</code> as a teacher user → NetBird Dashboard shows Docenten group</li>
 <li>Identity Bridge <code>/lookup</code> returns "Docenten" for that user's overlay IP</li>
-<li><code>curl -x http://100.70.154.79:3128 https://chatgpt.com</code> → 200</li>
+<li><code>curl -x http://100.70.154.79:3128 https://deepai.org</code> → 200</li>
 </ol>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>
@@ -3785,8 +3875,8 @@
 <li>[ ] Squid external_acl_type configured to query Identity Bridge</li>
 <li>[ ] Squid ACLs defined for Studenten/Docenten/Admins</li>
 <li>[ ] Squid access.log shows identity group per request</li>
-<li>[ ] Student blocked from ChatGPT (403)</li>
-<li>[ ] Teacher allowed to ChatGPT (200)</li>
+<li>[ ] Student blocked from deepai.org (403)</li>
+<li>[ ] Teacher allowed to deepai.org (200)</li>
 </ul>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>

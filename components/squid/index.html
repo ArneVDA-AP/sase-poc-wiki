@@ -570,6 +570,8 @@
       
         
       
+        
+      
     
     
     
@@ -1169,6 +1171,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2279,6 +2309,8 @@
       
         
       
+        
+      
     
     
     
@@ -2643,6 +2675,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2661,6 +2721,8 @@
       
         
           
+        
+      
         
       
         
@@ -3362,6 +3424,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3721,7 +3811,7 @@
 <h2 id="how-it-works-in-this-stack">How it works in this stack<a class="headerlink" href="#how-it-works-in-this-stack" title="Permanent link">&para;</a></h2>
 <p>Squid runs in <strong>explicit proxy mode</strong>: clients are configured via a PAC file to send their HTTP/HTTPS traffic directly to Squid on <code>100.70.154.79:3128</code> (pop01's NetBird overlay IP). This is the opposite of a transparent proxy, where the firewall silently intercepts traffic.</p>
 <p>The choice of explicit mode is not optional — transparent proxy via <code>pf rdr</code> cannot intercept WireGuard-routed traffic on the <code>wt0</code> interface. See <a href="../../findings/wt0-pf-rdr-limitation/">Finding: wt0 pf rdr limitation</a> and <a href="../../decisions/wpad-vs-transparent-proxy/">Decision: WPAD/PAC vs Transparent Proxy</a>.</p>
-<p><strong>WPAD/PAC distribution:</strong> The PAC file is hosted by <a href="../caddy/">Caddy</a> on mgmt01 at <code>http://wpad.sandbox.local/wpad.dat</code>. Clients discover this via a NetBird Custom DNS Zone that resolves <code>wpad.sandbox.local</code> to mgmt01's overlay IP. Mobile01 is configured via Windows Settings → Proxy → "Use setup script".</p>
+<p><strong>WPAD/PAC distribution:</strong> The PAC file is hosted by <a href="../caddy/">Caddy</a> on mgmt01 at <code>http://wpad.sandbox.local/wpad.dat</code>. Clients discover this via the <code>sandbox.local</code> NetBird Custom DNS Zone, which routes the <code>wpad.sandbox.local</code> query to pop01 Unbound (the NetBird primary nameserver); Unbound resolves it to the Caddy host on mgmt01's overlay IP. Mobile01 is configured via Windows Settings → Proxy → "Use setup script".</p>
 <p><strong>SSL Bump:</strong> Squid decrypts HTTPS traffic using a self-signed CA (<code>SASE-PoC-CA</code>, installed on client trust stores). This is what enables the ICAP pipeline to inspect HTTPS content. Without SSL Bump, ClamAV and the Python DLP server see only encrypted bytes.</p>
 <p><strong>URL Filtering:</strong> Two blacklist mechanisms run before any <code>allow</code> rule (first-match-wins):
 1. Manual blacklist: <code>gambling.com</code>, <code>.bet365.com</code>, <code>.pokerstars.com</code>
@@ -3742,9 +3832,15 @@
 <h3 id="allowed-subnets">Allowed subnets<a class="headerlink" href="#allowed-subnets" title="Permanent link">&para;</a></h3>
 <p><code>100.64.0.0/10</code> (NetBird CGNAT range) must be added to Squid ACL via GUI → Forward Proxy → Access Control List → Allowed Subnets. Without this, all NetBird clients receive <code>TCP_DENIED/403</code>.</p>
 <h3 id="no-bump-list">No-bump list<a class="headerlink" href="#no-bump-list" title="Permanent link">&para;</a></h3>
-<p>Sites excluded from SSL inspection (configured via GUI):
+<p>Sites excluded from SSL inspection (configured via GUI):</p>
+<p>The Microsoft control-plane set — these must be spliced or Intune device registration, Entra authentication, and the compliant-device check break:
 - <code>login.microsoftonline.com</code> — <strong>required</strong>: protects the Entra ID OIDC flow. If Squid bumps the Microsoft login page, NetBird authentication fails for all clients.
-- <code>.microsoft.com</code>, <code>.paypal.com</code>, <code>.apple.com</code>, <code>.banking.example.com</code> — demonstrative entries.</p>
+- <code>.microsoftonline.com</code> — covers <code>device.login.microsoftonline.com</code> and the other auth subdomains the bare FQDN does not.
+- <code>.microsoft.com</code> — covers the <code>manage.microsoft.com</code> enrollment family.
+- <code>enterpriseregistration.windows.net</code> — the device-registration endpoint (exact host, not <code>.windows.net</code>, which is too broad).
+- <code>.microsoftazuread-sso.com</code> — the seamless SSO endpoint (<code>autologon.microsoftazuread-sso.com</code>) is cert-pinned and breaks if bumped.
+- <code>.live.com</code> — the consumer auth leg used during the interactive Entra join.</p>
+<p>Demonstrative privacy entries: <code>.paypal.com</code>, <code>.apple.com</code>, <code>.banking.example.com</code>.</p>
 <h3 id="acl-order-in-squidconf">ACL order in squid.conf<a class="headerlink" href="#acl-order-in-squidconf" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">http_access</span><span class="w"> </span><span class="no">deny</span><span class="w"> </span>blackList
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">http_access</span><span class="w"> </span><span class="no">deny</span><span class="w"> </span>remoteblacklist_UT1
@@ -3794,14 +3890,15 @@
 <tr>
 <td>Entra ID / OIDC</td>
 <td>no-bump</td>
-<td><code>login.microsoftonline.com</code> is in the no-bump list so CA evaluation is not disrupted</td>
+<td>The Microsoft control-plane set (<code>.microsoftonline.com</code>, <code>.microsoft.com</code>, <code>enterpriseregistration.windows.net</code>, <code>.microsoftazuread-sso.com</code>, <code>.live.com</code>) is on the no-bump list so device registration and CA evaluation are not disrupted</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="nats-integration">NATS integration<a class="headerlink" href="#nats-integration" title="Permanent link">&para;</a></h2>
 <p>Squid publishes proxy access events to the NATS event bus on mgmt01. A Python producer script on pop01 tails <code>access.log</code> and publishes structured events to <code>security.alert.proxy</code>. Events include: source IP (overlay), destination URL, HTTP method, response code, ACL decision, identity group (from external_acl). These events feed both the <a href="../control-daemon/">Control Daemon</a> (real-time threat scoring) and <a href="../wazuh/">Wazuh</a> SIEM (forensic analysis).</p>
-<p>Additionally, Squid integrates with the <a href="../identity-bridge/">Identity Bridge</a> via <code>external_acl_type</code>: for each request, a helper queries <code>http://192.168.122.23:&lt;port&gt;/lookup?ip=%SRC</code> to resolve the overlay IP to an Entra ID persona group. This enables identity-based URL filtering (e.g., Studenten blocked from ChatGPT, Docenten allowed).</p>
+<p>The producer filters on <code>TCP_DENIED</code>. Each HTTPS block writes two access.log lines — a <code>TCP_DENIED/200</code> on the CONNECT and a <code>NONE_NONE/403</code> on the bumped GET — so filtering on the <code>TCP_DENIED</code> prefix deduplicates the block to a single event. It also carries the identity: <code>user=</code> is only populated on the <code>TCP_DENIED</code> CONNECT line (a persona deny invokes the identity helper), while a category deny short-circuits without an identity lookup and leaves <code>user=</code> empty (<code>-</code> maps to <code>null</code>). The same filter catches plain-HTTP <code>TCP_DENIED/403</code>.</p>
+<p>Additionally, Squid integrates with the <a href="../identity-bridge/">Identity Bridge</a> via <code>external_acl_type</code>: for each request, a helper queries <code>http://192.168.122.23:&lt;port&gt;/lookup?ip=%SRC</code> to resolve the overlay IP to an Entra ID persona group. This enables identity-based URL filtering (e.g., Studenten blocked from deepai.org, Docenten allowed). The persona deny is expressed as <code>http_access deny ai_chat persona_studenten</code>, with the domain ACL first so the helper is only consulted on matching traffic. Its include must be placed <strong>pre-auth</strong>: the <code>post-auth/*.conf</code> include loads after <code>http_access deny all</code>, so a persona rule placed there is dead — the chain has already terminated. A <code>deny</code> this early is safe because it can only early-reject the narrow persona match; everything else falls through to the security baseline.</p>
 <hr />
 <h2 id="known-issues-gotchas">Known issues / gotchas<a class="headerlink" href="#known-issues-gotchas" title="Permanent link">&para;</a></h2>
 <p><strong>"Clear log" in WebUI destroys the logfile</strong> — see <a href="../../findings/squid-clearlog-destroys-file/">Finding: Squid clearlog</a>. Use <code>&gt; /var/log/squid/access.log</code> to truncate without deletion.</p>

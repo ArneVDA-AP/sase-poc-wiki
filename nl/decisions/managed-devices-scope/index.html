@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2207,6 +2237,8 @@
       
         
       
+        
+      
     
     
     
@@ -2571,6 +2603,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2589,6 +2649,8 @@
       
         
           
+        
+      
         
       
         
@@ -3290,6 +3352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3555,7 +3645,7 @@
 </tbody>
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
-<p>Beheerde Windows-apparaten (Intune-beheerd, Entra ID-joined) zoals voorgeschreven door lectormandaat R11. Dit stelt Gate 2 in staat Intune-compliancepolicies te gebruiken voor device posture-verificatie in plaats van uitsluitend te vertrouwen op NetBird posture checks. Endpoint-handhaving wordt vereenvoudigd doordat MDM het proxy PAC-bestand, Windows Firewall-regels en root-CA-certificaten rechtstreeks naar ge-enrollde apparaten kan pushen.</p>
+<p>Beheerde Windows-apparaten (Intune-beheerd, Entra ID-joined) zoals voorgeschreven door lectormandaat R11. Dit stelt Gate 2 in staat Intune-compliancepolicies te gebruiken voor device posture-verificatie in plaats van uitsluitend te vertrouwen op NetBird posture checks. Endpoint-handhaving wordt vereenvoudigd doordat MDM het proxy PAC-bestand, Windows Firewall-regels en root-CA-certificaten rechtstreeks naar ge-enrollde apparaten kan pushen. De profielen die dit uitvoeren staan beschreven in <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a>.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Gate 2-herontwerp:</strong> Device posture-verificatie verschuift van NetBird posture checks (die OS-versie en procesaanwezigheid verifiëren bij tunnel-bouwtijd) naar Intune-compliancepolicies (die OS-versie, Defender AV, firewallstatus en real-time protection verifiëren via MDM-attestatie).</li>

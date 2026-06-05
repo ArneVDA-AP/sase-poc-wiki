@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2207,6 +2237,8 @@
       
         
       
+        
+      
     
     
     
@@ -2571,6 +2603,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2589,6 +2649,8 @@
       
         
           
+        
+      
         
       
         
@@ -3290,6 +3352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3533,7 +3623,7 @@
 <p>WPAD/PAC is het mechanisme dat elke browseraanvraag op mobile01 via Squid op pop01 routeert, zonder een proxyadres in elke browser hard te coderen. De ontdekkingsketen:</p>
 <ol>
 <li>Het DNS-zoekdomein van mobile01 is <code>sandbox.local</code> (gedistribueerd door NetBird DNS-configuratie)</li>
-<li>Browser queryet <code>wpad.sandbox.local</code> → resolvet naar mgmt01 overlay-IP <code>100.70.135.241</code> (via NetBird Custom DNS Zone)</li>
+<li>Browser queryet <code>wpad.sandbox.local</code> → de query gaat naar pop01 Unbound (de NetBird primary nameserver) via de <code>sandbox.local</code> Custom DNS zone, die de naam resolvet naar de Caddy-host op het overlay-IP van mgmt01 <code>100.70.135.241</code></li>
 <li>Browser haalt <code>http://wpad.sandbox.local/wpad.dat</code> op</li>
 <li>Browser voert <code>FindProxyForURL()</code> uit voor elke URL → geeft <code>PROXY 100.70.154.79:3128</code> terug (Squid)</li>
 <li>Al het niet-interne verkeer stroomt door Squid voor inspectie</li>
@@ -3546,7 +3636,7 @@
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
 <p><strong><a href="../../components/caddy/">Caddy</a>:</strong> serveert het PAC-bestand op <code>http://wpad.sandbox.local/wpad.dat</code> met het juiste MIME-type (<code>application/x-ns-proxy-autoconfig</code>). Draait op het overlay-IP van mgmt01 (<code>100.70.135.241</code>).</p>
 <p><strong><a href="../../components/squid/">Squid</a>:</strong> de proxy waarnaar het PAC-bestand verwijst: <code>PROXY 100.70.154.79:3128</code>. Squid draait de pre-auth include-listener op dit NetBird overlay-IP met volledige ssl-bump-parameters.</p>
-<p><strong><a href="../../components/netbird/">NetBird</a>:</strong> biedt twee dingen waarvan WPAD afhankelijk is: (1) het overlaynetwerk dat het IP van mgmt01 bereikbaar maakt vanuit mobile01, en (2) de Custom DNS Zone die <code>wpad.sandbox.local</code> resolvet naar het overlay-IP van mgmt01.</p>
+<p><strong><a href="../../components/netbird/">NetBird</a>:</strong> biedt twee dingen waarvan WPAD afhankelijk is: (1) het overlaynetwerk dat het IP van mgmt01 bereikbaar maakt vanuit mobile01, en (2) de DNS-configuratie die pop01 als primary nameserver instelt en de <code>sandbox.local</code> Custom DNS zone definieert, zodat een query naar <code>wpad.sandbox.local</code> pop01 Unbound bereikt en resolvet naar de Caddy-host op mgmt01.</p>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
 <p><strong>PAC-bestand moet DIRECT retourneren voor overlay-IP's:</strong> als het PAC-bestand <code>PROXY ...</code> retourneerde voor <code>100.64.0.0/10</code> (het NetBird overlay-subnet), zouden browseraanvragen naar de NetBird-beheerconsole via Squid worden gerouteerd, wat een routeringslus zou veroorzaken. Het PAC-bestand moet overlay- en interne subnetten expliciet uitsluiten.</p>
 <p><strong>WPAD dekt alleen browser-HTTP/HTTPS:</strong> applicaties die de systeemproxyinstelling niet lezen (veel niet-browserapps, commandoregeltools) omzeilen Squid volledig. Suricata's netwerklaaginspectie op vtnet0 compenseert gedeeltelijk door afwijkingen in directe verbindingen te detecteren.</p>

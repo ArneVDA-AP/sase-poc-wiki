@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2207,6 +2237,8 @@
       
         
       
+        
+      
     
     
     
@@ -2571,6 +2603,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2589,6 +2649,8 @@
       
         
           
+        
+      
         
       
         
@@ -3290,6 +3352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3552,9 +3642,14 @@
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s1">  dynamic_cert_mem_cache_size=10MB generate-host-certificates=on&#39;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>&gt;<span class="w"> </span>/usr/local/etc/squid/pre-auth/netbird-listener.conf
 </code></pre></div>
-<p><strong>No-bump-lijst</strong> (sites uitgesloten van SSL-inspectie):
+<p><strong>No-bump-lijst</strong> (sites uitgesloten van SSL-inspectie). De Microsoft control plane-endpoints moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de conform-apparaatcontrole:
 - <code>login.microsoftonline.com</code> (<strong>verplicht</strong>): als Squid de Microsoft-aanmeldingspagina bumpt, wordt de Entra ID OIDC-stroom die door NetBird wordt gebruikt gebroken. Alle clientauthenticatie zou mislukken.
-- <code>.microsoft.com</code>, <code>.paypal.com</code>, <code>.apple.com</code> (demonstratieve uitzonderingen)</p>
+- <code>.microsoftonline.com</code>: dekt <code>device.login.microsoftonline.com</code> en de overige auth-subdomeinen die de kale FQDN niet dekt.
+- <code>.microsoft.com</code>: dekt de <code>manage.microsoft.com</code>-enrollmentfamilie.
+- <code>enterpriseregistration.windows.net</code>: het apparaatregistratie-endpoint (exacte host, niet <code>.windows.net</code>).
+- <code>.microsoftazuread-sso.com</code>: het cert-pinned seamless SSO-endpoint (<code>autologon.microsoftazuread-sso.com</code>).
+- <code>.live.com</code>: de consumer-auth-leg die tijdens de interactieve Entra-join wordt gebruikt.
+- <code>.paypal.com</code>, <code>.apple.com</code> (demonstratieve uitzonderingen)</p>
 <p><strong><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></strong> en <strong><a href="../../components/python-dlp/">Python DLP</a>:</strong> afhankelijk van SSL Bump om leesbare bodies te ontvangen. Zonder SSL Bump kunnen ze geen HTTPS-inhoud inspecteren.</p>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
 <p><strong>ssl-bump op pre-auth-listener:</strong> de kritieke bevinding gedocumenteerd in <a href="../../findings/pre-auth-ssl-bump-params/">Bevinding: pre-auth ssl-bump parameters</a>: als het pre-auth include alleen <code>http_port 100.70.154.79:3128</code> heeft (geen ssl-bump-parameters), tunnelt HTTPS-verkeer van NetBird-clients als CONNECT zonder inspectie. De volledige ssl-bump-directive moet in de pre-auth conf staan.</p>

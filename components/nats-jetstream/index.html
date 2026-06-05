@@ -570,6 +570,8 @@
       
         
       
+        
+      
     
     
     
@@ -1130,6 +1132,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2240,6 +2270,8 @@
       
         
       
+        
+      
     
     
     
@@ -2604,6 +2636,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2622,6 +2682,8 @@
       
         
           
+        
+      
         
       
         
@@ -3323,6 +3385,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3755,6 +3845,7 @@
 <li><strong>Store dir double nesting:</strong> See <a href="../../findings/nats-store-dir/">Finding: NATS store dir</a>.</li>
 <li><strong>Container recreate required:</strong> <code>docker compose restart</code> after config changes does not pick up new environment variables. Use <code>docker compose up -d --force-recreate</code>.</li>
 <li><strong>Producers do not need <code>$JS.API.&gt;</code> permissions:</strong> Only subject publish + <code>_INBOX.&gt;</code> are required for producers.</li>
+<li><strong>Producer persistence (pop01):</strong> The four pop01 producers (Suricata, Squid, DNS-RPZ, c-icap/ClamAV) are reboot-persistent via the <code>nats_producers</code> rc.d service (<code>sysrc nats_producers_enable=YES</code>), which starts them from the venv at <code>/usr/local/etc/nats-producers/venv</code>. Without it the producers do not survive a pop01 reboot and the event bus goes deaf. The Docker volume only persists the bus's own JetStream store, not the producers. See <a href="../../runbooks/10-nats-jetstream/">Runbook 10: NATS JetStream</a>.</li>
 </ul>
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>

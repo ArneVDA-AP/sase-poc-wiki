@@ -570,6 +570,8 @@
       
         
       
+        
+      
     
     
     
@@ -1130,6 +1132,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2240,6 +2270,8 @@
       
         
       
+        
+      
     
     
     
@@ -2604,6 +2636,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2622,6 +2682,8 @@
       
         
           
+        
+      
         
       
         
@@ -3323,6 +3385,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3755,6 +3845,7 @@
 <li><strong>Store dir dubbele nesting:</strong> Zie <a href="../../findings/nats-store-dir/">Bevinding: NATS store dir</a>.</li>
 <li><strong>Container-herschepping vereist:</strong> <code>docker compose restart</code> na configuratiewijzigingen neemt nieuwe omgevingsvariabelen niet over. Gebruik <code>docker compose up -d --force-recreate</code>.</li>
 <li><strong>Producers hebben geen <code>$JS.API.&gt;</code> rechten nodig:</strong> Enkel subject publish + <code>_INBOX.&gt;</code> zijn vereist voor producers.</li>
+<li><strong>Producer-persistentie (pop01):</strong> De vier pop01-producers (Suricata, Squid, DNS-RPZ, c-icap/ClamAV) zijn persistent over reboots via de <code>nats_producers</code> rc.d-service (<code>sysrc nats_producers_enable=YES</code>), die ze start vanuit de venv op <code>/usr/local/etc/nats-producers/venv</code>. Zonder die service overleven de producers een pop01-reboot niet en wordt de event bus doof. Het Docker-volume bewaart enkel de JetStream-opslag van de bus zelf, niet de producers. Zie <a href="../../runbooks/10-nats-jetstream/">Runbook 10: NATS JetStream</a>.</li>
 </ul>
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

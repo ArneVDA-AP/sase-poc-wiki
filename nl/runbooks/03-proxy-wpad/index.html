@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2115,6 +2145,8 @@
       
         
       
+        
+      
     
     
     
@@ -2383,13 +2415,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-8-windows-proxy-configureren-op-mobile01" class="md-nav__link">
+  <a href="#stap-8-de-client-proxy-configureren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 8: Windows-proxy configureren op mobile01
+        Stap 8: De client-proxy configureren
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Stap 8: De client-proxy configureren">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primaire-methode-managed-devices-afgedwongen-pac-via-mdm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primaire methode (managed devices): afgedwongen PAC via MDM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback-methode-handmatig-windows-proxy-op-mobile01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fallback-methode (handmatig): Windows-proxy op mobile01
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2681,6 +2741,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2699,6 +2787,8 @@
       
         
           
+        
+      
         
       
         
@@ -3400,6 +3490,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3626,13 +3744,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-8-windows-proxy-configureren-op-mobile01" class="md-nav__link">
+  <a href="#stap-8-de-client-proxy-configureren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 8: Windows-proxy configureren op mobile01
+        Stap 8: De client-proxy configureren
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Stap 8: De client-proxy configureren">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primaire-methode-managed-devices-afgedwongen-pac-via-mdm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primaire methode (managed devices): afgedwongen PAC via MDM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback-methode-handmatig-windows-proxy-op-mobile01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fallback-methode (handmatig): Windows-proxy op mobile01
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3876,12 +4022,21 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 </blockquote>
 <p><strong>DNS-bereikbaarheidsvalkuil:</strong> een peer die de pop01-naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft, toont <code>Nameservers: 0/1 Available</code> in <code>netbird status</code>. Zorg dat de groep van de peer een ACL-pad naar <code>Core-Services</code> (pop01 Unbound) heeft.</p>
 <hr />
-<h2 id="stap-8-windows-proxy-configureren-op-mobile01">Stap 8: Windows-proxy configureren op mobile01<a class="headerlink" href="#stap-8-windows-proxy-configureren-op-mobile01" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Windows Instellingen → Netwerk en internet → Proxy:
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  Instellingen automatisch detecteren: Uit
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>  Installatiescript gebruiken: Aan
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  Scriptadres: http://wpad.sandbox.local/wpad.dat
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>  Handmatige proxy: Uit
+<h2 id="stap-8-de-client-proxy-configureren">Stap 8: De client-proxy configureren<a class="headerlink" href="#stap-8-de-client-proxy-configureren" title="Permanent link">&para;</a></h2>
+<h3 id="primaire-methode-managed-devices-afgedwongen-pac-via-mdm">Primaire methode (managed devices): afgedwongen PAC via MDM<a class="headerlink" href="#primaire-methode-managed-devices-afgedwongen-pac-via-mdm" title="Permanent link">&para;</a></h3>
+<p>Op Intune-enrolled apparaten wordt de PAC-URL vanuit de cloud gepusht in plaats van met de hand gezet, zodat de gebruiker hem niet kan wissen. Een Custom OMA-URI-profiel <code>2ITCSC1A-SASE-Proxy-PAC</code> stuurt de NetworkProxy-CSP aan (de Settings Catalog toont NetworkProxy niet, dus loopt het via OMA-URI):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./Vendor/MSFT/NetworkProxy/ProxySettingsPerUser   Integer  0
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>./Vendor/MSFT/NetworkProxy/AutoDetect             Integer  0
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>./Vendor/MSFT/NetworkProxy/SetupScriptUrl         String   http://wpad.sandbox.local/wpad.dat
+</code></pre></div>
+<p><code>ProxySettingsPerUser=0</code> maakt de PAC systeembreed, <code>AutoDetect=0</code> forceert de expliciete PAC in plaats van WPAD-discovery, en <code>SetupScriptUrl</code> wijst naar het Caddy PAC-doel uit Stap 5. Zet geen ProxyServer-node naast de PAC-URL; die combinatie is een bekende Intune-bug die het profiel sloopt. Zie <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a> voor het volledige profiel en de device-scoping.</p>
+<h3 id="fallback-methode-handmatig-windows-proxy-op-mobile01">Fallback-methode (handmatig): Windows-proxy op mobile01<a class="headerlink" href="#fallback-methode-handmatig-windows-proxy-op-mobile01" title="Permanent link">&para;</a></h3>
+<p>Voor een unmanaged of met de hand gebouwde testclient zet je dezelfde PAC-URL handmatig:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Windows Instellingen → Netwerk en internet → Proxy:
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  Instellingen automatisch detecteren: Uit
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>  Installatiescript gebruiken: Aan
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  Scriptadres: http://wpad.sandbox.local/wpad.dat
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  Handmatige proxy: Uit
 </code></pre></div>
 <p>De Caddy root-CA moet al zijn geïmporteerd in de Windows-trust store (gedaan tijdens NetBird-registratie).</p>
 <hr />
@@ -3893,41 +4048,45 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 - Organisatie: SASE PoC</p>
 <p><strong>Schakel SSL-inspectie in</strong> in Forward Proxy-instellingen met de nieuwe CA.</p>
 <p><strong>Werk de pre-auth include bij met volledige ssl-bump-parameters:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem dynamic_cert_mem_cache_size=10MB generate-host-certificates=on&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/usr/local/etc/squid/pre-auth/netbird-listener.conf
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>configctl<span class="w"> </span>proxy<span class="w"> </span>restart
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem dynamic_cert_mem_cache_size=10MB generate-host-certificates=on&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/usr/local/etc/squid/pre-auth/netbird-listener.conf
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>configctl<span class="w"> </span>proxy<span class="w"> </span>restart
 </code></pre></div>
 <p><strong>Verificatie:</strong> Browser toont certificaat met issuer <code>Organization (O): SASE PoC</code>.</p>
 <p><strong>Configureer de no-bump-lijst</strong> (GUI → Forward Proxy → SSL-inspectie):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>login.microsoftonline.com
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>.microsoft.com
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>.paypal.com
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>.apple.com
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>.banking.example.com
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>login.microsoftonline.com
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>.microsoftonline.com
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>.microsoft.com
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>enterpriseregistration.windows.net
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>.microsoftazuread-sso.com
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>.live.com
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>.paypal.com
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>.apple.com
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>.banking.example.com
 </code></pre></div>
 <blockquote>
-<p><strong>Valkuil: <code>login.microsoftonline.com</code> MOET in de no-bump-lijst staan.</strong> Als Squid de Microsoft-inlogpagina bumpt, wordt de OIDC-certificaatketen verbroken en mislukt Entra ID-authenticatie voor alle NetBird-clients.</p>
+<p><strong>Valkuil: de Microsoft control plane-set MOET in de no-bump-lijst staan.</strong> Als Squid een van deze bumpt, wordt de OIDC-certificaatketen verbroken en mislukken Entra ID-authenticatie, Intune-apparaatregistratie en de conform-apparaatcontrole voor alle NetBird-clients. <code>.microsoftonline.com</code> (met punt vooraan) dekt <code>device.login.microsoftonline.com</code>; <code>enterpriseregistration.windows.net</code> is de exacte apparaatregistratie-host; <code>.microsoftazuread-sso.com</code> is het cert-pinned seamless SSO-endpoint; <code>.live.com</code> is de consumer-auth-leg die tijdens de interactieve Entra-join wordt geraakt.</p>
 </blockquote>
 <hr />
 <h2 id="stap-10-url-filtering-inschakelen-met-ut1-toulouse">Stap 10: URL-filtering inschakelen met UT1 Toulouse<a class="headerlink" href="#stap-10-url-filtering-inschakelen-met-ut1-toulouse" title="Permanent link">&para;</a></h2>
 <p>Via GUI → Forward Proxy → Remote Access Control List:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Bestandsnaam:    UT1
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>URL:             https://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>SSL cert negeren: aangevinkt
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>Categorieën:     adult, malware, phishing, gambling
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Bestandsnaam:    UT1
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>URL:             https://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>SSL cert negeren: aangevinkt
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>Categorieën:     adult, malware, phishing, gambling
 </code></pre></div>
 <p>Handmatige zwarte lijst via Forward Proxy → Access Control List → Blacklist:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>gambling.com
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>.bet365.com
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>.pokerstars.com
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>gambling.com
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>.bet365.com
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>.pokerstars.com
 </code></pre></div>
 <p><strong>Verificatie:</strong> gebruik curl, niet een browser (browsercache maskeert blokkering):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">gambling</span><span class="p">.</span><span class="n">com</span> <span class="n">-v</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c"># Verwacht: HTTP/1.1 403 Forbidden, X-Squid-Error: ERR_ACCESS_DENIED 0</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">gambling</span><span class="p">.</span><span class="n">com</span> <span class="n">-v</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c"># Verwacht: HTTP/1.1 403 Forbidden, X-Squid-Error: ERR_ACCESS_DENIED 0</span>
 </code></pre></div>
 <hr />
 <h2 id="bekende-cosmetische-problemen">Bekende cosmetische problemen<a class="headerlink" href="#bekende-cosmetische-problemen" title="Permanent link">&para;</a></h2>
 <p><strong>OPNsense "Clear log" verwijdert het logbestand:</strong> de WebUI-knop verwijdert in plaats van afkapt. Squid stopt met loggen. Oplossing:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>&gt;<span class="w"> </span>/var/log/squid/access.log<span class="w">   </span><span class="c1"># afkappen zonder verwijderen</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>&gt;<span class="w"> </span>/var/log/squid/access.log<span class="w">   </span><span class="c1"># afkappen zonder verwijderen</span>
 </code></pre></div>
 <p>Zie <a href="../../findings/squid-clearlog-destroys-file/">Finding: Squid clearlog vernietigt bestand</a>.</p>
 <p><strong>Squid segfault bij stoppen is cosmetisch:</strong> treedt op tijdens de stopfase van <code>configctl proxy restart</code> op FreeBSD. De daemon herstart correct. Geen functionele impact.</p>

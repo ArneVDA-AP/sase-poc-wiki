@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2218,6 +2248,8 @@
       
         
       
+        
+      
     
     
     
@@ -2582,6 +2614,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2600,6 +2660,8 @@
       
         
           
+        
+      
         
       
         
@@ -3301,6 +3363,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3621,7 +3711,7 @@
 <h2 id="casb-three-layer-model">CASB three-layer model<a class="headerlink" href="#casb-three-layer-model" title="Permanent link">&para;</a></h2>
 <p>The CASB implementation spans three enforcement layers, each covering a different time horizon:</p>
 <ul>
-<li><strong>Layer 1 — Inline (Squid forward proxy):</strong> Identity-based URL filtering and DLP on every HTTP/HTTPS request. Squid queries the Identity Bridge for the user's persona group and applies differentiated policies (e.g., Studenten blocked on ChatGPT; Docenten allowed). Operational since V31.</li>
+<li><strong>Layer 1 — Inline (Squid forward proxy):</strong> Identity-based URL filtering and DLP on every HTTP/HTTPS request. Squid enforces two distinct layers in order. First, the UT1 Toulouse category blacklist is identity-blind: it denies a matching domain for <em>everyone</em> (student and teacher alike) before any persona rule runs — AI-chat domains such as <code>chatgpt.com</code>/<code>openai.com</code> sit in this blanket layer and are blocked for both personas. Second, the persona ACL queries the Identity Bridge for the user's persona group and applies differentiated policies on top. Persona differentiation is therefore only observable on a domain that the category blacklist does <em>not</em> already block: <code>deepai.org</code> is not in UT1, so Studenten are denied (403) while Docenten are allowed (200). Operational since V31.</li>
 <li><strong>Layer 2 — API-mode (Wazuh + M365 Management Activity API):</strong> Polls SharePoint/OneDrive audit events for policy violations (anonymous shares, external shares). Wazuh custom rules (100600-family) detect violations; Active Response scripts revoke sharing links via Microsoft Graph API. Operational since V39.</li>
 <li><strong>Layer 3 — Real-time event-driven (NATS + Control Daemon):</strong> All detection silos publish events to the NATS bus. The control daemon maintains per-peer threat scores with sliding-window decay. When a peer exceeds the quarantine threshold, it is removed from policy-bearing persona groups — deny-by-default blocks all connectivity. Operational since V35.</li>
 </ul>

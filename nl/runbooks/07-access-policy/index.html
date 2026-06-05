@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2115,6 +2145,8 @@
       
         
       
+        
+      
     
     
     
@@ -2787,6 +2819,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2805,6 +2865,8 @@
       
         
           
+        
+      
         
       
         
@@ -3506,6 +3568,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -4124,7 +4214,7 @@
 <blockquote>
 <p><strong>Valkuil: een getargete gebruiker zonder Intune-licentie toont "Not applicable", niet "Non-compliant".</strong> In Verslag40 rapporteerde het beleid <code>Total 0 / Not applicable</code> totdat de teststudent een A5-licentie kreeg (die Intune Plan 1 omvat). <code>docent1</code>/<code>admin1</code> werden bewust ongelicenseerd gelaten, wat de reden is dat Beleid 5 studenten-only is gescoped (B40.20).</p>
 <p><strong>Valkuil: een verlopen MDM-sessie blokkeert de evaluatie, en een reboot lost dit niet op.</strong> Na het licentiëren bleven <code>Device status → Total 0</code> en <code>Last contacted</code> bevroren, zelfs na een reboot. De MDM-sessie was verlopen, dus het apparaat kon niet authenticeren op het policy-evaluatiekanaal. Een verse gebruikersaanmelding (geen reboot) herstelde de evaluatie; mobile01 rapporteerde toen <strong>Compliant</strong> (B40.20).</p>
-<p><strong>Valkuil: de Microsoft control plane moet SSL-Bump omzeilen.</strong> Intune-apparaatregistratie en de conform-apparaatcontrole mislukken als Squid Microsoft-endpoints bumpt. Zorg dat <code>*.microsoftonline.com</code> en <code>enterpriseregistration.windows.net</code> op de Squid splice/no-bump-lijst staan (Runbook 03, B40.9/40.10).</p>
+<p><strong>Valkuil: de Microsoft control plane moet SSL-Bump omzeilen.</strong> Intune-apparaatregistratie en de conform-apparaatcontrole mislukken als Squid Microsoft-endpoints bumpt. Zorg dat <code>*.microsoftonline.com</code>, <code>enterpriseregistration.windows.net</code>, <code>.microsoftazuread-sso.com</code> en <code>.live.com</code> op de Squid splice/no-bump-lijst staan (Runbook 03, B40.9/40.10/44.13).</p>
 </blockquote>
 <p><strong>Controlepunt Gate 2:</strong></p>
 <ul>
