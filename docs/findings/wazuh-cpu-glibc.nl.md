@@ -20,7 +20,7 @@ Wanneer glibc of OpenSearch (de indexer-engine) probeert deze instructies te geb
 
 ## Oplossing / workaround
 
-Stel het QEMU CPU-model in op `host` in de GNS3 node-instellingen voor mgmt01:
+Stel het QEMU CPU-model in op `host` in de GNS3 node settings voor mgmt01:
 
 ```
 GNS3 → mgmt01 → Configure → QEMU → CPU model: host

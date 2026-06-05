@@ -53,7 +53,7 @@ De action leest `sase_groups` uit de metadata van de gebruiker en roept `setClai
 
 ### Fail-open ontwerp
 
-Beide actions hebben `allowed-to-fail: true`. Als een van beide actions faalt, slaagt de authenticatie alsnog: de gebruiker krijgt een geldig JWT maar zonder group claims. Dit is een bewuste ontwerpkeuze. Fail-open op de authenticatielaag is acceptabel omdat Gate 3 (de SWG-pijplijn op pop01) inhoudsinspectie afdwingt ongeacht groepslidmaatschap. Een gebruiker zonder group claims ontvangt het meest restrictieve standaardbeleid in plaats van volledig buitengesloten te worden.
+Beide actions hebben `allowed-to-fail: true`. Als een van beide actions faalt, slaagt de authenticatie alsnog: de gebruiker krijgt een geldig JWT maar zonder group claims. Dit is een bewuste ontwerpkeuze. Fail-open op de authenticatielaag is acceptabel omdat Gate 3 (de SWG-pijplijn op pop01) inhoudsinspectie afdwingt ongeacht groepslidmaatschap. Een gebruiker zonder group claims ontvangt de meest restrictieve default policy in plaats van volledig buitengesloten te worden.
 
 ---
 
@@ -69,7 +69,7 @@ De Entra ID-app-registratie waarnaar Zitadel federeert is sandbox-specifiek:
 | Client ID | `11803ee8-eb15-462c-a286-5415c17a29c6` |
 | Tenant ID | `23e9bcdc-5cb9-4867-9310-76cc0b462ddc` |
 
-Deze vervangt de gedeelde registratie `cebe0d74-be9f-49ac-9f35-65f11586c1bb` die door andere teams werd gebruikt. De sandbox-specifieke registratie voorkomt onderlinge interferentie met Conditional Access-beleid en tokenconfiguratie.
+Deze vervangt de gedeelde registratie `cebe0d74-be9f-49ac-9f35-65f11586c1bb` die door andere teams werd gebruikt. De sandbox-specifieke registratie voorkomt onderlinge interferentie met Conditional Access policy en tokenconfiguratie.
 
 ### Token Configuration (Entra ID-zijde)
 
@@ -84,7 +84,7 @@ De `cloud_displayname`-eigenschap moet in het manifest van de Entra ID-app-regis
 | [NetBird](netbird.md) | <- OIDC | Zitadel is de geconfigureerde OIDC-uitgever van NetBird; JWT group sync is afhankelijk van Action 2 |
 | Entra ID (aplab.be) | -> federatie | Externe IdP die Microsoft-identiteiten en groepslidmaatschap levert |
 | [Identity Bridge](identity-bridge.md) | indirect | Groepen propageren via de Zitadel -> NetBird -> Identity Bridge polling-keten |
-| [Squid](squid.md) | indirect | Eindconsument van identiteit: persona-groepen bepalen per-request filterbeleid |
+| [Squid](squid.md) | indirect | Eindconsument van identiteit: persona-groepen bepalen per-request filtering policy |
 
 ---
 

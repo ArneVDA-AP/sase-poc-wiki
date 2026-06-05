@@ -24,7 +24,7 @@ De implementatie hiervan zou vereisen: een IPsec-tunnel op VyOS, een NetBird-con
 |-------|-----|--------|
 | Implementeer IPsec + NetBird uCPE op VyOS | Voldoet aan originele Handboek-specificatie | Repliceert netwerkcentrische patronen die SASE juist vervangt; site-to-site-tunnel verleent impliciete subnettoegang, in strijd met Zero Trust; dupliceert de ZTNA-overlay |
 | Schrap SD-WAN-tests; schrijf sitepc01 individueel in bij NetBird | Sluit aan op Zero Trust-architectuur; consistent met Zscaler-model; eenvoudiger | F12/F13/F14 moeten als N.v.t. worden gemarkeerd in alle testmatrices |
-| Implementeer alleen QoS (zonder IPsec) | Gedeeltelijke naleving | QoS-configuratie op VyOS zonder bijbehorende IPsec-tunnel is contextloos en niet zinvol voor de PoC |
+| Implementeer alleen QoS (zonder IPsec) | Gedeeltelijke compliance | QoS-configuratie op VyOS zonder bijbehorende IPsec-tunnel is contextloos en niet zinvol voor de PoC |
 
 ## Beslissing
 

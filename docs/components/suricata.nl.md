@@ -21,7 +21,7 @@ Suricata draait in PCAP-opnamemodus op pop01 en leest ruwe frames van BPF-appara
 
 **Waarom niet wt0 (NetBird).** WireGuard is een Layer 3 VPN. Verkeer dat via wt0 wordt gerouteerd verschijnt vanuit het perspectief van BPF niet als inkomende frames op die interface. `tcpdump` op wt0 met een TCP-filter toont 0 paketten. Suricata op wt0 zou niets zien. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
 
-**IDS-modus, niet IPS:** Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge); virtio-NIC's in QEMU hebben geen van deze. Zelfs `sysctl dev.netmap.admode=2` (geëmuleerde Netmap-modus) loste dit niet op: geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete `pf divert-to`-firewallregels (`pfctl -s rules | grep divert` retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert-beleidstabel staat klaar voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie [Beslissing: IDS vs. IPS](../decisions/ids-vs-ips.md) en [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
+**IDS-modus, niet IPS:** Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge); virtio-NIC's in QEMU hebben geen van deze. Zelfs `sysctl dev.netmap.admode=2` (geëmuleerde Netmap-modus) loste dit niet op: geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete `pf divert-to`-firewallregels (`pfctl -s rules | grep divert` retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert policy table staat klaar voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie [Beslissing: IDS vs. IPS](../decisions/ids-vs-ips.md) en [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
 
 **RAM-vereiste:** Suricata + ClamAV + Squid gelijktijdig uitvoeren vereist **minimaal 8 GB RAM** op pop01. Hyperscan-patrooncompilatie van ET Open-regels piekt op ~4 GB RSS. Bij 6 GB beëindigt de OOM-killer services stilzwijgend zonder log output.
 
@@ -29,9 +29,9 @@ Suricata draait in PCAP-opnamemodus op pop01 en leest ruwe frames van BPF-appara
 
 ## Configuratie
 
-### GUI-instellingen
+### GUI settings
 
-Services → Intrusion Detection → Administratie → Instellingen:
+Services → Intrusion Detection → Administration → Settings:
 
 ```
 Ingeschakeld:       ✔
@@ -48,7 +48,7 @@ Thuisnetwerken:     10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10
 
 ### Regelsets
 
-Downloaden via Administratie → Download. Na het downloaden zijn regels **niet automatisch actief**: ga naar Administratie → Regels en schakel alle regelbestanden afzonderlijk in.
+Downloaden via Administration → Download. Na het downloaden zijn regels **niet automatisch actief**: ga naar Administration → Rules en schakel alle regelbestanden afzonderlijk in.
 
 | Regelset | Regels |
 |----------|--------|
@@ -57,9 +57,9 @@ Downloaden via Administratie → Download. Na het downloaden zijn regels **niet 
 | Abuse.ch SSL Fingerprint Blacklist | JA3 fingerprints |
 | Abuse.ch SSL IP Blacklist | bekende C2-IP's |
 
-### Gedifferentieerd drop/alert-beleid
+### Gedifferentieerd drop/alert policy
 
-Via Administratie → Beleid. Geconfigureerd en gereed voor IPS-activering:
+Via Administration → Policies. Geconfigureerd en gereed voor IPS-activering:
 
 | Actie | Categorieën |
 |-------|------------|

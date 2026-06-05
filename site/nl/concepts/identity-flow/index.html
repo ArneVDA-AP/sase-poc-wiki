@@ -2510,7 +2510,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2650,7 +2650,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3718,12 +3718,12 @@
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>  v
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>Squid (pop01, external_acl)
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>  | Per verzoek: helper queryet Identity Bridge met %SRC (overlay-IP)
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>  | Retourneert persona-groep -&gt; ACL evalueert per-groep-beleid
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>  | Retourneert persona-groep -&gt; ACL evalueert per-groep policies
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>  v
 <a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>Per-request identiteitsgebaseerde filtering
 <a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>  (bijv. Studenten geblokkeerd voor deepai.org; Docenten toegestaan)
 </code></pre></div>
-<p>Elke hop transformeert de identiteitsrepresentatie: geprefixte weergavenamen worden schone namen, schone namen worden JWT-claims, JWT-claims worden auto-groups, auto-groups worden gecachte IP-naar-groep-mappings, en gecachte mappings worden ACL-beslissingen. Een fout op eender welke hop verbreekt de keten, maar het fail-open ontwerp zorgt ervoor dat een gebroken identiteitsketen nooit authenticatie blokkeert, alleen de toegang beperkt tot het meest restrictieve standaardbeleid.</p>
+<p>Elke hop transformeert de identiteitsrepresentatie: geprefixte weergavenamen worden schone namen, schone namen worden JWT-claims, JWT-claims worden auto-groups, auto-groups worden gecachte IP-naar-groep-mappings, en gecachte mappings worden ACL-beslissingen. Een fout op eender welke hop verbreekt de keten, maar het fail-open ontwerp zorgt ervoor dat een gebroken identiteitsketen nooit authenticatie blokkeert, alleen de toegang beperkt tot de meest restrictieve default policy.</p>
 <h2 id="groupsync-sync-mechanisme-en-pad-b">GroupSync: sync-mechanisme en Pad B<a class="headerlink" href="#groupsync-sync-mechanisme-en-pad-b" title="Permanent link">&para;</a></h2>
 <p><strong>Sync-mechanisme (JWT group sync).</strong> NetBird Community Edition kan de IdP Sync- (Graph API-polling) of SCIM-provisioning-mechanismen niet gebruiken (beide vereisen een NetBird Cloud- of Commercial License). Het enige mechanisme dat in CE beschikbaar is, is <strong>JWT group sync</strong>. NetBird leest de <code>groups</code>-claim uit het ID-token bij elke gebruikerslogin en maakt/wijst dienovereenkomstig auto-groups toe. De inherente beperking is dat groepslidmaatschap alleen bij login wordt bijgewerkt; er is geen achtergrondsynchronisatie. Als een gebruiker aan een nieuwe Entra ID-groep wordt toegevoegd, is de wijziging pas zichtbaar in de stack bij het volgende OIDC-authenticatie-event van die gebruiker.</p>
 <p><strong>Prefixafhandeling, Pad B (geïmplementeerd).</strong> Entra ID-groepsnamen dragen een verplicht <code>2ITCSC1A-</code>-teamprefix (bijv. <code>2ITCSC1A-Studenten</code>). Omdat <code>cloud_displayname</code> aan de groups claim is gekoppeld (zie <a href="../../runbooks/08-groupsync/">Runbook 08</a>), stuurt de claim de <em>weergavenaam-string</em> van elke groep uit in plaats van zijn ObjectID-GUID. Er werden twee paden overwogen:</p>
@@ -3766,27 +3766,27 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Totaal slechtste geval:</strong> volgende login + 30s + volgend verzoek. In de praktijk betekent dit dat een wijziging in groepslidmaatschap vereist dat de gebruiker opnieuw authenticeert bij NetBird voordat de nieuwe groep effect heeft in het filterbeleid van Squid. Voor beveiligingskritieke groepsverwijderingen (bijv. het intrekken van admin-toegang) is deze vertraging significant.</p>
+<p><strong>Totaal slechtste geval:</strong> volgende login + 30s + volgend verzoek. In de praktijk betekent dit dat een wijziging in groepslidmaatschap vereist dat de gebruiker opnieuw authenticeert bij NetBird voordat de nieuwe groep effect heeft in de filtering policies van Squid. Voor beveiligingskritieke groepsverwijderingen (bijv. het intrekken van admin-toegang) is deze vertraging significant.</p>
 <h2 id="fail-open-ontwerp">Fail-open ontwerp<a class="headerlink" href="#fail-open-ontwerp" title="Permanent link">&para;</a></h2>
 <p>De identiteitsketen is ontworpen om op elke hop fail-open te zijn in plaats van toegang te blokkeren:</p>
 <ul>
 <li><strong>Zitadel Actions:</strong> <code>allowed-to-fail: true</code>, authenticatie slaagt zonder group claims</li>
-<li><strong>Identity Bridge:</strong> retourneert "unknown" voor niet-oplosbare IP's; Squid past standaard restrictief beleid toe</li>
+<li><strong>Identity Bridge:</strong> retourneert "unknown" voor niet-oplosbare IP's; Squid past standaard een restrictieve policy toe</li>
 <li><strong>Squid external_acl:</strong> valt terug op niet-identiteitsgebaseerde URL-filtering wanneer Identity Bridge onbereikbaar is</li>
 </ul>
-<p>Dit is bewust: Gate 3 (SWG-pijplijn: inhoudsinspectie, malwarescanning, DLP) werkt onafhankelijk van identiteit. Een gebruiker zonder group claims krijgt nog steeds volledige inhoudsinspectie; deze heeft alleen geen toegang tot groepsspecifiek beleid (bijv. alleen-Docenten URL-toelatingen). Beveiliging is gelaagd, niet afhankelijk van een enkele identiteitsketen.</p>
+<p>Dit is bewust: Gate 3 (SWG-pijplijn: inhoudsinspectie, malwarescanning, DLP) werkt onafhankelijk van identiteit. Een gebruiker zonder group claims krijgt nog steeds volledige inhoudsinspectie; deze heeft alleen geen toegang tot groepsspecifieke policies (bijv. alleen-Docenten URL-toelatingen). Beveiliging is gelaagd, niet afhankelijk van een enkele identiteitsketen.</p>
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong><a href="../../components/zitadel/">Zitadel</a>:</strong> OIDC-broker, Action 1 (allowlist-mapt de groeps-weergavenaam-string naar de schone naam) en Action 2 (JWT group injection)</li>
 <li><strong><a href="../../components/netbird/">NetBird</a>:</strong> JWT group sync leest de <code>groups</code>-claim en maakt auto_groups per persona aan</li>
 <li><strong><a href="../../components/identity-bridge/">Identity Bridge</a>:</strong> pollt NetBird API, bouwt overlay IP-naar-groep-cache, bedient Squid-lookups</li>
-<li><strong><a href="../../components/squid/">Squid</a>:</strong> external_acl queryet Identity Bridge per verzoek, dwingt persona-gebaseerd filterbeleid af</li>
-<li><strong><a href="../../decisions/ca-posture-hybrid/">Entra ID CA</a>:</strong> Gate 1 Conditional Access-beleid geevalueerd tijdens de OIDC-stroom</li>
+<li><strong><a href="../../components/squid/">Squid</a>:</strong> external_acl queryet Identity Bridge per verzoek, dwingt persona-gebaseerde filtering policies af</li>
+<li><strong><a href="../../decisions/ca-posture-hybrid/">Entra ID CA</a>:</strong> Gate 1 Conditional Access policies geevalueerd tijdens de OIDC-stroom</li>
 </ul>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
 <p><strong>Identiteit vs authenticatie:</strong> Authenticatie (bewijzen wie je bent) vindt eenmalig plaats tijdens de OIDC-loginstroom via Zitadel en Entra ID. Identiteitspropagatie (dat bewijs door de stack transporteren zodat downstream-systemen toegangsbeslissingen kunnen nemen) vindt continu plaats via de polling- en cachingketen. Een gebruiker kan geauthenticeerd zijn zonder dat de identiteit gepropageerd is; dit is de fail-open toestand.</p>
 <p><strong>JWT group sync vs IdP Sync:</strong> IdP Sync (en SCIM) pollen of pushen groepslidmaatschap op de achtergrond (ze werken bij zelfs wanneer gebruikers niet actief inloggen), maar beide vereisen een NetBird Cloud- of Commercial License, dus geen van beide is beschikbaar in de hier gebruikte Community Edition. JWT group sync, het enige in CE beschikbare mechanisme, is afhankelijk van het OIDC-token dat bij het inloggen wordt uitgegeven, dus groepswijzigingen propageren pas wanneer de gebruiker opnieuw authenticeert. Daarnaast verwijst <strong>Pad A vs Pad B</strong> naar prefixafhandeling <em>binnen</em> JWT group sync (Pad B strijkt het <code>2ITCSC1A-</code>-prefix weg, zie boven), niet naar de keuze van sync-mechanisme.</p>
-<p><strong>Fail-open vs fail-closed:</strong> De identiteitsketen faalt open by design. Dit contrasteert met de inhoudsinspectieketen (Gate 3), waar ClamAV-scanning niet wordt omzeild wanneer de service uitvalt. De rationale: identiteitscontroles bepalen <em>welk</em> beleid van toepassing is, terwijl inhoudsinspectie baseline beveiliging biedt voor <em>al het</em> verkeer ongeacht identiteit.</p>
+<p><strong>Fail-open vs fail-closed:</strong> De identiteitsketen faalt open by design. Dit contrasteert met de inhoudsinspectieketen (Gate 3), waar ClamAV-scanning niet wordt omzeild wanneer de service uitvalt. De rationale: identiteitscontroles bepalen <em>welke</em> policy van toepassing is, terwijl inhoudsinspectie baseline beveiliging biedt voor <em>al het</em> verkeer ongeacht identiteit.</p>
 <h2 id="bronnen">Bronnen<a class="headerlink" href="#bronnen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>18_mei_SASE_PoC_Addendum_H_Identity_Bridge_v1.md</code> (Identity Bridge-architectuur)</li>

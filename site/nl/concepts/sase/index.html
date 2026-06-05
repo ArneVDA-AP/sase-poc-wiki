@@ -2488,7 +2488,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2628,7 +2628,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3642,7 +3642,7 @@
 - <strong>Inspectie</strong> plaatsvindt op pop01 (de PoP/edge-node) bij elke aanvraag, niet aan een datacentervergrenzing</p>
 <p><strong>Control plane / Data plane-splitsing</strong> (een bewuste architecturale keuze):
 - <strong>mgmt01</strong> = management plane: distribueert configuratie (WPAD), beheert identiteit (Zitadel/Entra ID), aggregeert threat intelligence (ioc2rpz), draait Docker-services
-- <strong>pop01</strong> = data plane: inspecteert al het verkeer (Squid, ClamAV, Suricata), handhaaft DNS-beleid (Unbound RPZ), termineert WireGuard-tunnels (wt0)</p>
+- <strong>pop01</strong> = data plane: inspecteert al het verkeer (Squid, ClamAV, Suricata), handhaaft DNS policy (Unbound RPZ), termineert WireGuard-tunnels (wt0)</p>
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3712,7 +3712,7 @@
 <p>De CASB-implementatie omvat drie handhavingslagen, elk voor een andere tijdshorizon:</p>
 <ul>
 <li><strong>Laag 1, Inline (Squid forward proxy):</strong> Identiteitsgebaseerde URL-filtering en DLP op elk HTTP/HTTPS-verzoek. Squid handhaaft twee onderscheiden lagen in volgorde. Eerst is er de UT1 Toulouse-categorieblacklist, die identiteitsblind is: die weigert een overeenkomend domein voor <em>iedereen</em> (student en docent gelijk) voordat er een persona-regel draait. AI-chatdomeinen zoals <code>chatgpt.com</code>/<code>openai.com</code> zitten in deze blanket-laag en worden voor beide persona's geblokkeerd. Daarbovenop queryet de persona-ACL de Identity Bridge voor de persona-groep van de gebruiker en past gedifferentieerde policies toe. Persona-differentiatie is daarom alleen zichtbaar op een domein dat de categorieblacklist niet al blokkeert: <code>deepai.org</code> zit niet in UT1, dus Studenten worden geweigerd (403) terwijl Docenten toegestaan worden (200). Operationeel sinds V31.</li>
-<li><strong>Laag 2, API-mode (Wazuh + M365 Management Activity API):</strong> Pollt SharePoint/OneDrive audit-events op beleidsschendingen (anonieme shares, externe shares). Wazuh custom rules (100600-familie) detecteren schendingen; Active Response scripts intrekken deellinks via Microsoft Graph API. Operationeel sinds V39.</li>
+<li><strong>Laag 2, API-mode (Wazuh + M365 Management Activity API):</strong> Pollt SharePoint/OneDrive audit-events op policy violations (anonieme shares, externe shares). Wazuh custom rules (100600-familie) detecteren schendingen; Active Response scripts intrekken deellinks via Microsoft Graph API. Operationeel sinds V39.</li>
 <li><strong>Laag 3, Real-time event-driven (NATS + Control Daemon):</strong> Alle detectiesilo's publiceren events naar de NATS-bus. De control daemon houdt per peer een threat score bij met sliding-window decay. Wanneer een peer de quarantainedrempel overschrijdt, wordt deze uit de policy-bearing persona-groepen verwijderd; deny-by-default blokkeert alle connectiviteit. Operationeel sinds V35.</li>
 </ul>
 <p>Zie: <a href="../../decisions/casb-three-layers/">Beslissing: CASB drie lagen</a></p>

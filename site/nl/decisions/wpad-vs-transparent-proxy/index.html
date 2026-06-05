@@ -2477,7 +2477,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2617,7 +2617,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3658,7 +3658,7 @@
 <p>WPAD/PAC is ook het architecturaal correcte patroon voor een SASE-stack: het commerciële equivalent (Zscaler Client Connector) distribueert proxyconfiguratie naar de browser op precies dezelfde manier.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>mobile01 moet worden geconfigureerd met de PAC-bestand URL (handmatig via Windows-instellingen → Proxy → "Installatiescript gebruiken")</li>
+<li>mobile01 moet worden geconfigureerd met de PAC-bestand URL (handmatig via Windows Settings → Proxy → "Use setup script")</li>
 <li>Niet-browserapplicaties die de systeemproxyinstelling negeren, omzeilen Squid (gedeeltelijk gecompenseerd door Suricata op vtnet0)</li>
 <li>Squid moet luisteren op het NetBird overlay-IP (<code>100.70.154.79:3128</code>) via pre-auth include, niet via de GUI</li>
 <li>Caddy op mgmt01 serveert het PAC-bestand; de <code>sandbox.local</code> NetBird Custom DNS Zone routeert de query naar <code>wpad.sandbox.local</code> naar pop01 Unbound (de NetBird primary nameserver), die die resolvet naar de Caddy-host op mgmt01</li>

@@ -5,7 +5,7 @@ tags: [ioc2rpz, dns, rpz, bind, unbound, docker, opnsense, sase, network]
 
 # ioc2rpz + BIND + Unbound: DNS-threat intelligence
 
-**Rol:** Proactieve DNS-blokkering van bekende kwaadaardige domeinen. ioc2rpz aggregeert threat intelligence-feeds (URLhaus, ThreatFox) in een RPZ-zone; BIND fungeert als TSIG-geauthenticeerde intermediary; Unbound dwingt het RPZ-beleid af voor alle DNS-query's van overlay-clients en DC-LAN-nodes.  
+**Rol:** Proactieve DNS-blokkering van bekende kwaadaardige domeinen. ioc2rpz aggregeert threat intelligence-feeds (URLhaus, ThreatFox) in een RPZ-zone; BIND fungeert als TSIG-geauthenticeerde intermediary; Unbound dwingt de RPZ policy af voor alle DNS-query's van overlay-clients en DC-LAN-nodes.  
 **Status:** ✅ Volledig operationeel (71.767 RPZ-records uit twee feeds, gevalideerd vanaf drie testpunten).  
 **Configuratielocaties:**
 - ioc2rpz: `/opt/ioc2rpz/` op mgmt01 (Docker)
@@ -110,11 +110,11 @@ Zie [Bevinding: ioc2rpz GUI JS-bug](../findings/ioc2rpz-gui-js-bug.md).
 
 ### BIND (os-bind) op pop01
 
-Plugin installeren: Systeem → Firmware → Plugins → `os-bind`.
+Plugin installeren: System → Firmware → Plugins → `os-bind`.
 
-**ACL:** Maak `loopback_only` (`127.0.0.1/32`) aan vóór het configureren van algemene instellingen.
+**ACL:** Maak `loopback_only` (`127.0.0.1/32`) aan vóór het configureren van General Settings.
 
-**Algemene instellingen:**
+**General Settings:**
 - Listen IPs: `127.0.0.1`, Listen Port: `53530`
 - DNS-doorstuurservers: (leeg), Recursie: geen, Transfer toestaan: `loopback_only`
 
@@ -209,7 +209,7 @@ DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via `security.al
 
 ## Bekende problemen / valkuilen
 
-**iptables FORWARD-regelvolgorde:** gebruik bij het toevoegen van poortdoorsturingen voor GUI-toegang op de GNS3-host altijd `-I FORWARD 1`. Toevoegen (`-A`) plaatst de regel na de REJECT-keten van libvirt. Zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
+**iptables FORWARD-regelvolgorde:** gebruik bij het toevoegen van port forwards voor GUI-toegang op de GNS3-host altijd `-I FORWARD 1`. Toevoegen (`-A`) plaatst de regel na de REJECT-keten van libvirt. Zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
 
 **ioc2rpz.gui JS-aanmeldbug:** upstream-bug in `io2auth.js`. Pas de sed-correctie toe na elke containeropbouw. Zie [Bevinding: ioc2rpz GUI JS-bug](../findings/ioc2rpz-gui-js-bug.md).
 
@@ -217,7 +217,7 @@ DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via `security.al
 
 **OPNsense Unbound WebUI toont "handmatige overschrijvingen"-waarschuwing.** Dit is verwacht en onschadelijk. Het rpz.conf overschrijft module-config, wat OPNsense detecteert. Documenteer dit in operationele runbooks zodat beheerders hier niet door verrast worden.
 
-**TSIG-sleutel moet gekoppeld zijn aan RPZ-zone in ioc2rpz:** de sleutel moet expliciet worden geselecteerd in GUI → Configuratie → RPZ-zones. Als leeg gelaten (`tkeys: [""]`), ontvangt BIND TSIG-fouten (`tsig indicates error`) bij elke AXFR-poging.
+**TSIG-sleutel moet gekoppeld zijn aan RPZ-zone in ioc2rpz:** de sleutel moet expliciet worden geselecteerd in GUI → Configuration → RPZ-zones. Als leeg gelaten (`tkeys: [""]`), ontvangt BIND TSIG-fouten (`tsig indicates error`) bij elke AXFR-poging.
 
 ---
 

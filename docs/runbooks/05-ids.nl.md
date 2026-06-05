@@ -25,7 +25,7 @@ tags: [runbook, suricata, ids, hyperscan]
 
 > **Valkuil: Dit moet vóór alles anders gebeuren.** Bij 4 GB (of zelfs 6 GB) crashen ClamAV en Suricata stilzwijgend via FreeBSD's OOM-killer; er worden geen logboekregels geschreven. ClamAV gebruikt ~1,2 GB, Suricata ~760 MB na Hyperscan-compilatie (piekt op ~4 GB tijdens compilatie), Squid ~400 MB. Samen overschrijden ze 6 GB.
 
-Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (`shutdown -h now`), verander het RAM in GNS3 node-instellingen, herstart.
+Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (`shutdown -h now`), verander het RAM in GNS3 node settings, herstart.
 
 **Verificatie na opstarten:**
 
@@ -67,7 +67,7 @@ Thuisnetwerken:    10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10
 
 > **Valkuil: Promiscuous mode is essentieel op vtnet1 (LAN).** Zonder dit ziet de NIC alleen frames die bestemd zijn voor het MAC-adres van pop01. Verkeer van dc01 bestemd voor andere bestemmingen zou onzichtbaar zijn.
 
-**Waarom IDS en niet IPS:** Netmap IPS vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel `igb`, `ixgbe`). De virtio-NIC's in QEMU/GNS3 hebben geen Netmap-stuurprogramma; alle worker-threads verwerken nul pakketten. Het drop/alert-beleid is geconfigureerd en gereed voor IPS-activering op fysieke hardware met compatibele NIC's. Zie [Beslissing: IDS vs IPS](../decisions/ids-vs-ips.nl.md).
+**Waarom IDS en niet IPS:** Netmap IPS vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel `igb`, `ixgbe`). De virtio-NIC's in QEMU/GNS3 hebben geen Netmap-stuurprogramma; alle worker-threads verwerken nul pakketten. Het drop/alert policy is geconfigureerd en gereed voor IPS-activering op fysieke hardware met compatibele NIC's. Zie [Beslissing: IDS vs IPS](../decisions/ids-vs-ips.nl.md).
 
 ---
 
@@ -86,15 +86,15 @@ Via Administration → Download, selecteer en klik op "Download & Update Rules":
 
 ---
 
-## Stap 4: Gedifferentieerd beleid aanmaken
+## Stap 4: Gedifferentieerd policy aanmaken
 
 Via Administration → Policies:
 
-**Beleid 1: Drop (hoge betrouwbaarheid, altijd kwaadaardig):**
+**Policy 1: Drop (hoge betrouwbaarheid, altijd kwaadaardig):**
 - Categorieën: emerging-malware, emerging-exploit, emerging-worm, emerging-botcc, emerging-botcc.portgrouped, compromised, drop, ciarmy, Threatview_CS-C2, alle Abuse.ch-feeds
 - Actie: Drop, Nieuwe actie: Drop
 
-**Beleid 2: Alert (risico op valse positieven):**
+**Policy 2: Alert (risico op valse positieven):**
 - Categorieën: tor, emerging-info, emerging-policy, emerging-dns, emerging-web_client, emerging-web_server, emerging-misc, emerging-games, emerging-chat, emerging-p2p, emerging-attack_response
 - Actie: Alert, Nieuwe actie: Alert
 
@@ -206,7 +206,7 @@ Controleer OPNsense WebUI → Services → Intrusion Detection → Alerts: zowel
 - [ ] SSE4.2 bevestigd, Hyperscan geselecteerd
 - [ ] `100.64.0.0/10` in HOME_NET
 - [ ] 79.620+ regels gedownload EN ingeschakeld
-- [ ] Drop/Alert-beleid geconfigureerd
+- [ ] Drop/Alert policy geconfigureerd
 - [ ] `procstat -f <PID> | grep bpf` toont bpf0 en bpf1
 - [ ] vtnet0-meldingen aanwezig (SID 2100498 of vergelijkbaar)
 - [ ] vtnet1-meldingen aanwezig (dc01-verkeer)

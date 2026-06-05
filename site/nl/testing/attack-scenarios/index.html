@@ -2538,7 +2538,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2678,7 +2678,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3775,7 +3775,7 @@
 
 
 <h1 id="aanvals-bypass-scenarios-demovalidatie">Aanvals- &amp; bypass-scenario's (demovalidatie)<a class="headerlink" href="#aanvals-bypass-scenarios-demovalidatie" title="Permanent link">&para;</a></h1>
-<p>Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen uit te voeren die de stack moet detecteren en blokkeren. Elk scenario verwijst naar een of meer acceptatietests (F1–F15, T-A1–T-A13) beschreven in <a href="../acceptance-tests/">Acceptatietests</a>.</p>
+<p>Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit te voeren die de stack moet detecteren en blokkeren. Elk scenario verwijst naar een of meer acceptatietests (F1–F15, T-A1–T-A13) beschreven in <a href="../acceptance-tests/">Acceptatietests</a>.</p>
 <hr />
 <h2 id="scenarios-per-pijler">Scenario's per pijler<a class="headerlink" href="#scenarios-per-pijler" title="Permanent link">&para;</a></h2>
 <h3 id="ztna-identiteit-tunnel">ZTNA: Identiteit &amp; tunnel<a class="headerlink" href="#ztna-identiteit-tunnel" title="Permanent link">&para;</a></h3>
@@ -3806,10 +3806,10 @@
 </tr>
 <tr>
 <td>A3</td>
-<td>Niet-conform apparaat logt in</td>
+<td>Non-compliant device logt in</td>
 <td>Conditional Access blokkeert (report-only tot demo)</td>
 <td>F3</td>
-<td>Apparaatcompliance aanpassen in Intune</td>
+<td>device compliance aanpassen in Intune</td>
 </tr>
 </tbody>
 </table>
@@ -3891,14 +3891,14 @@
 <tr>
 <td>C1</td>
 <td>Student surft naar deepai.org</td>
-<td>Geblokkeerd, 403 (Studenten-beleid)</td>
+<td>Geblokkeerd, 403 (Studenten-policy)</td>
 <td>CASB L1</td>
 <td><code>curl.exe -x ... https://deepai.org</code> als student</td>
 </tr>
 <tr>
 <td>C2</td>
 <td>Docent surft naar deepai.org</td>
-<td>Toegestaan, 200 (Docenten-beleid)</td>
+<td>Toegestaan, 200 (Docenten-policy)</td>
 <td>CASB L1</td>
 <td>Zelfde URL als docentidentiteit</td>
 </tr>
@@ -4027,7 +4027,7 @@
 <h2 id="belangrijke-testopmerkingen">Belangrijke testopmerkingen<a class="headerlink" href="#belangrijke-testopmerkingen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Alle proxytests vanaf Windows vereisen <code>--ssl-no-revoke</code> wegens Schannel CRL-controlefout op SASE-PoC-CA (zie <a href="../../findings/curl-ssl-no-revoke/">Finding: curl --ssl-no-revoke</a>).</li>
-<li>ICMP-ping naar overlay-peers faalt by design onder het ALLOW-only beleidsmodel. Gebruik altijd poortgebaseerde tests.</li>
+<li>ICMP-ping naar overlay-peers faalt by design onder het ALLOW-only policy model. Gebruik altijd poortgebaseerde tests.</li>
 <li>Elke Suricata SID vuurt eenmaal per TCP-flow door connection pooling (zie <a href="../../findings/suricata-connection-pooling/">Finding: Suricata connection pooling</a>).</li>
 </ul>
 <hr />

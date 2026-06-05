@@ -2383,7 +2383,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2523,7 +2523,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3619,7 +3619,7 @@
 <p>De Wazuh indexer vereist de glibc x86-64-v2 instructieset (Haswell en later). Dit omvat SSE4.2, POPCNT en gerelateerde instructies. Het standaard QEMU <code>kvm64</code> CPU-model maskeert deze instructies: het emuleert een generieke x86-64 baseline-CPU die de vereiste feature flags mist.</p>
 <p>Wanneer glibc of OpenSearch (de indexer-engine) probeert deze instructies te gebruiken, genereert de CPU een illegal instruction-exceptie en wordt het proces beëindigd.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
-<p>Stel het QEMU CPU-model in op <code>host</code> in de GNS3 node-instellingen voor mgmt01:</p>
+<p>Stel het QEMU CPU-model in op <code>host</code> in de GNS3 node settings voor mgmt01:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>GNS3 → mgmt01 → Configure → QEMU → CPU model: host
 </code></pre></div>
 <p>Het <code>host</code>-model geeft de fysieke host-CPU-features door aan de gast-VM, waardoor alle moderne instructiesets beschikbaar worden. Na het wijzigen van deze instelling en het herstarten van het node startte de Wazuh indexer succesvol.</p>

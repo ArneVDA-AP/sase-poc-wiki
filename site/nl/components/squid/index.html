@@ -2549,7 +2549,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2689,7 +2689,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3811,7 +3811,7 @@
 <h2 id="werking-in-deze-stack">Werking in deze stack<a class="headerlink" href="#werking-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>Squid draait in <strong>expliciete proxymodus</strong>: clients worden via een PAC-bestand geconfigureerd om hun HTTP/HTTPS-verkeer rechtstreeks naar Squid te sturen op <code>100.70.154.79:3128</code> (de NetBird-overlay-IP van pop01). Dit is het tegenovergestelde van een transparante proxy, waarbij de firewall verkeer stilzwijgend onderschept.</p>
 <p>De keuze voor expliciete modus is niet optioneel: transparante proxy via <code>pf rdr</code> kan geen via WireGuard gerouteerd verkeer op de <code>wt0</code>-interface onderscheppen. Zie <a href="../../findings/wt0-pf-rdr-limitation/">Bevinding: wt0 pf rdr-beperking</a> en <a href="../../decisions/wpad-vs-transparent-proxy/">Beslissing: WPAD/PAC vs. transparante proxy</a>.</p>
-<p><strong>WPAD/PAC-distributie:</strong> Het PAC-bestand wordt gehost door <a href="../caddy/">Caddy</a> op mgmt01 via <code>http://wpad.sandbox.local/wpad.dat</code>. Clients ontdekken dit via de <code>sandbox.local</code> NetBird Custom DNS Zone, die de query naar <code>wpad.sandbox.local</code> naar pop01 Unbound routeert (de NetBird primary nameserver); Unbound resolvet die naar de Caddy-host op het overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows-instellingen → Proxy → "Installatiescript gebruiken".</p>
+<p><strong>WPAD/PAC-distributie:</strong> Het PAC-bestand wordt gehost door <a href="../caddy/">Caddy</a> op mgmt01 via <code>http://wpad.sandbox.local/wpad.dat</code>. Clients ontdekken dit via de <code>sandbox.local</code> NetBird Custom DNS Zone, die de query naar <code>wpad.sandbox.local</code> naar pop01 Unbound routeert (de NetBird primary nameserver); Unbound resolvet die naar de Caddy-host op het overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows Settings → Proxy → "Use setup script".</p>
 <p><strong>SSL Bump:</strong> Squid decrypteert HTTPS-verkeer met een zelfondertekend CA-certificaat (<code>SASE-PoC-CA</code>, geïnstalleerd in de trust store van de client). Dit maakt het mogelijk dat de ICAP pipeline HTTPS-inhoud inspecteert. Zonder SSL Bump zien ClamAV en de Python DLP-server alleen versleutelde bytes.</p>
 <p><strong>URL-filtering:</strong> Twee blokkeerlijstmechanismen worden uitgevoerd vóór elke <code>allow</code>-regel (eerste overeenkomst wint):
 1. Handmatige blokkeerlijst: <code>gambling.com</code>, <code>.bet365.com</code>, <code>.pokerstars.com</code>
@@ -3833,7 +3833,7 @@
 <p><code>100.64.0.0/10</code> (NetBird CGNAT-bereik) moet worden toegevoegd aan de Squid-ACL via GUI → Forward Proxy → Access Control List → Allowed Subnets. Zonder dit ontvangen alle NetBird-clients <code>TCP_DENIED/403</code>.</p>
 <h3 id="no-bump-lijst">No-bump-lijst<a class="headerlink" href="#no-bump-lijst" title="Permanent link">&para;</a></h3>
 <p>Sites uitgesloten van SSL-inspectie (geconfigureerd via GUI):</p>
-<p>De Microsoft control plane-set: deze moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de conform-apparaatcontrole:
+<p>De Microsoft control plane-set: deze moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de compliant-device check:
 - <code>login.microsoftonline.com</code> (<strong>verplicht</strong>): beschermt de Entra ID OIDC-flow. Als Squid de Microsoft-inlogpagina bumpt, mislukt NetBird-authenticatie voor alle clients.
 - <code>.microsoftonline.com</code>: dekt <code>device.login.microsoftonline.com</code> en de overige auth-subdomeinen die de kale FQDN niet dekt.
 - <code>.microsoft.com</code>: dekt de <code>manage.microsoft.com</code>-enrollmentfamilie.
@@ -3906,7 +3906,7 @@
 <p><strong>Browsercache maskeert URL-filtering:</strong> gebruik bij het testen van URL-blokkades altijd <code>curl.exe -x http://100.70.154.79:3128 http://target.com</code> in plaats van een browser. De browsercache kan een gecachte response leveren ook nadat de URL geblokkeerd is.</p>
 <p><strong><code>squid -k parse</code> segfault aan het einde.</strong> De parse-uitvoer vóór de crash is geldig en nuttig voor diagnose. De segfault is een OPNsense/FreeBSD-eigenaardigheid, geen configuratiefout.</p>
 <p><strong>StevenBlack-hostsformaat is incompatibel:</strong> OPNsense Remote ACL's verwachten een tar.gz-archief in Squid ACL-formaat, geen hostsbestand. Gebruik UT1 Toulouse in plaats daarvan. Zie <a href="../../findings/stevenblack-incompatible/">Bevinding: StevenBlack incompatibel</a>.</p>
-<p><strong><code>--management-url</code> is verplicht voor zelf-gehoste NetBird:</strong> bij het installeren van de NetBird-agent op pop01 moet de <code>--management-url</code>-vlag naar de zelf-gehoste managementserver wijzen. Zonder deze valt de client terug op het NetBird-cloud-managementeindpunt en treedt hij nooit toe tot de sandbox-overlay.</p>
+<p><strong><code>--management-url</code> is verplicht voor zelf-gehoste NetBird:</strong> bij het installeren van de NetBird-agent op pop01 moet de <code>--management-url</code>-vlag naar de zelf-gehoste managementserver wijzen. Zonder deze valt de client terug op het NetBird-cloud-management-endpoint en treedt hij nooit toe tot de sandbox-overlay.</p>
 <p><strong>OPNsense-GUI kan Squid niet aan <code>wt0</code> binden:</strong> de <code>wt0</code>-interface heeft <code>IPv4 Configuration Type: None</code> omdat het IP door WireGuard wordt beheerd, niet door de DHCP/statische stack van OPNsense. De Squid-GUI-dropdown toont alleen interfaces met door OPNsense beheerde IP's. Daarom is het pre-auth include-bestand nodig voor de overlay-listener.</p>
 <p><strong>Handboek-NAT-regel (poort 443 → 3129) is irrelevant.</strong> Het handboek beschrijft een NAT-regel voor poort 443 → 3129. Dit is alleen nodig voor transparante proxymodus, waarbij de firewall uitgaand verkeer onderschept. In expliciete proxymodus stuurt de client een <code>CONNECT</code>-verzoek rechtstreeks naar Squid op poort 3128. Er is geen DNAT vereist.</p>
 <hr />

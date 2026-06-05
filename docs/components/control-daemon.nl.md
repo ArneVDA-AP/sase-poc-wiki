@@ -25,7 +25,7 @@ De control daemon is de real-time handhavingsmotor. Het abonneert zich op `secur
 - **Quarantainemechanisme:** Strip persona-groepen van peer → deny-by-default. NIET via een aparte deny-groep.
 - **Dequarantaine:** Herstelt originele groepen vanuit Redis-backup. Opgelost: NetBird retourneert `peers:null` voor lege groepen (niet `[]`), wat dequarantaine deed crashen.
 - **Redis:** Threat score opslag + sessiestatus op `redis:7-alpine`, poort 6379 enkel localhost.
-- **Beleidsgroepen:** `NETBIRD_POLICY_GROUPS=Studenten,Docenten,Admins` (enkel deze worden gestript tijdens quarantaine). Infrastructuurgroepen zijn structureel onaantastbaar.
+- **Policy groups:** `NETBIRD_POLICY_GROUPS=Studenten,Docenten,Admins` (enkel deze worden gestript tijdens quarantaine). Infrastructuurgroepen zijn structureel onaantastbaar.
 
 ## Integratiepunten
 

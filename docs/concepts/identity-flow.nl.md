@@ -29,13 +29,13 @@ Identity Bridge (mgmt01 Docker, FastAPI)
   v
 Squid (pop01, external_acl)
   | Per verzoek: helper queryet Identity Bridge met %SRC (overlay-IP)
-  | Retourneert persona-groep -> ACL evalueert per-groep-beleid
+  | Retourneert persona-groep -> ACL evalueert per-groep policies
   v
 Per-request identiteitsgebaseerde filtering
   (bijv. Studenten geblokkeerd voor deepai.org; Docenten toegestaan)
 ```
 
-Elke hop transformeert de identiteitsrepresentatie: geprefixte weergavenamen worden schone namen, schone namen worden JWT-claims, JWT-claims worden auto-groups, auto-groups worden gecachte IP-naar-groep-mappings, en gecachte mappings worden ACL-beslissingen. Een fout op eender welke hop verbreekt de keten, maar het fail-open ontwerp zorgt ervoor dat een gebroken identiteitsketen nooit authenticatie blokkeert, alleen de toegang beperkt tot het meest restrictieve standaardbeleid.
+Elke hop transformeert de identiteitsrepresentatie: geprefixte weergavenamen worden schone namen, schone namen worden JWT-claims, JWT-claims worden auto-groups, auto-groups worden gecachte IP-naar-groep-mappings, en gecachte mappings worden ACL-beslissingen. Een fout op eender welke hop verbreekt de keten, maar het fail-open ontwerp zorgt ervoor dat een gebroken identiteitsketen nooit authenticatie blokkeert, alleen de toegang beperkt tot de meest restrictieve default policy.
 
 ## GroupSync: sync-mechanisme en Pad B
 
@@ -61,25 +61,25 @@ Wijzigingen in Entra ID-groepslidmaatschap hebben tijd nodig om door de volledig
 | NetBird -> Identity Bridge | Maximaal 30s | Polling-interval |
 | Identity Bridge -> Squid | Volgend verzoek | external_acl TTL (30s cache, 10s negatief) |
 
-**Totaal slechtste geval:** volgende login + 30s + volgend verzoek. In de praktijk betekent dit dat een wijziging in groepslidmaatschap vereist dat de gebruiker opnieuw authenticeert bij NetBird voordat de nieuwe groep effect heeft in het filterbeleid van Squid. Voor beveiligingskritieke groepsverwijderingen (bijv. het intrekken van admin-toegang) is deze vertraging significant.
+**Totaal slechtste geval:** volgende login + 30s + volgend verzoek. In de praktijk betekent dit dat een wijziging in groepslidmaatschap vereist dat de gebruiker opnieuw authenticeert bij NetBird voordat de nieuwe groep effect heeft in de filtering policies van Squid. Voor beveiligingskritieke groepsverwijderingen (bijv. het intrekken van admin-toegang) is deze vertraging significant.
 
 ## Fail-open ontwerp
 
 De identiteitsketen is ontworpen om op elke hop fail-open te zijn in plaats van toegang te blokkeren:
 
 - **Zitadel Actions:** `allowed-to-fail: true`, authenticatie slaagt zonder group claims
-- **Identity Bridge:** retourneert "unknown" voor niet-oplosbare IP's; Squid past standaard restrictief beleid toe
+- **Identity Bridge:** retourneert "unknown" voor niet-oplosbare IP's; Squid past standaard een restrictieve policy toe
 - **Squid external_acl:** valt terug op niet-identiteitsgebaseerde URL-filtering wanneer Identity Bridge onbereikbaar is
 
-Dit is bewust: Gate 3 (SWG-pijplijn: inhoudsinspectie, malwarescanning, DLP) werkt onafhankelijk van identiteit. Een gebruiker zonder group claims krijgt nog steeds volledige inhoudsinspectie; deze heeft alleen geen toegang tot groepsspecifiek beleid (bijv. alleen-Docenten URL-toelatingen). Beveiliging is gelaagd, niet afhankelijk van een enkele identiteitsketen.
+Dit is bewust: Gate 3 (SWG-pijplijn: inhoudsinspectie, malwarescanning, DLP) werkt onafhankelijk van identiteit. Een gebruiker zonder group claims krijgt nog steeds volledige inhoudsinspectie; deze heeft alleen geen toegang tot groepsspecifieke policies (bijv. alleen-Docenten URL-toelatingen). Beveiliging is gelaagd, niet afhankelijk van een enkele identiteitsketen.
 
 ## Waar het in de stack voorkomt
 
 - **[Zitadel](../components/zitadel.md):** OIDC-broker, Action 1 (allowlist-mapt de groeps-weergavenaam-string naar de schone naam) en Action 2 (JWT group injection)
 - **[NetBird](../components/netbird.md):** JWT group sync leest de `groups`-claim en maakt auto_groups per persona aan
 - **[Identity Bridge](../components/identity-bridge.md):** pollt NetBird API, bouwt overlay IP-naar-groep-cache, bedient Squid-lookups
-- **[Squid](../components/squid.md):** external_acl queryet Identity Bridge per verzoek, dwingt persona-gebaseerd filterbeleid af
-- **[Entra ID CA](../decisions/ca-posture-hybrid.md):** Gate 1 Conditional Access-beleid geevalueerd tijdens de OIDC-stroom
+- **[Squid](../components/squid.md):** external_acl queryet Identity Bridge per verzoek, dwingt persona-gebaseerde filtering policies af
+- **[Entra ID CA](../decisions/ca-posture-hybrid.md):** Gate 1 Conditional Access policies geevalueerd tijdens de OIDC-stroom
 
 ## Belangrijke onderscheidingen
 
@@ -87,7 +87,7 @@ Dit is bewust: Gate 3 (SWG-pijplijn: inhoudsinspectie, malwarescanning, DLP) wer
 
 **JWT group sync vs IdP Sync:** IdP Sync (en SCIM) pollen of pushen groepslidmaatschap op de achtergrond (ze werken bij zelfs wanneer gebruikers niet actief inloggen), maar beide vereisen een NetBird Cloud- of Commercial License, dus geen van beide is beschikbaar in de hier gebruikte Community Edition. JWT group sync, het enige in CE beschikbare mechanisme, is afhankelijk van het OIDC-token dat bij het inloggen wordt uitgegeven, dus groepswijzigingen propageren pas wanneer de gebruiker opnieuw authenticeert. Daarnaast verwijst **Pad A vs Pad B** naar prefixafhandeling *binnen* JWT group sync (Pad B strijkt het `2ITCSC1A-`-prefix weg, zie boven), niet naar de keuze van sync-mechanisme.
 
-**Fail-open vs fail-closed:** De identiteitsketen faalt open by design. Dit contrasteert met de inhoudsinspectieketen (Gate 3), waar ClamAV-scanning niet wordt omzeild wanneer de service uitvalt. De rationale: identiteitscontroles bepalen *welk* beleid van toepassing is, terwijl inhoudsinspectie baseline beveiliging biedt voor *al het* verkeer ongeacht identiteit.
+**Fail-open vs fail-closed:** De identiteitsketen faalt open by design. Dit contrasteert met de inhoudsinspectieketen (Gate 3), waar ClamAV-scanning niet wordt omzeild wanneer de service uitvalt. De rationale: identiteitscontroles bepalen *welke* policy van toepassing is, terwijl inhoudsinspectie baseline beveiliging biedt voor *al het* verkeer ongeacht identiteit.
 
 ## Bronnen
 

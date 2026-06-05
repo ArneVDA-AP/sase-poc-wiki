@@ -101,7 +101,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [04: Malware & DLP](runbooks/04-malware-dlp.md) | ClamAV/c-icap RESPMOD, YARA-regels, Python DLP REQMOD |
 | [05: IDS](runbooks/05-ids.md) | Suricata op WAN+LAN, Hyperscan, 79.620+ regels |
 | [06: DNS Threat Intel](runbooks/06-dns-threat-intel.md) | ioc2rpz, BIND TSIG, Unbound RPZ, 71.767 records |
-| [07: Toegangsbeleid](runbooks/07-access-policy.md) | Conditional Access, posturecontroles, validatiescenario's |
+| [07: Access Policy](runbooks/07-access-policy.md) | Conditional Access, posture checks, validatiescenario's |
 | [08: GroupSync](runbooks/08-groupsync.md) | JWT group sync, Entra ID token config, Zitadel Actions |
 | [09: Identity Bridge](runbooks/09-identity-bridge.md) | FastAPI overlay-IP → persona-groep, Squid external_acl |
 | [10: NATS JetStream](runbooks/10-nats-jetstream.md) | Event bus, producers, Control Daemon, Redis |
@@ -140,5 +140,5 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | Gate | Status | Technologie |
 |------|--------|-------------|
 | Gate 1 (Identiteit) | ✅ Operationeel | Entra ID Conditional Access (5 policies) |
-| Gate 2 (Apparaat) | ✅ Operationeel | Intune-apparaatconformiteit (Report-only tot demo) |
+| Gate 2 (Apparaat) | ✅ Operationeel | Intune device compliance (Report-only tot demo) |
 | Gate 3 (Inhoud) | ✅ Operationeel | Squid + ClamAV + Python DLP + Unbound RPZ + Suricata |

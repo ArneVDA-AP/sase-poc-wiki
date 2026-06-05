@@ -2404,10 +2404,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" class="md-nav__link">
+  <a href="#stap-7-het-acl-policy-voor-proxy-dns-bereikbaarheid-verifieren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
+        Stap 7: Het ACL policy voor proxy-/DNS-bereikbaarheid verifiëren
       
     </span>
   </a>
@@ -2615,7 +2615,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2755,7 +2755,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3733,10 +3733,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" class="md-nav__link">
+  <a href="#stap-7-het-acl-policy-voor-proxy-dns-bereikbaarheid-verifieren" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
+        Stap 7: Het ACL policy voor proxy-/DNS-bereikbaarheid verifiëren
       
     </span>
   </a>
@@ -4015,8 +4015,8 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="c"># Moet resolven naar 100.70.135.241</span>
 </code></pre></div>
 <hr />
-<h2 id="stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren">Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren<a class="headerlink" href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" title="Permanent link">&para;</a></h2>
-<p>Onder het V34-personamodel (zie <a href="../../components/netbird/">Component: NetBird</a>) draagt één allow-beleid alle connectiviteit: <strong><code>Personas-to-Core-Services</code></strong>: sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.</p>
+<h2 id="stap-7-het-acl-policy-voor-proxy-dns-bereikbaarheid-verifieren">Stap 7: Het ACL policy voor proxy-/DNS-bereikbaarheid verifiëren<a class="headerlink" href="#stap-7-het-acl-policy-voor-proxy-dns-bereikbaarheid-verifieren" title="Permanent link">&para;</a></h2>
+<p>Onder het V34-personamodel (zie <a href="../../components/netbird/">Component: NetBird</a>) draagt één allow policy alle connectiviteit: <strong><code>Personas-to-Core-Services</code></strong>: sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.</p>
 <blockquote>
 <p><strong>Verouderd:</strong> eerdere builds gebruikten aparte <code>Admin-Infrastructure</code>-, <code>Mobile-to-Services</code>- en <code>Datacenter Access</code>-policies op <code>SASE-*</code>-groepen. Die policies en groepen zijn verwijderd in de V34-migratie; maak ze niet opnieuw aan.</p>
 </blockquote>
@@ -4032,11 +4032,11 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <p><code>ProxySettingsPerUser=0</code> maakt de PAC systeembreed, <code>AutoDetect=0</code> forceert de expliciete PAC in plaats van WPAD-discovery, en <code>SetupScriptUrl</code> wijst naar het Caddy PAC-doel uit Stap 5. Zet geen ProxyServer-node naast de PAC-URL; die combinatie is een bekende Intune-bug die het profiel sloopt. Zie <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a> voor het volledige profiel en de device-scoping.</p>
 <h3 id="fallback-methode-handmatig-windows-proxy-op-mobile01">Fallback-methode (handmatig): Windows-proxy op mobile01<a class="headerlink" href="#fallback-methode-handmatig-windows-proxy-op-mobile01" title="Permanent link">&para;</a></h3>
 <p>Voor een unmanaged of met de hand gebouwde testclient zet je dezelfde PAC-URL handmatig:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Windows Instellingen → Netwerk en internet → Proxy:
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  Instellingen automatisch detecteren: Uit
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>  Installatiescript gebruiken: Aan
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  Scriptadres: http://wpad.sandbox.local/wpad.dat
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  Handmatige proxy: Uit
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Windows Settings → Network &amp; Internet → Proxy:
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  Automatically detect settings: Off
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>  Use setup script: On
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  Script Address: http://wpad.sandbox.local/wpad.dat
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  Manual proxy: Off
 </code></pre></div>
 <p>De Caddy root-CA moet al zijn geïmporteerd in de Windows-trust store (gedaan tijdens NetBird-registratie).</p>
 <hr />
@@ -4064,7 +4064,7 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>.banking.example.com
 </code></pre></div>
 <blockquote>
-<p><strong>Valkuil: de Microsoft control plane-set MOET in de no-bump-lijst staan.</strong> Als Squid een van deze bumpt, wordt de OIDC-certificaatketen verbroken en mislukken Entra ID-authenticatie, Intune-apparaatregistratie en de conform-apparaatcontrole voor alle NetBird-clients. <code>.microsoftonline.com</code> (met punt vooraan) dekt <code>device.login.microsoftonline.com</code>; <code>enterpriseregistration.windows.net</code> is de exacte apparaatregistratie-host; <code>.microsoftazuread-sso.com</code> is het cert-pinned seamless SSO-endpoint; <code>.live.com</code> is de consumer-auth-leg die tijdens de interactieve Entra-join wordt geraakt.</p>
+<p><strong>Valkuil: de Microsoft control plane-set MOET in de no-bump-lijst staan.</strong> Als Squid een van deze bumpt, wordt de OIDC-certificaatketen verbroken en mislukken Entra ID-authenticatie, Intune-apparaatregistratie en de compliant-device check voor alle NetBird-clients. <code>.microsoftonline.com</code> (met punt vooraan) dekt <code>device.login.microsoftonline.com</code>; <code>enterpriseregistration.windows.net</code> is de exacte apparaatregistratie-host; <code>.microsoftazuread-sso.com</code> is het cert-pinned seamless SSO-endpoint; <code>.live.com</code> is de consumer-auth-leg die tijdens de interactieve Entra-join wordt geraakt.</p>
 </blockquote>
 <hr />
 <h2 id="stap-10-url-filtering-inschakelen-met-ut1-toulouse">Stap 10: URL-filtering inschakelen met UT1 Toulouse<a class="headerlink" href="#stap-10-url-filtering-inschakelen-met-ut1-toulouse" title="Permanent link">&para;</a></h2>

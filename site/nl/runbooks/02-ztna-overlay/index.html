@@ -2631,7 +2631,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2771,7 +2771,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -4086,7 +4086,7 @@ Zie <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 <hr />
 <h2 id="stap-10-groepen-aanmaken-in-netbird-dashboard">Stap 10: Groepen aanmaken in NetBird Dashboard<a class="headerlink" href="#stap-10-groepen-aanmaken-in-netbird-dashboard" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>⚠️ Verouderd door de V34-personamigratie (mei 2026).</strong> Stappen 10–13 hieronder documenteren de <em>oorspronkelijke</em> Fase-2-build met <code>SASE-*</code>-groepen en drie ACL policies. Dat model is vervangen: een diagnose toonde dat alle connectiviteit op de <code>SASE-*</code>-groepen hing, terwijl de identiteit-gesynchroniseerde persona-groepen (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) geen beleid droegen, waardoor groep-gebaseerde quarantaine een no-op was. De huidige staat is een <code>Core-Services</code>-groep (pop01, mgmt01) plus één <code>Personas-to-Core-Services</code>-ACL-beleid (persona-groepen → <code>Core-Services</code>, <strong>alleen TCP 3128</strong>), en het <code>Internal-DC</code>-netwerk + <code>Datacenter-Access</code>-beleid zijn verwijderd (DC-LAN-over-overlay uitgesteld tot de geplande Cosmos-sessie). <strong>Volg voor de huidige build het groep-/beleidmodel in <a href="../../components/netbird/">Component: NetBird</a>; persona-groepen worden aangemaakt door identiteitssynchronisatie, niet handmatig (<a href="../08-groupsync/">Runbook 08: GroupSync</a>).</strong> De onderstaande stappen blijven behouden als historische/evolutiereferentie.</p>
+<p><strong>⚠️ Verouderd door de V34-personamigratie (mei 2026).</strong> Stappen 10–13 hieronder documenteren de <em>oorspronkelijke</em> Fase-2-build met <code>SASE-*</code>-groepen en drie ACL policies. Dat model is vervangen: een diagnose toonde dat alle connectiviteit op de <code>SASE-*</code>-groepen hing, terwijl de identiteit-gesynchroniseerde persona-groepen (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) geen policy droegen, waardoor groep-gebaseerde quarantaine een no-op was. De huidige staat is een <code>Core-Services</code>-groep (pop01, mgmt01) plus één <code>Personas-to-Core-Services</code>-ACL policy (persona-groepen → <code>Core-Services</code>, <strong>alleen TCP 3128</strong>), en het <code>Internal-DC</code>-netwerk + <code>Datacenter-Access</code>-policy zijn verwijderd (DC-LAN-over-overlay uitgesteld tot de geplande Cosmos-sessie). <strong>Volg voor de huidige build het groep-/policy model in <a href="../../components/netbird/">Component: NetBird</a>; persona-groepen worden aangemaakt door identiteitssynchronisatie, niet handmatig (<a href="../08-groupsync/">Runbook 08: GroupSync</a>).</strong> De onderstaande stappen blijven behouden als historische/evolutiereferentie.</p>
 </blockquote>
 <p>NetBird Dashboard → Peers → maak groepen aan:</p>
 <table>
@@ -4111,7 +4111,7 @@ Zie <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 <tr>
 <td><code>SASE-Services</code></td>
 <td>pop01, mgmt01</td>
-<td>Service-eindpunten (WPAD, DNS, proxy)</td>
+<td>Service-endpoints (WPAD, DNS, proxy)</td>
 </tr>
 <tr>
 <td><code>SASE-InternalResources</code></td>
@@ -4124,23 +4124,23 @@ Zie <a href="../../findings/netbird-config-zero-bytes/">Finding: NetBird config 
 <hr />
 <h2 id="stap-11-acl-policies-aanmaken">Stap 11: ACL policies aanmaken<a class="headerlink" href="#stap-11-acl-policies-aanmaken" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Valkuil: Volgorde is cruciaal.</strong> Maak alle policies aan <strong>vóór</strong> het verwijderen van het standaard alles-naar-alles-beleid. Als je het standaardbeleid verwijdert zonder vervangers, valt alle peercommunicatie direct weg.</p>
+<p><strong>Valkuil: Volgorde is cruciaal.</strong> Maak alle policies aan <strong>vóór</strong> het verwijderen van de default all-to-all policy. Als je de default policy verwijdert zonder vervangers, valt alle peercommunicatie direct weg.</p>
 </blockquote>
-<p><strong>Beleid 1: Admin-Infrastructuur:</strong></p>
+<p><strong>Policy 1: Admin-Infrastructuur:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>Naam:        Admin-Infrastructure
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>Sources:     SASE-Admins
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>Destinations: SASE-Admins
 <a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>Protocol:    All
 <a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>Actie:       Accept
 </code></pre></div>
-<p><strong>Beleid 2: Mobiel-naar-Services:</strong></p>
+<p><strong>Policy 2: Mobiel-naar-Services:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Naam:        Mobile-to-Services
 <a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>Sources:     SASE-MobileUsers
 <a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>Destinations: SASE-Services
 <a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>Protocol:    All
 <a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>Actie:       Accept
 </code></pre></div>
-<p><strong>Beleid 3: Datacentertoegeng:</strong></p>
+<p><strong>Policy 3: Datacentertoegang:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Naam:        Datacenter Access
 <a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>Sources:     SASE-MobileUsers
 <a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>Destinations: SASE-InternalResources

@@ -10,7 +10,7 @@ tags: [finding, suricata, workaround]
 
 ## Wat er gebeurde
 
-IPS-modus werd ingeschakeld in OPNsense (Intrusion Detection → Instellingen → IPS-modus ✔, patroonherkenner: Netmap). Suricata herstartte maar verwerkte 0 paketten. Alle eerder actieve alertcategorieën stopten met activeren. Het systeem leek te werken (geen crash) maar was volledig blind voor al het verkeer.
+IPS-modus werd ingeschakeld in OPNsense (Intrusion Detection → Settings → IPS mode ✔, patroonherkenner: Netmap). Suricata herstartte maar verwerkte 0 paketten. Alle eerder actieve alertcategorieën stopten met activeren. Het systeem leek te werken (geen crash) maar was volledig blind voor al het verkeer.
 
 Terugkeren naar IDS-modus (PCAP) herstelde de normale alertactiviteit.
 
@@ -24,7 +24,7 @@ Wanneer Netmap wordt ingeschakeld op een niet-ondersteunde NIC, start Suricata m
 
 ## Oplossing / workaround
 
-Blijf in IDS-modus (PCAP). De gedifferentieerde drop/alert-beleidstabel is geconfigureerd en gereed. Op fysieke hardware met Intel igb/ixgbe of Broadcom bge NIC's kan IPS-modus worden geactiveerd door de schakelaar in te schakelen; het beleid is al correct.
+Blijf in IDS-modus (PCAP). De gedifferentieerde drop/alert policy table is geconfigureerd en gereed. Op fysieke hardware met Intel igb/ixgbe of Broadcom bge NIC's kan IPS-modus worden geactiveerd door de schakelaar in te schakelen; de policies zijn al correct.
 
 ## Lessen
 

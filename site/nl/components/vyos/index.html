@@ -1026,10 +1026,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#icmp-misleidend-onder-allow-only-beleid" class="md-nav__link">
+  <a href="#icmp-misleidend-onder-allow-only-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ICMP misleidend onder ALLOW-only beleid
+        ICMP misleidend onder ALLOW-only policy
       
     </span>
   </a>
@@ -2588,7 +2588,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2728,7 +2728,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3735,10 +3735,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#icmp-misleidend-onder-allow-only-beleid" class="md-nav__link">
+  <a href="#icmp-misleidend-onder-allow-only-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ICMP misleidend onder ALLOW-only beleid
+        ICMP misleidend onder ALLOW-only policy
       
     </span>
   </a>
@@ -3846,9 +3846,9 @@
 <strong>Configuratielocatie:</strong> <code>/etc/vyos/config.boot</code> op site01</p>
 <hr />
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
-<p>VyOS draait als <code>site01</code> met twee interfaces: eth0 op het WAN-segment (<code>192.168.122.33</code>) en eth1 op het Site-LAN (<code>172.16.10.1/24</code>). De verantwoordelijkheden zijn bewust beperkt tot connectiviteit: het fungeert als NAT-gateway zodat apparaten op het Site-LAN het internet kunnen bereiken, maar het handhaaft zelf geen beveiligingsbeleid.</p>
+<p>VyOS draait als <code>site01</code> met twee interfaces: eth0 op het WAN-segment (<code>192.168.122.33</code>) en eth1 op het Site-LAN (<code>172.16.10.1/24</code>). De verantwoordelijkheden zijn bewust beperkt tot connectiviteit: het fungeert als NAT-gateway zodat apparaten op het Site-LAN het internet kunnen bereiken, maar het handhaaft zelf geen security policy.</p>
 <p>De branch volgt een <strong>Zero Trust Branch-model</strong>: de gehele site wordt behandeld als een niet-vertrouwde locatie, niet anders dan een Wi-Fi-netwerk in een koffiebar. Er zijn geen IPsec-tunnels tussen site01 en pop01. In plaats daarvan draait sitepc01 een <a href="../netbird/">NetBird</a>-client en treedt toe tot de WireGuard-overlay met een identiteitsgebaseerde verbinding, en volgt exact hetzelfde pad als elke mobiele gebruiker. Alle beveiligingsinspectie vindt plaats op de PoP, niet aan de branch-rand.</p>
-<p>Dit weerspiegelt de Zero Trust SD-WAN-architectuur van Zscaler, waarbij de branch-appliance ruwe connectiviteit biedt terwijl de Zero Trust Exchange (hier: de SWG-keten van pop01) inspectie en beleidshandhaving verzorgt.</p>
+<p>Dit weerspiegelt de Zero Trust SD-WAN-architectuur van Zscaler, waarbij de branch-appliance ruwe connectiviteit biedt terwijl de Zero Trust Exchange (hier: de SWG-keten van pop01) inspectie en policy enforcement verzorgt.</p>
 <p><strong>IP-adressering:</strong></p>
 <table>
 <thead>
@@ -3930,9 +3930,9 @@
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
 <h3 id="dns-bootstrap-voor-inschrijving-sitepc01">DNS-bootstrap voor inschrijving sitepc01<a class="headerlink" href="#dns-bootstrap-voor-inschrijving-sitepc01" title="Permanent link">&para;</a></h3>
-<p>sitepc01 had een tijdelijke scaffold-NIC nodig (Ethernet 2 gericht op <code>8.8.8.8</code>) tijdens de initiële inschrijving, omdat <a href="../ioc2rpz/">Unbound</a> op pop01 DNS-verzoeken van niet-overlay IP-adressen blokkeert via de WAN ACL. Zonder de scaffold-NIC kan de machine Entra ID- of NetBird-eindpunten niet resolven om de inschrijving te voltooien.</p>
-<h3 id="icmp-misleidend-onder-allow-only-beleid">ICMP misleidend onder ALLOW-only beleid<a class="headerlink" href="#icmp-misleidend-onder-allow-only-beleid" title="Permanent link">&para;</a></h3>
-<p>Ping naar overlay-peers faalt by design wanneer het firewallbeleidsmodel ALLOW-only is (geen ICMP-regel). Gebruik in plaats daarvan poortgebaseerde connectiviteitstests:</p>
+<p>sitepc01 had een tijdelijke scaffold-NIC nodig (Ethernet 2 gericht op <code>8.8.8.8</code>) tijdens de initiële inschrijving, omdat <a href="../ioc2rpz/">Unbound</a> op pop01 DNS-verzoeken van niet-overlay IP-adressen blokkeert via de WAN ACL. Zonder de scaffold-NIC kan de machine Entra ID- of NetBird-endpoints niet resolven om de inschrijving te voltooien.</p>
+<h3 id="icmp-misleidend-onder-allow-only-policy">ICMP misleidend onder ALLOW-only policy<a class="headerlink" href="#icmp-misleidend-onder-allow-only-policy" title="Permanent link">&para;</a></h3>
+<p>Ping naar overlay-peers faalt by design wanneer het firewall policy model ALLOW-only is (geen ICMP-regel). Gebruik in plaats daarvan poortgebaseerde connectiviteitstests:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nb">Test-NetConnection</span> <span class="n">-ComputerName</span> <span class="p">&lt;</span><span class="n">target</span><span class="p">&gt;</span> <span class="n">-Port</span> <span class="n">3128</span>
 </code></pre></div>
 <h3 id="caddy-ca-certificaat-kip-en-ei-probleem">Caddy CA-certificaat kip-en-ei-probleem<a class="headerlink" href="#caddy-ca-certificaat-kip-en-ei-probleem" title="Permanent link">&para;</a></h3>

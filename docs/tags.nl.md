@@ -73,7 +73,7 @@ Alle wiki-pagina's gebruiken uitsluitend tags uit deze lijst. Een nieuwe tag wor
 | `entra-id` | Microsoft Entra ID, cloud identity provider (aplab.be-tenant) |
 | `event-bus` | Event-driven architectuur, NATS publish/subscribe-patroon |
 | `groupsync` | JWT group sync, Entra ID → Zitadel → NetBird-groepspropagatie |
-| `intune` | Microsoft Intune, apparaatconformiteit en -beheer |
+| `intune` | Microsoft Intune, device compliance en -beheer |
 | `mdm` | Mobile Device Management, Intune-beheer van het endpoint |
 | `oidc` | OpenID Connect, authenticatieprotocol (Entra ID → Zitadel → NetBird) |
 | `sd-wan` | SD-WAN / Zero Trust Branch, WAN-connectiviteit en verkeersoptimalisatie |

@@ -17,7 +17,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 |------|------|--------|--------|
 | **F1** | ZTNA-tunnelverbinding | ZTNA | ✅ Gevalideerd |
 | **F2** | Entra ID SSO | ZTNA | ✅ Gevalideerd |
-| **F3** | Posturecontrole | ZTNA | ⏳ Deels bewezen; CA-beleid actief, Intune-enrolled (Report-only) |
+| **F3** | Posture check | ZTNA | ⏳ Deels bewezen; CA policy actief, Intune-enrolled (Report-only) |
 | **F4** | Datacentertoegang via ZTNA | ZTNA | ✅ Gevalideerd (bij opbouw, mei 2026); DC-LAN-over-overlay-pad sindsdien verwijderd in V34, uitgesteld |
 | **F5** | URL-filtering | SWG | ✅ Gevalideerd |
 | **F6** | SSL-Bump-inspectie | SWG | ✅ Gevalideerd |
@@ -222,7 +222,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | Test | Wat het bewijst |
 |------|----------------|
 | F1 | WireGuard-tunnel operationeel: `InterfaceAlias: wt0`, peer count 1/1 Connected |
-| F8 | ACL-beleid per resource: Datacenter Access vereist expliciet groepslidmaatschap |
+| F8 | ACL policy per resource: Datacenter Access vereist expliciet groepslidmaatschap |
 | Wiki-bewijs | Component: NetBird (ACL policies per resourcegroep) |
 
 ### 3.4 Toegang tot on-premises resources

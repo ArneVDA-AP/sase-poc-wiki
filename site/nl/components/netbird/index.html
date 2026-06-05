@@ -903,10 +903,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#acl-beleid" class="md-nav__link">
+  <a href="#acl-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ACL-beleid
+        ACL policy
       
     </span>
   </a>
@@ -2593,7 +2593,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2733,7 +2733,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3701,10 +3701,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#acl-beleid" class="md-nav__link">
+  <a href="#acl-policy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ACL-beleid
+        ACL policy
       
     </span>
   </a>
@@ -3857,7 +3857,7 @@
 
 
 <h1 id="netbird-zitadel-entra-id-ztna-overlay">NetBird + Zitadel + Entra ID: ZTNA-overlay<a class="headerlink" href="#netbird-zitadel-entra-id-ztna-overlay" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> ZTNA-transportlaag die een WireGuard-mesh-overlay creëert die managed Windows-clients toegang geeft tot pop01 (proxy, DNS) en DC-LAN-resources, ongeacht hun fysieke netwerklocatie. Elke toegangsbeslissing is identiteitsgebaseerd; lateral movement tussen resources vereist expliciet ACL-beleid.<br />
+<p><strong>Rol:</strong> ZTNA-transportlaag die een WireGuard-mesh-overlay creëert die managed Windows-clients toegang geeft tot pop01 (proxy, DNS) en DC-LAN-resources, ongeacht hun fysieke netwerklocatie. Elke toegangsbeslissing is identiteitsgebaseerd; lateral movement tussen resources vereist expliciet ACL policy.<br />
 <strong>Status:</strong> ✅ Volledig operationeel (snapshot <code>Fase2-ZTNA-Complete</code>)<br />
 <strong>Configuratielocatie:</strong> mgmt01 Docker Compose (<code>~/docker-compose.yml</code>), NetBird Dashboard (<code>https://netbird.sandbox.local</code>)</p>
 <hr />
@@ -3871,8 +3871,8 @@
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                                Microsoft-inlogpagina (aplab.be-tenant)
 </code></pre></div>
 <p>Het quickstart-script van NetBird installeert Zitadel als primaire OIDC-uitgever. Entra ID is verbonden als externe IdP <em>aan Zitadel</em>, niet rechtstreeks aan NetBird. Dit is een architecturele realiteit van het quickstart-script, geen beperking. Zitadel voegt een centrale gebruikersbeheerlaag toe met rollen en groepen die onafhankelijk zijn van Entra ID-configuratie.</p>
-<p><strong>Entra ID Conditional Access</strong> evalueert bij het Entra ID <code>/authorize</code>-eindpunt, gericht op de NetBird-app-registratie <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>). Of de OIDC-omleiding afkomstig is van Zitadel of rechtstreeks van een NetBird-client is irrelevant: de gebruiker authenticeert zich rechtstreeks bij Entra ID en CA wordt geactiveerd voor die app-registratie. Zie <a href="../../decisions/ca-posture-hybrid/">Beslissing: CA-postuur hybride</a>.</p>
-<p><strong>WireGuard-mesh vs. per-app-tunnels:</strong> NetBird creëert een volledige WireGuard-mesh waarbij ACL-beleid bepaalt welke peers kunnen communiceren. Dit is architectureel equivalent aan per-app Zero Trust-tunnels (Zscaler ZPA): een peer met toegang tot dc01 kan mgmt01 niet bereiken zonder een apart ACL-beleid (resources zijn niet zichtbaar, niet alleen ontoegankelijk).</p>
+<p><strong>Entra ID Conditional Access</strong> evalueert bij het Entra ID <code>/authorize</code>-endpoint, gericht op de NetBird-app-registratie <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>). Of de OIDC-omleiding afkomstig is van Zitadel of rechtstreeks van een NetBird-client is irrelevant: de gebruiker authenticeert zich rechtstreeks bij Entra ID en CA wordt geactiveerd voor die app-registratie. Zie <a href="../../decisions/ca-posture-hybrid/">Beslissing: CA-posture hybride</a>.</p>
+<p><strong>WireGuard-mesh vs. per-app-tunnels:</strong> NetBird creëert een volledige WireGuard-mesh waarbij ACL policy bepaalt welke peers kunnen communiceren. Dit is architectureel equivalent aan per-app Zero Trust-tunnels (Zscaler ZPA): een peer met toegang tot dc01 kan mgmt01 niet bereiken zonder een aparte ACL policy (resources zijn niet zichtbaar, niet alleen ontoegankelijk).</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <h3 id="implementatie-zitadel-quickstart">Implementatie: Zitadel-quickstart<a class="headerlink" href="#implementatie-zitadel-quickstart" title="Permanent link">&para;</a></h3>
@@ -3928,7 +3928,7 @@
 <p>De GNS3-host draait nginx SNI stream passthrough: <code>netbird.sandbox.local:443</code> → <code>192.168.122.23:443</code>.</p>
 <h3 id="entra-id-externe-idp">Entra ID externe IdP<a class="headerlink" href="#entra-id-externe-idp" title="Permanent link">&para;</a></h3>
 <p>Via Zitadel-console op <code>https://netbird.sandbox.local/zitadel/ui/console</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Instellingen → Identity Providers → Toevoegen → Microsoft Azure AD
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Settings → Identity Providers → Add → Microsoft Azure AD
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Client ID:     11803ee8-eb15-462c-a286-5415c17a29c6
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Tenant ID:     23e9bcdc-5cb9-4867-9310-76cc0b462ddc
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Client Secret: &lt;uit Entra ID-app-registratie&gt;
@@ -3974,22 +3974,22 @@
 </table>
 <p>Alleen <code>Core-Services</code> wordt handmatig aangemaakt. De persona-groepen (<code>Studenten</code>/<code>Docenten</code>/<code>Admins</code>) worden <strong>niet</strong> in het dashboard aangemaakt: een JWT-groep materialiseert pas als NetBird-groep wanneer een peer met die <code>groups</code>-claim voor het eerst verbindt; enrollment <em>is</em> de groepssynchronisatie (geen aparte stap).</p>
 <blockquote>
-<p><strong>Groepsmigratie (V34, mei 2026).</strong> De oorspronkelijke Fase-2-build gebruikte <code>SASE-Admins</code>, <code>SASE-MobileUsers</code>, <code>SASE-Services</code> en <code>SASE-InternalResources</code>. Een diagnose toonde dat <strong>alle</strong> NetBird ACL-connectiviteit op de <code>SASE-*</code>-groepen hing, terwijl de persona-groepen <strong>nul</strong> beleid droegen. Quarantaine-per-groep (een peer uit zijn persona-groep verwijderen) zou dus een no-op zijn geweest. De migratie verplaatste alle connectiviteit naar het persona-model + <code>Core-Services</code> en verwijderde elke <code>SASE-*</code>-groep en -beleid. Het persona-model hieronder is de huidige staat; het <code>SASE-*</code>-model is verouderd.</p>
+<p><strong>Groepsmigratie (V34, mei 2026).</strong> De oorspronkelijke Fase-2-build gebruikte <code>SASE-Admins</code>, <code>SASE-MobileUsers</code>, <code>SASE-Services</code> en <code>SASE-InternalResources</code>. Een diagnose toonde dat <strong>alle</strong> NetBird ACL-connectiviteit op de <code>SASE-*</code>-groepen hing, terwijl de persona-groepen <strong>nul</strong> policies droegen. Quarantaine-per-groep (een peer uit zijn persona-groep verwijderen) zou dus een no-op zijn geweest. De migratie verplaatste alle connectiviteit naar het persona-model + <code>Core-Services</code> en verwijderde elke <code>SASE-*</code>-groep en -policy. Het persona-model hieronder is de huidige staat; het <code>SASE-*</code>-model is verouderd.</p>
 </blockquote>
-<p><strong>Volgorde van beleidsaanmaak (deny-by-default):</strong> Het standaard All→All-beleid is verwijderd, dus peers zonder beleid hebben geen connectiviteit. Maak het vervangende beleid aan <em>vóór</em> het verwijderen van de standaard, om te voorkomen dat alle peer-communicatie wegvalt.</p>
-<h3 id="acl-beleid">ACL-beleid<a class="headerlink" href="#acl-beleid" title="Permanent link">&para;</a></h3>
+<p><strong>Policy creation order (deny-by-default):</strong> De default all-to-all policy is verwijderd, dus peers zonder policy hebben geen connectiviteit. Maak de vervangende policy aan <em>vóór</em> het verwijderen van de default, om te voorkomen dat alle peer-communicatie wegvalt.</p>
+<h3 id="acl-policy">ACL policy<a class="headerlink" href="#acl-policy" title="Permanent link">&para;</a></h3>
 <p><strong><code>Personas-to-Core-Services</code>:</strong> Sources: <code>Studenten</code>, <code>Docenten</code>, <code>Admins</code> → Destination: <code>Core-Services</code>, Protocol: <strong>alleen TCP 3128</strong>.</p>
-<p>Dit ene beleid is de volledige allow-list onder deny-by-default. Het laat elke persona-peer de pop01 Squid-proxy (<code>100.70.154.79:3128</code>) bereiken; al het webverkeer loopt vervolgens door de SWG-pijplijn, waar de differentiatie per persona in Squid gebeurt (niet in NetBird-ACL's). WPAD-poorten (<code>:80</code>/<code>:443</code> op mgmt01) zijn <strong>bewust weggelaten</strong>: het PAC-bestand is leeg en clients gebruiken een handmatige proxy-instelling, dus WPAD-bereikbaarheid is niet nodig (V34.13). Quarantaine werkt omdat het verwijderen van een peer uit zijn persona-groep zijn enige pad naar <code>Core-Services</code> wegneemt.</p>
+<p>Deze ene policy is de volledige allow-list onder deny-by-default. Het laat elke persona-peer de pop01 Squid-proxy (<code>100.70.154.79:3128</code>) bereiken; al het webverkeer loopt vervolgens door de SWG-pijplijn, waar de differentiatie per persona in Squid gebeurt (niet in NetBird-ACL's). WPAD-poorten (<code>:80</code>/<code>:443</code> op mgmt01) zijn <strong>bewust weggelaten</strong>: het PAC-bestand is leeg en clients gebruiken een handmatige proxy-instelling, dus WPAD-bereikbaarheid is niet nodig (V34.13). Quarantaine werkt omdat het verwijderen van een peer uit zijn persona-groep zijn enige pad naar <code>Core-Services</code> wegneemt.</p>
 <h3 id="exit-node-en-dc-lan-routering">Exit node en DC-LAN-routering<a class="headerlink" href="#exit-node-en-dc-lan-routering" title="Permanent link">&para;</a></h3>
 <p><strong>Exit node (internetverkeer):</strong> via Netwerkroutes:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Netwerk: 0.0.0.0/0, Routing Peer: pop01, Distribution Groups: Studenten, Docenten, Admins
 </code></pre></div></p>
 <p>Het exit node blijft bestaan zodat persona-groepverkeer (Studenten/Docenten/Admins) via pop01 naar buiten gaat. Het exit node van NetBird is <strong>alles-of-niets</strong>: het kan geen destination ranges selectief uitsluiten (issues #2493 / #3523). Om Microsoft 365 "Optimize"-bereiken van de tunnel te houden, pusht een Intune-Remediation (<code>2ITCSC1A-Route-Remediation</code>) die routes rechtstreeks op de client (een client-side split-tunnel die het ontbrekende per-route-uitsluiten compenseert).</p>
-<p><strong>DC-LAN (10.0.0.0/8) over de overlay (uitgesteld).</strong> Het oorspronkelijke <code>Internal-DC</code>-netwerk (ACL-bewust) en zijn <code>Datacenter-Access</code>-beleid zijn <strong>verwijderd in de V34-migratie</strong>; er is geen actief DC-LAN-over-overlay-pad in de huidige sandbox. Het opnieuw introduceren van datacenterbereikbaarheid is uitgesteld tot de geplande Cosmos-app-gateway-sessie. De ontwerpredenering hieronder blijft behouden voor wanneer dat werk wordt hervat.</p>
+<p><strong>DC-LAN (10.0.0.0/8) over de overlay (uitgesteld).</strong> Het oorspronkelijke <code>Internal-DC</code>-netwerk (ACL-bewust) en zijn <code>Datacenter-Access</code>-policy zijn <strong>verwijderd in de V34-migratie</strong>; er is geen actief DC-LAN-over-overlay-pad in de huidige sandbox. Het opnieuw introduceren van datacenterbereikbaarheid is uitgesteld tot de geplande Cosmos-app-gateway-sessie. De ontwerpredenering hieronder blijft behouden voor wanneer dat werk wordt hervat.</p>
 <blockquote>
-<p><strong>Netwerken vs. Netwerkroutes (ontwerpredenering, voor het uitgestelde DC-LAN-werk):</strong> Netwerkroutes omzeilen ACL-beleid standaard. Netwerken vereisen groepkoppeling by design. DC-LAN zou Netwerken moeten gebruiken voor zero-trust-correctheid; het exit node moet Netwerkroutes gebruiken (NetBird-beperking voor 0.0.0.0/0).</p>
+<p><strong>Netwerken vs. Netwerkroutes (ontwerpredenering, voor het uitgestelde DC-LAN-werk):</strong> Netwerkroutes omzeilen ACL policy standaard. Netwerken vereisen groepkoppeling by design. DC-LAN zou Netwerken moeten gebruiken voor zero-trust-correctheid; het exit node moet Netwerkroutes gebruiken (NetBird-beperking voor 0.0.0.0/0).</p>
 </blockquote>
-<p><strong>Distribution Groups vs. ACL-beleid:</strong> Deze dienen verschillende doelen: de distribution group bepaalt <em>welke peers de DNS-/netwerkconfiguratie ontvangen</em>, terwijl het ACL-beleid bepaalt <em>of het verkeer daadwerkelijk stroomt</em>. Als een peer in de distribution group zit maar geen ACL-beleid heeft dat verkeer toestaat, ontvangt hij de config maar kan hij de resource niet bereiken. Symptoom: <code>netbird status</code> toont <code>Nameservers: 0/1 Available</code> op een peer die de nameserverconfig ontvangt maar er geen ACL-pad naartoe heeft.</p>
+<p><strong>Distribution Groups vs. ACL policy:</strong> Deze dienen verschillende doelen: de distribution group bepaalt <em>welke peers de DNS-/netwerkconfiguratie ontvangen</em>, terwijl de ACL policy bepaalt <em>of het verkeer daadwerkelijk stroomt</em>. Als een peer in de distribution group zit maar geen ACL policy heeft die verkeer toestaat, ontvangt hij de config maar kan hij de resource niet bereiken. Symptoom: <code>netbird status</code> toont <code>Nameservers: 0/1 Available</code> op een peer die de nameserverconfig ontvangt maar er geen ACL-pad naartoe heeft.</p>
 <h3 id="dns-configuratie">DNS-configuratie<a class="headerlink" href="#dns-configuratie" title="Permanent link">&para;</a></h3>
 <p>NetBird Dashboard → DNS:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Aangepaste DNS-zone:   sandbox.local → pop01 (100.70.154.79)
@@ -4030,7 +4030,7 @@
 <tr>
 <td><a href="../../decisions/ca-posture-hybrid/">Drie-gate model</a></td>
 <td>authenticatielaag</td>
-<td>Gate 1 (Entra ID CA) + Gate 2 (postuurcontroles) koppelen beide aan de NetBird-aanmeldflow</td>
+<td>Gate 1 (Entra ID CA) + Gate 2 (posture checks) koppelen beide aan de NetBird-aanmeldflow</td>
 </tr>
 </tbody>
 </table>
@@ -4052,7 +4052,7 @@
 <p>NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:</p>
 <ul>
 <li><strong>Producer:</strong> De <a href="../identity-bridge/">Identity Bridge</a> (die afhankelijk is van de NetBird Management API) publiceert identity events naar <code>identity.peer.connected</code>, <code>identity.peer.disconnected</code> en <code>identity.multi_persona</code> (zero-trust-anomalie) wanneer peers verbinden, verbreken of in meer dan één personagroep verschijnen.</li>
-<li><strong>Handhavingsdoelwit:</strong> De <a href="../control-daemon/">Control Daemon</a> gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit policy-bearing personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (standaard All-&gt;All-beleid verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.</li>
+<li><strong>Handhavingsdoelwit:</strong> De <a href="../control-daemon/">Control Daemon</a> gebruikt de NetBird Groups API om peers in quarantaine te plaatsen door ze te verwijderen uit policy-bearing personagroepen (Studenten/Docenten/Admins). Onder het deny-by-default-model (default all-to-all policy verwijderd) verliest een peer zonder groepslidmaatschap alle connectiviteit.</li>
 </ul>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
@@ -4060,7 +4060,7 @@
 <p><strong>OPNsense WebUI-vergrendeling na wijzigingen toepassen:</strong> sommige firewallwijzigingen produceren een vergrendeling waarbij pf-regels tijdelijk onjuist zijn. Oplossing: <code>configctl filter reload</code> vanuit de OPNsense-shell, niet <code>pfctl -f</code>. Dit herstelt de door OPNsense gegenereerde regels correct.</p>
 <p><strong>Docker-volumes vereisen containerrecreatie:</strong> <code>docker compose restart caddy</code> past geen nieuwe volume-mounts toe. Gebruik in plaats daarvan <code>docker compose up -d caddy</code>.</p>
 <p><strong>Zitadel-groepenclaim-mismatch:</strong> Zitadel gebruikt geneste <code>roles</code> JSON; NetBird verwacht een platte <code>groups</code>-array. Als groepen niet propageren naar NetBird, controleer dan het Zitadel-actiescript voor groepenclaim-transformatie. Zie NetBird Zitadel-documentatie.</p>
-<p><strong><code>process_check</code> platformbeperkingen:</strong> de <code>process_check</code>-postuurcontrole van NetBird is niet beschikbaar op iOS/Android. Bij het configureren van <code>os_version_check</code> geldt: als er voor een bepaald OS geen pad is opgegeven, wordt dat OS <strong>standaard geblokkeerd</strong> (niet toegestaan). Dit is een beveiligingspositieve standaard, maar kan onbedoeld hele platformen buitensluiten. Merk op dat procescontroles spoofbaar zijn: een dummy-binary op het verwachte pad voldoet aan de controle zonder dat de beveiligingssoftware daadwerkelijk draait.</p>
+<p><strong><code>process_check</code> platformbeperkingen:</strong> de <code>process_check</code>-posture check van NetBird is niet beschikbaar op iOS/Android. Bij het configureren van <code>os_version_check</code> geldt: als er voor een bepaald OS geen pad is opgegeven, wordt dat OS <strong>standaard geblokkeerd</strong> (niet toegestaan). Dit is een beveiligingspositieve standaard, maar kan onbedoeld hele platformen buitensluiten. Merk op dat procescontroles spoofbaar zijn: een dummy-binary op het verwachte pad voldoet aan de controle zonder dat de beveiligingssoftware daadwerkelijk draait.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
@@ -4068,7 +4068,7 @@
 <li><a href="../../concepts/zero-trust/">Concept: Zero Trust</a></li>
 <li><a href="../../concepts/sase/">Concept: SASE</a></li>
 <li><a href="../../decisions/zitadel-idp-broker/">Beslissing: Zitadel als IdP-broker</a></li>
-<li><a href="../../decisions/ca-posture-hybrid/">Beslissing: CA + postuur hybride</a></li>
+<li><a href="../../decisions/ca-posture-hybrid/">Beslissing: CA + posture hybride</a></li>
 <li><a href="../../decisions/gns3-vs-eveng/">Beslissing: GNS3 vs. EVE-NG</a></li>
 <li><a href="../../findings/netbird-primary-nameserver/">Bevinding: NetBird primaire nameserver</a></li>
 <li><a href="../../findings/netbird-config-zero-bytes/">Bevinding: NetBird config nul bytes</a></li>
@@ -4078,7 +4078,7 @@
 <li><a href="../control-daemon/">Control Daemon</a></li>
 <li><a href="../wazuh/">Wazuh</a></li>
 <li><a href="../../concepts/identity-flow/">Concept: Identity Flow</a></li>
-<li><a href="../../runbooks/07-access-policy/">Runbook: Toegangsbeleid</a></li>
+<li><a href="../../runbooks/07-access-policy/">Runbook: Access Policy</a></li>
 </ul>
 
 

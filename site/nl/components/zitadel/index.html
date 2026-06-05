@@ -2566,7 +2566,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2706,7 +2706,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3834,7 +3834,7 @@
 <p>Voegt de <code>groups</code>-claim toe aan het JWT-token dat Zitadel aan NetBird uitgeeft. Zonder deze action bevat de JWT wel authenticatie-informatie, maar geen groepslidmaatschap, en ziet NetBird nooit tot welke persona-groep de gebruiker behoort.</p>
 <p>De action leest <code>sase_groups</code> uit de metadata van de gebruiker en roept <code>setClaim('groups', [...])</code> aan om die schone namen in de uitgaande JWT te injecteren. De JWT group sync van NetBird leest vervolgens deze claim en maakt of wijst auto-groups dienovereenkomstig toe.</p>
 <h3 id="fail-open-ontwerp">Fail-open ontwerp<a class="headerlink" href="#fail-open-ontwerp" title="Permanent link">&para;</a></h3>
-<p>Beide actions hebben <code>allowed-to-fail: true</code>. Als een van beide actions faalt, slaagt de authenticatie alsnog: de gebruiker krijgt een geldig JWT maar zonder group claims. Dit is een bewuste ontwerpkeuze. Fail-open op de authenticatielaag is acceptabel omdat Gate 3 (de SWG-pijplijn op pop01) inhoudsinspectie afdwingt ongeacht groepslidmaatschap. Een gebruiker zonder group claims ontvangt het meest restrictieve standaardbeleid in plaats van volledig buitengesloten te worden.</p>
+<p>Beide actions hebben <code>allowed-to-fail: true</code>. Als een van beide actions faalt, slaagt de authenticatie alsnog: de gebruiker krijgt een geldig JWT maar zonder group claims. Dit is een bewuste ontwerpkeuze. Fail-open op de authenticatielaag is acceptabel omdat Gate 3 (de SWG-pijplijn op pop01) inhoudsinspectie afdwingt ongeacht groepslidmaatschap. Een gebruiker zonder group claims ontvangt de meest restrictieve default policy in plaats van volledig buitengesloten te worden.</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <h3 id="app-registration-entra-id-zijde">App Registration (Entra ID-zijde)<a class="headerlink" href="#app-registration-entra-id-zijde" title="Permanent link">&para;</a></h3>
@@ -3861,7 +3861,7 @@
 </tr>
 </tbody>
 </table>
-<p>Deze vervangt de gedeelde registratie <code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code> die door andere teams werd gebruikt. De sandbox-specifieke registratie voorkomt onderlinge interferentie met Conditional Access-beleid en tokenconfiguratie.</p>
+<p>Deze vervangt de gedeelde registratie <code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code> die door andere teams werd gebruikt. De sandbox-specifieke registratie voorkomt onderlinge interferentie met Conditional Access policy en tokenconfiguratie.</p>
 <h3 id="token-configuration-entra-id-zijde">Token Configuration (Entra ID-zijde)<a class="headerlink" href="#token-configuration-entra-id-zijde" title="Permanent link">&para;</a></h3>
 <p>De <code>cloud_displayname</code>-eigenschap moet in het manifest van de Entra ID-app-registratie aan de <code>groups</code>-claim gekoppeld worden. Het is niet selecteerbaar in de Token Configuration UI en moet worden toegevoegd door het manifest rechtstreeks te bewerken (zie <a href="../../runbooks/08-groupsync/">Runbook 08</a>). Zonder deze koppeling valt de <code>groups</code>-claim terug op GUID's, heeft Action 1's allowlist geen naamstring om op te matchen (een GUID staat nooit in de allowlist), en faalt groepsresolutie stilzwijgend (vanwege <code>allowed-to-fail: true</code>).</p>
 <hr />
@@ -3893,7 +3893,7 @@
 <tr>
 <td><a href="../squid/">Squid</a></td>
 <td>indirect</td>
-<td>Eindconsument van identiteit: persona-groepen bepalen per-request filterbeleid</td>
+<td>Eindconsument van identiteit: persona-groepen bepalen per-request filtering policy</td>
 </tr>
 </tbody>
 </table>

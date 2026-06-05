@@ -17,7 +17,7 @@ Squid draait in **expliciete proxymodus**: clients worden via een PAC-bestand ge
 
 De keuze voor expliciete modus is niet optioneel: transparante proxy via `pf rdr` kan geen via WireGuard gerouteerd verkeer op de `wt0`-interface onderscheppen. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md).
 
-**WPAD/PAC-distributie:** Het PAC-bestand wordt gehost door [Caddy](caddy.md) op mgmt01 via `http://wpad.sandbox.local/wpad.dat`. Clients ontdekken dit via de `sandbox.local` NetBird Custom DNS Zone, die de query naar `wpad.sandbox.local` naar pop01 Unbound routeert (de NetBird primary nameserver); Unbound resolvet die naar de Caddy-host op het overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows-instellingen → Proxy → "Installatiescript gebruiken".
+**WPAD/PAC-distributie:** Het PAC-bestand wordt gehost door [Caddy](caddy.md) op mgmt01 via `http://wpad.sandbox.local/wpad.dat`. Clients ontdekken dit via de `sandbox.local` NetBird Custom DNS Zone, die de query naar `wpad.sandbox.local` naar pop01 Unbound routeert (de NetBird primary nameserver); Unbound resolvet die naar de Caddy-host op het overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows Settings → Proxy → "Use setup script".
 
 **SSL Bump:** Squid decrypteert HTTPS-verkeer met een zelfondertekend CA-certificaat (`SASE-PoC-CA`, geïnstalleerd in de trust store van de client). Dit maakt het mogelijk dat de ICAP pipeline HTTPS-inhoud inspecteert. Zonder SSL Bump zien ClamAV en de Python DLP-server alleen versleutelde bytes.
 
@@ -54,7 +54,7 @@ De `ssl-bump`-parameters moeten in deze directive worden opgenomen. De GUI voegt
 
 Sites uitgesloten van SSL-inspectie (geconfigureerd via GUI):
 
-De Microsoft control plane-set: deze moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de conform-apparaatcontrole:
+De Microsoft control plane-set: deze moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de compliant-device check:
 - `login.microsoftonline.com` (**verplicht**): beschermt de Entra ID OIDC-flow. Als Squid de Microsoft-inlogpagina bumpt, mislukt NetBird-authenticatie voor alle clients.
 - `.microsoftonline.com`: dekt `device.login.microsoftonline.com` en de overige auth-subdomeinen die de kale FQDN niet dekt.
 - `.microsoft.com`: dekt de `manage.microsoft.com`-enrollmentfamilie.
@@ -115,7 +115,7 @@ Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `ext
 
 **StevenBlack-hostsformaat is incompatibel:** OPNsense Remote ACL's verwachten een tar.gz-archief in Squid ACL-formaat, geen hostsbestand. Gebruik UT1 Toulouse in plaats daarvan. Zie [Bevinding: StevenBlack incompatibel](../findings/stevenblack-incompatible.md).
 
-**`--management-url` is verplicht voor zelf-gehoste NetBird:** bij het installeren van de NetBird-agent op pop01 moet de `--management-url`-vlag naar de zelf-gehoste managementserver wijzen. Zonder deze valt de client terug op het NetBird-cloud-managementeindpunt en treedt hij nooit toe tot de sandbox-overlay.
+**`--management-url` is verplicht voor zelf-gehoste NetBird:** bij het installeren van de NetBird-agent op pop01 moet de `--management-url`-vlag naar de zelf-gehoste managementserver wijzen. Zonder deze valt de client terug op het NetBird-cloud-management-endpoint en treedt hij nooit toe tot de sandbox-overlay.
 
 **OPNsense-GUI kan Squid niet aan `wt0` binden:** de `wt0`-interface heeft `IPv4 Configuration Type: None` omdat het IP door WireGuard wordt beheerd, niet door de DHCP/statische stack van OPNsense. De Squid-GUI-dropdown toont alleen interfaces met door OPNsense beheerde IP's. Daarom is het pre-auth include-bestand nodig voor de overlay-listener.
 

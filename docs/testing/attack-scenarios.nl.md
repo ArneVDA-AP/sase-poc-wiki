@@ -5,7 +5,7 @@ tags: [testing, sase, demo, swg, ztna, casb, fwaas, ids, dlp, rpz]
 
 # Aanvals- & bypass-scenario's (demovalidatie)
 
-Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen uit te voeren die de stack moet detecteren en blokkeren. Elk scenario verwijst naar een of meer acceptatietests (F1–F15, T-A1–T-A13) beschreven in [Acceptatietests](acceptance-tests.nl.md).
+Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit te voeren die de stack moet detecteren en blokkeren. Elk scenario verwijst naar een of meer acceptatietests (F1–F15, T-A1–T-A13) beschreven in [Acceptatietests](acceptance-tests.nl.md).
 
 ---
 
@@ -17,7 +17,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 |---|----------|--------------------|-----------|--------------|
 | A1 | Niet-ge-enrolld apparaat probeert DC-LAN-toegang | Geen route naar 10.0.0.0/24: destination unreachable | F8 | `ping 10.0.0.100` vanaf niet-ge-enrollde host |
 | A2 | NetBird-login via Entra ID | OIDC-flow voltooid, tunnel actief, peer in juiste groep | F1, F2 | `netbird up` gevolgd door browser SSO |
-| A3 | Niet-conform apparaat logt in | Conditional Access blokkeert (report-only tot demo) | F3 | Apparaatcompliance aanpassen in Intune |
+| A3 | Non-compliant device logt in | Conditional Access blokkeert (report-only tot demo) | F3 | device compliance aanpassen in Intune |
 
 ### SWG: Webgateway-inspectie
 
@@ -35,8 +35,8 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
-| C1 | Student surft naar deepai.org | Geblokkeerd, 403 (Studenten-beleid) | CASB L1 | `curl.exe -x ... https://deepai.org` als student |
-| C2 | Docent surft naar deepai.org | Toegestaan, 200 (Docenten-beleid) | CASB L1 | Zelfde URL als docentidentiteit |
+| C1 | Student surft naar deepai.org | Geblokkeerd, 403 (Studenten-policy) | CASB L1 | `curl.exe -x ... https://deepai.org` als student |
+| C2 | Docent surft naar deepai.org | Toegestaan, 200 (Docenten-policy) | CASB L1 | Zelfde URL als docentidentiteit |
 | C3 | SharePoint anonieme deellink | Gedetecteerd (regel 100601); Active Response trekt link in achter de ENFORCE-gate (standaard detect-only, live revoke nog niet actief) | CASB L2 | Anonieme deellink aanmaken in SharePoint |
 
 ### FWaaS / IDS: Netwerkdetectie
@@ -69,7 +69,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 ## Belangrijke testopmerkingen
 
 - Alle proxytests vanaf Windows vereisen `--ssl-no-revoke` wegens Schannel CRL-controlefout op SASE-PoC-CA (zie [Finding: curl --ssl-no-revoke](../findings/curl-ssl-no-revoke.nl.md)).
-- ICMP-ping naar overlay-peers faalt by design onder het ALLOW-only beleidsmodel. Gebruik altijd poortgebaseerde tests.
+- ICMP-ping naar overlay-peers faalt by design onder het ALLOW-only policy model. Gebruik altijd poortgebaseerde tests.
 - Elke Suricata SID vuurt eenmaal per TCP-flow door connection pooling (zie [Finding: Suricata connection pooling](../findings/suricata-connection-pooling.nl.md)).
 
 ---

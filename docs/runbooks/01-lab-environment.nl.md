@@ -137,7 +137,7 @@ Klik met rechts op elke node → Configure → General settings:
 
 ---
 
-## Stap 5: IP-adressering en poortdoorsturing configureren
+## Stap 5: IP-adressering en port forwarding configureren
 
 **WAN-segment (192.168.122.0/24, libvirt NAT-gateway .1):**
 
@@ -154,7 +154,7 @@ Klik met rechts op elke node → Configure → General settings:
 | DC-LAN | `10.0.0.0/24` | `10.0.0.1` (pop01 vtnet1) | dc01: `10.0.0.100` |
 | Site-LAN | `172.16.10.0/24` | `172.16.10.1` (site01 eth1) | sitepc01: `172.16.10.10` |
 
-**Poortdoorsturing op GNS3-host** (`10.158.10.67`):
+**Port forwarding op GNS3-host** (`10.158.10.67`):
 
 ```bash
 # Pop01 SSH
@@ -235,7 +235,7 @@ Alle nodes **moeten** gestopt zijn vóór het aanmaken van een snapshot.
 - [ ] `ip addr show virbr0` toont `192.168.122.1/24`
 - [ ] GNS3 GUI verbindt met `10.158.10.67:3080` en toont alle nodes
 - [ ] Alle nodes starten en consoletoegang werkt
-- [ ] Poortdoorsturing werkt: SSH via 7022/7023/7033
+- [ ] Port forwarding werkt: SSH via 7022/7023/7033
 - [ ] Snapshot succesvol aangemaakt
 
 ---

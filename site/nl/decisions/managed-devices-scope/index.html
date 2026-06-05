@@ -2477,7 +2477,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2617,7 +2617,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3635,11 +3635,11 @@
 <tr>
 <td><strong>BYOD (oorspronkelijke scope)</strong></td>
 <td>Bredere apparaatdekking; weerspiegelt real-world heterogene omgeving</td>
-<td>Device posture-controles beperkt tot wat NetBird kan verifiëren zonder MDM (OS-versie, procesaanwezigheid). Geen compliance-attestatie. Kan proxyconfiguratie, firewallregels of certificaten niet op OS-niveau afdwingen</td>
+<td>Device posture checks beperkt tot wat NetBird kan verifiëren zonder MDM (OS-versie, procesaanwezigheid). Geen compliance attestation. Kan proxyconfiguratie, firewallregels of certificaten niet op OS-niveau afdwingen</td>
 </tr>
 <tr>
 <td><strong>Beheerde Windows-apparaten (lectormandaat)</strong></td>
-<td>Intune-compliance-attestatie beschikbaar (Gate 2). MDM kan proxyconfiguratie, firewallregels en certificaten pushen. Smallere scope maar diepere handhaving</td>
+<td>Intune compliance attestation beschikbaar (Gate 2). MDM kan proxyconfiguratie, firewallregels en certificaten pushen. Smallere scope maar diepere handhaving</td>
 <td>Beperkt tot Windows-apparaten die Entra-joined en Intune-enrolled zijn. Dekt geen persoonlijke apparaten of niet-Windows-platforms</td>
 </tr>
 </tbody>
@@ -3648,10 +3648,10 @@
 <p>Beheerde Windows-apparaten (Intune-beheerd, Entra ID-joined) zoals voorgeschreven door lectormandaat R11. Dit stelt Gate 2 in staat Intune-compliancepolicies te gebruiken voor device posture-verificatie in plaats van uitsluitend te vertrouwen op NetBird posture checks. Endpoint-handhaving wordt vereenvoudigd doordat MDM het proxy PAC-bestand, Windows Firewall-regels en root-CA-certificaten rechtstreeks naar ge-enrollde apparaten kan pushen. De profielen die dit uitvoeren staan beschreven in <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a>.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Gate 2-herontwerp:</strong> Device posture-verificatie verschuift van NetBird posture checks (die OS-versie en procesaanwezigheid verifiëren bij tunnel-bouwtijd) naar Intune-compliancepolicies (die OS-versie, Defender AV, firewallstatus en real-time protection verifiëren via MDM-attestatie).</li>
+<li><strong>Gate 2-herontwerp:</strong> Device posture-verificatie verschuift van NetBird posture checks (die OS-versie en procesaanwezigheid verifiëren bij tunnel-bouwtijd) naar Intune-compliancepolicies (die OS-versie, Defender AV, firewallstatus en real-time protection verifiëren via MDM-attestation).</li>
 <li><strong>Addendum F (Linux PoP transparante proxy)</strong> is grotendeels achterhaald. Het transparante proxy-ontwerp ging uit van BYOD-apparaten die niet centraal geconfigureerd konden worden. Met beheerde apparaten wordt proxyconfiguratie via Intune gepusht; transparante interceptie is niet langer het primaire deploymentmodel.</li>
 <li><strong>Identity Bridge-mechanisme is ongewijzigd.</strong> De JWT-gebaseerde groepssynchronisatiepipeline (Entra ID -&gt; Zitadel -&gt; NetBird -&gt; Identity Bridge -&gt; NATS -&gt; Squid) werkt op gebruikersidentiteit, niet op apparaattype. De scopewijziging beïnvloedt apparaathandhaving, niet identiteitsfederatie.</li>
-<li><strong>sitepc01 en mobile01</strong> moeten Entra-joined en Intune-enrolled zijn om geldige test-endpoints te zijn. Beide zijn ge-enrolld (mobile01 in Verslag40, sitepc01/SITE01 in Verslag44), maar alleen <strong>mobile01 (<code>2ITCSC1A-MOB-1</code>) is geverifieerd als Compliant</strong> (Verslag40). <strong>sitepc01 is nog niet geverifieerd als conform:</strong> Microsoft Defender staat uit op zijn Tiny11-image, wat de AV-controle van <code>2ITCSC1A-SASE-Windows-Compliance</code> doet falen. Dit is een bekende compliance-gap (Verslag44, B44.12) die gedicht moet worden door Defender te herstellen voordat compliance-evaluatie op dat endpoint wordt ingeschakeld.</li>
+<li><strong>sitepc01 en mobile01</strong> moeten Entra-joined en Intune-enrolled zijn om geldige test-endpoints te zijn. Beide zijn ge-enrolld (mobile01 in Verslag40, sitepc01/SITE01 in Verslag44), maar alleen <strong>mobile01 (<code>2ITCSC1A-MOB-1</code>) is geverifieerd als Compliant</strong> (Verslag40). <strong>sitepc01 is nog niet geverifieerd als compliant:</strong> Microsoft Defender staat uit op zijn Tiny11-image, wat de AV-controle van <code>2ITCSC1A-SASE-Windows-Compliance</code> doet falen. Dit is een bekende compliance-gap (Verslag44, B44.12) die gedicht moet worden door Defender te herstellen voordat compliance-evaluatie op dat endpoint wordt ingeschakeld.</li>
 <li><strong>Certificaatdistributie:</strong> Het interne CA-rootcertificaat kan worden gepusht via een Intune-configuratieprofiel in plaats van handmatige installatie op elk apparaat.</li>
 </ul>
 <p>Zie ook: <a href="../ca-posture-hybrid/">Beslissing: Entra ID CA + NetBird Posture Checks</a>, <a href="../../concepts/zero-trust/">Concept: Zero Trust</a>, <a href="../../components/netbird/">Component: NetBird</a></p>

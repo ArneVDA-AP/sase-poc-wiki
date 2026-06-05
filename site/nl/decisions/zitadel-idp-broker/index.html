@@ -2488,7 +2488,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2628,7 +2628,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3663,7 +3663,7 @@
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>Zitadel als primaire OIDC-uitgever (geïnstalleerd door quickstart-script), met Entra ID verbonden als externe IdP aan Zitadel.</p>
 <p>Dit was een architecturale realiteit van het quickstart-script, geen bewuste keuze tussen opties. Het quickstart produceert een werkende stack met Zitadel als uitgever. Entra ID wordt daarna toegevoegd als externe IdP in de console van Zitadel. De resulterende keten is architecturaal solide: Zitadel biedt een centrale gebruikersbeheerlaag, en Entra ID biedt schoolaccountauthenticatie.</p>
-<p><strong>CA-policies werken nog steeds:</strong> Entra ID Conditional Access evalueert op het Entra ID <code>/authorize</code>-eindpunt gericht op de NetBird-appregistratie <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>). Of de omleiding afkomstig is van Zitadel of van het NetBird Dashboard is irrelevant: de gebruiker authenticeert rechtstreeks met Entra ID, en CA valt in voor die appregistratie.</p>
+<p><strong>CA-policies werken nog steeds:</strong> Entra ID Conditional Access evalueert op het Entra ID <code>/authorize</code>-endpoint gericht op de NetBird-appregistratie <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>). Of de omleiding afkomstig is van Zitadel of van het NetBird Dashboard is irrelevant: de gebruiker authenticeert rechtstreeks met Entra ID, en CA valt in voor die appregistratie.</p>
 <blockquote>
 <p><strong>App-registratiewissel (V30, mei 2026).</strong> De eerdere build hergebruikte een gedeelde appregistratie (<code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code>), wat een verborgen koppeling tussen de sandbox en de teamprojectstack veroorzaakte. V30 maakte een toegewijde <code>2ITCSC1A-Netbird-Sandbox</code>-registratie (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>) en richtte de Entra ID-federatie van Zitadel daarop. De sandbox-specifieke registratie is de huidige waarde; <code>cebe0d74…</code> is verouderd.</p>
 </blockquote>

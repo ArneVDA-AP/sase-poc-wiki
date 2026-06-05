@@ -2438,10 +2438,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-4-gedifferentieerd-beleid-aanmaken" class="md-nav__link">
+  <a href="#stap-4-gedifferentieerd-policy-aanmaken" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 4: Gedifferentieerd beleid aanmaken
+        Stap 4: Gedifferentieerd policy aanmaken
       
     </span>
   </a>
@@ -2554,7 +2554,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2694,7 +2694,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3650,10 +3650,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#stap-4-gedifferentieerd-beleid-aanmaken" class="md-nav__link">
+  <a href="#stap-4-gedifferentieerd-policy-aanmaken" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 4: Gedifferentieerd beleid aanmaken
+        Stap 4: Gedifferentieerd policy aanmaken
       
     </span>
   </a>
@@ -3782,7 +3782,7 @@
 <blockquote>
 <p><strong>Valkuil: Dit moet vóór alles anders gebeuren.</strong> Bij 4 GB (of zelfs 6 GB) crashen ClamAV en Suricata stilzwijgend via FreeBSD's OOM-killer; er worden geen logboekregels geschreven. ClamAV gebruikt ~1,2 GB, Suricata ~760 MB na Hyperscan-compilatie (piekt op ~4 GB tijdens compilatie), Squid ~400 MB. Samen overschrijden ze 6 GB.</p>
 </blockquote>
-<p>Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (<code>shutdown -h now</code>), verander het RAM in GNS3 node-instellingen, herstart.</p>
+<p>Als pop01 minder dan 8 GB heeft: sluit pop01 netjes af (<code>shutdown -h now</code>), verander het RAM in GNS3 node settings, herstart.</p>
 <p><strong>Verificatie na opstarten:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>top
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># ClamAV: ~1230 MB RSS, Suricata: ~761 MB RSS</span>
@@ -3809,7 +3809,7 @@
 <p><strong>Valkuil: <code>100.64.0.0/10</code> MOET in HOME_NET staan.</strong> NetBird-peer-IP's gebruiken het CGNAT-bereik (100.64.x.x). Zonder dit subnet beschouwt Suricata NetBird-clients als externe hosts en worden regels die <code>$HOME_NET</code> gebruiken niet correct geactiveerd.</p>
 <p><strong>Valkuil: Promiscuous mode is essentieel op vtnet1 (LAN).</strong> Zonder dit ziet de NIC alleen frames die bestemd zijn voor het MAC-adres van pop01. Verkeer van dc01 bestemd voor andere bestemmingen zou onzichtbaar zijn.</p>
 </blockquote>
-<p><strong>Waarom IDS en niet IPS:</strong> Netmap IPS vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel <code>igb</code>, <code>ixgbe</code>). De virtio-NIC's in QEMU/GNS3 hebben geen Netmap-stuurprogramma; alle worker-threads verwerken nul pakketten. Het drop/alert-beleid is geconfigureerd en gereed voor IPS-activering op fysieke hardware met compatibele NIC's. Zie <a href="../../decisions/ids-vs-ips/">Beslissing: IDS vs IPS</a>.</p>
+<p><strong>Waarom IDS en niet IPS:</strong> Netmap IPS vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel <code>igb</code>, <code>ixgbe</code>). De virtio-NIC's in QEMU/GNS3 hebben geen Netmap-stuurprogramma; alle worker-threads verwerken nul pakketten. Het drop/alert policy is geconfigureerd en gereed voor IPS-activering op fysieke hardware met compatibele NIC's. Zie <a href="../../decisions/ids-vs-ips/">Beslissing: IDS vs IPS</a>.</p>
 <hr />
 <h2 id="stap-3-regelsets-downloaden-en-inschakelen">Stap 3: Regelsets downloaden en inschakelen<a class="headerlink" href="#stap-3-regelsets-downloaden-en-inschakelen" title="Permanent link">&para;</a></h2>
 <p>Via Administration → Download, selecteer en klik op "Download &amp; Update Rules":</p>
@@ -3843,12 +3843,12 @@
 <p><strong>Valkuil: Gedownloade regels worden NIET automatisch geactiveerd.</strong> Ga naar Administration → Rules, selecteer alle regelbestanden en schakel ze expliciet <strong>in</strong>. Dit is een aparte stap.</p>
 </blockquote>
 <hr />
-<h2 id="stap-4-gedifferentieerd-beleid-aanmaken">Stap 4: Gedifferentieerd beleid aanmaken<a class="headerlink" href="#stap-4-gedifferentieerd-beleid-aanmaken" title="Permanent link">&para;</a></h2>
+<h2 id="stap-4-gedifferentieerd-policy-aanmaken">Stap 4: Gedifferentieerd policy aanmaken<a class="headerlink" href="#stap-4-gedifferentieerd-policy-aanmaken" title="Permanent link">&para;</a></h2>
 <p>Via Administration → Policies:</p>
-<p><strong>Beleid 1: Drop (hoge betrouwbaarheid, altijd kwaadaardig):</strong>
+<p><strong>Policy 1: Drop (hoge betrouwbaarheid, altijd kwaadaardig):</strong>
 - Categorieën: emerging-malware, emerging-exploit, emerging-worm, emerging-botcc, emerging-botcc.portgrouped, compromised, drop, ciarmy, Threatview_CS-C2, alle Abuse.ch-feeds
 - Actie: Drop, Nieuwe actie: Drop</p>
-<p><strong>Beleid 2: Alert (risico op valse positieven):</strong>
+<p><strong>Policy 2: Alert (risico op valse positieven):</strong>
 - Categorieën: tor, emerging-info, emerging-policy, emerging-dns, emerging-web_client, emerging-web_server, emerging-misc, emerging-games, emerging-chat, emerging-p2p, emerging-attack_response
 - Actie: Alert, Nieuwe actie: Alert</p>
 <p>Opmerking: <code>emerging-attack_response</code> is ingesteld op Alert; dit maakt testvalidatie met SID 2100498 mogelijk.</p>
@@ -3967,7 +3967,7 @@ Zie <a href="../../findings/suricata-interface-default-bug/">Finding: Suricata i
 <li>[ ] SSE4.2 bevestigd, Hyperscan geselecteerd</li>
 <li>[ ] <code>100.64.0.0/10</code> in HOME_NET</li>
 <li>[ ] 79.620+ regels gedownload EN ingeschakeld</li>
-<li>[ ] Drop/Alert-beleid geconfigureerd</li>
+<li>[ ] Drop/Alert policy geconfigureerd</li>
 <li>[ ] <code>procstat -f &lt;PID&gt; | grep bpf</code> toont bpf0 en bpf1</li>
 <li>[ ] vtnet0-meldingen aanwezig (SID 2100498 of vergelijkbaar)</li>
 <li>[ ] vtnet1-meldingen aanwezig (dc01-verkeer)</li>

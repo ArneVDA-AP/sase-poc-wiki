@@ -205,7 +205,7 @@ Herstel: als `config.json` 0 bytes is, herstel vanuit de back-up en herstart Net
 
 ## Stap 10: Groepen aanmaken in NetBird Dashboard
 
-> **⚠️ Verouderd door de V34-personamigratie (mei 2026).** Stappen 10–13 hieronder documenteren de *oorspronkelijke* Fase-2-build met `SASE-*`-groepen en drie ACL policies. Dat model is vervangen: een diagnose toonde dat alle connectiviteit op de `SASE-*`-groepen hing, terwijl de identiteit-gesynchroniseerde persona-groepen (`Studenten`/`Docenten`/`Admins`) geen beleid droegen, waardoor groep-gebaseerde quarantaine een no-op was. De huidige staat is een `Core-Services`-groep (pop01, mgmt01) plus één `Personas-to-Core-Services`-ACL-beleid (persona-groepen → `Core-Services`, **alleen TCP 3128**), en het `Internal-DC`-netwerk + `Datacenter-Access`-beleid zijn verwijderd (DC-LAN-over-overlay uitgesteld tot de geplande Cosmos-sessie). **Volg voor de huidige build het groep-/beleidmodel in [Component: NetBird](../components/netbird.nl.md); persona-groepen worden aangemaakt door identiteitssynchronisatie, niet handmatig ([Runbook 08: GroupSync](08-groupsync.nl.md)).** De onderstaande stappen blijven behouden als historische/evolutiereferentie.
+> **⚠️ Verouderd door de V34-personamigratie (mei 2026).** Stappen 10–13 hieronder documenteren de *oorspronkelijke* Fase-2-build met `SASE-*`-groepen en drie ACL policies. Dat model is vervangen: een diagnose toonde dat alle connectiviteit op de `SASE-*`-groepen hing, terwijl de identiteit-gesynchroniseerde persona-groepen (`Studenten`/`Docenten`/`Admins`) geen policy droegen, waardoor groep-gebaseerde quarantaine een no-op was. De huidige staat is een `Core-Services`-groep (pop01, mgmt01) plus één `Personas-to-Core-Services`-ACL policy (persona-groepen → `Core-Services`, **alleen TCP 3128**), en het `Internal-DC`-netwerk + `Datacenter-Access`-policy zijn verwijderd (DC-LAN-over-overlay uitgesteld tot de geplande Cosmos-sessie). **Volg voor de huidige build het groep-/policy model in [Component: NetBird](../components/netbird.nl.md); persona-groepen worden aangemaakt door identiteitssynchronisatie, niet handmatig ([Runbook 08: GroupSync](08-groupsync.nl.md)).** De onderstaande stappen blijven behouden als historische/evolutiereferentie.
 
 NetBird Dashboard → Peers → maak groepen aan:
 
@@ -213,7 +213,7 @@ NetBird Dashboard → Peers → maak groepen aan:
 |-------|-------|-----|
 | `SASE-Admins` | pop01, mgmt01 | Administratieve SSH/HTTPS-toegang |
 | `SASE-MobileUsers` | mobile01, toekomstige BYOD | BYOD-clients |
-| `SASE-Services` | pop01, mgmt01 | Service-eindpunten (WPAD, DNS, proxy) |
+| `SASE-Services` | pop01, mgmt01 | Service-endpoints (WPAD, DNS, proxy) |
 | `SASE-InternalResources` | (resourcegroep voor netwerk) | DC-LAN-resources |
 
 mgmt01 zit in zowel `SASE-Admins` als `SASE-Services`; dit scheidt de infrarol (beheertoegang) van de servicerol (WPAD via Caddy, ioc2rpz-feeds).
@@ -222,9 +222,9 @@ mgmt01 zit in zowel `SASE-Admins` als `SASE-Services`; dit scheidt de infrarol (
 
 ## Stap 11: ACL policies aanmaken
 
-> **Valkuil: Volgorde is cruciaal.** Maak alle policies aan **vóór** het verwijderen van het standaard alles-naar-alles-beleid. Als je het standaardbeleid verwijdert zonder vervangers, valt alle peercommunicatie direct weg.
+> **Valkuil: Volgorde is cruciaal.** Maak alle policies aan **vóór** het verwijderen van de default all-to-all policy. Als je de default policy verwijdert zonder vervangers, valt alle peercommunicatie direct weg.
 
-**Beleid 1: Admin-Infrastructuur:**
+**Policy 1: Admin-Infrastructuur:**
 
 ```
 Naam:        Admin-Infrastructure
@@ -234,7 +234,7 @@ Protocol:    All
 Actie:       Accept
 ```
 
-**Beleid 2: Mobiel-naar-Services:**
+**Policy 2: Mobiel-naar-Services:**
 
 ```
 Naam:        Mobile-to-Services
@@ -244,7 +244,7 @@ Protocol:    All
 Actie:       Accept
 ```
 
-**Beleid 3: Datacentertoegeng:**
+**Policy 3: Datacentertoegang:**
 
 ```
 Naam:        Datacenter Access

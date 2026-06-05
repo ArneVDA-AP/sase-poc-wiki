@@ -31,7 +31,7 @@ WPAD/PAC is ook het architecturaal correcte patroon voor een SASE-stack: het com
 
 ## Gevolgen
 
-- mobile01 moet worden geconfigureerd met de PAC-bestand URL (handmatig via Windows-instellingen → Proxy → "Installatiescript gebruiken")
+- mobile01 moet worden geconfigureerd met de PAC-bestand URL (handmatig via Windows Settings → Proxy → "Use setup script")
 - Niet-browserapplicaties die de systeemproxyinstelling negeren, omzeilen Squid (gedeeltelijk gecompenseerd door Suricata op vtnet0)
 - Squid moet luisteren op het NetBird overlay-IP (`100.70.154.79:3128`) via pre-auth include, niet via de GUI
 - Caddy op mgmt01 serveert het PAC-bestand; de `sandbox.local` NetBird Custom DNS Zone routeert de query naar `wpad.sandbox.local` naar pop01 Unbound (de NetBird primary nameserver), die die resolvet naar de Caddy-host op mgmt01

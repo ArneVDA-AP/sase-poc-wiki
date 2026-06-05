@@ -34,7 +34,7 @@ YARA-regels worden uitgevoerd *na* de bestandsdecompressie-engine van ClamAV: ee
 
 ### ClamAV + c-icap inschakelen
 
-Installeren via OPNsense → Systeem → Firmware → Plugins: `os-clamav` en `os-c-icap`.
+Installeren via OPNsense → System → Firmware → Plugins: `os-clamav` en `os-c-icap`.
 
 Configureren via Services → ClamAV Antivirus:
 - ClamAV inschakelen: ✔

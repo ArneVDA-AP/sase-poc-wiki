@@ -98,7 +98,7 @@ tail -f /var/log/squid/access.log
 
 ## Stap 5: Identiteitsgebaseerde filtering testen
 
-Test of beleidshandhaving verschilt per persona. Gebruik `deepai.org` als demonstrator: dit domein zit niet in de UT1-categorieblacklist, dus het enige wat het kan blokkeren is de persona-ACL, waardoor het verschil zichtbaar wordt. AI-chatdomeinen zoals `chatgpt.com` zitten in UT1 en worden voor *beide* persona's geblokkeerd door de categoriefilter (die voor de persona-regel draait). Ze tonen dus "voor iedereen geblokkeerd" en kunnen de differentiatie niet aantonen.
+Test of policy enforcement verschilt per persona. Gebruik `deepai.org` als demonstrator: dit domein zit niet in de UT1-categorieblacklist, dus het enige wat het kan blokkeren is de persona-ACL, waardoor het verschil zichtbaar wordt. AI-chatdomeinen zoals `chatgpt.com` zitten in UT1 en worden voor *beide* persona's geblokkeerd door de categoriefilter (die voor de persona-regel draait). Ze tonen dus "voor iedereen geblokkeerd" en kunnen de differentiatie niet aantonen.
 
 **Student (beperkt):**
 

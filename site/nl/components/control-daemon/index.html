@@ -2488,7 +2488,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2628,7 +2628,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3657,7 +3657,7 @@
 <li><strong>Quarantainemechanisme:</strong> Strip persona-groepen van peer → deny-by-default. NIET via een aparte deny-groep.</li>
 <li><strong>Dequarantaine:</strong> Herstelt originele groepen vanuit Redis-backup. Opgelost: NetBird retourneert <code>peers:null</code> voor lege groepen (niet <code>[]</code>), wat dequarantaine deed crashen.</li>
 <li><strong>Redis:</strong> Threat score opslag + sessiestatus op <code>redis:7-alpine</code>, poort 6379 enkel localhost.</li>
-<li><strong>Beleidsgroepen:</strong> <code>NETBIRD_POLICY_GROUPS=Studenten,Docenten,Admins</code> (enkel deze worden gestript tijdens quarantaine). Infrastructuurgroepen zijn structureel onaantastbaar.</li>
+<li><strong>Policy groups:</strong> <code>NETBIRD_POLICY_GROUPS=Studenten,Docenten,Admins</code> (enkel deze worden gestript tijdens quarantaine). Infrastructuurgroepen zijn structureel onaantastbaar.</li>
 </ul>
 <h2 id="integratiepunten">Integratiepunten<a class="headerlink" href="#integratiepunten" title="Permanent link">&para;</a></h2>
 <table>

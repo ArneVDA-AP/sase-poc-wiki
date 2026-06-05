@@ -171,9 +171,9 @@ nslookup wpad.sandbox.local
 
 ---
 
-## Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
+## Stap 7: Het ACL policy voor proxy-/DNS-bereikbaarheid verifiëren
 
-Onder het V34-personamodel (zie [Component: NetBird](../components/netbird.nl.md)) draagt één allow-beleid alle connectiviteit: **`Personas-to-Core-Services`**: sources `Studenten`/`Docenten`/`Admins` → destination `Core-Services` (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.
+Onder het V34-personamodel (zie [Component: NetBird](../components/netbird.nl.md)) draagt één allow policy alle connectiviteit: **`Personas-to-Core-Services`**: sources `Studenten`/`Docenten`/`Admins` → destination `Core-Services` (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.
 
 > **Verouderd:** eerdere builds gebruikten aparte `Admin-Infrastructure`-, `Mobile-to-Services`- en `Datacenter Access`-policies op `SASE-*`-groepen. Die policies en groepen zijn verwijderd in de V34-migratie; maak ze niet opnieuw aan.
 
@@ -200,11 +200,11 @@ Op Intune-enrolled apparaten wordt de PAC-URL vanuit de cloud gepusht in plaats 
 Voor een unmanaged of met de hand gebouwde testclient zet je dezelfde PAC-URL handmatig:
 
 ```
-Windows Instellingen → Netwerk en internet → Proxy:
-  Instellingen automatisch detecteren: Uit
-  Installatiescript gebruiken: Aan
-  Scriptadres: http://wpad.sandbox.local/wpad.dat
-  Handmatige proxy: Uit
+Windows Settings → Network & Internet → Proxy:
+  Automatically detect settings: Off
+  Use setup script: On
+  Script Address: http://wpad.sandbox.local/wpad.dat
+  Manual proxy: Off
 ```
 
 De Caddy root-CA moet al zijn geïmporteerd in de Windows-trust store (gedaan tijdens NetBird-registratie).
@@ -244,7 +244,7 @@ enterpriseregistration.windows.net
 .banking.example.com
 ```
 
-> **Valkuil: de Microsoft control plane-set MOET in de no-bump-lijst staan.** Als Squid een van deze bumpt, wordt de OIDC-certificaatketen verbroken en mislukken Entra ID-authenticatie, Intune-apparaatregistratie en de conform-apparaatcontrole voor alle NetBird-clients. `.microsoftonline.com` (met punt vooraan) dekt `device.login.microsoftonline.com`; `enterpriseregistration.windows.net` is de exacte apparaatregistratie-host; `.microsoftazuread-sso.com` is het cert-pinned seamless SSO-endpoint; `.live.com` is de consumer-auth-leg die tijdens de interactieve Entra-join wordt geraakt.
+> **Valkuil: de Microsoft control plane-set MOET in de no-bump-lijst staan.** Als Squid een van deze bumpt, wordt de OIDC-certificaatketen verbroken en mislukken Entra ID-authenticatie, Intune-apparaatregistratie en de compliant-device check voor alle NetBird-clients. `.microsoftonline.com` (met punt vooraan) dekt `device.login.microsoftonline.com`; `enterpriseregistration.windows.net` is de exacte apparaatregistratie-host; `.microsoftazuread-sso.com` is het cert-pinned seamless SSO-endpoint; `.live.com` is de consumer-auth-leg die tijdens de interactieve Entra-join wordt geraakt.
 
 ---
 

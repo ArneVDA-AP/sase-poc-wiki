@@ -2386,7 +2386,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2672,7 +2672,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3842,7 +3842,7 @@
 <p><strong>Verwacht:</strong> Logregels bevatten de identiteitsgroep (Studenten/Docenten/Admins) voor elk verzoek, wat bewijst dat Squid de Identity Bridge succesvol queryet voor elke verbinding.</p>
 <hr />
 <h2 id="stap-5-identiteitsgebaseerde-filtering-testen">Stap 5: Identiteitsgebaseerde filtering testen<a class="headerlink" href="#stap-5-identiteitsgebaseerde-filtering-testen" title="Permanent link">&para;</a></h2>
-<p>Test of beleidshandhaving verschilt per persona. Gebruik <code>deepai.org</code> als demonstrator: dit domein zit niet in de UT1-categorieblacklist, dus het enige wat het kan blokkeren is de persona-ACL, waardoor het verschil zichtbaar wordt. AI-chatdomeinen zoals <code>chatgpt.com</code> zitten in UT1 en worden voor <em>beide</em> persona's geblokkeerd door de categoriefilter (die voor de persona-regel draait). Ze tonen dus "voor iedereen geblokkeerd" en kunnen de differentiatie niet aantonen.</p>
+<p>Test of policy enforcement verschilt per persona. Gebruik <code>deepai.org</code> als demonstrator: dit domein zit niet in de UT1-categorieblacklist, dus het enige wat het kan blokkeren is de persona-ACL, waardoor het verschil zichtbaar wordt. AI-chatdomeinen zoals <code>chatgpt.com</code> zitten in UT1 en worden voor <em>beide</em> persona's geblokkeerd door de categoriefilter (die voor de persona-regel draait). Ze tonen dus "voor iedereen geblokkeerd" en kunnen de differentiatie niet aantonen.</p>
 <p><strong>Student (beperkt):</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-x<span class="w"> </span>http://100.70.154.79:3128<span class="w"> </span>https://deepai.org
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># Verwacht: 403 Forbidden (geblokkeerd voor studenten)</span>

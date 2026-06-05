@@ -27,7 +27,7 @@ Zitadel als primaire OIDC-uitgever (geïnstalleerd door quickstart-script), met 
 
 Dit was een architecturale realiteit van het quickstart-script, geen bewuste keuze tussen opties. Het quickstart produceert een werkende stack met Zitadel als uitgever. Entra ID wordt daarna toegevoegd als externe IdP in de console van Zitadel. De resulterende keten is architecturaal solide: Zitadel biedt een centrale gebruikersbeheerlaag, en Entra ID biedt schoolaccountauthenticatie.
 
-**CA-policies werken nog steeds:** Entra ID Conditional Access evalueert op het Entra ID `/authorize`-eindpunt gericht op de NetBird-appregistratie `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`). Of de omleiding afkomstig is van Zitadel of van het NetBird Dashboard is irrelevant: de gebruiker authenticeert rechtstreeks met Entra ID, en CA valt in voor die appregistratie.
+**CA-policies werken nog steeds:** Entra ID Conditional Access evalueert op het Entra ID `/authorize`-endpoint gericht op de NetBird-appregistratie `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`). Of de omleiding afkomstig is van Zitadel of van het NetBird Dashboard is irrelevant: de gebruiker authenticeert rechtstreeks met Entra ID, en CA valt in voor die appregistratie.
 
 > **App-registratiewissel (V30, mei 2026).** De eerdere build hergebruikte een gedeelde appregistratie (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`), wat een verborgen koppeling tussen de sandbox en de teamprojectstack veroorzaakte. V30 maakte een toegewijde `2ITCSC1A-Netbird-Sandbox`-registratie (`11803ee8-eb15-462c-a286-5415c17a29c6`) en richtte de Entra ID-federatie van Zitadel daarop. De sandbox-specifieke registratie is de huidige waarde; `cebe0d74…` is verouderd.
 

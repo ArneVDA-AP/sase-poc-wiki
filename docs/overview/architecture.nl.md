@@ -16,7 +16,7 @@ Het project verwerpt het traditionele perimetermodel waarbij vertrouwen voortkom
 In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats **op de PoP** (Point of Presence), de edge-node tussen clients en internet. De PoP evalueert vertrouwen op basis van drie onafhankelijke factoren:
 
 1. **Identiteit:** wie ben je? (Entra ID + MFA)
-2. **Apparaatposture:** wat is de toestand van je apparaat? (Intune-conformiteit + Entra ID CA)
+2. **Device posture:** wat is de toestand van je apparaat? (Intune compliance + Entra ID CA)
 3. **Inhoud:** wat verstuur je? (SWG-inspectiepipeline)
 
 Dit is het [Zero Trust drie-gate model](../concepts/zero-trust.md).
@@ -145,12 +145,12 @@ netbird up (mobile01)
   │   - CA Policy 2: Geo-blokkering (alleen België), Report-only
   │   - CA Policy 3: Legacy-auth geblokkeerd ✅
   │   - CA Policy 4: Risico-gebaseerde blokkering ✅
-  │   - CA Policy 5: Conform apparaat vereist, Report-only
+  │   - CA Policy 5: Compliant device vereist, Report-only
   │ OIDC-token ontvangen
   │
-  │ Gate 2: Intune-apparaatconformiteit evalueert (✅ operationeel)
+  │ Gate 2: Intune device compliance evalueert (✅ operationeel)
   │   - OS-versie, Defender AV + firewall, real-time protection
-  │   - mobile01 enrolled als 2ITCSC1A-MOB-1, conform
+  │   - mobile01 enrolled als 2ITCSC1A-MOB-1, compliant
   │ WireGuard-tunnelonderhandeling met pop01
   │ WireGuard-tunnel actief, ACL-policies toegepast
   ▼
@@ -204,7 +204,7 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 
 | Grens | Wat het handhaaft | Waar |
 |-------|------------------|------|
-| WireGuard-tunnelopbouw | Identiteit (OIDC) + apparaatposture (Intune-conformiteit) | pop01 wt0 |
+| WireGuard-tunnelopbouw | Identiteit (OIDC) + device posture (Intune compliance) | pop01 wt0 |
 | Squid ACL | Netwerkniveau toestaan/weigeren per subnet | pop01 Squid |
 | ICAP-pipeline | Inhoudsniveau toestaan/weigeren per transactie | pop01 + mgmt01 |
 | ICAP fail-open | `bypass=on`, uploads passeren ongeïnspecteerd als Python DLP-container uitvalt | pop01 Squid → mgmt01 |
@@ -253,7 +253,7 @@ Drie gates handhaven toegangscontrole op verschillende punten in de verbindingsl
 | Gate | Technologie | Timing | Status |
 |------|-------------|--------|--------|
 | Gate 1, Identiteit | Entra ID Conditional Access (5 policies) | Bij authenticatie (OIDC-login) | ✅ Operationeel |
-| Gate 2, Apparaat | [Intune-apparaatconformiteit](../components/intune-endpoint-enforcement.md) | Bij authenticatie + continu (8u-cyclus) | ✅ Operationeel (Report-only tot demo) |
+| Gate 2, Apparaat | [Intune device compliance](../components/intune-endpoint-enforcement.md) | Bij authenticatie + continu (8u-cyclus) | ✅ Operationeel (Report-only tot demo) |
 | Gate 3, Inhoud | Squid + ClamAV + Python DLP + Suricata + Unbound RPZ | Elke HTTP/DNS-aanvraag | ✅ Operationeel |
 
 Gates zijn aanvullend, niet redundant. Gate 1 evalueert *wie* de gebruiker is (MFA, aanmeldingsrisico, geo-locatie). Gate 2 evalueert *wat* het apparaat is (OS-versie, AV-status, firewall). Gate 3 evalueert *wat* wordt overgedragen (malware, gevoelige data, geblokkeerde domeinen). Geen enkele gate kan de andere vervangen.

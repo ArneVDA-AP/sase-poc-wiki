@@ -112,7 +112,7 @@ plugins:
             04 — Malware & DLP: 04 — Malware & DLP
             05 — IDS: 05 — IDS
             06 — DNS Threat Intel: 06 — DNS Threat Intel
-            07 — Access Policy: 07 — Toegangsbeleid
+            07 — Access Policy: 07 — Access Policy
             SD-WAN Descoped: SD-WAN Geschrapt
             Testing: Testen
             Acceptance Tests (F1–F15): Acceptatietests (F1–F15)
@@ -137,7 +137,7 @@ plugins:
             09 — Identity Bridge: 09 — Identity Bridge
             10 — NATS JetStream: 10 — NATS JetStream
             11 — Wazuh: 11 — Wazuh
-            12 — Intune Endpoint: 12 — Intune-eindpunt
+            12 — Intune Endpoint: 12 — Intune Endpoint
             NetBird issue 3127: NetBird issue 3127
             Squid overlay bind race: Squid overlay bind-race
             Overlay IP instability: Overlay-IP-instabiliteit

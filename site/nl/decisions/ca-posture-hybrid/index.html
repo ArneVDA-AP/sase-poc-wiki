@@ -2499,7 +2499,7 @@
   <span class="md-ellipsis">
     
   
-    07 — Toegangsbeleid
+    07 — Access Policy
   
 
     
@@ -2639,7 +2639,7 @@
   <span class="md-ellipsis">
     
   
-    12 — Intune-eindpunt
+    12 — Intune Endpoint
   
 
     
@@ -3659,8 +3659,8 @@
 <strong>Datum:</strong> Architectuur april 2026 (Addendum E.2); geïmplementeerd 2 juni 2026 (Verslag40)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
 <p>De vraag die deze beslissing beantwoordt: hoe verifieer je zowel <em>identiteit</em> als <em>apparaatstatus</em> voordat je netwerktoegang verleent?</p>
-<p>Een vroege stellingname (Verslag18, Bevinding 17.7, "Entra ID Conditional Access vervangt NetBird posture checks") werd voor het eerst herzien in Verslag27 onder de aanname van <em>onbeheerde BYOD</em>. Op onbeheerde apparaten kan CA apparaatconformiteit niet controleren (dat vereist Intune-enrollment), dus werden NetBird posture checks voorgesteld als een aanvullende apparaatstatus-gate (Doc7, Addendum E.1).</p>
-<p>Die premisse veranderde vervolgens. Een scopecorrectie stelde vast dat de in-scope apparaten <strong>beheerde, Intune-ge-enrollde Windows-apparaten</strong> zijn, niet onbeheerde BYOD (Addendum E.2; zie <a href="../managed-devices-scope/">Beslissing: Scope beheerde Windows-apparaten</a>). Met beheerde apparaten <em>kan</em> CA apparaatstatus evalueren, via Intune-conformiteitsattestatie. Dus werd <strong>Intune-conformiteit het primaire apparaatpostuurmechanisme (Gate 2)</strong>, en NetBird posture checks werden gedegradeerd tot een <strong>optionele defense-in-depth-uitbreiding</strong> die nooit in de sandbox is gedeployd. Verslag40 (2 juni 2026) implementeerde dit beheerde-apparaatmodel.</p>
+<p>Een vroege stellingname (Verslag18, Bevinding 17.7, "Entra ID Conditional Access vervangt NetBird posture checks") werd voor het eerst herzien in Verslag27 onder de aanname van <em>onbeheerde BYOD</em>. Op onbeheerde apparaten kan CA device compliance niet controleren (dat vereist Intune-enrollment), dus werden NetBird posture checks voorgesteld als een aanvullende apparaatstatus-gate (Doc7, Addendum E.1).</p>
+<p>Die premisse veranderde vervolgens. Een scopecorrectie stelde vast dat de in-scope apparaten <strong>beheerde, Intune-ge-enrollde Windows-apparaten</strong> zijn, niet onbeheerde BYOD (Addendum E.2; zie <a href="../managed-devices-scope/">Beslissing: Scope beheerde Windows-apparaten</a>). Met beheerde apparaten <em>kan</em> CA apparaatstatus evalueren, via Intune compliance attestation. Dus werd <strong>Intune compliance het primaire device posture-mechanisme (Gate 2)</strong>, en NetBird posture checks werden gedegradeerd tot een <strong>optionele defense-in-depth-uitbreiding</strong> die nooit in de sandbox is gedeployd. Verslag40 (2 juni 2026) implementeerde dit beheerde-apparaatmodel.</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>De eerste drie rijen vormen de <strong>BYOD-tijdperk-analyse</strong> (Addendum E.1 / Doc7). Ze worden bewaard als beslissingsgeschiedenis; hun gedeelde premisse (onbeheerde BYOD) werd vervangen door de beheerde-apparaat-scopecorrectie (laatste rij).</p>
@@ -3677,7 +3677,7 @@
 <tr>
 <td><strong>Alleen CA</strong></td>
 <td>Eén controlepunt; door Microsoft beheerd</td>
-<td>Op <em>onbeheerde</em> BYOD is CA-apparaatconformiteit niet beschikbaar (vereist Intune). CA kan MFA en aanmeldingsrisico afdwingen, maar geen OS-versie of AV-status</td>
+<td>Op <em>onbeheerde</em> BYOD is CA device compliance niet beschikbaar (vereist Intune). CA kan MFA en aanmeldingsrisico afdwingen, maar geen OS-versie of AV-status</td>
 </tr>
 <tr>
 <td><strong>Alleen NetBird posture</strong></td>
@@ -3687,11 +3687,11 @@
 <tr>
 <td><strong>CA + NetBird posture (BYOD-tijdperk-plan)</strong></td>
 <td>Elk dekt wat de andere niet kan</td>
-<td><strong>Premisse vervangen.</strong> Ging uit van onbeheerde BYOD; zodra apparaten beheerd waren, verving Intune-conformiteit NetBird posture als de apparaat-gate</td>
+<td><strong>Premisse vervangen.</strong> Ging uit van onbeheerde BYOD; zodra apparaten beheerd waren, verving Intune compliance NetBird posture als de apparaat-gate</td>
 </tr>
 <tr>
-<td><strong>CA + Intune-conformiteit (beheerd apparaat, geïmplementeerd)</strong></td>
-<td>Attestatie-gebaseerd apparaatpostuur op authenticatietijdstip; niet spoofbaar door de eindgebruiker; zelfde control plane als identiteit</td>
+<td><strong>CA + Intune compliance (beheerd apparaat, geïmplementeerd)</strong></td>
+<td>Attestation-based device posture op authenticatietijdstip; niet spoofbaar door de eindgebruiker; zelfde control plane als identiteit</td>
 <td>Beperkt tot Intune-ge-enrollde Windows-apparaten</td>
 </tr>
 </tbody>
@@ -3700,20 +3700,20 @@
 <p>Beheerde-apparaat <strong>drie-gate model</strong> (Verslag40):</p>
 <ul>
 <li><strong>Gate 1 (Identiteit):</strong> Entra ID Conditional Access (5 policies, authenticatietijdstip)</li>
-<li><strong>Gate 2 (Apparaat):</strong> Intune-apparaatconformiteit (attestatie-gebaseerd postuur, geëvalueerd bij authenticatie via CA Policy 5 en op Intune's periodieke cyclus). De endpoint-config-kant van diezelfde beheerde-apparaatbasis is <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a>.</li>
+<li><strong>Gate 2 (Apparaat):</strong> Intune device compliance (attestation-based posture, geëvalueerd bij authenticatie via CA Policy 5 en op Intune's periodieke cyclus). De endpoint-config-kant van diezelfde beheerde-apparaatbasis is <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a>.</li>
 <li><strong>Gate 3 (Inhoud):</strong> SWG-pipeline (Squid SSL-Bump + ClamAV + DLP + Unbound RPZ, elke aanvraag)</li>
 </ul>
-<p>NetBird posture checks blijven <em>beschikbaar</em> als een optionele, onafhankelijke defense-in-depth-laag (andere timing, namelijk tunnel-bouw, en ander mechanisme, namelijk client-side controle), maar werden <strong>niet gedeployd</strong>: met beheerde apparaten dekt Intune-conformiteit de apparaatpostuureis van de rubric al via attestatie in plaats van een spoofbare procescontrole.</p>
+<p>NetBird posture checks blijven <em>beschikbaar</em> als een optionele, onafhankelijke defense-in-depth-laag (andere timing, namelijk tunnel-bouw, en ander mechanisme, namelijk client-side controle), maar werden <strong>niet gedeployd</strong>: met beheerde apparaten dekt Intune compliance de device posture-vereiste van de rubric al via attestation in plaats van een spoofbare procescontrole.</p>
 <p><strong>Wat CA (Gate 1) dekt:</strong>
 - MFA-handhaving
 - Aanmeldingsrisicoevaluatie (gelekte inloggegevens, onmogelijke reis, afwijkende aanmeldpatronen via Entra ID Protection; beschikbaar omdat <code>aplab.be</code> een A5-licentie heeft die P2 omvat)
 - Benoemde locaties (geo-blokkering)
 - Blokkering van legacy-authenticatie</p>
-<p><strong>Wat Intune-conformiteit (Gate 2) dekt:</strong>
-- OS-versie (attestatie-gebaseerd, minimum <code>10.0.22000.0</code>)
+<p><strong>Wat Intune compliance (Gate 2) dekt:</strong>
+- OS-versie (attestation-based, minimum <code>10.0.22000.0</code>)
 - Defender antivirus actief + security intelligence actueel + real-time protection
 - Windows Defender Firewall actief</p>
-<p>Omdat Intune de werkelijke apparaatstatus rapporteert via de beheeragent (attestatie), is Gate 2 <strong>niet spoofbaar door de eindgebruiker</strong>. Dit is het belangrijkste voordeel ten opzichte van de NetBird <code>process_check</code> die het verving, die alleen verifieert dat een binary op een pad bestaat.</p>
+<p>Omdat Intune de werkelijke apparaatstatus rapporteert via de beheeragent (attestation), is Gate 2 <strong>niet spoofbaar door de eindgebruiker</strong>. Dit is het belangrijkste voordeel ten opzichte van de NetBird <code>process_check</code> die het verving, die alleen verifieert dat een binary op een pad bestaat.</p>
 <h2 id="geimplementeerde-gate-1-policies">Geïmplementeerde Gate 1-policies<a class="headerlink" href="#geimplementeerde-gate-1-policies" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3740,7 +3740,7 @@
 <td>✅ Actief</td>
 </tr>
 <tr>
-<td>CA Policy 5 (Conform apparaat vereist)</td>
+<td>CA Policy 5 (Compliant device vereist)</td>
 <td>Report-only: Success bewezen, On bij demo</td>
 </tr>
 </tbody>
@@ -3756,23 +3756,23 @@
 </thead>
 <tbody>
 <tr>
-<td>Intune-conformiteitsbeleid (OS-versie, Defender AV + firewall, real-time protection)</td>
+<td>Intune compliance policy (OS-versie, Defender AV + firewall, real-time protection)</td>
 <td>✅ Actief</td>
 </tr>
 <tr>
-<td>mobile01 (<code>2ITCSC1A-MOB-1</code>) Entra joined + Intune enrolled + conform</td>
+<td>mobile01 (<code>2ITCSC1A-MOB-1</code>) Entra joined + Intune enrolled + compliant</td>
 <td>✅ Geverifieerd</td>
 </tr>
 </tbody>
 </table>
-<p>BitLocker/TPM geschrapt: rubric vereist "device posture", niet encryptie. Drie posturecontroles: OS-versie, AV, firewall. Policy op Report-only tot demo-voorbereiding.</p>
+<p>BitLocker/TPM geschrapt: rubric vereist "device posture", niet encryptie. Drie posture checks: OS-versie, AV, firewall. Policy op Report-only tot demo-voorbereiding.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Gate 1 (Entra ID CA) en Gate 2 (Intune-conformiteit) zijn beide live sinds Verslag40: vier CA-policies die handhaven (MFA, legacy-auth-blokkering, risico-blokkering) plus Policy 5 (conform apparaat) en Geo-Block op Report-only tot demo. Gate 3 (SWG-pipeline) werkt onafhankelijk van identiteit/apparaat bij elke aanvraag, dus alle drie de gates zijn operationeel, niet alleen Gate 3</li>
+<li>Gate 1 (Entra ID CA) en Gate 2 (Intune compliance) zijn beide live sinds Verslag40: vier CA-policies die handhaven (MFA, legacy-auth-blokkering, risico-blokkering) plus Policy 5 (compliant device) en Geo-Block op Report-only tot demo. Gate 3 (SWG-pipeline) werkt onafhankelijk van identiteit/apparaat bij elke aanvraag, dus alle drie de gates zijn operationeel, niet alleen Gate 3</li>
 <li>Activering van Gate 1 vereist MFA-pre-registratie voor testaccounts vóór het inschakelen van policies (niet-geregistreerde MFA veroorzaakt een lus die zelfs de verificatiesessie blokkeert)</li>
 <li>De admins-persona valt onder geen enkele CA-policy: <code>2itcsc1a_admin1</code> is het enige lid en is de break-glass-uitsluiting op elke policy, dus deze is bewust ongereguleerd om uitsluiting te voorkomen</li>
-<li>Intune Gate 2 is afhankelijk van het un-bumped bereikbaar zijn van de Microsoft control plane: <code>*.microsoftonline.com</code>, <code>enterpriseregistration.windows.net</code>, <code>.microsoftazuread-sso.com</code> en <code>.live.com</code> staan op de Squid splice/no-bump-lijst, anders breken apparaatregistratie en de conform-apparaatcontrole (Policy 5)</li>
-<li><strong>Optionele NetBird posture-laag (niet gedeployd):</strong> waren NetBird posture checks als apparaat-gate gebruikt, dan zou de OS-controle de kernelversie lezen (<code>10.0.19041</code> = Windows 10 2004, de eerste met de native WireGuard-kernelmodule) en zou de AV-controle een <code>process_check</code> zijn die alleen verifieert dat een binary op een pad bestaat (spoofbaar, en blind voor of definities actueel zijn of real-time scanning actief is). Intune-attestatie (Gate 2, minimum OS <code>10.0.22000.0</code>) vervangt dit; diepe inhouds-/endpointbescherming is Gate 3 (ClamAV)</li>
+<li>Intune Gate 2 is afhankelijk van het un-bumped bereikbaar zijn van de Microsoft control plane: <code>*.microsoftonline.com</code>, <code>enterpriseregistration.windows.net</code>, <code>.microsoftazuread-sso.com</code> en <code>.live.com</code> staan op de Squid splice/no-bump-lijst, anders breken apparaatregistratie en de compliant-device check (Policy 5)</li>
+<li><strong>Optionele NetBird posture-laag (niet gedeployd):</strong> waren NetBird posture checks als apparaat-gate gebruikt, dan zou de OS-controle de kernelversie lezen (<code>10.0.19041</code> = Windows 10 2004, de eerste met de native WireGuard-kernelmodule) en zou de AV-controle een <code>process_check</code> zijn die alleen verifieert dat een binary op een pad bestaat (spoofbaar, en blind voor of definities actueel zijn of real-time scanning actief is). Intune-attestation (Gate 2, minimum OS <code>10.0.22000.0</code>) vervangt dit; diepe inhouds-/endpointbescherming is Gate 3 (ClamAV)</li>
 </ul>
 <p>Zie ook: <a href="../../components/netbird/">Component: NetBird</a>, <a href="../../concepts/zero-trust/">Concept: Zero Trust</a></p>
 

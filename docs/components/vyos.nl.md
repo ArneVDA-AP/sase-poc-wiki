@@ -14,11 +14,11 @@ tags: [network, sase, sd-wan, nat, zero-trust]
 
 ## Hoe het werkt in deze stack
 
-VyOS draait als `site01` met twee interfaces: eth0 op het WAN-segment (`192.168.122.33`) en eth1 op het Site-LAN (`172.16.10.1/24`). De verantwoordelijkheden zijn bewust beperkt tot connectiviteit: het fungeert als NAT-gateway zodat apparaten op het Site-LAN het internet kunnen bereiken, maar het handhaaft zelf geen beveiligingsbeleid.
+VyOS draait als `site01` met twee interfaces: eth0 op het WAN-segment (`192.168.122.33`) en eth1 op het Site-LAN (`172.16.10.1/24`). De verantwoordelijkheden zijn bewust beperkt tot connectiviteit: het fungeert als NAT-gateway zodat apparaten op het Site-LAN het internet kunnen bereiken, maar het handhaaft zelf geen security policy.
 
 De branch volgt een **Zero Trust Branch-model**: de gehele site wordt behandeld als een niet-vertrouwde locatie, niet anders dan een Wi-Fi-netwerk in een koffiebar. Er zijn geen IPsec-tunnels tussen site01 en pop01. In plaats daarvan draait sitepc01 een [NetBird](netbird.md)-client en treedt toe tot de WireGuard-overlay met een identiteitsgebaseerde verbinding, en volgt exact hetzelfde pad als elke mobiele gebruiker. Alle beveiligingsinspectie vindt plaats op de PoP, niet aan de branch-rand.
 
-Dit weerspiegelt de Zero Trust SD-WAN-architectuur van Zscaler, waarbij de branch-appliance ruwe connectiviteit biedt terwijl de Zero Trust Exchange (hier: de SWG-keten van pop01) inspectie en beleidshandhaving verzorgt.
+Dit weerspiegelt de Zero Trust SD-WAN-architectuur van Zscaler, waarbij de branch-appliance ruwe connectiviteit biedt terwijl de Zero Trust Exchange (hier: de SWG-keten van pop01) inspectie en policy enforcement verzorgt.
 
 **IP-adressering:**
 
@@ -113,11 +113,11 @@ Een health-check-script (`/config/scripts/wan-health-check.sh`) draait op een Vy
 
 ### DNS-bootstrap voor inschrijving sitepc01
 
-sitepc01 had een tijdelijke scaffold-NIC nodig (Ethernet 2 gericht op `8.8.8.8`) tijdens de initiële inschrijving, omdat [Unbound](ioc2rpz.md) op pop01 DNS-verzoeken van niet-overlay IP-adressen blokkeert via de WAN ACL. Zonder de scaffold-NIC kan de machine Entra ID- of NetBird-eindpunten niet resolven om de inschrijving te voltooien.
+sitepc01 had een tijdelijke scaffold-NIC nodig (Ethernet 2 gericht op `8.8.8.8`) tijdens de initiële inschrijving, omdat [Unbound](ioc2rpz.md) op pop01 DNS-verzoeken van niet-overlay IP-adressen blokkeert via de WAN ACL. Zonder de scaffold-NIC kan de machine Entra ID- of NetBird-endpoints niet resolven om de inschrijving te voltooien.
 
-### ICMP misleidend onder ALLOW-only beleid
+### ICMP misleidend onder ALLOW-only policy
 
-Ping naar overlay-peers faalt by design wanneer het firewallbeleidsmodel ALLOW-only is (geen ICMP-regel). Gebruik in plaats daarvan poortgebaseerde connectiviteitstests:
+Ping naar overlay-peers faalt by design wanneer het firewall policy model ALLOW-only is (geen ICMP-regel). Gebruik in plaats daarvan poortgebaseerde connectiviteitstests:
 
 ```powershell
 Test-NetConnection -ComputerName <target> -Port 3128

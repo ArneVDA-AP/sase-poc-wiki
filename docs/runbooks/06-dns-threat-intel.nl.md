@@ -177,7 +177,7 @@ Zone "threat-intel.rpz.sase" updated, serial ..., 71836 rules, 35918 indicators
 
 Via System → Firmware → Plugins: installeer `os-bind`. Na installatie: Services → BIND verschijnt in het menu.
 
-> **Valkuil: Maak de ACL aan vóór Algemene Instellingen.** Het ACL-dropdown in Algemene Instellingen toont alleen ACL's die al bestaan. Als je eerst Algemene Instellingen configureert, is het ACL-dropdown leeg.
+> **Valkuil: Maak de ACL aan vóór General Settings.** Het ACL-dropdown in General Settings toont alleen ACL's die al bestaan. Als je eerst General Settings configureert, is het ACL-dropdown leeg.
 
 **ACL:** Services → BIND → Access Control List:
 ```
@@ -187,7 +187,7 @@ Netwerken: 127.0.0.1/32
 
 Navigeer weg en terug (GUI-dropdown quirk).
 
-**Algemene instellingen:**
+**General Settings:**
 ```
 BIND Daemon inschakelen: aangevinkt
 Listen IPs:           127.0.0.1

@@ -18,7 +18,7 @@ De PoC vervangt het perimetermodel door een SASE-stack waarbij:
 
 **Control plane / Data plane-splitsing** (een bewuste architecturale keuze):
 - **mgmt01** = management plane: distribueert configuratie (WPAD), beheert identiteit (Zitadel/Entra ID), aggregeert threat intelligence (ioc2rpz), draait Docker-services
-- **pop01** = data plane: inspecteert al het verkeer (Squid, ClamAV, Suricata), handhaaft DNS-beleid (Unbound RPZ), termineert WireGuard-tunnels (wt0)
+- **pop01** = data plane: inspecteert al het verkeer (Squid, ClamAV, Suricata), handhaaft DNS policy (Unbound RPZ), termineert WireGuard-tunnels (wt0)
 
 ## Waar het in de stack voorkomt
 
@@ -51,7 +51,7 @@ De PoC vervangt het perimetermodel door een SASE-stack waarbij:
 De CASB-implementatie omvat drie handhavingslagen, elk voor een andere tijdshorizon:
 
 - **Laag 1, Inline (Squid forward proxy):** Identiteitsgebaseerde URL-filtering en DLP op elk HTTP/HTTPS-verzoek. Squid handhaaft twee onderscheiden lagen in volgorde. Eerst is er de UT1 Toulouse-categorieblacklist, die identiteitsblind is: die weigert een overeenkomend domein voor *iedereen* (student en docent gelijk) voordat er een persona-regel draait. AI-chatdomeinen zoals `chatgpt.com`/`openai.com` zitten in deze blanket-laag en worden voor beide persona's geblokkeerd. Daarbovenop queryet de persona-ACL de Identity Bridge voor de persona-groep van de gebruiker en past gedifferentieerde policies toe. Persona-differentiatie is daarom alleen zichtbaar op een domein dat de categorieblacklist niet al blokkeert: `deepai.org` zit niet in UT1, dus Studenten worden geweigerd (403) terwijl Docenten toegestaan worden (200). Operationeel sinds V31.
-- **Laag 2, API-mode (Wazuh + M365 Management Activity API):** Pollt SharePoint/OneDrive audit-events op beleidsschendingen (anonieme shares, externe shares). Wazuh custom rules (100600-familie) detecteren schendingen; Active Response scripts intrekken deellinks via Microsoft Graph API. Operationeel sinds V39.
+- **Laag 2, API-mode (Wazuh + M365 Management Activity API):** Pollt SharePoint/OneDrive audit-events op policy violations (anonieme shares, externe shares). Wazuh custom rules (100600-familie) detecteren schendingen; Active Response scripts intrekken deellinks via Microsoft Graph API. Operationeel sinds V39.
 - **Laag 3, Real-time event-driven (NATS + Control Daemon):** Alle detectiesilo's publiceren events naar de NATS-bus. De control daemon houdt per peer een threat score bij met sliding-window decay. Wanneer een peer de quarantainedrempel overschrijdt, wordt deze uit de policy-bearing persona-groepen verwijderd; deny-by-default blokkeert alle connectiviteit. Operationeel sinds V35.
 
 Zie: [Beslissing: CASB drie lagen](../decisions/casb-three-layers.md)

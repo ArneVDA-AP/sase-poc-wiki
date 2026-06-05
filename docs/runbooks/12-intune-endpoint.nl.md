@@ -223,7 +223,7 @@ dsregcmd /status
 
 De `displayName 2ITCSC1A-SITE01` matcht de dynamische regel, dus het device komt in `2ITcsc1A-SASE-Devices` en de cert-/proxy-/QoS-profielen landen erop. Het device is onafhankelijk bevestigd tegen de device-store (`dsregcmd`), met bump/splice/RPZ alle drie bewezen vanaf SITE01.
 
-**Resterende taak op deze image:** Defender staat uit op de Tiny11-build, dus het device faalt de antivirus-compliance-check ([Runbook 07: Toegangsbeleid](07-access-policy.nl.md), Gate 2). Herstel Defender voordat de compliance-evaluatie relevant wordt, of documenteer de Defender-uit-staat als een bewuste Tiny11-gap naast de software-KSP-TPM-gap.
+**Resterende taak op deze image:** Defender staat uit op de Tiny11-build, dus het device faalt de antivirus-compliance-check ([Runbook 07: Access Policy](07-access-policy.nl.md), Gate 2). Herstel Defender voordat de compliance-evaluatie relevant wordt, of documenteer de Defender-uit-staat als een bewuste Tiny11-gap naast de software-KSP-TPM-gap.
 
 ---
 
@@ -247,5 +247,5 @@ De `displayName 2ITCSC1A-SITE01` matcht de dynamische regel, dus het device komt
 - [Component: Squid](../components/squid.nl.md)
 - [Beslissing: Beheerde apparaten-scope](../decisions/managed-devices-scope.nl.md)
 - [Beslissing: CA + Posture hybride](../decisions/ca-posture-hybrid.nl.md)
-- [Runbook 07: Toegangsbeleid](07-access-policy.nl.md)
+- [Runbook 07: Access Policy](07-access-policy.nl.md)
 - [Runbook 03: Proxy & WPAD](03-proxy-wpad.nl.md)
