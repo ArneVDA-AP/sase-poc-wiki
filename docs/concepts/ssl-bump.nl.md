@@ -34,9 +34,14 @@ echo 'http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem \
   > /usr/local/etc/squid/pre-auth/netbird-listener.conf
 ```
 
-**No-bump-lijst** (sites uitgesloten van SSL-inspectie):
+**No-bump-lijst** (sites uitgesloten van SSL-inspectie). De Microsoft control plane-endpoints moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de conform-apparaatcontrole:
 - `login.microsoftonline.com` (**verplicht**): als Squid de Microsoft-aanmeldingspagina bumpt, wordt de Entra ID OIDC-stroom die door NetBird wordt gebruikt gebroken. Alle clientauthenticatie zou mislukken.
-- `.microsoft.com`, `.paypal.com`, `.apple.com` (demonstratieve uitzonderingen)
+- `.microsoftonline.com`: dekt `device.login.microsoftonline.com` en de overige auth-subdomeinen die de kale FQDN niet dekt.
+- `.microsoft.com`: dekt de `manage.microsoft.com`-enrollmentfamilie.
+- `enterpriseregistration.windows.net`: het apparaatregistratie-endpoint (exacte host, niet `.windows.net`).
+- `.microsoftazuread-sso.com`: het cert-pinned seamless SSO-endpoint (`autologon.microsoftazuread-sso.com`).
+- `.live.com`: de consumer-auth-leg die tijdens de interactieve Entra-join wordt gebruikt.
+- `.paypal.com`, `.apple.com` (demonstratieve uitzonderingen)
 
 **[ClamAV/c-icap](../components/clamav-cicap.md)** en **[Python DLP](../components/python-dlp.md):** afhankelijk van SSL Bump om leesbare bodies te ontvangen. Zonder SSL Bump kunnen ze geen HTTPS-inhoud inspecteren.
 

@@ -135,11 +135,13 @@ plugins:
             09 — Identity Bridge: 09 — Identity Bridge
             10 — NATS JetStream: 10 — NATS JetStream
             11 — Wazuh: 11 — Wazuh
+            12 — Intune Endpoint: 12 — Intune-eindpunt
             NetBird issue 3127: NetBird issue 3127
             Squid overlay bind race: Squid overlay bind-race
             Overlay IP instability: Overlay-IP-instabiliteit
             NATS store dir: NATS store-dir
             Wazuh CPU glibc: Wazuh CPU glibc
+            GNS3 host RAM overcommit: GNS3-host RAM-overcommit
             Wazuh dashboard airgap: Wazuh dashboard airgap
             NetBird JWT allow-groups lockout: NetBird JWT allow-groups lockout
             DC LAN isolation route ACL: DC LAN-isolatie route-ACL
@@ -192,6 +194,7 @@ nav:
     - NATS JetStream: components/nats-jetstream.md
     - Control Daemon: components/control-daemon.md
     - Wazuh: components/wazuh.md
+    - Intune Endpoint Enforcement: components/intune-endpoint-enforcement.md
   - Concepts:
     - concepts/index.md
     - SASE: concepts/sase.md
@@ -238,6 +241,7 @@ nav:
     - 09 — Identity Bridge: runbooks/09-identity-bridge.md
     - 10 — NATS JetStream: runbooks/10-nats-jetstream.md
     - 11 — Wazuh: runbooks/11-wazuh.md
+    - 12 — Intune Endpoint: runbooks/12-intune-endpoint.md
   - Findings:
     - findings/index.md
     - wt0 pf rdr limitation: findings/wt0-pf-rdr-limitation.md
@@ -261,6 +265,7 @@ nav:
     - Overlay IP instability: findings/overlay-ip-instability.md
     - NATS store dir: findings/nats-store-dir.md
     - Wazuh CPU glibc: findings/wazuh-cpu-glibc.md
+    - GNS3 host RAM overcommit: findings/gns3-host-ram-overcommit.md
     - Wazuh dashboard airgap: findings/wazuh-dashboard-airgate.md
     - NetBird JWT allow-groups lockout: findings/netbird-jwt-allow-groups-lockout.md
     - DC LAN isolation route ACL: findings/dc-lan-isolation-route-acl.md

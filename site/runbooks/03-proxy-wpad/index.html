@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2115,6 +2145,8 @@
       
         
       
+        
+      
     
     
     
@@ -2383,13 +2415,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-8-configure-windows-proxy-on-mobile01" class="md-nav__link">
+  <a href="#step-8-configure-the-client-proxy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 8: Configure Windows proxy on mobile01
+        Step 8: Configure the client proxy
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Step 8: Configure the client proxy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primary-method-managed-devices-mdm-enforced-forced-pac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primary method (managed devices): MDM-enforced forced PAC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback-method-manual-windows-proxy-on-mobile01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fallback method (manual): Windows proxy on mobile01
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2681,6 +2741,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2699,6 +2787,8 @@
       
         
           
+        
+      
         
       
         
@@ -3400,6 +3490,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3626,13 +3744,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#step-8-configure-windows-proxy-on-mobile01" class="md-nav__link">
+  <a href="#step-8-configure-the-client-proxy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 8: Configure Windows proxy on mobile01
+        Step 8: Configure the client proxy
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Step 8: Configure the client proxy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#primary-method-managed-devices-mdm-enforced-forced-pac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primary method (managed devices): MDM-enforced forced PAC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fallback-method-manual-windows-proxy-on-mobile01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fallback method (manual): Windows proxy on mobile01
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3876,12 +4022,21 @@ See <a href="../../findings/docker-volume-recreation/">Finding: Docker volume re
 </blockquote>
 <p><strong>DNS reachability gotcha:</strong> a peer that receives the pop01 nameserver config but has no ACL path to it shows <code>Nameservers: 0/1 Available</code> in <code>netbird status</code>. Ensure the peer's group has an ACL path to <code>Core-Services</code> (pop01 Unbound).</p>
 <hr />
-<h2 id="step-8-configure-windows-proxy-on-mobile01">Step 8: Configure Windows proxy on mobile01<a class="headerlink" href="#step-8-configure-windows-proxy-on-mobile01" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>Windows Settings → Network &amp; Internet → Proxy:
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  Automatically detect settings: Off
-<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>  Use setup script: On
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  Script Address: http://wpad.sandbox.local/wpad.dat
-<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>  Manual proxy:   Off
+<h2 id="step-8-configure-the-client-proxy">Step 8: Configure the client proxy<a class="headerlink" href="#step-8-configure-the-client-proxy" title="Permanent link">&para;</a></h2>
+<h3 id="primary-method-managed-devices-mdm-enforced-forced-pac">Primary method (managed devices): MDM-enforced forced PAC<a class="headerlink" href="#primary-method-managed-devices-mdm-enforced-forced-pac" title="Permanent link">&para;</a></h3>
+<p>On Intune-enrolled devices the PAC URL is pushed from the cloud, not set by hand, so the user cannot clear it. A Custom OMA-URI profile <code>2ITCSC1A-SASE-Proxy-PAC</code> drives the NetworkProxy CSP (the Settings Catalog does not surface NetworkProxy, so OMA-URI is the route):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>./Vendor/MSFT/NetworkProxy/ProxySettingsPerUser   Integer  0
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>./Vendor/MSFT/NetworkProxy/AutoDetect             Integer  0
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>./Vendor/MSFT/NetworkProxy/SetupScriptUrl         String   http://wpad.sandbox.local/wpad.dat
+</code></pre></div>
+<p><code>ProxySettingsPerUser=0</code> makes the PAC system-wide, <code>AutoDetect=0</code> forces the explicit PAC instead of WPAD discovery, and <code>SetupScriptUrl</code> points at the Caddy PAC target from Step 5. Do not set a ProxyServer node alongside the PAC URL — that combination is a known Intune bug that breaks the profile. See <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a> for the full profile and device-scoping.</p>
+<h3 id="fallback-method-manual-windows-proxy-on-mobile01">Fallback method (manual): Windows proxy on mobile01<a class="headerlink" href="#fallback-method-manual-windows-proxy-on-mobile01" title="Permanent link">&para;</a></h3>
+<p>For an unmanaged or hand-built test client, set the same PAC URL manually:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>Windows Settings → Network &amp; Internet → Proxy:
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>  Automatically detect settings: Off
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>  Use setup script: On
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>  Script Address: http://wpad.sandbox.local/wpad.dat
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>  Manual proxy:   Off
 </code></pre></div>
 <p>The Caddy root CA must already be imported in the Windows trust store (done during NetBird enrollment).</p>
 <hr />
@@ -3893,41 +4048,45 @@ See <a href="../../findings/docker-volume-recreation/">Finding: Docker volume re
 - Organization: SASE PoC</p>
 <p><strong>Enable SSL inspection</strong> in Forward Proxy settings with the new CA.</p>
 <p><strong>Update the pre-auth include with full ssl-bump parameters:</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem dynamic_cert_mem_cache_size=10MB generate-host-certificates=on&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/usr/local/etc/squid/pre-auth/netbird-listener.conf
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>configctl<span class="w"> </span>proxy<span class="w"> </span>restart
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem dynamic_cert_mem_cache_size=10MB generate-host-certificates=on&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/usr/local/etc/squid/pre-auth/netbird-listener.conf
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>configctl<span class="w"> </span>proxy<span class="w"> </span>restart
 </code></pre></div>
 <p><strong>Verify:</strong> Browser shows certificate with issuer <code>Organization (O): SASE PoC</code>.</p>
 <p><strong>Configure the no-bump list</strong> (GUI → Forward Proxy → SSL inspection):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>login.microsoftonline.com
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>.microsoft.com
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>.paypal.com
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>.apple.com
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>.banking.example.com
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>login.microsoftonline.com
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>.microsoftonline.com
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>.microsoft.com
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>enterpriseregistration.windows.net
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>.microsoftazuread-sso.com
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>.live.com
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>.paypal.com
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>.apple.com
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>.banking.example.com
 </code></pre></div>
 <blockquote>
-<p><strong>Gotcha: <code>login.microsoftonline.com</code> MUST be in the no-bump list.</strong> If Squid bumps the Microsoft login page, the OIDC certificate chain breaks and Entra ID authentication fails for all NetBird clients.</p>
+<p><strong>Gotcha: the Microsoft control-plane set MUST be in the no-bump list.</strong> If Squid bumps any of these, the OIDC certificate chain breaks and Entra ID authentication, Intune device registration, and the compliant-device check fail for all NetBird clients. <code>.microsoftonline.com</code> (leading dot) covers <code>device.login.microsoftonline.com</code>; <code>enterpriseregistration.windows.net</code> is the exact device-registration host; <code>.microsoftazuread-sso.com</code> is the cert-pinned seamless SSO endpoint; <code>.live.com</code> is the consumer auth leg hit during the interactive Entra join.</p>
 </blockquote>
 <hr />
 <h2 id="step-10-enable-url-filtering-with-ut1-toulouse">Step 10: Enable URL filtering with UT1 Toulouse<a class="headerlink" href="#step-10-enable-url-filtering-with-ut1-toulouse" title="Permanent link">&para;</a></h2>
 <p>Via GUI → Forward Proxy → Remote Access Control List:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Filename:        UT1
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>URL:             https://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>SSL ignore cert: checked
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>Categories:      adult, malware, phishing, gambling
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>Filename:        UT1
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>URL:             https://dsi.ut-capitole.fr/blacklists/download/blacklists.tar.gz
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>SSL ignore cert: checked
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>Categories:      adult, malware, phishing, gambling
 </code></pre></div>
 <p>Manual blacklist via Forward Proxy → Access Control List → Blacklist:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>gambling.com
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>.bet365.com
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>.pokerstars.com
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>gambling.com
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>.bet365.com
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>.pokerstars.com
 </code></pre></div>
 <p><strong>Verify</strong> — use curl, not a browser (browser cache masks blocking):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">gambling</span><span class="p">.</span><span class="n">com</span> <span class="n">-v</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c"># Expected: HTTP/1.1 403 Forbidden, X-Squid-Error: ERR_ACCESS_DENIED 0</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">gambling</span><span class="p">.</span><span class="n">com</span> <span class="n">-v</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="c"># Expected: HTTP/1.1 403 Forbidden, X-Squid-Error: ERR_ACCESS_DENIED 0</span>
 </code></pre></div>
 <hr />
 <h2 id="known-cosmetic-issues">Known cosmetic issues<a class="headerlink" href="#known-cosmetic-issues" title="Permanent link">&para;</a></h2>
 <p><strong>OPNsense "Clear log" deletes the log file</strong> — the WebUI button deletes rather than truncates. Squid stops logging. Fix:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>&gt;<span class="w"> </span>/var/log/squid/access.log<span class="w">   </span><span class="c1"># truncate without deleting</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>&gt;<span class="w"> </span>/var/log/squid/access.log<span class="w">   </span><span class="c1"># truncate without deleting</span>
 </code></pre></div>
 <p>See <a href="../../findings/squid-clearlog-destroys-file/">Finding: Squid clearlog destroys file</a>.</p>
 <p><strong>Squid segfault on stop is cosmetic</strong> — occurs during <code>configctl proxy restart</code> stop phase on FreeBSD. The daemon restarts correctly. No functional impact.</p>

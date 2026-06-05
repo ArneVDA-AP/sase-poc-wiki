@@ -32,7 +32,7 @@ Die premisse veranderde vervolgens. Een scopecorrectie stelde vast dat de in-sco
 Beheerde-apparaat **drie-gate model** (Verslag40):
 
 - **Gate 1 (Identiteit):** Entra ID Conditional Access (5 policies, authenticatietijdstip)
-- **Gate 2 (Apparaat):** Intune-apparaatconformiteit (attestatie-gebaseerd postuur, geëvalueerd bij authenticatie via CA Policy 5 en op Intune's periodieke cyclus)
+- **Gate 2 (Apparaat):** Intune-apparaatconformiteit (attestatie-gebaseerd postuur, geëvalueerd bij authenticatie via CA Policy 5 en op Intune's periodieke cyclus). De endpoint-config-kant van diezelfde beheerde-apparaatbasis is [Intune Endpoint Enforcement](../components/intune-endpoint-enforcement.md).
 - **Gate 3 (Inhoud):** SWG-pipeline (Squid SSL-Bump + ClamAV + DLP + Unbound RPZ, elke aanvraag)
 
 NetBird posture checks blijven *beschikbaar* als een optionele, onafhankelijke defense-in-depth-laag (andere timing, namelijk tunnel-bouw, en ander mechanisme, namelijk client-side controle), maar werden **niet gedeployd**: met beheerde apparaten dekt Intune-conformiteit de apparaatpostuureis van de rubric al via attestatie in plaats van een spoofbare procescontrole.
@@ -76,7 +76,7 @@ BitLocker/TPM geschrapt: rubric vereist "device posture", niet encryptie. Drie p
 - Gate 1 (Entra ID CA) en Gate 2 (Intune-conformiteit) zijn beide live sinds Verslag40: vier CA-policies die handhaven (MFA, legacy-auth-blokkering, risico-blokkering) plus Policy 5 (conform apparaat) en Geo-Block op Report-only tot demo. Gate 3 (SWG-pipeline) werkt onafhankelijk van identiteit/apparaat bij elke aanvraag, dus alle drie de gates zijn operationeel, niet alleen Gate 3
 - Activering van Gate 1 vereist MFA-pre-registratie voor testaccounts vóór het inschakelen van policies (niet-geregistreerde MFA veroorzaakt een lus die zelfs de verificatiesessie blokkeert)
 - De admins-persona valt onder geen enkele CA-policy: `2itcsc1a_admin1` is het enige lid en is de break-glass-uitsluiting op elke policy, dus deze is bewust ongereguleerd om uitsluiting te voorkomen
-- Intune Gate 2 is afhankelijk van het un-bumped bereikbaar zijn van de Microsoft control plane: `*.microsoftonline.com` en `enterpriseregistration.windows.net` staan op de Squid splice/no-bump-lijst, anders breken apparaatregistratie en de conform-apparaatcontrole (Policy 5)
+- Intune Gate 2 is afhankelijk van het un-bumped bereikbaar zijn van de Microsoft control plane: `*.microsoftonline.com`, `enterpriseregistration.windows.net`, `.microsoftazuread-sso.com` en `.live.com` staan op de Squid splice/no-bump-lijst, anders breken apparaatregistratie en de conform-apparaatcontrole (Policy 5)
 - **Optionele NetBird posture-laag (niet gedeployd):** waren NetBird posture checks als apparaat-gate gebruikt, dan zou de OS-controle de kernelversie lezen (`10.0.19041` = Windows 10 2004, de eerste met de native WireGuard-kernelmodule) en zou de AV-controle een `process_check` zijn die alleen verifieert dat een binary op een pad bestaat (spoofbaar, en blind voor of definities actueel zijn of real-time scanning actief is). Intune-attestatie (Gate 2, minimum OS `10.0.22000.0`) vervangt dit; diepe inhouds-/endpointbescherming is Gate 3 (ClamAV)
 
 Zie ook: [Component: NetBird](../components/netbird.md), [Concept: Zero Trust](../concepts/zero-trust.md)

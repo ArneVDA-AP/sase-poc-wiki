@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2207,6 +2237,8 @@
       
         
       
+        
+      
     
     
     
@@ -2571,6 +2603,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2589,6 +2649,8 @@
       
         
           
+        
+      
         
       
         
@@ -3290,6 +3352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3552,9 +3642,14 @@
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="s1">  dynamic_cert_mem_cache_size=10MB generate-host-certificates=on&#39;</span><span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span>&gt;<span class="w"> </span>/usr/local/etc/squid/pre-auth/netbird-listener.conf
 </code></pre></div>
-<p><strong>No-bump list</strong> — sites excluded from SSL inspection:
+<p><strong>No-bump list</strong> — sites excluded from SSL inspection. The Microsoft control-plane endpoints must be spliced or Intune device registration, Entra authentication, and the compliant-device check break:
 - <code>login.microsoftonline.com</code> — <strong>required</strong>: Squid bumping the Microsoft login page breaks the Entra ID OIDC flow used by NetBird. All client authentication would fail.
-- <code>.microsoft.com</code>, <code>.paypal.com</code>, <code>.apple.com</code> — demonstrative exemptions</p>
+- <code>.microsoftonline.com</code> — covers <code>device.login.microsoftonline.com</code> and the other auth subdomains the bare FQDN does not.
+- <code>.microsoft.com</code> — covers the <code>manage.microsoft.com</code> enrollment family.
+- <code>enterpriseregistration.windows.net</code> — the device-registration endpoint (exact host, not <code>.windows.net</code>).
+- <code>.microsoftazuread-sso.com</code> — the cert-pinned seamless SSO endpoint (<code>autologon.microsoftazuread-sso.com</code>).
+- <code>.live.com</code> — the consumer auth leg used during the interactive Entra join.
+- <code>.paypal.com</code>, <code>.apple.com</code> — demonstrative exemptions</p>
 <p><strong><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></strong> and <strong><a href="../../components/python-dlp/">Python DLP</a></strong> — depend on SSL Bump to receive cleartext bodies. Without it, they cannot inspect HTTPS content.</p>
 <h2 id="key-distinctions">Key distinctions<a class="headerlink" href="#key-distinctions" title="Permanent link">&para;</a></h2>
 <p><strong>ssl-bump on pre-auth listener</strong> — the critical finding documented in <a href="../../findings/pre-auth-ssl-bump-params/">Finding: pre-auth ssl-bump params</a>: if the pre-auth include only has <code>http_port 100.70.154.79:3128</code> (no ssl-bump parameters), HTTPS traffic from NetBird clients tunnels as CONNECT without inspection. The full ssl-bump directive must be in the pre-auth conf.</p>

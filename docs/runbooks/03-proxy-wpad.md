@@ -181,7 +181,23 @@ Under the V34 persona model (see [Component: NetBird](../components/netbird.md))
 
 ---
 
-## Step 8: Configure Windows proxy on mobile01
+## Step 8: Configure the client proxy
+
+### Primary method (managed devices): MDM-enforced forced PAC
+
+On Intune-enrolled devices the PAC URL is pushed from the cloud, not set by hand, so the user cannot clear it. A Custom OMA-URI profile `2ITCSC1A-SASE-Proxy-PAC` drives the NetworkProxy CSP (the Settings Catalog does not surface NetworkProxy, so OMA-URI is the route):
+
+```
+./Vendor/MSFT/NetworkProxy/ProxySettingsPerUser   Integer  0
+./Vendor/MSFT/NetworkProxy/AutoDetect             Integer  0
+./Vendor/MSFT/NetworkProxy/SetupScriptUrl         String   http://wpad.sandbox.local/wpad.dat
+```
+
+`ProxySettingsPerUser=0` makes the PAC system-wide, `AutoDetect=0` forces the explicit PAC instead of WPAD discovery, and `SetupScriptUrl` points at the Caddy PAC target from Step 5. Do not set a ProxyServer node alongside the PAC URL — that combination is a known Intune bug that breaks the profile. See [Intune Endpoint Enforcement](../components/intune-endpoint-enforcement.md) for the full profile and device-scoping.
+
+### Fallback method (manual): Windows proxy on mobile01
+
+For an unmanaged or hand-built test client, set the same PAC URL manually:
 
 ```
 Windows Settings → Network & Internet → Proxy:
@@ -218,13 +234,17 @@ configctl proxy restart
 
 ```
 login.microsoftonline.com
+.microsoftonline.com
 .microsoft.com
+enterpriseregistration.windows.net
+.microsoftazuread-sso.com
+.live.com
 .paypal.com
 .apple.com
 .banking.example.com
 ```
 
-> **Gotcha: `login.microsoftonline.com` MUST be in the no-bump list.** If Squid bumps the Microsoft login page, the OIDC certificate chain breaks and Entra ID authentication fails for all NetBird clients.
+> **Gotcha: the Microsoft control-plane set MUST be in the no-bump list.** If Squid bumps any of these, the OIDC certificate chain breaks and Entra ID authentication, Intune device registration, and the compliant-device check fail for all NetBird clients. `.microsoftonline.com` (leading dot) covers `device.login.microsoftonline.com`; `enterpriseregistration.windows.net` is the exact device-registration host; `.microsoftazuread-sso.com` is the cert-pinned seamless SSO endpoint; `.live.com` is the consumer auth leg hit during the interactive Entra join.
 
 ---
 

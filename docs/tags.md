@@ -78,6 +78,7 @@ One tag per distinct tool or system component.
 | `event-bus` | Event-driven architecture — NATS publish/subscribe pattern |
 | `groupsync` | JWT group sync — Entra ID → Zitadel → NetBird group propagation |
 | `intune` | Microsoft Intune — device compliance and management |
+| `mdm` | Mobile Device Management — Intune endpoint management |
 | `oidc` | OpenID Connect — authentication protocol (Entra ID → Zitadel → NetBird) |
 | `sd-wan` | SD-WAN / Zero Trust Branch — WAN connectivity and traffic optimization |
 | `testing` | Test scenarios, acceptance tests, demo validation |

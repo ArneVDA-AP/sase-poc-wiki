@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2115,6 +2145,8 @@
       
         
       
+        
+      
     
     
     
@@ -2480,6 +2512,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2498,6 +2558,8 @@
       
         
           
+        
+      
         
       
         
@@ -3199,6 +3261,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3422,7 +3512,8 @@
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>      │    └─► 09 Identity Bridge (na 08)
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>      ├─► 10 NATS JetStream (na 03, 04, 05, 06)
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>      │    └─► 11 Wazuh (na 10)
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>      └─► 07 Toegangsbeleid (na alles hierboven)
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>      ├─► 07 Toegangsbeleid (na alles hierboven)
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>      └─► 12 Intune Endpoint (na 07)
 </code></pre></div>
 <h2 id="runbook-overzicht">Runbook-overzicht<a class="headerlink" href="#runbook-overzicht" title="Permanent link">&para;</a></h2>
 <table>
@@ -3513,6 +3604,13 @@
 <td>Operationeel</td>
 <td>SIEM-stack, NATS-forwarder, M365 Active Response</td>
 </tr>
+<tr>
+<td>12</td>
+<td><a href="12-intune-endpoint/">Intune Endpoint</a></td>
+<td>Entra ID + Intune</td>
+<td>Geïmplementeerd</td>
+<td>Certificaat, afgedwongen PAC, firewall-block-set, Teams-QoS, split-tunnel-Remediation; SITE01-enrollment</td>
+</tr>
 </tbody>
 </table>
 <h2 id="afhankelijkheidsgraph">Afhankelijkheidsgraph<a class="headerlink" href="#afhankelijkheidsgraph" title="Permanent link">&para;</a></h2>
@@ -3567,6 +3665,10 @@
 <tr>
 <td>11 Wazuh</td>
 <td>10 (NATS operationeel)</td>
+</tr>
+<tr>
+<td>12 Intune Endpoint</td>
+<td>07 (managed device Entra-joined + Intune-enrolled)</td>
 </tr>
 </tbody>
 </table>

@@ -388,7 +388,7 @@ Wiki-bewijs: Sandbox als referentie-implementatie voor team, Doc1–Doc7 als ver
 
 - [Architectuur](../overview/architecture.md)
 - [Beslissing: SD-WAN Geschrapt](../decisions/sdwan-descoped.md)
-- [Beslissing: CA + Posture hybride (Driepoortsmodel)](../decisions/ca-posture-hybrid.md)
+- [Beslissing: CA + Posture hybride (Drie-gate model)](../decisions/ca-posture-hybrid.md)
 - [Bevinding: curl --ssl-no-revoke op Windows](../findings/curl-ssl-no-revoke.md)
 - [Bevinding: Suricata connection pooling](../findings/suricata-connection-pooling.md)
 - [NetBird](../components/netbird.md)

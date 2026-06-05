@@ -274,3 +274,46 @@ Alle em dashes in lopende tekst vervangen door contextueel gepaste Nederlandse l
 **Audit:** Onafhankelijke Opus auditor-agents verifieerden beide fases voor uitvoering. Fase 1: 10/10 PASS. Fase 2: 18/18 steekproefbestanden PASS, 1 bestaand probleem (attack-scenarios.nl.md) gedetecteerd en opgelost.
 
 **Gewijzigde bestanden:** 82 NL-wikipagina's. Geen EN-pagina's of `raw/`-bestanden gewijzigd.
+
+---
+
+## 2026-06-05: Intune endpoint-enforcement-dekking + re-audit-fixes (V18–V44)
+
+**Doel:** Een coverage-re-audit per verslag (V18–V44) bevestigde dat de ingest sterk was voor V18–V40,
+maar een geconcentreerd hiaat had in het Intune/MDM endpoint-enforcement-spoor (V41 + delen van V44),
+plus enkele V34-correctie-items over de huidige staat. De agent-bevindingen werden voor elke edit
+hertoetst tegen deze changelog en het agent-geheugen: de gemelde NATS `security.alert.ids` → `.ips`-wijziging
+is een bekende vals-positief (de live nats.conf bevestigt `.ids`) en bleef ongemoeid; het kvm64/qemu64-item
+was een bewuste eerdere keuze; de V44 Tiny11-enrollment staat als een geslaagde eindstaat, niet als een blokkade.
+
+**Bestanden aangemaakt (6):**
+- `components/intune-endpoint-enforcement.md` + `.nl.md`: de Intune/MDM endpoint-enforcement-component:
+  firewall-block-set `2ITCSC1A-SASE-FW-BypassBlock` (Block-QUIC-Outbound-UDP443 + Block-DoT-Outbound-TCP853),
+  afgedwongen PAC via OMA-URI `2ITCSC1A-SASE-Proxy-PAC`, trusted-cert `2ITCSC1A-SASE-PoC-CA-Root`, DSCP
+  `2ITCSC1A-SASE-QoS-Teams`, split-tunnel Remediation `2ITCSC1A-Route-Remediation` (+ Bijlage-fix),
+  dynamische device group `2ITcsc1A-SASE-Devices`, de gerichte-block-beslissing (IT1214934)
+- `runbooks/12-intune-endpoint.md` + `.nl.md`: deployment-trail voor enrollment + profiel-push; SITE01/Tiny11
+  als uitgewerkt voorbeeld (V44.15) met Defender-uit-compliance als open punt (B44.12)
+- `findings/gns3-host-ram-overcommit.md` + `.nl.md`: RAM-overcommit / 0 swap / OOM-killer-risico op host poc-1a (V36.12)
+
+**Bestanden bijgewerkt:**
+- Registratie: `mkdocs.yml`-nav; catalogus in `index.md`/`.nl.md`; `overview/architecture.md`/`.nl.md`
+  (Component Map-rij §7 + Gate 2-link §10); `tags.md`/`.nl.md` (nieuwe tag `mdm`); `runbooks/index.md`/`.nl.md`;
+  cross-links vanuit `decisions/managed-devices-scope` en `decisions/ca-posture-hybrid`
+- Microsoft control-plane no-bump/splice-set consistent gemaakt en uitgebreid met het V44.13-paar
+  (`.microsoftazuread-sso.com` + `.live.com`) over `components/squid`, `concepts/ssl-bump`,
+  `runbooks/03-proxy-wpad`, `decisions/ca-posture-hybrid`, `runbooks/07-access-policy` (+ `.nl.md`);
+  runbook 03 krijgt ook de afgedwongen-PAC-methode via MDM (de handmatige methode blijft de fallback)
+- Persona-differentiatie demo/test-doel op `deepai.org` (ChatGPT zit in de UT1-categorieblacklist voor beide
+  persona's en kan dus niet differentiëren) over `testing/attack-scenarios`, `runbooks/09-identity-bridge`,
+  `concepts/sase` (twee-laags SWG-framing), `concepts/identity-flow`, `components/squid` (+ `.nl.md`) en
+  `demos/demo-script-rubric.html`; de persona-deny-regel blijft ongewijzigd
+- NATS-producer-persistentie over reboots (rc.d-service `nats_producers`, venv) toegevoegd aan
+  `runbooks/10-nats-jetstream` en `components/nats-jetstream` (+ `.nl.md`)
+- Tier-3 detail-folds: `components/python-dlp` + `runbooks/04-malware-dlp` (`X-Client-IP` draagt het echte
+  overlay-IP voor REQMOD; threadveilige NatsPublisher); `components/squid` (pre-auth-plaatsing van de
+  persona-deny-ACL + `TCP_DENIED`-producerfilter); `components/gns3` (project-UUID-waarschuwing); WPAD-DNS-mechanisme
+  uitgelijnd op het pop01-Unbound-primary-model in `concepts/wpad-pac`, `components/squid`, `decisions/wpad-vs-transparent-proxy`
+
+**Audit:** Onafhankelijke Opus-auditors verifieerden de batch: feiten tegen de verslagen (PASS) en NL-stijl +
+naadloosheid (PASS na één em-dash-fix). `mkdocs build` schoon (EN + NL). Geen `raw/`-bestanden gewijzigd.

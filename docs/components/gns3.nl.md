@@ -132,11 +132,15 @@ shutdown -h now
 ```
 Mitigatie: voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01. FreeBSD draait dan automatisch fsck bij de volgende boot na een onregelmatige afsluiting.
 
+De OOM-killer kan dezelfde abrupte kill zonder waarschuwing aan elke QEMU-guest toebrengen: `poc-1a` committeert guest-RAM over en draait met 0 swap, dus een geheugenpiek kan de kernel een willekeurige guest laten beëindigen, pop01 inbegrepen. Zie [Bevinding: RAM-overcommit op de GNS3-host](../findings/gns3-host-ram-overcommit.md).
+
 **iptables FORWARD-volgorde:** libvirt plaatst zijn eigen REJECT-regels in de FORWARD-keten. Regels toegevoegd met `-A FORWARD` komen na die REJECT-regels terecht en matchen nooit. Gebruik altijd `-I FORWARD 1` voor ACCEPT-regels. Zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
 
 **ubridge learning bridge beperkt verkeerzichtbaarheid:** Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort, niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet. Dit heeft impact op elke toekomstige Zeek/RITA-uitrol: valideer met `tcpdump -i ens3 -n host 8.8.8.8` op mgmt01 vóór uitrol.
 
 **sitepc01 draait nu Tiny11 (Windows 11):** aanvankelijk aangemaakt als een lege node (geen OS), werd het later geïmporteerd als een Tiny11-image en ge-enrolld in de NetBird-overlay als `docent1` (Entra ID joined + Intune enrolled). Het is operationeel actief.
+
+**Twee projecten delen deze GNS3-host: verifieer op project, niet op node-naam.** De sandbox en het teamproject draaien beide guests met de naam `mgmt01`/`VyOS-1`, dus een node-naam alleen is dubbelzinnig. De project-UUID's zijn `97e2bce6` = de sandbox (`PoC_Sandbox`: `mgmt01`, `pop01`, `VyOS-1`) en `b3b179f6` = het teamproject (`SASE_POC`: `Ubuntu-mgmt01-1`, `OPNsense-1`, `linuxpop01`, en andere). Bevestig de node-naar-project-mapping in de GNS3-GUI (projectnaam ↔ UUID ↔ node-set) voordat je een node stopt of op een guest ingrijpt. De `SASE_POC_IP_Referentie.md`-referentie is onbetrouwbaar: die dateert van vóór de sandbox (16 maart 2026) en benoemt de project-ID's omgekeerd.
 
 ---
 
@@ -146,5 +150,6 @@ Mitigatie: voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01. FreeBSD d
 - [Component: NetBird](netbird.md)
 - [Component: VyOS](vyos.md)
 - [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md)
+- [Bevinding: RAM-overcommit op de GNS3-host](../findings/gns3-host-ram-overcommit.md)
 - [Beslissing: GNS3 vs EVE-NG](../decisions/gns3-vs-eveng.md)
 - [Runbook: Labomgeving](../runbooks/01-lab-environment.md)

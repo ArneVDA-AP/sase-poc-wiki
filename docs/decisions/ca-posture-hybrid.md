@@ -32,7 +32,7 @@ That premise then changed. A scope correction established that the in-scope devi
 Managed-device **three-gate model** (Verslag40):
 
 - **Gate 1 — Identity:** Entra ID Conditional Access (5 policies, authentication-time)
-- **Gate 2 — Device:** Intune device compliance (attestation-based posture, evaluated at authentication via CA Policy 5 and on Intune's periodic cycle)
+- **Gate 2 — Device:** Intune device compliance (attestation-based posture, evaluated at authentication via CA Policy 5 and on Intune's periodic cycle). The endpoint-config side of that same managed-device foundation is [Intune Endpoint Enforcement](../components/intune-endpoint-enforcement.md).
 - **Gate 3 — Content:** SWG pipeline (Squid SSL-Bump + ClamAV + DLP + Unbound RPZ, every request)
 
 NetBird posture checks remain *available* as an optional, independent defense-in-depth layer (different timing — tunnel-build — and mechanism — client-side check), but were **not deployed**: with managed devices, Intune compliance already covers the rubric's device-posture requirement through attestation rather than a spoofable process check.
@@ -76,7 +76,7 @@ BitLocker/TPM dropped — rubric requires "device posture", not encryption. Thre
 - Gate 1 (Entra ID CA) and Gate 2 (Intune compliance) are both live as of Verslag40: four CA policies enforcing (MFA, legacy-auth block, risk-block) plus Policy 5 (compliant device) and Geo-Block held at Report-only until demo. Gate 3 (SWG pipeline) operates independently of identity/device on every request — so all three gates are operational, not just Gate 3
 - Activation of Gate 1 requires MFA pre-registration for test accounts before enabling policies (unregistered MFA produces a loop that blocks even the verification session)
 - The admins persona falls under no CA policy — `2itcsc1a_admin1` is its sole member and is the break-glass exclude on every policy, so it is deliberately ungoverned to prevent lockout
-- Intune Gate 2 depends on the Microsoft control plane being reachable un-bumped: `*.microsoftonline.com` and `enterpriseregistration.windows.net` are on the Squid splice/no-bump list, otherwise device registration and the compliant-device check (Policy 5) break
+- Intune Gate 2 depends on the Microsoft control plane being reachable un-bumped: `*.microsoftonline.com`, `enterpriseregistration.windows.net`, `.microsoftazuread-sso.com`, and `.live.com` are on the Squid splice/no-bump list, otherwise device registration and the compliant-device check (Policy 5) break
 - **Optional NetBird posture layer (not deployed):** had NetBird posture checks been used as the device gate, the OS check would read the kernel version (`10.0.19041` = Windows 10 2004, the first with the native WireGuard kernel module) and the AV check would be a `process_check` that only verifies a binary exists at a path — spoofable, and blind to whether definitions are current or real-time scanning is active. Intune attestation (Gate 2, minimum OS `10.0.22000.0`) supersedes this; deep content/endpoint protection is Gate 3 (ClamAV)
 
 See also: [Component: NetBird](../components/netbird.md), [Concept: Zero Trust](../concepts/zero-trust.md)

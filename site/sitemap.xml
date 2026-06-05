@@ -57,6 +57,13 @@
         <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/identity-bridge/"/>
     </url>
     <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/intune-endpoint-enforcement/</loc>
+        <lastmod>2026-06-05</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/intune-endpoint-enforcement/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/intune-endpoint-enforcement/"/>
+    </url>
+    <url>
         <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/components/ioc2rpz/</loc>
         <lastmod>2026-06-05</lastmod>
         <changefreq>daily</changefreq>
@@ -337,6 +344,13 @@
         <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/docker-volume-recreation/"/>
     </url>
     <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/gns3-host-ram-overcommit/</loc>
+        <lastmod>2026-06-05</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/gns3-host-ram-overcommit/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/gns3-host-ram-overcommit/"/>
+    </url>
+    <url>
         <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/findings/ioc2rpz-gui-js-bug/</loc>
         <lastmod>2026-06-05</lastmod>
         <changefreq>daily</changefreq>
@@ -575,6 +589,13 @@
         <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/11-wazuh/"/>
     </url>
     <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/12-intune-endpoint/</loc>
+        <lastmod>2026-06-05</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/12-intune-endpoint/"/>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/12-intune-endpoint/"/>
+    </url>
+    <url>
         <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/testing/acceptance-tests/</loc>
         <lastmod>2026-06-05</lastmod>
         <changefreq>daily</changefreq>
@@ -650,6 +671,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/identity-bridge/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/identity-bridge/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/intune-endpoint-enforcement/</loc>
+        <lastmod>2026-06-05</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/intune-endpoint-enforcement/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/components/intune-endpoint-enforcement/"/>
     </url>
     <url>
         <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/ioc2rpz/</loc>
@@ -932,6 +960,13 @@
         <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/docker-volume-recreation/"/>
     </url>
     <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/gns3-host-ram-overcommit/</loc>
+        <lastmod>2026-06-05</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/gns3-host-ram-overcommit/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/findings/gns3-host-ram-overcommit/"/>
+    </url>
+    <url>
         <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/findings/ioc2rpz-gui-js-bug/</loc>
         <lastmod>2026-06-05</lastmod>
         <changefreq>daily</changefreq>
@@ -1168,6 +1203,13 @@
         <changefreq>daily</changefreq>
         <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/11-wazuh/"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/11-wazuh/"/>
+    </url>
+    <url>
+        <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/12-intune-endpoint/</loc>
+        <lastmod>2026-06-05</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="nl" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/runbooks/12-intune-endpoint/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://ArneVDA-AP.github.io/sase-poc-wiki/runbooks/12-intune-endpoint/"/>
     </url>
     <url>
         <loc>https://ArneVDA-AP.github.io/sase-poc-wiki/nl/testing/acceptance-tests/</loc>

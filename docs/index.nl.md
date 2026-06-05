@@ -35,6 +35,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [Control Daemon](components/control-daemon.md) | Threat scoring + real-time quarantaine via NetBird API |
 | [Wazuh](components/wazuh.md) | SIEM: NATS-forwarder + pop01-agent + M365 Active Response |
 | [Zitadel](components/zitadel.md) | OIDC IdP-broker: Entra ID → JWT group sync → NetBird |
+| [Intune Endpoint Enforcement](components/intune-endpoint-enforcement.md) | MDM-config-push naar het endpoint: afgedwongen PAC, trusted-cert, firewall-block-set, DSCP/QoS, split-tunnel-routes |
 | **Concepten** | |
 | [SASE](concepts/sase.md) | Vijf SASE-pijlers; onze open-source invulling; commerciële equivalenten |
 | [Zero Trust](concepts/zero-trust.md) | Drie-gate model; never trust always verify; Gates 1–3 |
@@ -84,6 +85,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [Overlay IP-instabiliteit](findings/overlay-ip-instability.md) | NetBird overlay-IP's kunnen wijzigen; Identity Bridge moet stale cache afhandelen |
 | [NATS store dir](findings/nats-store-dir.md) | JetStream-opslag moet op persistent Docker-volume staan |
 | [Wazuh CPU glibc](findings/wazuh-cpu-glibc.md) | CPU-piek bij opstarten door glibc-compatibiliteit |
+| [GNS3-host RAM-overcommit](findings/gns3-host-ram-overcommit.md) | poc-1a committeert guest-RAM over met 0 swap; een geheugenpiek riskeert dat de OOM-killer een QEMU-guest neerhaalt |
 | [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard Offline door lege UUID na down -v, opgelost via in-place 4.14.5 GA bump |
 | [NetBird JWT allow-groups lockout](findings/netbird-jwt-allow-groups-lockout.md) | JWT allow-groups inschakelen kan alle gebruikers buitensluiten bij verkeerde configuratie |
 | [DC-LAN isolatie route ACL](findings/dc-lan-isolation-route-acl.md) | NetBird Networks + ACL vereist voor DC-LAN-isolatie |

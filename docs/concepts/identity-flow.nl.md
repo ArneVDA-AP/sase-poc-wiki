@@ -32,7 +32,7 @@ Squid (pop01, external_acl)
   | Retourneert persona-groep -> ACL evalueert per-groep-beleid
   v
 Per-request identiteitsgebaseerde filtering
-  (bijv. Studenten geblokkeerd voor ChatGPT; Docenten toegestaan)
+  (bijv. Studenten geblokkeerd voor deepai.org; Docenten toegestaan)
 ```
 
 Elke hop transformeert de identiteitsrepresentatie: geprefixte weergavenamen worden schone namen, schone namen worden JWT-claims, JWT-claims worden auto-groups, auto-groups worden gecachte IP-naar-groep-mappings, en gecachte mappings worden ACL-beslissingen. Een fout op eender welke hop verbreekt de keten, maar het fail-open ontwerp zorgt ervoor dat een gebroken identiteitsketen nooit authenticatie blokkeert, alleen de toegang beperkt tot het meest restrictieve standaardbeleid.

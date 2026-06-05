@@ -200,7 +200,7 @@ Drie effectieve controles blijven over na het schrappen van de encryptie/boot-in
 >
 > **Valkuil: een verlopen MDM-sessie blokkeert de evaluatie, en een reboot lost dit niet op.** Na het licentiëren bleven `Device status → Total 0` en `Last contacted` bevroren, zelfs na een reboot. De MDM-sessie was verlopen, dus het apparaat kon niet authenticeren op het policy-evaluatiekanaal. Een verse gebruikersaanmelding (geen reboot) herstelde de evaluatie; mobile01 rapporteerde toen **Compliant** (B40.20).
 >
-> **Valkuil: de Microsoft control plane moet SSL-Bump omzeilen.** Intune-apparaatregistratie en de conform-apparaatcontrole mislukken als Squid Microsoft-endpoints bumpt. Zorg dat `*.microsoftonline.com` en `enterpriseregistration.windows.net` op de Squid splice/no-bump-lijst staan (Runbook 03, B40.9/40.10).
+> **Valkuil: de Microsoft control plane moet SSL-Bump omzeilen.** Intune-apparaatregistratie en de conform-apparaatcontrole mislukken als Squid Microsoft-endpoints bumpt. Zorg dat `*.microsoftonline.com`, `enterpriseregistration.windows.net`, `.microsoftazuread-sso.com` en `.live.com` op de Squid splice/no-bump-lijst staan (Runbook 03, B40.9/40.10/44.13).
 
 **Controlepunt Gate 2:**
 

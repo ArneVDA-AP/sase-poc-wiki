@@ -35,9 +35,9 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
-| C1 | Student surft naar ChatGPT | Geblokkeerd (Studenten-beleid) | CASB L1 | `curl.exe -x ... https://chatgpt.com` als student |
-| C2 | Docent surft naar ChatGPT | Toegestaan (Docenten-beleid) | CASB L1 | Zelfde URL als docentidentiteit |
-| C3 | SharePoint anonieme deellink | Gedetecteerd (regel 100601); Active Response trekt link in achter de ENFORCE-poort (standaard detect-only, live revoke nog niet actief) | CASB L2 | Anonieme deellink aanmaken in SharePoint |
+| C1 | Student surft naar deepai.org | Geblokkeerd, 403 (Studenten-beleid) | CASB L1 | `curl.exe -x ... https://deepai.org` als student |
+| C2 | Docent surft naar deepai.org | Toegestaan, 200 (Docenten-beleid) | CASB L1 | Zelfde URL als docentidentiteit |
+| C3 | SharePoint anonieme deellink | Gedetecteerd (regel 100601); Active Response trekt link in achter de ENFORCE-gate (standaard detect-only, live revoke nog niet actief) | CASB L2 | Anonieme deellink aanmaken in SharePoint |
 
 ### FWaaS / IDS: Netwerkdetectie
 

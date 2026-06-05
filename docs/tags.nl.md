@@ -74,6 +74,7 @@ Alle wiki-pagina's gebruiken uitsluitend tags uit deze lijst. Een nieuwe tag wor
 | `event-bus` | Event-driven architectuur, NATS publish/subscribe-patroon |
 | `groupsync` | JWT group sync, Entra ID → Zitadel → NetBird-groepspropagatie |
 | `intune` | Microsoft Intune, apparaatconformiteit en -beheer |
+| `mdm` | Mobile Device Management, Intune-beheer van het endpoint |
 | `oidc` | OpenID Connect, authenticatieprotocol (Entra ID → Zitadel → NetBird) |
 | `sd-wan` | SD-WAN / Zero Trust Branch, WAN-connectiviteit en verkeersoptimalisatie |
 | `testing` | Testscenario's, acceptatietests, demovalidatie |
@@ -93,5 +94,5 @@ Alle wiki-pagina's gebruiken uitsluitend tags uit deze lijst. Een nieuwe tag wor
 | `siem` | Security Information and Event Management (Wazuh) |
 | `swg` | Secure Web Gateway, Squid + SSL Bump + ICAP-pipeline |
 | `yara` | YARA-regels, patroonherkenningsengine voor malware- en DLP-detectie |
-| `zero-trust` | Zero Trust-beveiligingsmodel, never trust, always verify; driepoortmodel |
+| `zero-trust` | Zero Trust-beveiligingsmodel, never trust, always verify; drie-gate model |
 | `ztna` | Zero Trust Network Access, identiteitsgebaseerde tunnel (NetBird + Entra ID) |

@@ -194,6 +194,7 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 | NATS JetStream | [nats-jetstream.md](../components/nats-jetstream.md) | Central event bus — connects detection silos | ✅ Operational |
 | Control Daemon | [control-daemon.md](../components/control-daemon.md) | Threat scoring + real-time quarantine via NetBird API | ✅ Operational |
 | Wazuh | [wazuh.md](../components/wazuh.md) | SIEM — NATS forwarder + pop01 agent | ✅ Operational |
+| Intune Endpoint Enforcement | [intune-endpoint-enforcement.md](../components/intune-endpoint-enforcement.md) | MDM endpoint config push (forced PAC, trusted-cert, firewall, DSCP, split-tunnel) | ✅ Operational |
 | Entra ID CA + Intune | [ca-posture-hybrid.md](../decisions/ca-posture-hybrid.md) | Context-aware access (Gates 1+2) | ✅ Operational |
 | M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Layer 2 — Office 365 Management Activity API detection | ✅ Detection operational; AR enforcement detect-only (live revoke pending) |
 
@@ -252,7 +253,7 @@ Three gates enforce access control at different points in the connection lifecyc
 | Gate | Technology | Timing | Status |
 |------|-----------|--------|--------|
 | Gate 1 — Identity | Entra ID Conditional Access (5 policies) | At authentication (OIDC login) | ✅ Operational |
-| Gate 2 — Device | Intune device compliance | At authentication + continuous (8h cycle) | ✅ Operational (Report-only until demo) |
+| Gate 2 — Device | [Intune device compliance](../components/intune-endpoint-enforcement.md) | At authentication + continuous (8h cycle) | ✅ Operational (Report-only until demo) |
 | Gate 3 — Content | Squid + ClamAV + Python DLP + Suricata + Unbound RPZ | Every HTTP/DNS request | ✅ Operational |
 
 Gates are complementary, not redundant. Gate 1 evaluates *who* the user is (MFA, sign-in risk, geo-location). Gate 2 evaluates *what* the device is (OS version, AV status, firewall). Gate 3 evaluates *what* is being transferred (malware, sensitive data, blocked domains). No single gate can substitute for the others.

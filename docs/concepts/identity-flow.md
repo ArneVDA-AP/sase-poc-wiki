@@ -32,7 +32,7 @@ Squid (pop01, external_acl)
   | Returns persona group -> ACL evaluates per-group policies
   v
 Per-request identity-based filtering
-  (e.g., Studenten blocked from ChatGPT; Docenten allowed)
+  (e.g., Studenten blocked from deepai.org; Docenten allowed)
 ```
 
 Each hop transforms the identity representation: prefixed display names become clean names, clean names become JWT claims, JWT claims become auto-groups, auto-groups become cached IP-to-group mappings, and cached mappings become ACL decisions. A failure at any hop breaks the chain — but the fail-open design ensures that broken identity never blocks authentication, only restricts access to the most restrictive default policy.

@@ -118,6 +118,28 @@ nats sub "security.alert.>"
 # Expected: event appears on the subscription
 ```
 
+### Producer persistence (pop01 rc.d)
+
+The producers run from a Python venv at `/usr/local/etc/nats-producers/venv`, not the system Python. Installing `nats-py` system-wide with `pip --break-system-packages` was rejected on OPNsense because anything outside the firmware mechanism is not upgrade-durable, so the venv is the supported path (V33.2). The venv references the system Python (3.13); a firmware upgrade that bumps Python's minor version breaks the symlink and the venv must be rebuilt (non-destructive).
+
+Make the four producers start on boot with an rc.d service. Without it, they run as background processes that do not survive a pop01 reboot, and the event bus goes deaf.
+
+1. Install the rc.d script at `/usr/local/etc/rc.d/nats_producers`. It uses the venv Python, sources the shared `nats.env` for credentials and log paths, and handles start/stop/status/restart for all four producers with PID tracking under `/var/run/nats-producers/`. Keep it POSIX `sh` (no bash-isms, FreeBSD-compatible).
+2. Enable and start it:
+
+```sh
+chmod +x /usr/local/etc/rc.d/nats_producers
+sysrc nats_producers_enable=YES
+service nats_producers start
+```
+
+3. Verify all four are running:
+
+```sh
+service nats_producers status
+# Expected: suricata_producer / squid_producer / cicap_producer / rpz_producer each "running (pid ...)"
+```
+
 ---
 
 ## Step 5: Deploy producers on mgmt01

@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2207,6 +2237,8 @@
       
         
       
+        
+      
     
     
     
@@ -2571,6 +2603,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2589,6 +2649,8 @@
       
         
           
+        
+      
         
       
         
@@ -3290,6 +3352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3555,7 +3645,7 @@
 </tbody>
 </table>
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
-<p>Managed Windows devices (Intune-managed, Entra ID joined) as dictated by lector mandate R11. This enables Gate 2 to use Intune compliance policies for device posture verification rather than relying solely on NetBird posture checks. Endpoint enforcement is simplified because MDM can push the proxy PAC file, Windows Firewall rules, and root CA certificates directly to enrolled devices.</p>
+<p>Managed Windows devices (Intune-managed, Entra ID joined) as dictated by lector mandate R11. This enables Gate 2 to use Intune compliance policies for device posture verification rather than relying solely on NetBird posture checks. Endpoint enforcement is simplified because MDM can push the proxy PAC file, Windows Firewall rules, and root CA certificates directly to enrolled devices. The profiles that carry these out are documented in <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a>.</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Gate 2 redesign:</strong> Device posture verification shifts from NetBird posture checks (which verify OS version and process presence at tunnel-build time) to Intune compliance policies (which verify OS version, Defender AV, firewall status, and real-time protection through MDM attestation).</li>

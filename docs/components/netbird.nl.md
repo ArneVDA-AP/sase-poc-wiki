@@ -158,7 +158,7 @@ De lege instelling voor overeenkomende domeinen routeert **alle** DNS-query's va
 | [ioc2rpz/RPZ](ioc2rpz.md) | DNS-afhankelijkheid | Primaire nameserver-instelling routeert alle client-DNS via Unbound RPZ |
 | [Caddy](caddy.md) | → browser | WPAD PAC-bestand geleverd door Caddy op mgmt01 overlay-IP, alleen bereikbaar via NetBird |
 | [Suricata](suricata.md) | zichtbaarheid | Suricata ziet WireGuard als versleuteld UDP op vtnet0; binnenste payload niet inspecteerbaar |
-| [Driepoortmodel](../decisions/ca-posture-hybrid.md) | authenticatielaag | Poort 1 (Entra ID CA) + Poort 2 (postuurcontroles) koppelen beide aan de NetBird-aanmeldflow |
+| [Drie-gate model](../decisions/ca-posture-hybrid.md) | authenticatielaag | Gate 1 (Entra ID CA) + Gate 2 (postuurcontroles) koppelen beide aan de NetBird-aanmeldflow |
 
 ClamAV/Python DLP ICAP-verkeer van pop01 naar mgmt01 loopt via het `192.168.122.0/24` WAN-segment, niet via de NetBird-overlay. Dit communicatiepad werkt ook wanneer de NetBird-tunnel niet actief is.
 

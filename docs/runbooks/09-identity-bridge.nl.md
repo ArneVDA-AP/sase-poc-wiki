@@ -98,19 +98,19 @@ tail -f /var/log/squid/access.log
 
 ## Stap 5: Identiteitsgebaseerde filtering testen
 
-Test of beleidshandhaving verschilt per persona:
+Test of beleidshandhaving verschilt per persona. Gebruik `deepai.org` als demonstrator: dit domein zit niet in de UT1-categorieblacklist, dus het enige wat het kan blokkeren is de persona-ACL, waardoor het verschil zichtbaar wordt. AI-chatdomeinen zoals `chatgpt.com` zitten in UT1 en worden voor *beide* persona's geblokkeerd door de categoriefilter (die voor de persona-regel draait). Ze tonen dus "voor iedereen geblokkeerd" en kunnen de differentiatie niet aantonen.
 
 **Student (beperkt):**
 
 ```bash
-curl -x http://100.70.154.79:3128 https://chatgpt.com
+curl -x http://100.70.154.79:3128 https://deepai.org
 # Verwacht: 403 Forbidden (geblokkeerd voor studenten)
 ```
 
 **Docent (standaard):**
 
 ```bash
-curl -x http://100.70.154.79:3128 https://chatgpt.com
+curl -x http://100.70.154.79:3128 https://deepai.org
 # Verwacht: 200 OK (toegestaan voor docenten)
 ```
 
@@ -124,10 +124,10 @@ End-to-end-validatie:
 
 1. `netbird up` als studentgebruiker → NetBird Dashboard toont groep Studenten
 2. Identity Bridge `/lookup` retourneert "Studenten" voor het overlay-IP van die gebruiker
-3. `curl -x http://100.70.154.79:3128 https://chatgpt.com` → 403
+3. `curl -x http://100.70.154.79:3128 https://deepai.org` → 403
 4. `netbird up` als docentgebruiker → NetBird Dashboard toont groep Docenten
 5. Identity Bridge `/lookup` retourneert "Docenten" voor het overlay-IP van die gebruiker
-6. `curl -x http://100.70.154.79:3128 https://chatgpt.com` → 200
+6. `curl -x http://100.70.154.79:3128 https://deepai.org` → 200
 
 ---
 
@@ -140,8 +140,8 @@ End-to-end-validatie:
 - [ ] Squid external_acl_type geconfigureerd om Identity Bridge te queryen
 - [ ] Squid ACL's gedefinieerd voor Studenten/Docenten/Admins
 - [ ] Squid access.log toont identiteitsgroep per verzoek
-- [ ] Student geblokkeerd voor ChatGPT (403)
-- [ ] Docent toegestaan tot ChatGPT (200)
+- [ ] Student geblokkeerd voor deepai.org (403)
+- [ ] Docent toegestaan tot deepai.org (200)
 
 ---
 

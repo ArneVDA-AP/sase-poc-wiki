@@ -570,6 +570,8 @@
       
         
       
+        
+      
     
     
     
@@ -1158,6 +1160,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2268,6 +2298,8 @@
       
         
       
+        
+      
     
     
     
@@ -2632,6 +2664,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2650,6 +2710,8 @@
       
         
           
+        
+      
         
       
         
@@ -3351,6 +3413,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3851,9 +3941,11 @@
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Wait for node to stop in GNS3, then proceed</span>
 </code></pre></div>
 Mitigation: add <code>fsck_y_enable="YES"</code> to <code>/etc/rc.conf</code> on pop01 — FreeBSD then runs fsck automatically on next boot after unclean shutdown.</p>
+<p>The OOM-killer can deliver the same abrupt kill to any QEMU guest without warning: <code>poc-1a</code> overcommits guest RAM and runs with 0 swap, so a memory spike can have the kernel terminate an arbitrary guest — pop01 included. See <a href="../../findings/gns3-host-ram-overcommit/">Finding: GNS3 host RAM overcommit</a>.</p>
 <p><strong>iptables FORWARD ordering</strong> — libvirt places its own REJECT rules in the FORWARD chain. Rules appended with <code>-A FORWARD</code> land after those REJECT rules and never match. Always use <code>-I FORWARD 1</code> for ACCEPT rules. See <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWARD ordering</a>.</p>
 <p><strong>ubridge learning bridge limits traffic visibility</strong> — Switch-WAN uses ubridge, a learning L2 bridge. After MAC learning, unicast frames only go to the correct port — not flooded. Mgmt01 in promiscuous mode on ens3 does not see pop01's traffic to the internet. This impacts any future Zeek/RITA deployment: validate with <code>tcpdump -i ens3 -n host 8.8.8.8</code> on mgmt01 before deploying.</p>
 <p><strong>sitepc01 now runs Tiny11 (Windows 11)</strong> — initially created as an empty node (no OS), it was later imported as a Tiny11 image and enrolled in the NetBird overlay as <code>docent1</code> (Entra ID joined + Intune enrolled). It is operationally active.</p>
+<p><strong>Two projects share this GNS3 host — verify by project, not node name.</strong> The sandbox and the team project both run guests named <code>mgmt01</code>/<code>VyOS-1</code>, so a node name alone is ambiguous. The project UUIDs are <code>97e2bce6</code> = the sandbox (<code>PoC_Sandbox</code>: <code>mgmt01</code>, <code>pop01</code>, <code>VyOS-1</code>) and <code>b3b179f6</code> = the team project (<code>SASE_POC</code>: <code>Ubuntu-mgmt01-1</code>, <code>OPNsense-1</code>, <code>linuxpop01</code>, and others). Before stopping a node or acting on a guest, confirm node-to-project mapping in the GNS3 GUI (project name ↔ UUID ↔ node set) — the <code>SASE_POC_IP_Referentie.md</code> reference is unreliable: it predates the sandbox (16 March 2026) and labels the project IDs the wrong way around.</p>
 <hr />
 <h2 id="related">Related<a class="headerlink" href="#related" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3861,6 +3953,7 @@ Mitigation: add <code>fsck_y_enable="YES"</code> to <code>/etc/rc.conf</code> on
 <li><a href="../netbird/">Component: NetBird</a></li>
 <li><a href="../vyos/">Component: VyOS</a></li>
 <li><a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWARD ordering</a></li>
+<li><a href="../../findings/gns3-host-ram-overcommit/">Finding: GNS3 host RAM overcommit</a></li>
 <li><a href="../../decisions/gns3-vs-eveng/">Decision: GNS3 vs EVE-NG</a></li>
 <li><a href="../../runbooks/01-lab-environment/">Runbook: Lab Environment</a></li>
 </ul>

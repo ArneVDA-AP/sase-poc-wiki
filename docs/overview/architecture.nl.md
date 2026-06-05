@@ -194,6 +194,7 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 | NATS JetStream | [nats-jetstream.md](../components/nats-jetstream.md) | Centrale event bus, verbindt detectiesilo's | ✅ Operationeel |
 | Control Daemon | [control-daemon.md](../components/control-daemon.md) | Threat scoring + real-time quarantaine via NetBird API | ✅ Operationeel |
 | Wazuh | [wazuh.md](../components/wazuh.md) | SIEM, NATS forwarder + pop01-agent | ✅ Operationeel |
+| Intune Endpoint Enforcement | [intune-endpoint-enforcement.md](../components/intune-endpoint-enforcement.md) | MDM-config-push naar het endpoint (afgedwongen PAC, trusted-cert, firewall, DSCP, split-tunnel) | ✅ Operationeel |
 | Entra ID CA + Intune | [ca-posture-hybrid.md](../decisions/ca-posture-hybrid.md) | Contextbewuste toegang (Gates 1+2) | ✅ Operationeel |
 | M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Laag 2, Office 365 Management Activity API-detectie | ✅ Detectie operationeel; AR-handhaving detect-only (live revoke nog niet actief) |
 
@@ -252,7 +253,7 @@ Drie gates handhaven toegangscontrole op verschillende punten in de verbindingsl
 | Gate | Technologie | Timing | Status |
 |------|-------------|--------|--------|
 | Gate 1, Identiteit | Entra ID Conditional Access (5 policies) | Bij authenticatie (OIDC-login) | ✅ Operationeel |
-| Gate 2, Apparaat | Intune-apparaatconformiteit | Bij authenticatie + continu (8u-cyclus) | ✅ Operationeel (Report-only tot demo) |
+| Gate 2, Apparaat | [Intune-apparaatconformiteit](../components/intune-endpoint-enforcement.md) | Bij authenticatie + continu (8u-cyclus) | ✅ Operationeel (Report-only tot demo) |
 | Gate 3, Inhoud | Squid + ClamAV + Python DLP + Suricata + Unbound RPZ | Elke HTTP/DNS-aanvraag | ✅ Operationeel |
 
 Gates zijn aanvullend, niet redundant. Gate 1 evalueert *wie* de gebruiker is (MFA, aanmeldingsrisico, geo-locatie). Gate 2 evalueert *wat* het apparaat is (OS-versie, AV-status, firewall). Gate 3 evalueert *wat* wordt overgedragen (malware, gevoelige data, geblokkeerde domeinen). Geen enkele gate kan de andere vervangen.

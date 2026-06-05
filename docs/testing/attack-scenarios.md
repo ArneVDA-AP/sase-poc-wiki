@@ -35,8 +35,8 @@ These scenarios validate each SASE pillar by attempting attacks or policy bypass
 
 | # | Scenario | Expected result | Validates | Test command |
 |---|----------|-----------------|-----------|--------------|
-| C1 | Student browses ChatGPT | Blocked (Studenten policy) | CASB L1 | `curl.exe -x ... https://chatgpt.com` as student |
-| C2 | Teacher browses ChatGPT | Allowed (Docenten policy) | CASB L1 | Same URL as teacher identity |
+| C1 | Student browses deepai.org | Blocked, 403 (Studenten policy) | CASB L1 | `curl.exe -x ... https://deepai.org` as student |
+| C2 | Teacher browses deepai.org | Allowed, 200 (Docenten policy) | CASB L1 | Same URL as teacher identity |
 | C3 | SharePoint anonymous share | Detected (rule 100601); Active Response revokes link behind the ENFORCE gate (detect-only by default, live revoke pending) | CASB L2 | Create anonymous sharing link in SharePoint |
 
 ### FWaaS / IDS -- Network Detection

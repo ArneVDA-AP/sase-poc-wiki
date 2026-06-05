@@ -570,6 +570,8 @@
       
         
       
+        
+      
     
     
     
@@ -1158,6 +1160,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2268,6 +2298,8 @@
       
         
       
+        
+      
     
     
     
@@ -2632,6 +2664,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune-eindpunt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2650,6 +2710,8 @@
       
         
           
+        
+      
         
       
         
@@ -3351,6 +3413,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3851,9 +3941,11 @@
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Wacht tot de node stopt in GNS3, ga dan verder</span>
 </code></pre></div>
 Mitigatie: voeg <code>fsck_y_enable="YES"</code> toe aan <code>/etc/rc.conf</code> op pop01. FreeBSD draait dan automatisch fsck bij de volgende boot na een onregelmatige afsluiting.</p>
+<p>De OOM-killer kan dezelfde abrupte kill zonder waarschuwing aan elke QEMU-guest toebrengen: <code>poc-1a</code> committeert guest-RAM over en draait met 0 swap, dus een geheugenpiek kan de kernel een willekeurige guest laten beëindigen, pop01 inbegrepen. Zie <a href="../../findings/gns3-host-ram-overcommit/">Bevinding: RAM-overcommit op de GNS3-host</a>.</p>
 <p><strong>iptables FORWARD-volgorde:</strong> libvirt plaatst zijn eigen REJECT-regels in de FORWARD-keten. Regels toegevoegd met <code>-A FORWARD</code> komen na die REJECT-regels terecht en matchen nooit. Gebruik altijd <code>-I FORWARD 1</code> voor ACCEPT-regels. Zie <a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a>.</p>
 <p><strong>ubridge learning bridge beperkt verkeerzichtbaarheid:</strong> Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort, niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet. Dit heeft impact op elke toekomstige Zeek/RITA-uitrol: valideer met <code>tcpdump -i ens3 -n host 8.8.8.8</code> op mgmt01 vóór uitrol.</p>
 <p><strong>sitepc01 draait nu Tiny11 (Windows 11):</strong> aanvankelijk aangemaakt als een lege node (geen OS), werd het later geïmporteerd als een Tiny11-image en ge-enrolld in de NetBird-overlay als <code>docent1</code> (Entra ID joined + Intune enrolled). Het is operationeel actief.</p>
+<p><strong>Twee projecten delen deze GNS3-host: verifieer op project, niet op node-naam.</strong> De sandbox en het teamproject draaien beide guests met de naam <code>mgmt01</code>/<code>VyOS-1</code>, dus een node-naam alleen is dubbelzinnig. De project-UUID's zijn <code>97e2bce6</code> = de sandbox (<code>PoC_Sandbox</code>: <code>mgmt01</code>, <code>pop01</code>, <code>VyOS-1</code>) en <code>b3b179f6</code> = het teamproject (<code>SASE_POC</code>: <code>Ubuntu-mgmt01-1</code>, <code>OPNsense-1</code>, <code>linuxpop01</code>, en andere). Bevestig de node-naar-project-mapping in de GNS3-GUI (projectnaam ↔ UUID ↔ node-set) voordat je een node stopt of op een guest ingrijpt. De <code>SASE_POC_IP_Referentie.md</code>-referentie is onbetrouwbaar: die dateert van vóór de sandbox (16 maart 2026) en benoemt de project-ID's omgekeerd.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3861,6 +3953,7 @@ Mitigatie: voeg <code>fsck_y_enable="YES"</code> toe aan <code>/etc/rc.conf</cod
 <li><a href="../netbird/">Component: NetBird</a></li>
 <li><a href="../vyos/">Component: VyOS</a></li>
 <li><a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a></li>
+<li><a href="../../findings/gns3-host-ram-overcommit/">Bevinding: RAM-overcommit op de GNS3-host</a></li>
 <li><a href="../../decisions/gns3-vs-eveng/">Beslissing: GNS3 vs EVE-NG</a></li>
 <li><a href="../../runbooks/01-lab-environment/">Runbook: Labomgeving</a></li>
 </ul>

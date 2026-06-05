@@ -21,7 +21,7 @@ De oorspronkelijke projectscope richtte zich op BYOD (Bring Your Own Device) met
 
 ## Beslissing
 
-Beheerde Windows-apparaten (Intune-beheerd, Entra ID-joined) zoals voorgeschreven door lectormandaat R11. Dit stelt Gate 2 in staat Intune-compliancepolicies te gebruiken voor device posture-verificatie in plaats van uitsluitend te vertrouwen op NetBird posture checks. Endpoint-handhaving wordt vereenvoudigd doordat MDM het proxy PAC-bestand, Windows Firewall-regels en root-CA-certificaten rechtstreeks naar ge-enrollde apparaten kan pushen.
+Beheerde Windows-apparaten (Intune-beheerd, Entra ID-joined) zoals voorgeschreven door lectormandaat R11. Dit stelt Gate 2 in staat Intune-compliancepolicies te gebruiken voor device posture-verificatie in plaats van uitsluitend te vertrouwen op NetBird posture checks. Endpoint-handhaving wordt vereenvoudigd doordat MDM het proxy PAC-bestand, Windows Firewall-regels en root-CA-certificaten rechtstreeks naar ge-enrollde apparaten kan pushen. De profielen die dit uitvoeren staan beschreven in [Intune Endpoint Enforcement](../components/intune-endpoint-enforcement.md).
 
 ## Gevolgen
 

@@ -23,7 +23,8 @@ Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aa
       │    └─► 09 Identity Bridge (na 08)
       ├─► 10 NATS JetStream (na 03, 04, 05, 06)
       │    └─► 11 Wazuh (na 10)
-      └─► 07 Toegangsbeleid (na alles hierboven)
+      ├─► 07 Toegangsbeleid (na alles hierboven)
+      └─► 12 Intune Endpoint (na 07)
 ```
 
 ## Runbook-overzicht
@@ -41,6 +42,7 @@ Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aa
 | 9 | [Identity Bridge](09-identity-bridge.nl.md) | mgmt01 + pop01 | Operationeel | FastAPI overlay-IP → persona-groep, Squid external_acl |
 | 10 | [NATS JetStream](10-nats-jetstream.nl.md) | mgmt01 + pop01 | Operationeel | Event bus, producers, Control Daemon, Redis |
 | 11 | [Wazuh](11-wazuh.nl.md) | mgmt01 + pop01 | Operationeel | SIEM-stack, NATS-forwarder, M365 Active Response |
+| 12 | [Intune Endpoint](12-intune-endpoint.nl.md) | Entra ID + Intune | Geïmplementeerd | Certificaat, afgedwongen PAC, firewall-block-set, Teams-QoS, split-tunnel-Remediation; SITE01-enrollment |
 
 ## Afhankelijkheidsgraph
 
@@ -57,6 +59,7 @@ Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aa
 | 09 Identity Bridge | 08 (GroupSync voltooid) |
 | 10 NATS JetStream | 03, 04, 05, 06 (alle producers operationeel) |
 | 11 Wazuh | 10 (NATS operationeel) |
+| 12 Intune Endpoint | 07 (managed device Entra-joined + Intune-enrolled) |
 
 ## Snelreferentie: belangrijkste poorten
 

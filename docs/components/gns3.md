@@ -132,11 +132,15 @@ shutdown -h now
 ```
 Mitigation: add `fsck_y_enable="YES"` to `/etc/rc.conf` on pop01 — FreeBSD then runs fsck automatically on next boot after unclean shutdown.
 
+The OOM-killer can deliver the same abrupt kill to any QEMU guest without warning: `poc-1a` overcommits guest RAM and runs with 0 swap, so a memory spike can have the kernel terminate an arbitrary guest — pop01 included. See [Finding: GNS3 host RAM overcommit](../findings/gns3-host-ram-overcommit.md).
+
 **iptables FORWARD ordering** — libvirt places its own REJECT rules in the FORWARD chain. Rules appended with `-A FORWARD` land after those REJECT rules and never match. Always use `-I FORWARD 1` for ACCEPT rules. See [Finding: iptables FORWARD ordering](../findings/iptables-forward-ordering.md).
 
 **ubridge learning bridge limits traffic visibility** — Switch-WAN uses ubridge, a learning L2 bridge. After MAC learning, unicast frames only go to the correct port — not flooded. Mgmt01 in promiscuous mode on ens3 does not see pop01's traffic to the internet. This impacts any future Zeek/RITA deployment: validate with `tcpdump -i ens3 -n host 8.8.8.8` on mgmt01 before deploying.
 
 **sitepc01 now runs Tiny11 (Windows 11)** — initially created as an empty node (no OS), it was later imported as a Tiny11 image and enrolled in the NetBird overlay as `docent1` (Entra ID joined + Intune enrolled). It is operationally active.
+
+**Two projects share this GNS3 host — verify by project, not node name.** The sandbox and the team project both run guests named `mgmt01`/`VyOS-1`, so a node name alone is ambiguous. The project UUIDs are `97e2bce6` = the sandbox (`PoC_Sandbox`: `mgmt01`, `pop01`, `VyOS-1`) and `b3b179f6` = the team project (`SASE_POC`: `Ubuntu-mgmt01-1`, `OPNsense-1`, `linuxpop01`, and others). Before stopping a node or acting on a guest, confirm node-to-project mapping in the GNS3 GUI (project name ↔ UUID ↔ node set) — the `SASE_POC_IP_Referentie.md` reference is unreliable: it predates the sandbox (16 March 2026) and labels the project IDs the wrong way around.
 
 ---
 
@@ -146,5 +150,6 @@ Mitigation: add `fsck_y_enable="YES"` to `/etc/rc.conf` on pop01 — FreeBSD the
 - [Component: NetBird](netbird.md)
 - [Component: VyOS](vyos.md)
 - [Finding: iptables FORWARD ordering](../findings/iptables-forward-ordering.md)
+- [Finding: GNS3 host RAM overcommit](../findings/gns3-host-ram-overcommit.md)
 - [Decision: GNS3 vs EVE-NG](../decisions/gns3-vs-eveng.md)
 - [Runbook: Lab Environment](../runbooks/01-lab-environment.md)

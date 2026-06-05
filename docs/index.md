@@ -35,6 +35,7 @@ decision point. Opens full-width in a new tab.
 | [Control Daemon](components/control-daemon.md) | Threat scoring + real-time quarantine via NetBird API |
 | [Wazuh](components/wazuh.md) | SIEM — NATS forwarder + pop01 agent + M365 Active Response |
 | [Zitadel](components/zitadel.md) | OIDC IdP broker — Entra ID → JWT group sync → NetBird |
+| [Intune Endpoint Enforcement](components/intune-endpoint-enforcement.md) | MDM endpoint config push — forced PAC, trusted-cert, firewall block-set, DSCP/QoS, split-tunnel routes |
 | **Concepts** | |
 | [SASE](concepts/sase.md) | Five SASE pillars; our open-source implementation; commercial equivalents |
 | [Zero Trust](concepts/zero-trust.md) | Three-gate model; never trust always verify; Gates 1–3 |
@@ -101,6 +102,7 @@ decision point. Opens full-width in a new tab.
 | [Overlay IP instability](findings/overlay-ip-instability.md) | NetBird overlay IPs can change — Identity Bridge must handle stale cache |
 | [NATS store dir](findings/nats-store-dir.md) | JetStream store must be on persistent Docker volume |
 | [Wazuh CPU glibc](findings/wazuh-cpu-glibc.md) | CPU spike on startup due to glibc compatibility |
+| [GNS3 host RAM overcommit](findings/gns3-host-ram-overcommit.md) | poc-1a overcommits guest RAM with 0 swap — a memory spike risks the OOM-killer dropping a QEMU guest |
 | [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard Offline caused by empty UUID after down -v — resolved, in-place 4.14.5 GA bump |
 | [NetBird JWT allow-groups lockout](findings/netbird-jwt-allow-groups-lockout.md) | Enabling JWT allow-groups can lock out all users if misconfigured |
 | [DC-LAN isolation route ACL](findings/dc-lan-isolation-route-acl.md) | NetBird Networks + ACL required for DC-LAN isolation |

@@ -12,7 +12,7 @@ tags: [proxy, wpad, sase, network, squid]
 WPAD/PAC is het mechanisme dat elke browseraanvraag op mobile01 via Squid op pop01 routeert, zonder een proxyadres in elke browser hard te coderen. De ontdekkingsketen:
 
 1. Het DNS-zoekdomein van mobile01 is `sandbox.local` (gedistribueerd door NetBird DNS-configuratie)
-2. Browser queryet `wpad.sandbox.local` → resolvet naar mgmt01 overlay-IP `100.70.135.241` (via NetBird Custom DNS Zone)
+2. Browser queryet `wpad.sandbox.local` → de query gaat naar pop01 Unbound (de NetBird primary nameserver) via de `sandbox.local` Custom DNS zone, die de naam resolvet naar de Caddy-host op het overlay-IP van mgmt01 `100.70.135.241`
 3. Browser haalt `http://wpad.sandbox.local/wpad.dat` op
 4. Browser voert `FindProxyForURL()` uit voor elke URL → geeft `PROXY 100.70.154.79:3128` terug (Squid)
 5. Al het niet-interne verkeer stroomt door Squid voor inspectie
@@ -31,7 +31,7 @@ Met expliciete proxymodus kan Squid ook HTTPS verwerken via `CONNECT`-tunnel (en
 
 **[Squid](../components/squid.md):** de proxy waarnaar het PAC-bestand verwijst: `PROXY 100.70.154.79:3128`. Squid draait de pre-auth include-listener op dit NetBird overlay-IP met volledige ssl-bump-parameters.
 
-**[NetBird](../components/netbird.md):** biedt twee dingen waarvan WPAD afhankelijk is: (1) het overlaynetwerk dat het IP van mgmt01 bereikbaar maakt vanuit mobile01, en (2) de Custom DNS Zone die `wpad.sandbox.local` resolvet naar het overlay-IP van mgmt01.
+**[NetBird](../components/netbird.md):** biedt twee dingen waarvan WPAD afhankelijk is: (1) het overlaynetwerk dat het IP van mgmt01 bereikbaar maakt vanuit mobile01, en (2) de DNS-configuratie die pop01 als primary nameserver instelt en de `sandbox.local` Custom DNS zone definieert, zodat een query naar `wpad.sandbox.local` pop01 Unbound bereikt en resolvet naar de Caddy-host op mgmt01.
 
 ## Belangrijke onderscheidingen
 

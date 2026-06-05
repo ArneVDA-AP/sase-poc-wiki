@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2229,6 +2259,8 @@
       
         
       
+        
+      
     
     
     
@@ -2593,6 +2625,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2611,6 +2671,8 @@
       
         
           
+        
+      
         
       
         
@@ -3312,6 +3374,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3610,7 +3700,7 @@
 <p>Managed-device <strong>three-gate model</strong> (Verslag40):</p>
 <ul>
 <li><strong>Gate 1 — Identity:</strong> Entra ID Conditional Access (5 policies, authentication-time)</li>
-<li><strong>Gate 2 — Device:</strong> Intune device compliance (attestation-based posture, evaluated at authentication via CA Policy 5 and on Intune's periodic cycle)</li>
+<li><strong>Gate 2 — Device:</strong> Intune device compliance (attestation-based posture, evaluated at authentication via CA Policy 5 and on Intune's periodic cycle). The endpoint-config side of that same managed-device foundation is <a href="../../components/intune-endpoint-enforcement/">Intune Endpoint Enforcement</a>.</li>
 <li><strong>Gate 3 — Content:</strong> SWG pipeline (Squid SSL-Bump + ClamAV + DLP + Unbound RPZ, every request)</li>
 </ul>
 <p>NetBird posture checks remain <em>available</em> as an optional, independent defense-in-depth layer (different timing — tunnel-build — and mechanism — client-side check), but were <strong>not deployed</strong>: with managed devices, Intune compliance already covers the rubric's device-posture requirement through attestation rather than a spoofable process check.</p>
@@ -3681,7 +3771,7 @@
 <li>Gate 1 (Entra ID CA) and Gate 2 (Intune compliance) are both live as of Verslag40: four CA policies enforcing (MFA, legacy-auth block, risk-block) plus Policy 5 (compliant device) and Geo-Block held at Report-only until demo. Gate 3 (SWG pipeline) operates independently of identity/device on every request — so all three gates are operational, not just Gate 3</li>
 <li>Activation of Gate 1 requires MFA pre-registration for test accounts before enabling policies (unregistered MFA produces a loop that blocks even the verification session)</li>
 <li>The admins persona falls under no CA policy — <code>2itcsc1a_admin1</code> is its sole member and is the break-glass exclude on every policy, so it is deliberately ungoverned to prevent lockout</li>
-<li>Intune Gate 2 depends on the Microsoft control plane being reachable un-bumped: <code>*.microsoftonline.com</code> and <code>enterpriseregistration.windows.net</code> are on the Squid splice/no-bump list, otherwise device registration and the compliant-device check (Policy 5) break</li>
+<li>Intune Gate 2 depends on the Microsoft control plane being reachable un-bumped: <code>*.microsoftonline.com</code>, <code>enterpriseregistration.windows.net</code>, <code>.microsoftazuread-sso.com</code>, and <code>.live.com</code> are on the Squid splice/no-bump list, otherwise device registration and the compliant-device check (Policy 5) break</li>
 <li><strong>Optional NetBird posture layer (not deployed):</strong> had NetBird posture checks been used as the device gate, the OS check would read the kernel version (<code>10.0.19041</code> = Windows 10 2004, the first with the native WireGuard kernel module) and the AV check would be a <code>process_check</code> that only verifies a binary exists at a path — spoofable, and blind to whether definitions are current or real-time scanning is active. Intune attestation (Gate 2, minimum OS <code>10.0.22000.0</code>) supersedes this; deep content/endpoint protection is Gate 3 (ClamAV)</li>
 </ul>
 <p>See also: <a href="../../components/netbird/">Component: NetBird</a>, <a href="../../concepts/zero-trust/">Concept: Zero Trust</a></p>

@@ -21,7 +21,7 @@ The original project scope targeted BYOD (Bring Your Own Device) with an estimat
 
 ## Decision
 
-Managed Windows devices (Intune-managed, Entra ID joined) as dictated by lector mandate R11. This enables Gate 2 to use Intune compliance policies for device posture verification rather than relying solely on NetBird posture checks. Endpoint enforcement is simplified because MDM can push the proxy PAC file, Windows Firewall rules, and root CA certificates directly to enrolled devices.
+Managed Windows devices (Intune-managed, Entra ID joined) as dictated by lector mandate R11. This enables Gate 2 to use Intune compliance policies for device posture verification rather than relying solely on NetBird posture checks. Endpoint enforcement is simplified because MDM can push the proxy PAC file, Windows Firewall rules, and root CA certificates directly to enrolled devices. The profiles that carry these out are documented in [Intune Endpoint Enforcement](../components/intune-endpoint-enforcement.md).
 
 ## Consequences
 

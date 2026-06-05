@@ -34,6 +34,6 @@ WPAD/PAC is also the architecturally correct pattern for a SASE stack: the comme
 - mobile01 must be configured with the PAC file URL (manually via Windows Settings → Proxy → "Use setup script")
 - Non-browser applications that ignore the system proxy setting bypass Squid (partially compensated by Suricata on vtnet0)
 - Squid must listen on the NetBird overlay IP (`100.70.154.79:3128`) via pre-auth include, not the GUI
-- Caddy on mgmt01 serves the PAC file; the `wpad.sandbox.local` DNS name resolves via NetBird Custom DNS Zone
+- Caddy on mgmt01 serves the PAC file; the `sandbox.local` NetBird Custom DNS Zone routes the `wpad.sandbox.local` query to pop01 Unbound (the NetBird primary nameserver), which resolves it to the Caddy host on mgmt01
 
 See also: [Finding: wt0 pf rdr limitation](../findings/wt0-pf-rdr-limitation.md), [Finding: pre-auth ssl-bump params](../findings/pre-auth-ssl-bump-params.md)

@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2115,6 +2145,8 @@
       
         
       
+        
+      
     
     
     
@@ -2590,6 +2622,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#producer-persistence-pop01-rcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer persistence (pop01 rc.d)
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2715,6 +2758,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2733,6 +2804,8 @@
       
         
           
+        
+      
         
       
         
@@ -3434,6 +3507,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3665,6 +3766,17 @@
     <span class="md-ellipsis">
       
         Producer: ClamAV malware
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#producer-persistence-pop01-rcd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Producer persistence (pop01 rc.d)
       
     </span>
   </a>
@@ -3904,6 +4016,23 @@
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Trigger a test event (e.g., curl to testmyids.com via proxy)</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Expected: event appears on the subscription</span>
 </code></pre></div>
+<h3 id="producer-persistence-pop01-rcd">Producer persistence (pop01 rc.d)<a class="headerlink" href="#producer-persistence-pop01-rcd" title="Permanent link">&para;</a></h3>
+<p>The producers run from a Python venv at <code>/usr/local/etc/nats-producers/venv</code>, not the system Python. Installing <code>nats-py</code> system-wide with <code>pip --break-system-packages</code> was rejected on OPNsense because anything outside the firmware mechanism is not upgrade-durable, so the venv is the supported path (V33.2). The venv references the system Python (3.13); a firmware upgrade that bumps Python's minor version breaks the symlink and the venv must be rebuilt (non-destructive).</p>
+<p>Make the four producers start on boot with an rc.d service. Without it, they run as background processes that do not survive a pop01 reboot, and the event bus goes deaf.</p>
+<ol>
+<li>Install the rc.d script at <code>/usr/local/etc/rc.d/nats_producers</code>. It uses the venv Python, sources the shared <code>nats.env</code> for credentials and log paths, and handles start/stop/status/restart for all four producers with PID tracking under <code>/var/run/nats-producers/</code>. Keep it POSIX <code>sh</code> (no bash-isms, FreeBSD-compatible).</li>
+<li>Enable and start it:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>/usr/local/etc/rc.d/nats_producers
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sysrc<span class="w"> </span><span class="nv">nats_producers_enable</span><span class="o">=</span>YES
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>service<span class="w"> </span>nats_producers<span class="w"> </span>start
+</code></pre></div>
+<ol>
+<li>Verify all four are running:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>service<span class="w"> </span>nats_producers<span class="w"> </span>status
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># Expected: suricata_producer / squid_producer / cicap_producer / rpz_producer each &quot;running (pid ...)&quot;</span>
+</code></pre></div>
 <hr />
 <h2 id="step-5-deploy-producers-on-mgmt01">Step 5: Deploy producers on mgmt01<a class="headerlink" href="#step-5-deploy-producers-on-mgmt01" title="Permanent link">&para;</a></h2>
 <h3 id="producer-python-dlp">Producer: Python DLP<a class="headerlink" href="#producer-python-dlp" title="Permanent link">&para;</a></h3>
@@ -3947,7 +4076,7 @@
 <li><strong>Producer:</strong> Verify the event appears on <code>security.alert.ids</code> subject</li>
 <li><strong>Redis:</strong> Check the threat score for the peer IP has increased:</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis<span class="w"> </span>redis-cli<span class="w"> </span>GET<span class="w"> </span><span class="s2">&quot;threat:&lt;peer-ip&gt;&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis<span class="w"> </span>redis-cli<span class="w"> </span>GET<span class="w"> </span><span class="s2">&quot;threat:&lt;peer-ip&gt;&quot;</span>
 </code></pre></div>
 <ol>
 <li><strong>Control Daemon:</strong> Check Control Daemon logs for the received event and scoring decision</li>

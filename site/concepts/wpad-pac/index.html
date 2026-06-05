@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2207,6 +2237,8 @@
       
         
       
+        
+      
     
     
     
@@ -2571,6 +2603,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2589,6 +2649,8 @@
       
         
           
+        
+      
         
       
         
@@ -3290,6 +3352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3533,7 +3623,7 @@
 <p>WPAD/PAC is the mechanism that routes every browser request on mobile01 through Squid on pop01 — without hardcoding a proxy address in each browser. The discovery chain:</p>
 <ol>
 <li>mobile01's DNS search domain is <code>sandbox.local</code> (distributed by NetBird DNS configuration)</li>
-<li>Browser queries <code>wpad.sandbox.local</code> → resolves to mgmt01 overlay IP <code>100.70.135.241</code> (via NetBird Custom DNS Zone)</li>
+<li>Browser queries <code>wpad.sandbox.local</code> → the query goes to pop01 Unbound (the NetBird primary nameserver) via the <code>sandbox.local</code> Custom DNS zone, which resolves the name to the Caddy host on mgmt01's overlay IP <code>100.70.135.241</code></li>
 <li>Browser fetches <code>http://wpad.sandbox.local/wpad.dat</code></li>
 <li>Browser executes <code>FindProxyForURL()</code> for each URL → returns <code>PROXY 100.70.154.79:3128</code> (Squid)</li>
 <li>All non-internal traffic flows through Squid for inspection</li>
@@ -3546,7 +3636,7 @@
 <h2 id="where-it-appears-in-the-stack">Where it appears in the stack<a class="headerlink" href="#where-it-appears-in-the-stack" title="Permanent link">&para;</a></h2>
 <p><strong><a href="../../components/caddy/">Caddy</a></strong> — serves the PAC file at <code>http://wpad.sandbox.local/wpad.dat</code> with the correct MIME type (<code>application/x-ns-proxy-autoconfig</code>). Runs on mgmt01's overlay IP (<code>100.70.135.241</code>).</p>
 <p><strong><a href="../../components/squid/">Squid</a></strong> — the proxy that the PAC file points to: <code>PROXY 100.70.154.79:3128</code>. Squid runs the pre-auth include listener on this NetBird overlay IP with full ssl-bump parameters.</p>
-<p><strong><a href="../../components/netbird/">NetBird</a></strong> — provides two things WPAD depends on: (1) the overlay network that makes mgmt01's IP reachable from mobile01, and (2) the Custom DNS Zone that resolves <code>wpad.sandbox.local</code> to mgmt01's overlay IP.</p>
+<p><strong><a href="../../components/netbird/">NetBird</a></strong> — provides two things WPAD depends on: (1) the overlay network that makes mgmt01's IP reachable from mobile01, and (2) the DNS configuration that sets pop01 as the primary nameserver and defines the <code>sandbox.local</code> Custom DNS zone, so a <code>wpad.sandbox.local</code> query reaches pop01 Unbound and resolves to the Caddy host on mgmt01.</p>
 <h2 id="key-distinctions">Key distinctions<a class="headerlink" href="#key-distinctions" title="Permanent link">&para;</a></h2>
 <p><strong>PAC file must return DIRECT for overlay IPs</strong> — if the PAC file returned <code>PROXY ...</code> for <code>100.64.0.0/10</code> (the NetBird overlay subnet), browser requests to the NetBird management console would be routed through Squid, which would then try to fetch via the tunnel — a routing loop. The PAC file must explicitly exclude overlay and internal subnets.</p>
 <p><strong>WPAD only covers browser HTTP/HTTPS</strong> — applications that do not read the system proxy setting (many non-browser apps, command-line tools) bypass Squid entirely. Suricata's network-layer inspection on vtnet0 partially compensates by detecting anomalies in direct connections.</p>

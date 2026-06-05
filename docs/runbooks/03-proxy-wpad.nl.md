@@ -181,7 +181,23 @@ Onder het V34-personamodel (zie [Component: NetBird](../components/netbird.nl.md
 
 ---
 
-## Stap 8: Windows-proxy configureren op mobile01
+## Stap 8: De client-proxy configureren
+
+### Primaire methode (managed devices): afgedwongen PAC via MDM
+
+Op Intune-enrolled apparaten wordt de PAC-URL vanuit de cloud gepusht in plaats van met de hand gezet, zodat de gebruiker hem niet kan wissen. Een Custom OMA-URI-profiel `2ITCSC1A-SASE-Proxy-PAC` stuurt de NetworkProxy-CSP aan (de Settings Catalog toont NetworkProxy niet, dus loopt het via OMA-URI):
+
+```
+./Vendor/MSFT/NetworkProxy/ProxySettingsPerUser   Integer  0
+./Vendor/MSFT/NetworkProxy/AutoDetect             Integer  0
+./Vendor/MSFT/NetworkProxy/SetupScriptUrl         String   http://wpad.sandbox.local/wpad.dat
+```
+
+`ProxySettingsPerUser=0` maakt de PAC systeembreed, `AutoDetect=0` forceert de expliciete PAC in plaats van WPAD-discovery, en `SetupScriptUrl` wijst naar het Caddy PAC-doel uit Stap 5. Zet geen ProxyServer-node naast de PAC-URL; die combinatie is een bekende Intune-bug die het profiel sloopt. Zie [Intune Endpoint Enforcement](../components/intune-endpoint-enforcement.md) voor het volledige profiel en de device-scoping.
+
+### Fallback-methode (handmatig): Windows-proxy op mobile01
+
+Voor een unmanaged of met de hand gebouwde testclient zet je dezelfde PAC-URL handmatig:
 
 ```
 Windows Instellingen → Netwerk en internet → Proxy:
@@ -218,13 +234,17 @@ configctl proxy restart
 
 ```
 login.microsoftonline.com
+.microsoftonline.com
 .microsoft.com
+enterpriseregistration.windows.net
+.microsoftazuread-sso.com
+.live.com
 .paypal.com
 .apple.com
 .banking.example.com
 ```
 
-> **Valkuil: `login.microsoftonline.com` MOET in de no-bump-lijst staan.** Als Squid de Microsoft-inlogpagina bumpt, wordt de OIDC-certificaatketen verbroken en mislukt Entra ID-authenticatie voor alle NetBird-clients.
+> **Valkuil: de Microsoft control plane-set MOET in de no-bump-lijst staan.** Als Squid een van deze bumpt, wordt de OIDC-certificaatketen verbroken en mislukken Entra ID-authenticatie, Intune-apparaatregistratie en de conform-apparaatcontrole voor alle NetBird-clients. `.microsoftonline.com` (met punt vooraan) dekt `device.login.microsoftonline.com`; `enterpriseregistration.windows.net` is de exacte apparaatregistratie-host; `.microsoftazuread-sso.com` is het cert-pinned seamless SSO-endpoint; `.live.com` is de consumer-auth-leg die tijdens de interactieve Entra-join wordt geraakt.
 
 ---
 

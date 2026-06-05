@@ -65,6 +65,7 @@ Vijf streams aangemaakt (V32, operationeel bevestigd):
 - **Store dir dubbele nesting:** Zie [Bevinding: NATS store dir](../findings/nats-store-dir.md).
 - **Container-herschepping vereist:** `docker compose restart` na configuratiewijzigingen neemt nieuwe omgevingsvariabelen niet over. Gebruik `docker compose up -d --force-recreate`.
 - **Producers hebben geen `$JS.API.>` rechten nodig:** Enkel subject publish + `_INBOX.>` zijn vereist voor producers.
+- **Producer-persistentie (pop01):** De vier pop01-producers (Suricata, Squid, DNS-RPZ, c-icap/ClamAV) zijn persistent over reboots via de `nats_producers` rc.d-service (`sysrc nats_producers_enable=YES`), die ze start vanuit de venv op `/usr/local/etc/nats-producers/venv`. Zonder die service overleven de producers een pop01-reboot niet en wordt de event bus doof. Het Docker-volume bewaart enkel de JetStream-opslag van de bus zelf, niet de producers. Zie [Runbook 10: NATS JetStream](../runbooks/10-nats-jetstream.nl.md).
 
 ## Gerelateerd
 

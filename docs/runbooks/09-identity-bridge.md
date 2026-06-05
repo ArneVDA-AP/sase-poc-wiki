@@ -98,19 +98,19 @@ tail -f /var/log/squid/access.log
 
 ## Step 5: Test identity-based filtering
 
-Test that policy enforcement differs by persona:
+Test that policy enforcement differs by persona. Use `deepai.org` as the demonstrator: it is not in the UT1 category blacklist, so the only thing that can block it is the persona ACL, which makes the difference observable. AI-chat domains such as `chatgpt.com` are in UT1 and are blocked for *both* personas by the category filter (which runs before the persona rule), so they show "blocked for everyone" and cannot demonstrate differentiation.
 
 **Student (restricted):**
 
 ```bash
-curl -x http://100.70.154.79:3128 https://chatgpt.com
+curl -x http://100.70.154.79:3128 https://deepai.org
 # Expected: 403 Forbidden (blocked for students)
 ```
 
 **Teacher (standard):**
 
 ```bash
-curl -x http://100.70.154.79:3128 https://chatgpt.com
+curl -x http://100.70.154.79:3128 https://deepai.org
 # Expected: 200 OK (allowed for teachers)
 ```
 
@@ -124,10 +124,10 @@ End-to-end validation:
 
 1. `netbird up` as a student user → NetBird Dashboard shows Studenten group
 2. Identity Bridge `/lookup` returns "Studenten" for that user's overlay IP
-3. `curl -x http://100.70.154.79:3128 https://chatgpt.com` → 403
+3. `curl -x http://100.70.154.79:3128 https://deepai.org` → 403
 4. `netbird up` as a teacher user → NetBird Dashboard shows Docenten group
 5. Identity Bridge `/lookup` returns "Docenten" for that user's overlay IP
-6. `curl -x http://100.70.154.79:3128 https://chatgpt.com` → 200
+6. `curl -x http://100.70.154.79:3128 https://deepai.org` → 200
 
 ---
 
@@ -140,8 +140,8 @@ End-to-end validation:
 - [ ] Squid external_acl_type configured to query Identity Bridge
 - [ ] Squid ACLs defined for Studenten/Docenten/Admins
 - [ ] Squid access.log shows identity group per request
-- [ ] Student blocked from ChatGPT (403)
-- [ ] Teacher allowed to ChatGPT (200)
+- [ ] Student blocked from deepai.org (403)
+- [ ] Teacher allowed to deepai.org (200)
 
 ---
 

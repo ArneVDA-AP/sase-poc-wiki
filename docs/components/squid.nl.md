@@ -17,7 +17,7 @@ Squid draait in **expliciete proxymodus**: clients worden via een PAC-bestand ge
 
 De keuze voor expliciete modus is niet optioneel: transparante proxy via `pf rdr` kan geen via WireGuard gerouteerd verkeer op de `wt0`-interface onderscheppen. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md).
 
-**WPAD/PAC-distributie:** Het PAC-bestand wordt gehost door [Caddy](caddy.md) op mgmt01 via `http://wpad.sandbox.local/wpad.dat`. Clients ontdekken dit via een NetBird Custom DNS Zone die `wpad.sandbox.local` omzet naar de overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows-instellingen → Proxy → "Installatiescript gebruiken".
+**WPAD/PAC-distributie:** Het PAC-bestand wordt gehost door [Caddy](caddy.md) op mgmt01 via `http://wpad.sandbox.local/wpad.dat`. Clients ontdekken dit via de `sandbox.local` NetBird Custom DNS Zone, die de query naar `wpad.sandbox.local` naar pop01 Unbound routeert (de NetBird primary nameserver); Unbound resolvet die naar de Caddy-host op het overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows-instellingen → Proxy → "Installatiescript gebruiken".
 
 **SSL Bump:** Squid decrypteert HTTPS-verkeer met een zelfondertekend CA-certificaat (`SASE-PoC-CA`, geïnstalleerd in de trust store van de client). Dit maakt het mogelijk dat de ICAP pipeline HTTPS-inhoud inspecteert. Zonder SSL Bump zien ClamAV en de Python DLP-server alleen versleutelde bytes.
 
@@ -53,8 +53,16 @@ De `ssl-bump`-parameters moeten in deze directive worden opgenomen. De GUI voegt
 ### No-bump-lijst
 
 Sites uitgesloten van SSL-inspectie (geconfigureerd via GUI):
+
+De Microsoft control plane-set: deze moeten gesplicet worden, anders breken Intune-apparaatregistratie, Entra-authenticatie en de conform-apparaatcontrole:
 - `login.microsoftonline.com` (**verplicht**): beschermt de Entra ID OIDC-flow. Als Squid de Microsoft-inlogpagina bumpt, mislukt NetBird-authenticatie voor alle clients.
-- `.microsoft.com`, `.paypal.com`, `.apple.com`, `.banking.example.com` (demonstratie-items).
+- `.microsoftonline.com`: dekt `device.login.microsoftonline.com` en de overige auth-subdomeinen die de kale FQDN niet dekt.
+- `.microsoft.com`: dekt de `manage.microsoft.com`-enrollmentfamilie.
+- `enterpriseregistration.windows.net`: het apparaatregistratie-endpoint (exacte host, niet `.windows.net`, dat te breed is).
+- `.microsoftazuread-sso.com`: het seamless SSO-endpoint (`autologon.microsoftazuread-sso.com`) is cert-pinned en breekt als het gebumpt wordt.
+- `.live.com`: de consumer-auth-leg die tijdens de interactieve Entra-join wordt gebruikt.
+
+Demonstratieve privacy-items: `.paypal.com`, `.apple.com`, `.banking.example.com`.
 
 ### ACL-volgorde in squid.conf
 
@@ -81,7 +89,7 @@ De weigeringsregels voor blokkeerlijsten staan voor alle toestemmingsregels. Squ
 | [ClamAV/c-icap](clamav-cicap.md) | ICAP RESPMOD | Squid stuurt alle responses naar c-icap op `127.0.0.1:1344` voor malware- + DLP-scan |
 | [Python DLP](python-dlp.md) | ICAP REQMOD | Squid stuurt POST/PUT/PATCH-verzoeken naar mgmt01:1345 voor upload-DLP |
 | [Suricata](suricata.md) | parallel | Suricata op vtnet0 ziet de opnieuw versleutelde upstreamverbindingen van Squid, ze delen dezelfde WAN-interface |
-| Entra ID / OIDC | no-bump | `login.microsoftonline.com` staat op de no-bump-lijst zodat CA-evaluatie niet verstoord wordt |
+| Entra ID / OIDC | no-bump | De Microsoft control plane-set (`.microsoftonline.com`, `.microsoft.com`, `enterpriseregistration.windows.net`, `.microsoftazuread-sso.com`, `.live.com`) staat op de no-bump-lijst zodat apparaatregistratie en CA-evaluatie niet verstoord worden |
 
 ---
 
@@ -89,7 +97,9 @@ De weigeringsregels voor blokkeerlijsten staan voor alle toestemmingsregels. Squ
 
 Squid publiceert proxy access events naar de NATS event bus op mgmt01. Een Python-producerscript op pop01 tailed `access.log` en publiceert gestructureerde events naar `security.alert.proxy`. Events bevatten: bron-IP (overlay), bestemmings-URL, HTTP-methode, responscode, ACL-beslissing en identiteitsgroep (via external_acl). Deze events voeden zowel de [Control Daemon](control-daemon.md) (realtime threat scoring) als [Wazuh](wazuh.md) SIEM (forensische analyse).
 
-Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `external_acl_type`: voor elk verzoek queryet een helper `http://192.168.122.23:<port>/lookup?ip=%SRC` om het overlay-IP om te zetten naar een Entra ID-personagroep. Dit maakt identiteitsgebaseerde URL-filtering mogelijk (bijv. Studenten geblokkeerd voor ChatGPT, Docenten toegestaan).
+De producer filtert op `TCP_DENIED`. Elke HTTPS-block schrijft twee access.log-regels: een `TCP_DENIED/200` op de CONNECT en een `NONE_NONE/403` op de gebumpte GET. Filteren op de `TCP_DENIED`-prefix dedupliceert de block tot één event. Het draagt ook de identiteit: `user=` is enkel gevuld op de `TCP_DENIED` CONNECT-regel (een persona-deny roept de identity-helper aan), terwijl een categorie-deny short-circuit zonder identity-lookup en `user=` leeg laat (`-` wordt `null`). Hetzelfde filter vangt ook plain-HTTP `TCP_DENIED/403`.
+
+Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `external_acl_type`: voor elk verzoek queryet een helper `http://192.168.122.23:<port>/lookup?ip=%SRC` om het overlay-IP om te zetten naar een Entra ID-personagroep. Dit maakt identiteitsgebaseerde URL-filtering mogelijk (bijv. Studenten geblokkeerd voor deepai.org, Docenten toegestaan). De persona-deny luidt `http_access deny ai_chat persona_studenten`, met de domein-ACL eerst zodat de helper alleen op matchend verkeer wordt geraadpleegd. De include hoort **pre-auth** te staan: de `post-auth/*.conf`-include laadt na `http_access deny all`, waardoor een persona-regel daar dood is. De keten is dan al beëindigd. Een `deny` zo vroeg is veilig omdat die enkel de smalle persona-match vroeg kan weigeren; al het andere valt door naar de security-baseline.
 
 ---
 

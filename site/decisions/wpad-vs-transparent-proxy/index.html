@@ -568,6 +568,8 @@
       
         
       
+        
+      
     
     
     
@@ -1003,6 +1005,34 @@
     
   
     Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
   
 
     
@@ -2207,6 +2237,8 @@
       
         
       
+        
+      
     
     
     
@@ -2571,6 +2603,34 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -2589,6 +2649,8 @@
       
         
           
+        
+      
         
       
         
@@ -3290,6 +3352,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 host RAM overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
         
   
@@ -3571,7 +3661,7 @@
 <li>mobile01 must be configured with the PAC file URL (manually via Windows Settings → Proxy → "Use setup script")</li>
 <li>Non-browser applications that ignore the system proxy setting bypass Squid (partially compensated by Suricata on vtnet0)</li>
 <li>Squid must listen on the NetBird overlay IP (<code>100.70.154.79:3128</code>) via pre-auth include, not the GUI</li>
-<li>Caddy on mgmt01 serves the PAC file; the <code>wpad.sandbox.local</code> DNS name resolves via NetBird Custom DNS Zone</li>
+<li>Caddy on mgmt01 serves the PAC file; the <code>sandbox.local</code> NetBird Custom DNS Zone routes the <code>wpad.sandbox.local</code> query to pop01 Unbound (the NetBird primary nameserver), which resolves it to the Caddy host on mgmt01</li>
 </ul>
 <p>See also: <a href="../../findings/wt0-pf-rdr-limitation/">Finding: wt0 pf rdr limitation</a>, <a href="../../findings/pre-auth-ssl-bump-params/">Finding: pre-auth ssl-bump params</a></p>
 

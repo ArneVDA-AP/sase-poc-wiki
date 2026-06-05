@@ -23,7 +23,8 @@ Step-by-step deployment guides for building the SASE PoC stack from scratch. Eac
       │    └─► 09 Identity Bridge (after 08)
       ├─► 10 NATS JetStream (after 03, 04, 05, 06)
       │    └─► 11 Wazuh (after 10)
-      └─► 07 Access Policy (after all above)
+      ├─► 07 Access Policy (after all above)
+      └─► 12 Intune Endpoint (after 07)
 ```
 
 ## Runbook catalog
@@ -41,6 +42,7 @@ Step-by-step deployment guides for building the SASE PoC stack from scratch. Eac
 | 9 | [Identity Bridge](09-identity-bridge.md) | mgmt01 + pop01 | Operational | FastAPI overlay-IP → persona group, Squid external_acl |
 | 10 | [NATS JetStream](10-nats-jetstream.md) | mgmt01 + pop01 | Operational | Event bus, producers, Control Daemon, Redis |
 | 11 | [Wazuh](11-wazuh.md) | mgmt01 + pop01 | Operational | SIEM stack, NATS forwarder, M365 Active Response |
+| 12 | [Intune Endpoint](12-intune-endpoint.md) | Entra ID + Intune | Implemented | Cert, forced-PAC, firewall block-set, Teams QoS, split-tunnel Remediation; SITE01 enrollment |
 
 ## Dependency graph
 
@@ -57,6 +59,7 @@ Step-by-step deployment guides for building the SASE PoC stack from scratch. Eac
 | 09 Identity Bridge | 08 (GroupSync complete) |
 | 10 NATS JetStream | 03, 04, 05, 06 (all producers operational) |
 | 11 Wazuh | 10 (NATS operational) |
+| 12 Intune Endpoint | 07 (managed device Entra-joined + Intune-enrolled) |
 
 ## Quick reference — key ports
 

@@ -185,7 +185,7 @@ h3.block{font-family:var(--font-display);font-weight:600;font-size:14px;letter-s
         <tr><td><b>Architectuur · packet-flow · tools · troubleshooting · rapportering</b></td><td><span class="b devfree">node / browser</span></td><td>presentatie / documentatie</td></tr>
         <tr><td><b>SWG inline</b> — URL-filter, SSL Bump, DNS-threat</td><td><span class="b devboth">MOB-1 of SITE01</span></td><td>SSL Bump (issuer O=SASE PoC) + RPZ bewezen op beide clients</td></tr>
         <tr><td><b>SWG inline</b> — malware (EICAR) + DLP</td><td><span class="b devboth">MOB-1 of SITE01</span></td><td>nog niet gecaptured → <b>live vastleggen tijdens de opname</b></td></tr>
-        <tr><td><b>Inline CASB-block</b> (student → ChatGPT)</td><td><span class="b devmob">MOB-1 (student)</span></td><td>Squid persona-ACL; student-persona zit op MOB-1</td></tr>
+        <tr><td><b>Inline CASB-block</b> (student → deepai.org)</td><td><span class="b devmob">MOB-1 (student)</span></td><td>Squid persona-ACL; student-persona zit op MOB-1. deepai.org zit niet in UT1, dus het persona-verschil is zichtbaar (chatgpt is voor beide persona's UT1-geblokkeerd)</td></tr>
         <tr><td><b>ZTNA per-app-toegang</b> + no-exposure-bypass</td><td><span class="b devboth">MOB-1 of SITE01</span></td><td>beide zijn sandbox-NetBird enrolled peers</td></tr>
         <tr><td><b>SWG bypass-set</b> (DoH / QUIC)</td><td><span class="b devboth">MOB-1 of SITE01</span></td><td>nog niet gecaptured → <b>live vastleggen tijdens de opname</b></td></tr>
         <tr><td><b>Persona-contrast</b> (student vs docent)</td><td><span class="b devboth">MOB-1 (student) + SITE01 (docent)</span></td><td>beide enrolled — MOB-1 = Studenten, SITE01 = Docenten; check vooraf of de inline-blok enkel op Studenten scoped is voor de docent-toegelaten-kant</td></tr>
@@ -311,12 +311,12 @@ h3.block{font-family:var(--font-display);font-weight:600;font-size:14px;letter-s
   <div class="crit">
     <div class="ch"><div><div class="cname">Blokkeren cloud apps</div><div class="target">Uitstekend: dynamische en context-based blokkering</div></div><span class="b ok">live</span> <span class="b pend">live intrekken = laatste stap</span></div>
     <div class="body">
-      <div class="row test"><span class="lbl">Test</span><div class="val"><b>Inline:</b> student opent ChatGPT → geweigerd. <b>API:</b> maak een publieke "Anyone"-deellink → automatisch gedetecteerd → herstel-actie (intrekken via Graph) getriggerd. <b>Real-time:</b> een security-event verhoogt de risicoscore.
+      <div class="row test"><span class="lbl">Test</span><div class="val"><b>Inline:</b> student opent deepai.org → geweigerd (niet-UT1-domein, dus het persona-verschil is zichtbaar; chatgpt is voor beide persona's UT1-geblokkeerd). <b>API:</b> maak een publieke "Anyone"-deellink → automatisch gedetecteerd → herstel-actie (intrekken via Graph) getriggerd. <b>Real-time:</b> een security-event verhoogt de risicoscore.
         <div class="term"><div class="bar"><span class="dot"></span><span class="host">beheerhost</span><button class="copy" onclick="cp(this)">copy</button></div><pre><code><span class="pr">$</span> docker logs -f o365-producer
 <span class="pr">$</span> docker exec single-node-wazuh.manager-1 tail -f /var/ossec/logs/active-responses.log</code></pre></div>
         <div class="out">event → <span class="key">cloud-deellink (scope=Anyone)</span> · herstel → <span class="hl">intrekken (bewezen tot bevestiging)</span></div></div></div>
       <div class="row proof"><span class="lbl">Bewijst</span><div class="val">Blokkering is niet één statische lijst maar context-afhankelijk: inline op identiteit, API op cloud-gedrag, real-time op risicoscore — exact de dynamische/context-based tier.</div></div>
-      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De ChatGPT-blokpagina + het detectie-event in Discover + de herstel-logregel.</div></div>
+      <div class="row cap"><span class="lbl">Screencap</span><div class="val">De deepai.org-blokpagina + het detectie-event in Discover + de herstel-logregel.</div></div>
       <div class="row vo"><span class="lbl">Voiceover</span><div class="val">Cloud-apps worden op drie niveaus beheerst: inline geweigerd op identiteit, riskante deelacties in de tenant automatisch gedetecteerd en hersteld, en risico real-time gescoord.</div></div>
     </div>
   </div>

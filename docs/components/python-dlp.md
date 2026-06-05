@@ -94,7 +94,11 @@ Use `printf`, not `echo -e` — FreeBSD's `/bin/sh` does not interpret `-e` as a
 
 ## NATS integration
 
-The Python DLP ICAP server publishes upload-inspection events to `security.alert.dlp` on the NATS event bus. When a DLP pattern match is found (Luhn credit card, IBAN mod-97, BSN 11-proof, AWS key), the event includes: pattern type, match count, source IP, destination URL, HTTP method. DLP events contribute to the per-peer threat score. Since the Python DLP server already runs on mgmt01 (same host as NATS), it publishes directly without cross-host connectivity.
+The Python DLP ICAP server publishes upload-inspection events to `security.alert.dlp` on the NATS event bus. When a DLP pattern match is found (Luhn credit card, IBAN mod-97, BSN 11-proof, AWS key), the event includes: pattern type, masked match detail, the client overlay IP, destination URL, HTTP method. DLP events contribute to the per-peer threat score. Since the Python DLP server already runs on mgmt01 (same host as NATS), it publishes directly without cross-host connectivity.
+
+The hook fires inside the REQMOD handler on a positive match, right after the existing block-log line, so only blocked uploads produce an event. Violation details are already masked at that point (e.g. `Creditcard: 4532****0366`), so the event carries no raw PII.
+
+**The ICAP server is threaded and blocking (`socketserver.ThreadingMixIn`) while nats-py is asyncio.** Publishing runs through a thread-safe `NatsPublisher` that owns a persistent asyncio loop and NATS connection on a background thread. The handler's `publish()` call hands the event to a bounded queue and returns immediately — the background loop drains it and performs the `js.publish`. A full queue drops the event and logs, never blocks. The block/pass decision therefore never waits on NATS: if the bus is slow or unreachable, the 403 still returns on time.
 
 ---
 
@@ -102,7 +106,7 @@ The Python DLP ICAP server publishes upload-inspection events to `security.alert
 
 **pyicap Python 3.10+ incompatibility** — see [Finding: pyicap collections bug](../findings/pyicap-collections-bug.md). The Dockerfile patches this automatically.
 
-**Client IP appears as "unknown" in DLP logs** — the server reads `X-Client-IP` from `self.enc_req_headers` (encapsulated headers), but Squid sends the client IP as an ICAP-level header accessible via `self.headers`. This is a cosmetic issue; blocking works correctly.
+**Client overlay IP is available in DLP logs and events** — for REQMOD requests Squid forwards the `X-Client-IP` ICAP header, and the server reads it to attribute the violation to a real overlay IP (e.g. `100.70.120.49`), not a placeholder. This is the same overlay IP the [Identity Bridge](identity-bridge.md) maps to an Entra ID persona, so DLP events are directly peer-attributable.
 
 **Container logs in Docker stdout** — for Wazuh SIEM integration, add a Docker logging driver (syslog pointed at Wazuh) or configure the Wazuh agent on mgmt01 to monitor container logs. This is a planned Phase 4 task.
 

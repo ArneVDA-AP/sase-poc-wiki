@@ -200,7 +200,7 @@ Three effective checks remain after dropping the encryption/boot settings: **OS 
 >
 > **Gotcha: a stale MDM session blocks evaluation, and a reboot does not fix it.** After licensing, `Device status → Total 0` and `Last contacted` stayed frozen even across a reboot — the MDM session had expired, so the device could not authenticate on the policy-evaluation channel. A fresh user sign-in (not a reboot) restored evaluation; mobile01 then reported **Compliant** (B40.20).
 >
-> **Gotcha: the Microsoft control plane must bypass SSL-Bump.** Intune device registration and the compliant-device check fail if Squid bumps Microsoft endpoints. Ensure `*.microsoftonline.com` and `enterpriseregistration.windows.net` are on the Squid splice/no-bump list (Runbook 03, B40.9/40.10).
+> **Gotcha: the Microsoft control plane must bypass SSL-Bump.** Intune device registration and the compliant-device check fail if Squid bumps Microsoft endpoints. Ensure `*.microsoftonline.com`, `enterpriseregistration.windows.net`, `.microsoftazuread-sso.com`, and `.live.com` are on the Squid splice/no-bump list (Runbook 03, B40.9/40.10/44.13).
 
 **Checkpoint Gate 2:**
 
