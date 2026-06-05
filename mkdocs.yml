@@ -2,6 +2,7 @@ site_name: Security Project Wiki
 site_url: https://ArneVDA-AP.github.io/sase-poc-wiki/
 site_description: SASE PoC — OPNsense / Squid / ClamAV / c-icap / NetBird
 site_author: Arne
+copyright: "© 2025-2026 Arne Van Den Abbeele — Licensed under Apache 2.0"
 docs_dir: docs
 
 theme:
