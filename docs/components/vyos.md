@@ -53,7 +53,7 @@ set system static-host-mapping host-name netbird.sandbox.local inet 192.168.122.
 
 ### QoS shaper (DSCP-based)
 
-VyOS applies a QoS shaper on eth0 egress that classifies Microsoft Teams media by DSCP marking — the SD-WAN QoS layer of the project. The DSCP values are set at the endpoint (Intune NetworkQoSPolicy CSP / GPO); VyOS sees them in cleartext on the **split-tunnel path**, where Teams Optimize media is routed to eth1 directly (via an Intune `/14` route) rather than through the WireGuard overlay. All other traffic stays inside the encrypted overlay, where app-aware QoS is not possible.
+VyOS applies a QoS shaper on eth0 egress that classifies Microsoft Teams media by DSCP marking — the SD-WAN QoS layer of the project. The DSCP values are set at the endpoint (Intune NetworkQoSPolicy CSP / GPO); VyOS sees them in cleartext on the **split-tunnel path**, where Teams Optimize media is routed directly out eth0 (via an Intune `/14` route) rather than through the WireGuard overlay. All other traffic stays inside the encrypted overlay, where app-aware QoS is not possible.
 
 On VyOS rolling 2026.02.16 the shaper uses the `qos policy shaper` command tree (not the older `traffic-policy`):
 

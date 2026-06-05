@@ -67,7 +67,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 1.1 Traffic routing (geen local breakout)
 
-**Rubric uitstekend:** Volledig geforceerd via SWG
+**Rubric criterium:** Volledig geforceerd via SWG
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -78,7 +78,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 1.2 Identity-based access
 
-**Rubric uitstekend:** Volledig geïntegreerd met Microsoft Entra ID
+**Rubric criterium:** Volledig geïntegreerd met Microsoft Entra ID
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -88,7 +88,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 1.3 DNS-filtering
 
-**Rubric uitstekend:** Geavanceerd (threat intel, logging, policy-based)
+**Rubric criterium:** Geavanceerd (threat intel, logging, policy-based)
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -99,7 +99,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 1.4 Malware-inspectie (DPI)
 
-**Rubric uitstekend:** DPI + TLS-decryptie + malware-detectie
+**Rubric criterium:** DPI + TLS-decryptie + malware-detectie
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -112,7 +112,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 1.5 Configuratie en documentatie
 
-**Rubric uitstekend:** Zeer gedetailleerd
+**Rubric criterium:** Zeer gedetailleerd
 
 | Bewijs | Wat het bewijst |
 |--------|----------------|
@@ -123,7 +123,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 1.6 Test en validatie
 
-**Rubric uitstekend:** Inclusief malware-test en DNS-blockingvalidatie
+**Rubric criterium:** Inclusief malware-test en DNS-blockingvalidatie
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -138,7 +138,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 2.1 Blokkeren van cloud apps
 
-**Rubric uitstekend:** Dynamische en context-based blokkering
+**Rubric criterium:** Dynamische en context-based blokkering
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -149,7 +149,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 2.2 Integratie met identity
 
-**Rubric uitstekend:** Volledig geïntegreerd met Microsoft Entra ID
+**Rubric criterium:** Volledig geïntegreerd met Microsoft Entra ID
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -160,7 +160,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 2.3 Policy-configuratie
 
-**Rubric uitstekend:** Geavanceerde policies (groepen, risico, apparaat)
+**Rubric criterium:** Geavanceerde policies (groepen, risico, apparaat)
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -170,7 +170,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 2.4 Testresultaten
 
-**Rubric uitstekend:** Uitgebreide testcases en bypass-pogingen
+**Rubric criterium:** Uitgebreide testcases en bypass-pogingen
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -181,7 +181,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 2.5 Beperkingen en analyse
 
-**Rubric uitstekend:** Kritische reflectie en verbetervoorstellen
+**Rubric criterium:** Kritische reflectie en verbetervoorstellen
 
 | Bewijs | Wat het bewijst |
 |--------|----------------|
@@ -196,7 +196,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 3.1 Per-applicatietoegang
 
-**Rubric uitstekend:** Volledig zero trust model (geen netwerk exposure)
+**Rubric criterium:** Volledig zero trust model (geen netwerk exposure)
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -206,7 +206,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 3.2 Identity en context awareness
 
-**Rubric uitstekend:** Identity + context (geoIP, device posture, malware check)
+**Rubric criterium:** Identity + context (geoIP, device posture, malware check)
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -217,7 +217,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 3.3 Tunnel per applicatie
 
-**Rubric uitstekend:** Dynamische per-app tunnels correct opgezet
+**Rubric criterium:** Dynamische per-app tunnels correct opgezet
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -227,7 +227,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 3.4 Toegang tot on-premises resources
 
-**Rubric uitstekend:** Veilig, conditioneel en gelogd
+**Rubric criterium:** Veilig, conditioneel en gelogd
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -238,7 +238,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 3.5 Test en validatie
 
-**Rubric uitstekend:** Aanvallen gesimuleerd en logging geanalyseerd
+**Rubric criterium:** Aanvallen gesimuleerd en logging geanalyseerd
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -253,7 +253,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 4.1 Basisconnectiviteit
 
-**Rubric uitstekend:** Volledig werkend met failover
+**Rubric criterium:** Volledig werkend met failover
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -263,17 +263,20 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 4.2 Routing en policies
 
-**Rubric uitstekend:** Slimme routing (latency, failover)
+**Rubric criterium:** Slimme routing (latency, failover)
+
+Latency en routing worden hier ingevuld door QoS-prioritering en een applicatie-based split-tunnel, niet door latency-gemeten padkeuze. Dat laatste vereist meerdere WAN-paden; het Zero Trust Branch-model heeft er bewust één, met inspectie gecentraliseerd op de PoP.
 
 | Test | Wat het bewijst |
 |------|----------------|
-| V43 Test #5 | QoS: DSCP EF 300/300 pakketten, 0 drops; bulk: 26 drops en 17k overlimits |
-| VyOS tc shaper | `tc`-policy op eth0 met EF/default classes |
-| Wiki-bewijs | Component: VyOS (QoS-configuratie), Beslissing: ZT SD-WAN Branch |
+| V43 Test #5 | QoS DSCP EF strict-priority: 300/300 pakketten, 0 drops; bulk 26 drops + 17k overlimits. Beschermt realtime-media-latency onder congestie |
+| Split-tunnel | Teams Optimize-media verlaat de site rechtstreeks via eth0 (Intune `/14`-route) i.p.v. door de WireGuard-overlay: applicatie-based routing die de overlay-hairpin vermijdt |
+| V43 Test #6 | Failover-detectie: CRITICAL binnen 30 sec bij interface-down, herstel gelogd (detectie + alerting, geen automatische dual-WAN-switch) |
+| Wiki-bewijs | Component: VyOS (QoS + split-tunnel), Beslissing: ZT SD-WAN Branch |
 
 ### 4.3 Integratie met SASE
 
-**Rubric uitstekend:** Duidelijke rol binnen SASE
+**Rubric criterium:** Duidelijke rol binnen SASE
 
 | Bewijs | Wat het bewijst |
 |--------|----------------|
@@ -283,7 +286,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 4.4 Configuratie
 
-**Rubric uitstekend:** Goed gedocumenteerd
+**Rubric criterium:** Goed gedocumenteerd
 
 | Bewijs | Wat het bewijst |
 |--------|----------------|
@@ -292,7 +295,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 4.5 Test
 
-**Rubric uitstekend:** Meerdere scenario's getest
+**Rubric criterium:** Meerdere scenario's getest
 
 | Test | Wat het bewijst |
 |------|----------------|
@@ -307,61 +310,61 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 ### 5.1 Architectuur
 
-**Rubric uitstekend:** Professioneel
+**Rubric criterium:** Professioneel
 
 Wiki-bewijs: Architectuurpagina, control/data plane-splitsing, node-rollen.
 
 ### 5.2 Functioneel schema (packet flow)
 
-**Rubric uitstekend:** Volledige SASE flow
+**Rubric criterium:** Volledige SASE flow
 
 Wiki-bewijs: Interactief functioneel schema (`demos/functioneel-schema.html`).
 
 ### 5.3 Pakketflow-uitleg
 
-**Rubric uitstekend:** Stap-voor-stap analyse
+**Rubric criterium:** Stap-voor-stap analyse
 
 Wiki-bewijs: Architectuur §5.1–5.4 (vier verkeersstromen uitgeschreven).
 
 ### 5.4 Transparantie voor klant (logging en inzicht)
 
-**Rubric uitstekend:** Duidelijke uitleg waarom verkeer geblokkeerd of toegestaan is
+**Rubric criterium:** Duidelijke uitleg waarom verkeer geblokkeerd of toegestaan is
 
 Wiki-bewijs: F5 (Squid ERR_ACCESS_DENIED), F7 (ClamAV VIRUS DETECTED log), T-A4/5/6 (RPZ NXDOMAIN + aa-vlag), Component: Wazuh (SIEM-dashboard), F10.
 
 ### 5.5 Performantie-optimalisatie
 
-**Rubric uitstekend:** Actief geoptimaliseerd (routing, caching, tuning)
+**Rubric criterium:** Actief geoptimaliseerd (routing, caching, tuning)
 
 Wiki-bewijs: Suricata Hyperscan engine, Squid `dynamic_cert_mem_cache`, VyOS QoS shaper tuning.
 
 ### 5.6 Keuze open-source tools
 
-**Rubric uitstekend:** Sterk onderbouwd
+**Rubric criterium:** Sterk onderbouwd
 
 Wiki-bewijs: 17 beslissingspagina's (ADR-formaat), Concept: SASE (commerciële equivalenten-tabel).
 
 ### 5.7 Integratie componenten
 
-**Rubric uitstekend:** Volledig geïntegreerd
+**Rubric criterium:** Volledig geïntegreerd
 
 Wiki-bewijs: T-A11 (NATS cross-component event delivery), T-A12 (Control Daemon end-to-end), NATS event bus-architectuur, Identity Bridge SWG+ZTNA-koppeling.
 
 ### 5.8 Troubleshooting
 
-**Rubric uitstekend:** Diepgaande analyse
+**Rubric criterium:** Diepgaande analyse
 
 Wiki-bewijs: 24 bevindingenpagina's met root cause, diagnose, oplossing en verificatie.
 
 ### 5.9 Rapportering
 
-**Rubric uitstekend:** Professioneel
+**Rubric criterium:** Professioneel
 
 Wiki-bewijs: Wiki zelf, Handboek v4, Doc1–Doc7, Addenda A–J, 44 verslagen.
 
 ### 5.10 Samenwerking (teamwork)
 
-**Rubric uitstekend:** Proactieve samenwerking, kennisdeling en gezamenlijke probleemoplossing
+**Rubric criterium:** Proactieve samenwerking, kennisdeling en gezamenlijke probleemoplossing
 
 Wiki-bewijs: Sandbox als referentie-implementatie voor team, Doc1–Doc7 als vergelijkingsdocumenten, wiki als gedeelde kennisbasis.
 
