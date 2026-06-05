@@ -3846,12 +3846,12 @@
 <p>Deze pagina beschrijft de volledige architectuur van de SASE PoC: nodes, netwerksegmenten, de control/data plane-splitsing en hoe alle beveiligingscomponenten met elkaar samenhangen. Elke componentpagina verwijst hiernaartoe voor architecturale context.</p>
 <hr />
 <h2 id="1-ontwerpfilosofie-castle-moat-edge-handhaving">1. Ontwerpfilosofie: Castle &amp; Moat → Edge-handhaving<a class="headerlink" href="#1-ontwerpfilosofie-castle-moat-edge-handhaving" title="Permanent link">&para;</a></h2>
-<p>Het project verwerpt het traditionele perimetermodel waarbij vertrouwen voortkomt uit netwerkpositie. In het traditionele model beschermt een firewall één grens; iedereen binnenin is vertrouwd. Dit werkt niet voor Atlascollege: 4 000 gebruikers op beheerde Windows-apparaten die vanuit thuis, cafés en treinen werken — er is geen "binnenste" meer.</p>
-<p>In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats <strong>op de PoP</strong> (Point of Presence) — de edge-node tussen clients en internet. De PoP evalueert vertrouwen op basis van drie onafhankelijke factoren:</p>
+<p>Het project verwerpt het traditionele perimetermodel waarbij vertrouwen voortkomt uit netwerkpositie. In het traditionele model beschermt een firewall één grens; iedereen binnenin is vertrouwd. Dit werkt niet voor Atlascollege: 4 000 gebruikers op beheerde Windows-apparaten die vanuit thuis, cafés en treinen werken; er is geen "binnenste" meer.</p>
+<p>In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats <strong>op de PoP</strong> (Point of Presence), de edge-node tussen clients en internet. De PoP evalueert vertrouwen op basis van drie onafhankelijke factoren:</p>
 <ol>
-<li><strong>Identiteit</strong> — wie ben je? (Entra ID + MFA)</li>
-<li><strong>Apparaatposture</strong> — wat is de toestand van je apparaat? (Intune-conformiteit + Entra ID CA)</li>
-<li><strong>Inhoud</strong> — wat verstuur je? (SWG-inspectiepipeline)</li>
+<li><strong>Identiteit:</strong> wie ben je? (Entra ID + MFA)</li>
+<li><strong>Apparaatposture:</strong> wat is de toestand van je apparaat? (Intune-conformiteit + Entra ID CA)</li>
+<li><strong>Inhoud:</strong> wat verstuur je? (SWG-inspectiepipeline)</li>
 </ol>
 <p>Dit is het <a href="../../concepts/zero-trust/">Zero Trust drie-gate model</a>.</p>
 <hr />
@@ -3884,28 +3884,28 @@
 <tr>
 <td><strong>dc01</strong></td>
 <td>Ubuntu 24.04</td>
-<td>Datacentersimulatie — interne resource-doelwit</td>
+<td>Datacentersimulatie, interne resource-doelwit</td>
 <td><code>10.0.0.100</code> (DC-LAN)</td>
-<td>—</td>
+<td>n.v.t.</td>
 </tr>
 <tr>
 <td><strong>site01</strong></td>
 <td>VyOS</td>
-<td>SASE-gateway voor remote site — WAN-connectiviteit + NAT</td>
+<td>SASE-gateway voor remote site, WAN-connectiviteit + NAT</td>
 <td><code>192.168.122.33</code></td>
-<td>—</td>
+<td>n.v.t.</td>
 </tr>
 <tr>
 <td><strong>sitepc01</strong></td>
 <td>Windows 11 (Tiny11)</td>
-<td>Remote site-endpoint — dual-NIC op Site-LAN, sandbox-enrolled</td>
+<td>Remote site-endpoint, dual-NIC op Site-LAN, sandbox-enrolled</td>
 <td><code>172.16.10.x</code></td>
-<td>—</td>
+<td>n.v.t.</td>
 </tr>
 <tr>
 <td><strong>mobile01</strong></td>
 <td>Windows 11 (VMware, buiten GNS3)</td>
-<td>Beheerde client — simuleert Intune-enrolled apparaat vanaf elke locatie</td>
+<td>Beheerde client, simuleert Intune-enrolled apparaat vanaf elke locatie</td>
 <td>extern</td>
 <td><code>100.70.95.98</code></td>
 </tr>
@@ -3933,7 +3933,7 @@
 <tr>
 <td><strong>DC-LAN</strong></td>
 <td><code>10.0.0.0/24</code></td>
-<td>Intern datacentersegment — simuleert on-premise resources</td>
+<td>Intern datacentersegment, simuleert on-premise resources</td>
 <td>pop01 (vtnet1 = gateway <code>.1</code>), dc01 (<code>.100</code>)</td>
 </tr>
 <tr>
@@ -3945,7 +3945,7 @@
 <tr>
 <td><strong>NetBird Overlay</strong></td>
 <td><code>100.64.0.0/10</code> (WireGuard mesh)</td>
-<td>Versleutelde overlay — client-transport voor al het SASE-verkeer</td>
+<td>Versleutelde overlay, client-transport voor al het SASE-verkeer</td>
 <td>pop01, mgmt01, mobile01</td>
 </tr>
 </tbody>
@@ -3955,15 +3955,15 @@
 <h2 id="4-control-plane-vs-data-plane">4. Control Plane vs Data Plane<a class="headerlink" href="#4-control-plane-vs-data-plane" title="Permanent link">&para;</a></h2>
 <p>Een bewuste architecturale splitsing die commerciële SASE weerspiegelt:</p>
 <p><strong>Management plane (mgmt01):</strong>
-- NetBird management-stack (Zitadel OIDC, management server, Caddy reverse proxy) — via Docker Compose
-- ioc2rpz — threat intelligence-aggregatie en RPZ-zonepublicatie
-- Caddy — WPAD-server, ioc2rpz GUI-proxy
-- Identity Bridge (FastAPI) — mapt overlay-IP's naar Entra ID persona-groepen voor Squid
-- NATS JetStream — centrale event bus die alle detectiesilo's verbindt
-- Control Daemon — consumeert NATS-events, per-peer threat scoring, quarantaine via NetBird API
-- Wazuh (manager + indexer + dashboard) — SIEM met NATS→Wazuh forwarder
-- Redis — threat score store + sessiestatus voor control daemon
-- Python DLP ICAP-server — upload-scanning op poort <code>192.168.122.23:1345</code></p>
+- NetBird management-stack (Zitadel OIDC, management server, Caddy reverse proxy), via Docker Compose
+- ioc2rpz: threat intelligence-aggregatie en RPZ-zonepublicatie
+- Caddy: WPAD-server, ioc2rpz GUI-proxy
+- Identity Bridge (FastAPI): mapt overlay-IP's naar Entra ID persona-groepen voor Squid
+- NATS JetStream: centrale event bus die alle detectiesilo's verbindt
+- Control Daemon: consumeert NATS-events, per-peer threat scoring, quarantaine via NetBird API
+- Wazuh (manager + indexer + dashboard): SIEM met NATS→Wazuh forwarder
+- Redis: threat score store + sessiestatus voor control daemon
+- Python DLP ICAP-server: upload-scanning op poort <code>192.168.122.23:1345</code></p>
 <p><strong>Data plane (pop01):</strong>
 - OPNsense firewall en routing
 - Squid expliciete proxy (pre-auth listener <code>100.70.154.79:3128</code>)
@@ -4005,7 +4005,7 @@
 </code></pre></div>
 <h3 id="52-dns-resolutie-threat-intelligence-pad">5.2 DNS-resolutie (threat intelligence-pad)<a class="headerlink" href="#52-dns-resolutie-threat-intelligence-pad" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mobile01 of dc01
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  │ DNS-query (alle queries — via NetBird primaire nameserver)
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>  │ DNS-query (alle queries, via NetBird primaire nameserver)
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>  ▼
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>pop01 Unbound (poort 53, respip-module actief)
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>  │ RPZ-controle: staat het domein in threat-intel.rpz.sase?
@@ -4026,10 +4026,10 @@
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  │ OIDC-stroom → Zitadel (mgmt01) → Entra ID (aplab.be tenant)
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  │ Gate 1: Entra ID Conditional Access evalueert (✅ operationeel)
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  │   - CA Policy 1: MFA vereist ✅
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  │   - CA Policy 2: Geo-blokkering (alleen België) — Report-only
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  │   - CA Policy 2: Geo-blokkering (alleen België), Report-only
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>  │   - CA Policy 3: Legacy-auth geblokkeerd ✅
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  │   - CA Policy 4: Risico-gebaseerde blokkering ✅
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  │   - CA Policy 5: Conform apparaat vereist — Report-only
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  │   - CA Policy 5: Conform apparaat vereist, Report-only
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  │ OIDC-token ontvangen
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>  │
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>  │ Gate 2: Intune-apparaatconformiteit evalueert (✅ operationeel)
@@ -4043,7 +4043,7 @@
 </code></pre></div>
 <hr />
 <h2 id="6-de-vier-laags-inspectiepipeline">6. De vier-laags inspectiepipeline<a class="headerlink" href="#6-de-vier-laags-inspectiepipeline" title="Permanent link">&para;</a></h2>
-<p>Al het HTTP/HTTPS-verkeer van beheerde clients passeert vier afzonderlijke inspectielagen. De lagen zijn <strong>aanvullend</strong>, niet redundant — elke laag inspecteert een domein dat de anderen niet kunnen zien:</p>
+<p>Al het HTTP/HTTPS-verkeer van beheerde clients passeert vier afzonderlijke inspectielagen. De lagen zijn <strong>aanvullend</strong>, niet redundant: elke laag inspecteert een domein dat de anderen niet kunnen zien:</p>
 <table>
 <thead>
 <tr>
@@ -4150,7 +4150,7 @@
 <tr>
 <td>VyOS</td>
 <td><a href="../../components/vyos/">vyos.md</a></td>
-<td>SASE-gateway — Zero Trust Branch model (Site-LAN)</td>
+<td>SASE-gateway, Zero Trust Branch model (Site-LAN)</td>
 <td>✅ Operationeel</td>
 </tr>
 <tr>
@@ -4162,7 +4162,7 @@
 <tr>
 <td>NATS JetStream</td>
 <td><a href="../../components/nats-jetstream/">nats-jetstream.md</a></td>
-<td>Centrale event bus — verbindt detectiesilo's</td>
+<td>Centrale event bus, verbindt detectiesilo's</td>
 <td>✅ Operationeel</td>
 </tr>
 <tr>
@@ -4174,7 +4174,7 @@
 <tr>
 <td>Wazuh</td>
 <td><a href="../../components/wazuh/">wazuh.md</a></td>
-<td>SIEM — NATS forwarder + pop01-agent</td>
+<td>SIEM, NATS forwarder + pop01-agent</td>
 <td>✅ Operationeel</td>
 </tr>
 <tr>
@@ -4186,7 +4186,7 @@
 <tr>
 <td>M365 Activity API + Wazuh AR</td>
 <td><a href="../../components/wazuh/">wazuh.md</a></td>
-<td>CASB Laag 2 — Office 365 Management Activity API-detectie</td>
+<td>CASB Laag 2, Office 365 Management Activity API-detectie</td>
 <td>✅ Detectie operationeel; AR-handhaving detect-only (live revoke nog niet actief)</td>
 </tr>
 </tbody>
@@ -4219,7 +4219,7 @@
 </tr>
 <tr>
 <td>ICAP fail-open</td>
-<td><code>bypass=on</code> — uploads passeren ongeïnspecteerd als Python DLP-container uitvalt</td>
+<td><code>bypass=on</code>, uploads passeren ongeïnspecteerd als Python DLP-container uitvalt</td>
 <td>pop01 Squid → mgmt01</td>
 </tr>
 <tr>
@@ -4239,12 +4239,12 @@
 </tr>
 <tr>
 <td>SWG-identiteitslaag</td>
-<td>Squid queryet Identity Bridge voor persona-groep — identiteitsgebaseerde filtering per gebruiker (Studenten/Docenten/Admins)</td>
+<td>Squid queryet Identity Bridge voor persona-groep; identiteitsgebaseerde filtering per gebruiker (Studenten/Docenten/Admins)</td>
 <td>pop01 Squid → mgmt01 Identity Bridge</td>
 </tr>
 <tr>
 <td>DC-LAN-uitgaand verkeer</td>
-<td>Geen SWG-inspectie — gerouteerd door OPNsense, niet via proxy</td>
+<td>Geen SWG-inspectie, gerouteerd door OPNsense, niet via proxy</td>
 <td>pop01 vtnet1 gateway</td>
 </tr>
 </tbody>
@@ -4287,19 +4287,19 @@
 </thead>
 <tbody>
 <tr>
-<td>Gate 1 — Identiteit</td>
+<td>Gate 1, Identiteit</td>
 <td>Entra ID Conditional Access (5 policies)</td>
 <td>Bij authenticatie (OIDC-login)</td>
 <td>✅ Operationeel</td>
 </tr>
 <tr>
-<td>Gate 2 — Apparaat</td>
+<td>Gate 2, Apparaat</td>
 <td>Intune-apparaatconformiteit</td>
 <td>Bij authenticatie + continu (8u-cyclus)</td>
 <td>✅ Operationeel (Report-only tot demo)</td>
 </tr>
 <tr>
-<td>Gate 3 — Inhoud</td>
+<td>Gate 3, Inhoud</td>
 <td>Squid + ClamAV + Python DLP + Suricata + Unbound RPZ</td>
 <td>Elke HTTP/DNS-aanvraag</td>
 <td>✅ Operationeel</td>
@@ -4308,7 +4308,7 @@
 </table>
 <p>Gates zijn aanvullend, niet redundant. Gate 1 evalueert <em>wie</em> de gebruiker is (MFA, aanmeldingsrisico, geo-locatie). Gate 2 evalueert <em>wat</em> het apparaat is (OS-versie, AV-status, firewall). Gate 3 evalueert <em>wat</em> wordt overgedragen (malware, gevoelige data, geblokkeerde domeinen). Geen enkele gate kan de andere vervangen.</p>
 <hr />
-<p><strong>DC-LAN-inspectiegat:</strong> dc01 gebruikt pop01 als standaardgateway (<code>10.0.0.1</code>) voor internettoegang. Dit verkeer wordt gerouteerd door OPNsense en geïnspecteerd door Suricata op vtnet1, maar gaat <strong>niet</strong> via Squid/ICAP — er is geen WPAD/PAC- of proxyconfiguratie op dc01. DNS-queries van dc01 gaan wel via Unbound RPZ. Dit is een geaccepteerde scopebeperking: DC-resources zijn serverworkloads, geen user browsers.</p>
+<p><strong>DC-LAN-inspectiegat:</strong> dc01 gebruikt pop01 als standaardgateway (<code>10.0.0.1</code>) voor internettoegang. Dit verkeer wordt gerouteerd door OPNsense en geïnspecteerd door Suricata op vtnet1, maar gaat <strong>niet</strong> via Squid/ICAP; er is geen WPAD/PAC- of proxyconfiguratie op dc01. DNS-queries van dc01 gaan wel via Unbound RPZ. Dit is een geaccepteerde scopebeperking: DC-resources zijn serverworkloads, geen user browsers.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

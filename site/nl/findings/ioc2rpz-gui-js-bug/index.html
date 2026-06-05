@@ -3560,7 +3560,7 @@
 <p><strong>Component:</strong> <a href="../../components/ioc2rpz/">ioc2rpz</a><br />
 <strong>Ernst:</strong> Valkuil</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>Inloggen op de ioc2rpz-GUI op <code>https://ioc2rpz.sandbox.local</code> mislukte met de melding "Unknown error!!!" in de browser — de pagina leek het inlogverzoek even te verwerken en laadde vervolgens opnieuw zonder authenticatie.</p>
+<p>Inloggen op de ioc2rpz-GUI op <code>https://ioc2rpz.sandbox.local</code> mislukte met de melding "Unknown error!!!" in de browser. De pagina leek het inlogverzoek even te verwerken en laadde vervolgens opnieuw zonder authenticatie.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p>De <code>signIn</code>-functie in <code>/opt/ioc2rpz.gui/www/js/io2auth.js</code> mist een <code>e.preventDefault()</code>-aanroep. Wanneer de gebruiker het inlogformulier indient:
 1. De browser dient het formulier native in (HTTP POST, veroorzaakt herlaad van pagina)
@@ -3577,9 +3577,9 @@
 <p>Dit moet opnieuw worden toegepast na elke containeropbouw (het image bevat de correctie niet).</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>JavaScript-formulierinzending met zowel native inzending als axios vereist <code>e.preventDefault()</code> op de formulierverwerker — een veelvoorkomende frontend-bug</li>
+<li>JavaScript-formulierinzending met zowel native inzending als axios vereist <code>e.preventDefault()</code> op de formulierverwerker (een veelvoorkomende frontend-bug)</li>
 <li>Pas de correctie direct na containerstart toe, vóór eventuele inlogpogingen</li>
-<li>Documenteer de correctieopdracht in het operationele runbook — het is een terugkerende onderhoudsstap na containerrecreatie</li>
+<li>Documenteer de correctieopdracht in het operationele runbook; het is een terugkerende onderhoudsstap na containerrecreatie</li>
 </ul>
 
 

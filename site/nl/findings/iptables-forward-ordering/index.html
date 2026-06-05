@@ -3560,10 +3560,10 @@
 <p><strong>Component:</strong> <a href="../../components/gns3/">GNS3</a>, <a href="../../components/ioc2rpz/">ioc2rpz</a><br />
 <strong>Ernst:</strong> Valkuil</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>Poortdoorsturing ACCEPT-regels werden toegevoegd aan de FORWARD-keten op de GNS3-host met <code>iptables -A FORWARD</code> (toevoegen). De poortdoorsturingen werkten niet — paketten werden gedropt ondanks dat overeenkomende regels aanwezig leken.</p>
+<p>Poortdoorsturing ACCEPT-regels werden toegevoegd aan de FORWARD-keten op de GNS3-host met <code>iptables -A FORWARD</code> (toevoegen). De poortdoorsturingen werkten niet: paketten werden gedropt ondanks dat overeenkomende regels aanwezig leken.</p>
 <p><code>iptables -L FORWARD --line-numbers</code> toonde de ACCEPT-regels op positie 24+, terwijl de <code>LIBVIRT_FWI</code>-keten op positie 22 stond met een REJECT-beleid.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>libvirt installeert zijn eigen FORWARD-ketenregels die een REJECT bevatten voor verkeer dat niet door libvirt wordt beheerd. Wanneer regels worden toegevoegd (<code>-A FORWARD</code>), worden ze geplaatst na de libvirt REJECT-keten. De eerste overeenkomende regel wint — het REJECT van libvirt activeert vóór de ACCEPT-regel wordt bereikt.</p>
+<p>libvirt installeert zijn eigen FORWARD-ketenregels die een REJECT bevatten voor verkeer dat niet door libvirt wordt beheerd. Wanneer regels worden toegevoegd (<code>-A FORWARD</code>), worden ze geplaatst na de libvirt REJECT-keten. De eerste overeenkomende regel wint: het REJECT van libvirt activeert vóór de ACCEPT-regel wordt bereikt.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p>Altijd invoegen bovenaan de FORWARD-keten:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>iptables<span class="w"> </span>-I<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span><span class="m">192</span>.168.122.0/24<span class="w"> </span>-j<span class="w"> </span>ACCEPT
@@ -3579,7 +3579,7 @@
 <ul>
 <li>Gebruik bij het toevoegen van FORWARD-regels op een host met libvirt altijd <code>-I FORWARD 1</code> (invoegen bovenaan), nooit <code>-A FORWARD</code> (toevoegen)</li>
 <li>Diagnose: <code>iptables -L FORWARD --line-numbers</code> om regelposities en de libvirt-ketenlocatie te zien</li>
-<li>De REJECT-regel van libvirt is by design — het voorkomt dat onbeheerd verkeer libvirt-netwerken kruist</li>
+<li>De REJECT-regel van libvirt is by design: het voorkomt dat onbeheerd verkeer libvirt-netwerken kruist</li>
 <li>Deze iptables-regels zijn <strong>niet persistent over reboots</strong> van de GNS3-host. Installeer <code>netfilter-persistent</code> (<code>apt install iptables-persistent</code>) en draai <code>netfilter-persistent save</code> na het toevoegen van regels. Zonder dit gaan alle poortdoorsturingen en FORWARD-regels verloren bij een reboot</li>
 </ul>
 

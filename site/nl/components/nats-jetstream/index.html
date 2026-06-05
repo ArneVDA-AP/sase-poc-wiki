@@ -3638,21 +3638,21 @@
 
 <h1 id="nats-jetstream">NATS JetStream<a class="headerlink" href="#nats-jetstream" title="Permanent link">&para;</a></h1>
 <p><strong>Rol:</strong> Centrale event bus op mgmt01 die geisoleerde detectiesilo's (Suricata, Squid, DLP, ClamAV, DNS-RPZ, Identity Bridge) verbindt tot een samenhangend, reactief systeem.<br />
-<strong>Versie:</strong> NATS 2.14.1 (<code>nats:2.14.1-alpine</code> — empirisch geverifieerd; Addendum J vermeldde 2.12.6, verouderd)<br />
+<strong>Versie:</strong> NATS 2.14.1 (<code>nats:2.14.1-alpine</code>, empirisch geverifieerd; Addendum J vermeldde 2.12.6, verouderd)<br />
 <strong>Configuratielocatie:</strong> mgmt01 Docker, secrets via env-interpolatie (geen plaintext in gecommitte configuratie)</p>
 <h2 id="hoe-het-werkt-in-deze-stack">Hoe het werkt in deze stack<a class="headerlink" href="#hoe-het-werkt-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>NATS JetStream biedt duurzame, at-least-once aflevering voor security events over de gehele stack. Elke detectiecomponent publiceert gestructureerde JSON-events naar onderwerpspecifieke topics. Twee onafhankelijke consumers verwerken deze events:</p>
 <ol>
-<li><strong>Control Daemon</strong> — real-time threat scoring en quarantainebeslissingen</li>
-<li><strong>NATS→Wazuh Forwarder</strong> — stuurt events door naar Wazuh voor SIEM-indexering en forensische analyse</li>
+<li><strong>Control Daemon:</strong> real-time threat scoring en quarantainebeslissingen</li>
+<li><strong>NATS→Wazuh Forwarder:</strong> stuurt events door naar Wazuh voor SIEM-indexering en forensische analyse</li>
 </ol>
 <p>De dual-write-architectuur garandeert dat geen van beide paden afhankelijk is van het andere. Een Wazuh-storing beinvloedt de real-time quarantaine niet; een uitval van de control daemon beinvloedt de SIEM-logging niet.</p>
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Auth-model:</strong> <code>accounts{}</code> — vereist voor JetStream <code>$JS.API.&gt;</code> toegang. Het <code>authorization{}</code>-model verleent geen JetStream API-toegang (empirisch bevestigd, V32).</li>
-<li><strong>Store dir:</strong> <code>/data</code> — NATS voegt automatisch <code>jetstream/</code> toe. Gebruik nooit <code>/data/jetstream</code> (veroorzaakt dubbele nesting). Zie <a href="../../findings/nats-store-dir/">Bevinding: NATS store dir</a>.</li>
+<li><strong>Auth-model:</strong> <code>accounts{}</code> (vereist voor JetStream <code>$JS.API.&gt;</code> toegang). Het <code>authorization{}</code>-model verleent geen JetStream API-toegang (empirisch bevestigd, V32).</li>
+<li><strong>Store dir:</strong> <code>/data</code> (NATS voegt automatisch <code>jetstream/</code> toe). Gebruik nooit <code>/data/jetstream</code> (veroorzaakt dubbele nesting). Zie <a href="../../findings/nats-store-dir/">Bevinding: NATS store dir</a>.</li>
 <li><strong>Docker-netwerk:</strong> <code>sase-internal</code> (extern, gedeeld met alle CASB-containers)</li>
-<li><strong>Poort:</strong> 4222 (client, gebonden aan 192.168.122.23), 8222 (HTTP-monitoring, enkel localhost)</li>
+<li><strong>Poort:</strong> 4222 (client, gebonden aan 192.168.122.23); 8222 (HTTP-monitoring, enkel localhost)</li>
 </ul>
 <h2 id="onderwerpenhierarchie">Onderwerpenhierarchie<a class="headerlink" href="#onderwerpenhierarchie" title="Permanent link">&para;</a></h2>
 <table>

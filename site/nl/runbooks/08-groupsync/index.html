@@ -2521,7 +2521,7 @@
   <a href="#action-1-external-authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action 1 — External Authentication
+        Action 1: External Authentication
       
     </span>
   </a>
@@ -2532,7 +2532,7 @@
   <a href="#action-2-complement-token" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action 2 — Complement Token
+        Action 2: Complement Token
       
     </span>
   </a>
@@ -3646,7 +3646,7 @@
   <a href="#action-1-external-authentication" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action 1 — External Authentication
+        Action 1: External Authentication
       
     </span>
   </a>
@@ -3657,7 +3657,7 @@
   <a href="#action-2-complement-token" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action 2 — Complement Token
+        Action 2: Complement Token
       
     </span>
   </a>
@@ -3808,7 +3808,7 @@
 <li>Sla het manifest op</li>
 </ol>
 <blockquote>
-<p><strong>Valkuil: <code>cloud_displayname</code> is niet selecteerbaar in de Token Configuration UI</strong> — het moet worden toegevoegd door het manifest rechtstreeks te bewerken. Het zorgt ervoor dat de <code>groups</code> claim de <em>weergavenaam</em> van elke groep uitstuurt (bijv. <code>2ITCSC1A-Studenten</code>) in plaats van zijn ObjectID-GUID — de harde voorwaarde voor Pad B, aangezien Zitadels allowlist matcht op de weergavenaam-string en niet op een GUID. Vereist Azure AD Premium (aplab.be heeft A5/P2) en cloud-only beveiligingsgroepen.</p>
+<p><strong>Valkuil: <code>cloud_displayname</code> is niet selecteerbaar in de Token Configuration UI;</strong> het moet worden toegevoegd door het manifest rechtstreeks te bewerken. Het zorgt ervoor dat de <code>groups</code> claim de <em>weergavenaam</em> van elke groep uitstuurt (bijv. <code>2ITCSC1A-Studenten</code>) in plaats van zijn ObjectID-GUID (de harde voorwaarde voor Pad B, aangezien Zitadels allowlist matcht op de weergavenaam-string en niet op een GUID). Vereist Azure AD Premium (aplab.be heeft A5/P2) en cloud-only beveiligingsgroepen.</p>
 </blockquote>
 <hr />
 <h2 id="stap-2-groups-claim-configureren">Stap 2: Groups claim configureren<a class="headerlink" href="#stap-2-groups-claim-configureren" title="Permanent link">&para;</a></h2>
@@ -3841,17 +3841,17 @@
 <tr>
 <td><code>2ITCSC1A-Studenten</code></td>
 <td><code>Studenten</code></td>
-<td>Studentenpersona — proxytoegang via Core-Services</td>
+<td>Studentenpersona, proxytoegang via Core-Services</td>
 </tr>
 <tr>
 <td><code>2ITCSC1A-Docenten</code></td>
 <td><code>Docenten</code></td>
-<td>Docentenpersona — proxytoegang via Core-Services</td>
+<td>Docentenpersona, proxytoegang via Core-Services</td>
 </tr>
 <tr>
 <td><code>2ITCSC1A-Admins</code></td>
 <td><code>Admins</code></td>
-<td>Adminpersona — volledige beheerderstoegang</td>
+<td>Adminpersona, volledige beheerderstoegang</td>
 </tr>
 </tbody>
 </table>
@@ -3870,16 +3870,16 @@
 <hr />
 <h2 id="stap-5-zitadel-actions-aanmaken">Stap 5: Zitadel Actions aanmaken<a class="headerlink" href="#stap-5-zitadel-actions-aanmaken" title="Permanent link">&para;</a></h2>
 <p>Navigeer in de Zitadel-beheerconsole op mgmt01 naar <strong>Actions</strong>:</p>
-<h3 id="action-1-external-authentication">Action 1 — External Authentication<a class="headerlink" href="#action-1-external-authentication" title="Permanent link">&para;</a></h3>
+<h3 id="action-1-external-authentication">Action 1: External Authentication<a class="headerlink" href="#action-1-external-authentication" title="Permanent link">&para;</a></h3>
 <p><strong>Trigger:</strong> External Authentication
 <strong>Allowed to fail:</strong> true</p>
 <p>Deze actie:</p>
 <ul>
-<li>Leest de groeps-weergavenamen uit de <code>groups</code> claim van het Entra ID-token (aanwezig als namen, niet als GUID's, omdat <code>cloud_displayname</code> is ingeschakeld — Stap 1)</li>
+<li>Leest de groeps-weergavenamen uit de <code>groups</code> claim van het Entra ID-token (aanwezig als namen, niet als GUID's, omdat <code>cloud_displayname</code> is ingeschakeld, Stap 1)</li>
 <li>Mapt elke weergavenaam naar zijn schone personanaam via een hardgecodeerde allowlist (<code>2ITCSC1A-Studenten</code> → <code>Studenten</code>, <code>2ITCSC1A-Docenten</code> → <code>Docenten</code>, <code>2ITCSC1A-Admins</code> → <code>Admins</code>); een groep die niet in de allowlist staat wordt weggelaten (fail-closed)</li>
 <li>Schrijft de overeenkomende schone namen naar de gebruikersmetadata-sleutel <code>sase_groups</code> (komma-gescheiden)</li>
 </ul>
-<h3 id="action-2-complement-token">Action 2 — Complement Token<a class="headerlink" href="#action-2-complement-token" title="Permanent link">&para;</a></h3>
+<h3 id="action-2-complement-token">Action 2: Complement Token<a class="headerlink" href="#action-2-complement-token" title="Permanent link">&para;</a></h3>
 <p><strong>Trigger:</strong> Complement Token
 <strong>Allowed to fail:</strong> true</p>
 <p>Deze actie:</p>
@@ -3888,7 +3888,7 @@
 <li>NetBird leest deze <code>groups</code> claim om gebruikers aan personagroepen toe te wijzen</li>
 </ul>
 <blockquote>
-<p><strong>Valkuil: Beide acties moeten <code>allowed-to-fail: true</code> hebben.</strong> Als een actie faalt (bijv. Entra ID retourneert niet de verwachte claim voor een gebruiker), moet authenticatie toch slagen — de gebruiker heeft dan alleen geen personagroepen toegewezen. Zie <a href="../../decisions/groupsync-pad-b/">Beslissing: GroupSync PAD B</a>.</p>
+<p><strong>Valkuil: Beide acties moeten <code>allowed-to-fail: true</code> hebben.</strong> Als een actie faalt (bijv. Entra ID retourneert niet de verwachte claim voor een gebruiker), moet authenticatie toch slagen; de gebruiker heeft dan alleen geen personagroepen toegewezen. Zie <a href="../../decisions/groupsync-pad-b/">Beslissing: GroupSync PAD B</a>.</p>
 </blockquote>
 <hr />
 <h2 id="stap-6-gebruikerslogin-en-groepstoewijzing-verifieren">Stap 6: Gebruikerslogin en groepstoewijzing verifiëren<a class="headerlink" href="#stap-6-gebruikerslogin-en-groepstoewijzing-verifieren" title="Permanent link">&para;</a></h2>

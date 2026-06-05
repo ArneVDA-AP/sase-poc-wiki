@@ -33,7 +33,7 @@
     
     
       
-        <title>Caddy — WPAD-server, Reverse Proxy, TLS-terminator - Security Project Wiki</title>
+        <title>Caddy: WPAD-server, Reverse Proxy, TLS-terminator - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Caddy — WPAD-server, Reverse Proxy, TLS-terminator
+              Caddy: WPAD-server, Reverse Proxy, TLS-terminator
             
           </span>
         </div>
@@ -915,7 +915,7 @@
   <a href="#caddyfile-netbird-tls" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Caddyfile — NetBird TLS
+        Caddyfile: NetBird TLS
       
     </span>
   </a>
@@ -926,7 +926,7 @@
   <a href="#caddyfile-wpad-en-ioc2rpz" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Caddyfile — WPAD en ioc2rpz
+        Caddyfile: WPAD en ioc2rpz
       
     </span>
   </a>
@@ -3569,7 +3569,7 @@
   <a href="#caddyfile-netbird-tls" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Caddyfile — NetBird TLS
+        Caddyfile: NetBird TLS
       
     </span>
   </a>
@@ -3580,7 +3580,7 @@
   <a href="#caddyfile-wpad-en-ioc2rpz" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Caddyfile — WPAD en ioc2rpz
+        Caddyfile: WPAD en ioc2rpz
       
     </span>
   </a>
@@ -3699,16 +3699,16 @@
 
 
 
-<h1 id="caddy-wpad-server-reverse-proxy-tls-terminator">Caddy — WPAD-server, Reverse Proxy, TLS-terminator<a class="headerlink" href="#caddy-wpad-server-reverse-proxy-tls-terminator" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> Multifunctionele HTTP-server op mgmt01 — levert het WPAD PAC-bestand voor automatische browserconfiguratie, biedt TLS-terminatie voor de NetBird/Zitadel-stack en reverse-proxiet de ioc2rpz-beheer-GUI.<br />
+<h1 id="caddy-wpad-server-reverse-proxy-tls-terminator">Caddy: WPAD-server, Reverse Proxy, TLS-terminator<a class="headerlink" href="#caddy-wpad-server-reverse-proxy-tls-terminator" title="Permanent link">&para;</a></h1>
+<p><strong>Rol:</strong> Multifunctionele HTTP-server op mgmt01 die het WPAD PAC-bestand levert voor automatische browserconfiguratie, biedt TLS-terminatie voor de NetBird/Zitadel-stack en reverse-proxiet de ioc2rpz-beheer-GUI.<br />
 <strong>Versie:</strong> Caddy 2.x (onderdeel van de NetBird Docker Compose-stack op mgmt01)<br />
 <strong>Configuratielocatie:</strong> <code>~/Caddyfile</code> op mgmt01, geleverd door de <code>caddy</code>-container in de NetBird Docker-stack</p>
 <hr />
 <h2 id="werking-in-deze-stack">Werking in deze stack<a class="headerlink" href="#werking-in-deze-stack" title="Permanent link">&para;</a></h2>
 <p>Caddy op mgmt01 vervult drie afzonderlijke rollen die toevallig hetzelfde proces delen:</p>
-<p><strong>1. WPAD/PAC-bestandsserver</strong> — Caddy levert <code>/wpad.dat</code> op <code>http://wpad.sandbox.local</code> via de overlay-IP <code>100.70.135.241</code> van mgmt01. De browser haalt <code>wpad.sandbox.local/wpad.dat</code> op en voert het PAC-bestand JavaScript uit om te ontdekken dat al het verkeer naar <code>PROXY 100.70.154.79:3128</code> (pop01 Squid) moet. In de PoC wordt mobile01 handmatig op deze URL gericht ("Installatiescript gebruiken") — WPAD-autodiscovery wordt niet geactiveerd omdat NetBird het zoekdomein <code>sandbox.local</code> alleen op de <code>wt0</code>-adapter instelt, niet in de globale suffixlijst. Zie <a href="../../concepts/wpad-pac/">Concept: WPAD/PAC</a>.</p>
-<p><strong>2. NetBird TLS-terminator</strong> — Het quickstart-script van NetBird installeert Caddy als de TLS-terminerende reverse proxy voor alle NetBird- en Zitadel-services op <code>netbird.sandbox.local</code>. Het TLS-certificaat is zelfondertekend via de <code>tls internal</code>-directive van Caddy (de ingebouwde lokale CA van Caddy). Let's Encrypt kan niet worden gebruikt omdat <code>netbird.sandbox.local</code> niet publiek oplosbaar is. Zie <a href="../../decisions/zitadel-idp-broker/">Beslissing: Zitadel IdP-broker</a>.</p>
-<p><strong>3. ioc2rpz GUI-proxy</strong> — Caddy reverse-proxiet de ioc2rpz GUI-container naar <code>https://ioc2rpz.sandbox.local</code>. Zie <a href="../ioc2rpz/">Component: ioc2rpz</a>.</p>
+<p><strong>1. WPAD/PAC-bestandsserver.</strong> Caddy levert <code>/wpad.dat</code> op <code>http://wpad.sandbox.local</code> via de overlay-IP <code>100.70.135.241</code> van mgmt01. De browser haalt <code>wpad.sandbox.local/wpad.dat</code> op en voert het PAC-bestand JavaScript uit om te ontdekken dat al het verkeer naar <code>PROXY 100.70.154.79:3128</code> (pop01 Squid) moet. In de PoC wordt mobile01 handmatig op deze URL gericht ("Installatiescript gebruiken"); WPAD-autodiscovery wordt niet geactiveerd omdat NetBird het zoekdomein <code>sandbox.local</code> alleen op de <code>wt0</code>-adapter instelt, niet in de globale suffixlijst. Zie <a href="../../concepts/wpad-pac/">Concept: WPAD/PAC</a>.</p>
+<p><strong>2. NetBird TLS-terminator.</strong> Het quickstart-script van NetBird installeert Caddy als de TLS-terminerende reverse proxy voor alle NetBird- en Zitadel-services op <code>netbird.sandbox.local</code>. Het TLS-certificaat is zelfondertekend via de <code>tls internal</code>-directive van Caddy (de ingebouwde lokale CA van Caddy). Let's Encrypt kan niet worden gebruikt omdat <code>netbird.sandbox.local</code> niet publiek oplosbaar is. Zie <a href="../../decisions/zitadel-idp-broker/">Beslissing: Zitadel IdP-broker</a>.</p>
+<p><strong>3. ioc2rpz GUI-proxy.</strong> Caddy reverse-proxiet de ioc2rpz GUI-container naar <code>https://ioc2rpz.sandbox.local</code>. Zie <a href="../ioc2rpz/">Component: ioc2rpz</a>.</p>
 <p>Caddy maakt deel uit van de control plane-rol van mgmt01: het distribueert configuratie (WPAD), maakt beheerinterfaces mogelijk (NetBird, ioc2rpz) en raakt het dataplaneverkeer dat via pop01 stroomt nooit aan.</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
@@ -3723,8 +3723,8 @@
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;PROXY 100.70.154.79:3128&quot;</span><span class="p">;</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
 </code></pre></div>
-<p>Het PAC-bestand gebruikt <code>shExpMatch()</code> in plaats van <code>isInNet()</code> of <code>dnsResolve()</code> — DNS-gerelateerde PAC-functies kunnen een timeout veroorzaken in de WinHTTP-context. <code>isPlainHostName()</code> retourneert DIRECT voor single-label hostnamen (zonder punt). Het overlay-subnet (<code>100.64.*</code>), loopback (<code>127.*</code>), DC-LAN (<code>10.*</code>) en alle <code>*.sandbox.local</code> interne namen omzeilen de proxy. Al het andere gaat via Squid op pop01.</p>
-<h3 id="caddyfile-netbird-tls">Caddyfile — NetBird TLS<a class="headerlink" href="#caddyfile-netbird-tls" title="Permanent link">&para;</a></h3>
+<p>Het PAC-bestand gebruikt <code>shExpMatch()</code> in plaats van <code>isInNet()</code> of <code>dnsResolve()</code>. DNS-gerelateerde PAC-functies kunnen een timeout veroorzaken in de WinHTTP-context. <code>isPlainHostName()</code> retourneert DIRECT voor single-label hostnamen (zonder punt). Het overlay-subnet (<code>100.64.*</code>), loopback (<code>127.*</code>), DC-LAN (<code>10.*</code>) en alle <code>*.sandbox.local</code> interne namen omzeilen de proxy. Al het andere gaat via Squid op pop01.</p>
+<h3 id="caddyfile-netbird-tls">Caddyfile: NetBird TLS<a class="headerlink" href="#caddyfile-netbird-tls" title="Permanent link">&para;</a></h3>
 <p>Het Caddyfile wordt gegenereerd door het NetBird-quickstart-script en vervolgens gepatcht om <code>tls internal</code> toe te voegen:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>netbird.sandbox.local {
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    tls internal
@@ -3741,7 +3741,7 @@
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">netbird.sandbox.local</span>
 </code></pre></div>
 <p>Deze alias staat Zitadel en NetBird-beheercontainers toe Caddy intern te bereiken voor HTTPS-callbacks.</p>
-<h3 id="caddyfile-wpad-en-ioc2rpz">Caddyfile — WPAD en ioc2rpz<a class="headerlink" href="#caddyfile-wpad-en-ioc2rpz" title="Permanent link">&para;</a></h3>
+<h3 id="caddyfile-wpad-en-ioc2rpz">Caddyfile: WPAD en ioc2rpz<a class="headerlink" href="#caddyfile-wpad-en-ioc2rpz" title="Permanent link">&para;</a></h3>
 <p>De WPAD- en ioc2rpz-blokken worden toegevoegd aan hetzelfde Caddyfile:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>http://wpad.sandbox.local {
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    header /wpad.dat Content-Type application/x-ns-proxy-autoconfig
@@ -3802,9 +3802,9 @@
 </table>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
-<p><strong><code>tls internal</code> geeft browsercertificaatwaarschuwing</strong> — de interne CA van Caddy wordt standaard door geen enkele browser vertrouwd. Voor het NetBird Dashboard betekent dit het accepteren van een beveiligingsuitzondering. De NetBird OIDC-flow vereist alleen HTTPS (niet een publiek vertrouwd certificaat), dus het zelfondertekende certificaat is functioneel voldoende.</p>
-<p><strong>Docker-volumerecreatie</strong> — nieuwe volume-mounts in <code>docker-compose.yml</code> voor de <code>caddy</code>-service zijn pas van kracht na <code>docker compose up -d caddy</code>, niet <code>docker compose restart caddy</code>. De <code>restart</code>-opdracht hergebruikt de bestaande container zonder volume-mount-wijzigingen opnieuw te lezen.</p>
-<p><strong>WPAD vereist zowel HTTP- als HTTPS-blokken</strong> — WinHTTP probeert het PAC-bestand eerst via HTTPS op te halen, zelfs wanneer de geconfigureerde URL <code>http://</code> specificeert. Zonder een HTTPS-serverblok voor <code>wpad.sandbox.local</code> tonen Caddy-logs <code>TLS handshake error</code> van de client. Het Caddyfile moet zowel een <code>http://wpad.sandbox.local</code>-blok als een <code>wpad.sandbox.local</code>-blok met <code>tls internal</code> bevatten.</p>
+<p><strong><code>tls internal</code> geeft browsercertificaatwaarschuwing:</strong> de interne CA van Caddy wordt standaard door geen enkele browser vertrouwd. Voor het NetBird Dashboard betekent dit het accepteren van een beveiligingsuitzondering. De NetBird OIDC-flow vereist alleen HTTPS (niet een publiek vertrouwd certificaat), dus het zelfondertekende certificaat is functioneel voldoende.</p>
+<p><strong>Docker-volumerecreatie:</strong> nieuwe volume-mounts in <code>docker-compose.yml</code> voor de <code>caddy</code>-service zijn pas van kracht na <code>docker compose up -d caddy</code>, niet <code>docker compose restart caddy</code>. De <code>restart</code>-opdracht hergebruikt de bestaande container zonder volume-mount-wijzigingen opnieuw te lezen.</p>
+<p><strong>WPAD vereist zowel HTTP- als HTTPS-blokken:</strong> WinHTTP probeert het PAC-bestand eerst via HTTPS op te halen, zelfs wanneer de geconfigureerde URL <code>http://</code> specificeert. Zonder een HTTPS-serverblok voor <code>wpad.sandbox.local</code> tonen Caddy-logs <code>TLS handshake error</code> van de client. Het Caddyfile moet zowel een <code>http://wpad.sandbox.local</code>-blok als een <code>wpad.sandbox.local</code>-blok met <code>tls internal</code> bevatten.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

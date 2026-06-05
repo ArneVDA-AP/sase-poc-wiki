@@ -33,7 +33,7 @@
     
     
       
-        <title>Concept: ICAP — Internet Content Adaptation Protocol - Security Project Wiki</title>
+        <title>Concept: ICAP (Internet Content Adaptation Protocol) - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Concept: ICAP — Internet Content Adaptation Protocol
+              Concept: ICAP (Internet Content Adaptation Protocol)
             
           </span>
         </div>
@@ -3591,8 +3591,8 @@
 
 
 
-<h1 id="concept-icap-internet-content-adaptation-protocol">Concept: ICAP — Internet Content Adaptation Protocol<a class="headerlink" href="#concept-icap-internet-content-adaptation-protocol" title="Permanent link">&para;</a></h1>
-<p><strong>Definitie:</strong> Een lichtgewicht protocol (RFC 3507) waarmee een proxy inhoudinspectie kan uitbesteden aan externe services — Squid stuurt HTTP-transacties naar ICAP-servers, die een verdict teruggeven (doorlaten, aanpassen of blokkeren).</p>
+<h1 id="concept-icap-internet-content-adaptation-protocol">Concept: ICAP (Internet Content Adaptation Protocol)<a class="headerlink" href="#concept-icap-internet-content-adaptation-protocol" title="Permanent link">&para;</a></h1>
+<p><strong>Definitie:</strong> Een lichtgewicht protocol (RFC 3507) waarmee een proxy inhoudinspectie kan uitbesteden aan externe services. Squid stuurt HTTP-transacties naar ICAP-servers, die een verdict teruggeven (doorlaten, aanpassen of blokkeren).</p>
 <h2 id="hoe-het-hier-van-toepassing-is">Hoe het hier van toepassing is<a class="headerlink" href="#hoe-het-hier-van-toepassing-is" title="Permanent link">&para;</a></h2>
 <p>Squid op pop01 kan HTTPS-inhoud niet op applicatielaagniveau inspecteren zonder hulp. ICAP is het integratieprotocol dat Squid verbindt met twee externe inspectiediensten:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Client → Squid (SSL Bump decodeert) → ICAP REQMOD → Python DLP (upload-controle)
@@ -3600,11 +3600,11 @@
 </code></pre></div>
 <p>Beide ICAP-services draaien gelijktijdig en onafhankelijk. ICAP REQMOD verwerkt de aanvraag voordat Squid die doorstuurt; ICAP RESPMOD verwerkt het antwoord voordat Squid het aan de client levert.</p>
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
-<p><strong><a href="../../components/squid/">Squid</a></strong> — de ICAP-client. Squid routeert:
+<p><strong><a href="../../components/squid/">Squid</a>:</strong> de ICAP-client. Squid routeert:
 - POST/PUT/PATCH-aanvragen → ICAP REQMOD → <code>icap://192.168.122.23:1345/dlpscan</code> (Python DLP)
 - Alle antwoorden → ICAP RESPMOD → <code>icap://127.0.0.1:1344/virus_scan</code> (ClamAV/c-icap)</p>
-<p><strong><a href="../../components/clamav-cicap/">ClamAV/c-icap</a></strong> — ICAP RESPMOD-server. c-icap ontvangt HTTP-antwoordbodies van Squid, geeft ze door aan ClamAV voor malware + DLP-scanning, en retourneert <code>204 No Content</code> (schoon) of een omleiding naar een blokpagina (gedetecteerd).</p>
-<p><strong><a href="../../components/python-dlp/">Python DLP</a></strong> — ICAP REQMOD-server. Ontvangt POST/PUT/PATCH-aanvraagbodies, parseert multipart/form-data correct, past algoritmische DLP-validators toe (Luhn, mod-97, 11-proef, regex) en retourneert een blokantwoord of <code>200 OK</code>.</p>
+<p><strong><a href="../../components/clamav-cicap/">ClamAV/c-icap</a>:</strong> ICAP RESPMOD-server. c-icap ontvangt HTTP-antwoordbodies van Squid, geeft ze door aan ClamAV voor malware + DLP-scanning, en retourneert <code>204 No Content</code> (schoon) of een omleiding naar een blokpagina (gedetecteerd).</p>
+<p><strong><a href="../../components/python-dlp/">Python DLP</a>:</strong> ICAP REQMOD-server. Ontvangt POST/PUT/PATCH-aanvraagbodies, parseert multipart/form-data correct, past algoritmische DLP-validators toe (Luhn, mod-97, 11-proef, regex) en retourneert een blokantwoord of <code>200 OK</code>.</p>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
 <p><strong>REQMOD vs RESPMOD:</strong></p>
 <table>
@@ -3628,7 +3628,7 @@
 </tr>
 <tr>
 <td>Gebruik</td>
-<td>Upload DLP — wat stuurt de gebruiker</td>
+<td>Upload DLP (wat stuurt de gebruiker)</td>
 <td>Malwarescanning, download DLP</td>
 </tr>
 <tr>
@@ -3638,9 +3638,9 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Waarom twee ICAP-servers:</strong> ClamAV's c-icap <code>virus_scan</code>-service parseert <code>multipart/form-data</code>-aanvraagbodies niet correct — POST-inhoud arriveert als ruwe bytes, waardoor DLP-patroonherkenning op formuliervelden onbetrouwbaar is. De Python DLP-server is specifiek toegevoegd om upload-inspectie te verwerken met correcte multipart-parsing. Zie <a href="../../decisions/two-layer-dlp/">Beslissing: Twee-laags DLP</a>.</p>
-<p><strong>ICAP is Squid-globaal:</strong> De ICAP-serviceconfiguratie in Squid is van toepassing op alle listeners automatisch — zowel de LAN-listener (<code>10.0.0.1:3128</code>) als de NetBird-overlay-listener (<code>100.70.154.79:3128</code>). Dit verschilt van SSL Bump, dat per <code>http_port</code>-directive gespecificeerd moet worden.</p>
-<p><strong><code>bypass=on</code> voor de Python DLP-service:</strong> Als de DLP-container onbereikbaar is, laat Squid verkeer door zonder inspectie (fail-open). ClamAV-scanning (RESPMOD) blijft actief. Een DLP-storing blokkeert niet al het verkeer — een bewuste beschikbaarheidsafweging.</p>
+<p><strong>Waarom twee ICAP-servers:</strong> ClamAV's c-icap <code>virus_scan</code>-service parseert <code>multipart/form-data</code>-aanvraagbodies niet correct: POST-inhoud arriveert als ruwe bytes, waardoor DLP-patroonherkenning op formuliervelden onbetrouwbaar is. De Python DLP-server is specifiek toegevoegd om upload-inspectie te verwerken met correcte multipart-parsing. Zie <a href="../../decisions/two-layer-dlp/">Beslissing: Twee-laags DLP</a>.</p>
+<p><strong>ICAP is Squid-globaal:</strong> De ICAP-serviceconfiguratie in Squid is van toepassing op alle listeners automatisch, zowel de LAN-listener (<code>10.0.0.1:3128</code>) als de NetBird-overlay-listener (<code>100.70.154.79:3128</code>). Dit verschilt van SSL Bump, dat per <code>http_port</code>-directive gespecificeerd moet worden.</p>
+<p><strong><code>bypass=on</code> voor de Python DLP-service:</strong> Als de DLP-container onbereikbaar is, laat Squid verkeer door zonder inspectie (fail-open). ClamAV-scanning (RESPMOD) blijft actief. Een DLP-storing blokkeert niet al het verkeer (een bewuste beschikbaarheidsafweging).</p>
 <p><strong><code>configctl proxy restart</code> vereist:</strong> Een Squid GUI "Apply" alleen activeert ICAP-wijzigingen niet in de draaiende daemon. Herstart altijd via <code>configctl proxy restart</code> na het aanpassen van de ICAP-configuratie.</p>
 <h2 id="bronnen">Bronnen<a class="headerlink" href="#bronnen" title="Permanent link">&para;</a></h2>
 <ul>

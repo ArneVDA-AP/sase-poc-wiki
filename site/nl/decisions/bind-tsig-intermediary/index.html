@@ -3609,7 +3609,7 @@
 <tr>
 <td><strong>ioc2rpz configureren zonder TSIG</strong></td>
 <td>Verwijdert de vereiste</td>
-<td>Verwijdert transfer-authenticatie — elke DNS-client zou de RPZ-zone kunnen ophalen</td>
+<td>Verwijdert transfer-authenticatie; elke DNS-client zou de RPZ-zone kunnen ophalen</td>
 </tr>
 <tr>
 <td><strong>BIND als tussenstap</strong></td>
@@ -3625,14 +3625,14 @@
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>BIND 9.20 invoegen (via OPNsense <code>os-bind</code>-plugin) als tussenstap tussen ioc2rpz en Unbound.</p>
-<p>BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en fungeert als secundaire nameserver voor de RPZ-zone. Unbound transfert de zone dan van BIND via loopback (<code>127.0.0.1:53530</code>) zonder TSIG-authenticatie. De transfer is niet-geauthenticeerd maar beperkt tot localhost — acceptabel op een single-node-setup.</p>
+<p>BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en fungeert als secundaire nameserver voor de RPZ-zone. Unbound transfert de zone dan van BIND via loopback (<code>127.0.0.1:53530</code>) zonder TSIG-authenticatie. De transfer is niet-geauthenticeerd maar beperkt tot localhost, acceptabel op een single-node-setup.</p>
 <p>Dit is een protocol-gap-brug: BIND bestaat uitsluitend omdat Unbound 1.24.2 TSIG-ondersteuning mist. Als NLnetLabs/unbound issue #336 wordt opgelost in een toekomstige release, kan BIND worden verwijderd en kan Unbound direct van ioc2rpz halen.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>BIND (os-bind-plugin) moet worden geïnstalleerd en geconfigureerd op pop01 naast Unbound</li>
-<li>BIND luistert alleen op <code>127.0.0.1:53530</code> met <code>loopback_only</code> ACL's — het is niet blootgesteld als resolver</li>
+<li>BIND luistert alleen op <code>127.0.0.1:53530</code> met <code>loopback_only</code> ACL's; het is niet blootgesteld als resolver</li>
 <li>ioc2rpz stuurt NOTIFY naar <code>192.168.122.13:53</code> (standaard DNS-poort, raakt Unbound, niet BIND op 53530). BIND ontdekt zone-updates alleen via SOA-verversing (3600 s). Handmatige retransfer: <code>rndc retransfer threat-intel.rpz.sase</code></li>
-<li>TSIG-sleutel (<code>tkey_rpz_transfer</code>, hmac-sha256) moet expliciet worden gekoppeld aan de RPZ-zone in de ioc2rpz GUI — als leeg gelaten, veroorzaakt dit TSIG-fouten bij elke AXFR-poging</li>
+<li>TSIG-sleutel (<code>tkey_rpz_transfer</code>, hmac-sha256) moet expliciet worden gekoppeld aan de RPZ-zone in de ioc2rpz GUI. Als leeg gelaten, veroorzaakt dit TSIG-fouten bij elke AXFR-poging</li>
 </ul>
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

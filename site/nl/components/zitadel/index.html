@@ -33,7 +33,7 @@
     
     
       
-        <title>Zitadel — OIDC Identity Provider Broker - Security Project Wiki</title>
+        <title>Zitadel: OIDC Identity Provider Broker - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Zitadel — OIDC Identity Provider Broker
+              Zitadel: OIDC Identity Provider Broker
             
           </span>
         </div>
@@ -988,7 +988,7 @@
   <a href="#action-1-external-authentication-pre-creation-hook" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action 1 — External Authentication (Pre-creation hook)
+        Action 1: External Authentication (Pre-creation hook)
       
     </span>
   </a>
@@ -999,7 +999,7 @@
   <a href="#action-2-complement-token" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action 2 — Complement Token
+        Action 2: Complement Token
       
     </span>
   </a>
@@ -3586,7 +3586,7 @@
   <a href="#action-1-external-authentication-pre-creation-hook" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action 1 — External Authentication (Pre-creation hook)
+        Action 1: External Authentication (Pre-creation hook)
       
     </span>
   </a>
@@ -3597,7 +3597,7 @@
   <a href="#action-2-complement-token" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Action 2 — Complement Token
+        Action 2: Complement Token
       
     </span>
   </a>
@@ -3755,8 +3755,8 @@
 
 
 
-<h1 id="zitadel-oidc-identity-provider-broker">Zitadel — OIDC Identity Provider Broker<a class="headerlink" href="#zitadel-oidc-identity-provider-broker" title="Permanent link">&para;</a></h1>
-<p><strong>Rol:</strong> OIDC Identity Provider broker — zit tussen NetBird en Entra ID en vertaalt Microsoft-identiteiten naar JWT-claims die NetBird kan gebruiken voor groepsgebaseerde toegangscontrole.<br />
+<h1 id="zitadel-oidc-identity-provider-broker">Zitadel: OIDC Identity Provider Broker<a class="headerlink" href="#zitadel-oidc-identity-provider-broker" title="Permanent link">&para;</a></h1>
+<p><strong>Rol:</strong> OIDC Identity Provider broker die tussen NetBird en Entra ID zit en Microsoft-identiteiten vertaalt naar JWT-claims die NetBird kan gebruiken voor groepsgebaseerde toegangscontrole.<br />
 <strong>Versie:</strong> Gedeployed via NetBird quickstart Docker Compose op mgmt01<br />
 <strong>Configuratielocatie:</strong> Docker Compose-stack op mgmt01 (onderdeel van NetBird-implementatie)</p>
 <hr />
@@ -3774,20 +3774,20 @@
 <hr />
 <h2 id="zitadel-actions">Zitadel Actions<a class="headerlink" href="#zitadel-actions" title="Permanent link">&para;</a></h2>
 <p>Twee aangepaste Actions vormen de kritieke brug tussen de ruwe claims van Entra ID en de clean groepsnamen die NetBird nodig heeft. Beide zijn JavaScript-snippets die server-side door Zitadel worden uitgevoerd tijdens de authenticatiestroom.</p>
-<h3 id="action-1-external-authentication-pre-creation-hook">Action 1 — External Authentication (Pre-creation hook)<a class="headerlink" href="#action-1-external-authentication-pre-creation-hook" title="Permanent link">&para;</a></h3>
+<h3 id="action-1-external-authentication-pre-creation-hook">Action 1: External Authentication (Pre-creation hook)<a class="headerlink" href="#action-1-external-authentication-pre-creation-hook" title="Permanent link">&para;</a></h3>
 <p>Wanneer een gebruiker voor het eerst via Entra ID inlogt, draagt de <code>groups</code>-claim van het Entra ID-token de groepslidmaatschappen van de gebruiker. Omdat <code>cloud_displayname</code> in het app-manifest aan de <code>groups</code>-claim is gekoppeld (zie <a href="../../runbooks/08-groupsync/">Runbook 08</a>), stuurt de claim de <strong>weergavenaam-string</strong> van elke groep uit (bijv. <code>2ITCSC1A-Studenten</code>) in plaats van zijn ObjectID-GUID (bijv. <code>e5f8a2b3-...</code>).</p>
 <p>Action 1 (<code>mapEntraGroupsToMetadata</code>) produceert de schone interne namen via een <strong>allowlist</strong> gekeyd op die weergavenaam-strings:</p>
 <ol>
 <li>Lees de <code>groups</code>-claim (weergavenaam-strings)</li>
-<li>Zoek elke naam op in een hardgecodeerde allowlist — <code>2ITCSC1A-Studenten</code> → <code>Studenten</code>, <code>2ITCSC1A-Docenten</code> → <code>Docenten</code>, <code>2ITCSC1A-Admins</code> → <code>Admins</code> (dit is <a href="../../decisions/groupsync-pad-b/">GroupSync Path B</a>)</li>
+<li>Zoek elke naam op in een hardgecodeerde allowlist: <code>2ITCSC1A-Studenten</code> → <code>Studenten</code>, <code>2ITCSC1A-Docenten</code> → <code>Docenten</code>, <code>2ITCSC1A-Admins</code> → <code>Admins</code> (dit is <a href="../../decisions/groupsync-pad-b/">GroupSync Path B</a>)</li>
 <li>Schrijf de overeenkomende schone namen naar de gebruikersmetadata-sleutel <code>sase_groups</code> (komma-gescheiden)</li>
 </ol>
-<p>De lookup is gekeyd op de <strong>naamstring</strong>, en daarom is <code>cloud_displayname</code> een harde voorwaarde — een ruwe GUID kan niet ge-allowlist worden naar <code>Studenten</code>. De allowlist is bewust <strong>fail-closed</strong>: een groep die niet in de map staat wordt stilzwijgend weggelaten in plaats van doorgegeven (strikter dan een blinde prefix-strip). De schone namen houden downstream NetBird-ACL's en Squid-policies leesbaar.</p>
-<h3 id="action-2-complement-token">Action 2 — Complement Token<a class="headerlink" href="#action-2-complement-token" title="Permanent link">&para;</a></h3>
-<p>Voegt de <code>groups</code>-claim toe aan het JWT-token dat Zitadel aan NetBird uitgeeft. Zonder deze action bevat de JWT wel authenticatie-informatie maar geen groepslidmaatschap, en ziet NetBird nooit tot welke persona-groep de gebruiker behoort.</p>
+<p>De lookup is gekeyd op de <strong>naamstring</strong>, en daarom is <code>cloud_displayname</code> een harde voorwaarde: een ruwe GUID kan niet ge-allowlist worden naar <code>Studenten</code>. De allowlist is bewust <strong>fail-closed</strong>: een groep die niet in de map staat wordt stilzwijgend weggelaten in plaats van doorgegeven. Dit is strikter dan een blinde prefix-strip. De schone namen houden downstream NetBird-ACL's en Squid-policies leesbaar.</p>
+<h3 id="action-2-complement-token">Action 2: Complement Token<a class="headerlink" href="#action-2-complement-token" title="Permanent link">&para;</a></h3>
+<p>Voegt de <code>groups</code>-claim toe aan het JWT-token dat Zitadel aan NetBird uitgeeft. Zonder deze action bevat de JWT wel authenticatie-informatie, maar geen groepslidmaatschap, en ziet NetBird nooit tot welke persona-groep de gebruiker behoort.</p>
 <p>De action leest <code>sase_groups</code> uit de metadata van de gebruiker en roept <code>setClaim('groups', [...])</code> aan om die schone namen in de uitgaande JWT te injecteren. De JWT group sync van NetBird leest vervolgens deze claim en maakt of wijst auto-groups dienovereenkomstig toe.</p>
 <h3 id="fail-open-ontwerp">Fail-open ontwerp<a class="headerlink" href="#fail-open-ontwerp" title="Permanent link">&para;</a></h3>
-<p>Beide actions hebben <code>allowed-to-fail: true</code>. Als een van beide actions faalt, slaagt de authenticatie alsnog — de gebruiker krijgt een geldig JWT maar zonder group claims. Dit is een bewuste ontwerpkeuze: fail-open op de authenticatielaag is acceptabel omdat Gate 3 (de SWG-pijplijn op pop01) inhoudsinspectie afdwingt ongeacht groepslidmaatschap. Een gebruiker zonder group claims ontvangt het meest restrictieve standaardbeleid in plaats van volledig buitengesloten te worden.</p>
+<p>Beide actions hebben <code>allowed-to-fail: true</code>. Als een van beide actions faalt, slaagt de authenticatie alsnog: de gebruiker krijgt een geldig JWT maar zonder group claims. Dit is een bewuste ontwerpkeuze. Fail-open op de authenticatielaag is acceptabel omdat Gate 3 (de SWG-pijplijn op pop01) inhoudsinspectie afdwingt ongeacht groepslidmaatschap. Een gebruiker zonder group claims ontvangt het meest restrictieve standaardbeleid in plaats van volledig buitengesloten te worden.</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <h3 id="app-registration-entra-id-zijde">App Registration (Entra ID-zijde)<a class="headerlink" href="#app-registration-entra-id-zijde" title="Permanent link">&para;</a></h3>
@@ -3816,7 +3816,7 @@
 </table>
 <p>Deze vervangt de gedeelde registratie <code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code> die door andere teams werd gebruikt. De sandbox-specifieke registratie voorkomt onderlinge interferentie met Conditional Access-beleid en tokenconfiguratie.</p>
 <h3 id="token-configuration-entra-id-zijde">Token Configuration (Entra ID-zijde)<a class="headerlink" href="#token-configuration-entra-id-zijde" title="Permanent link">&para;</a></h3>
-<p>De <code>cloud_displayname</code>-eigenschap moet in het manifest van de Entra ID-app-registratie aan de <code>groups</code>-claim gekoppeld worden — het is niet selecteerbaar in de Token Configuration UI en moet worden toegevoegd door het manifest rechtstreeks te bewerken (zie <a href="../../runbooks/08-groupsync/">Runbook 08</a>). Zonder deze koppeling valt de <code>groups</code>-claim terug op GUID's, heeft Action 1's allowlist geen naamstring om op te matchen (een GUID staat nooit in de allowlist), en faalt groepsresolutie stilzwijgend (vanwege <code>allowed-to-fail: true</code>).</p>
+<p>De <code>cloud_displayname</code>-eigenschap moet in het manifest van de Entra ID-app-registratie aan de <code>groups</code>-claim gekoppeld worden. Het is niet selecteerbaar in de Token Configuration UI en moet worden toegevoegd door het manifest rechtstreeks te bewerken (zie <a href="../../runbooks/08-groupsync/">Runbook 08</a>). Zonder deze koppeling valt de <code>groups</code>-claim terug op GUID's, heeft Action 1's allowlist geen naamstring om op te matchen (een GUID staat nooit in de allowlist), en faalt groepsresolutie stilzwijgend (vanwege <code>allowed-to-fail: true</code>).</p>
 <hr />
 <h2 id="integratiepunten">Integratiepunten<a class="headerlink" href="#integratiepunten" title="Permanent link">&para;</a></h2>
 <table>
@@ -3852,10 +3852,10 @@
 </table>
 <hr />
 <h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
-<p><strong>Geen stdout/console-logging in Actions</strong> — Zitadel Actions hebben geen mechanisme voor debug-uitvoer. Er is geen mogelijkheid om tussenliggende waarden te loggen of uitvoering te traceren binnen een action-script. De enige verificatiemethode is het onderzoeken van JWT-claims in NetBird na een geslaagde login, wat iteratieve ontwikkeling traag en foutgevoelig maakt.</p>
-<p><strong>GitHub #5399 (embedded-Dex scope-drop) — niet van toepassing op deze stack</strong> — Upstream #5399 meldt dat op NetBird-builds met <em>embedded Dex</em> + Zitadel de JWT group sync niet out-of-the-box werkt omdat <code>AUTH_SUPPORTED_SCOPES</code> de groups-scope mist. Deze sandbox draait de <strong>oudere multi-container NetBird-stack zonder Dex-container</strong> (Management v0.67.0 valideert Zitadel's token rechtstreeks — Verslag30), dus de door de action geïnjecteerde <code>groups</code>-claim stroomt zonder scope-fix door. De scope-drop-variant van #5399 is hier dus niet van toepassing; er is geen Docker Compose-aanpassing nodig voor group sync. (Het aparte gevaar "gevuld JWT allow-groups → 401-lockout", soms ook onder #5399 bijgehouden, geldt nog steeds — zie hieronder en <a href="../netbird/">NetBird</a>.)</p>
-<p><strong><code>cloud_displayname</code>-afhankelijkheid</strong> — Als <code>cloud_displayname</code> niet in het app-manifest aan de <code>groups</code>-claim is gekoppeld, draagt de claim GUID's in plaats van namen en matcht Action 1's allowlist niets, waardoor elke groep stilzwijgend wordt weggelaten. De gebruiker authenticeert succesvol maar zonder groepsresolutie. Omdat <code>allowed-to-fail: true</code> de fout onderdrukt, is deze faalwijze onzichtbaar zonder downstream JWT-claims te controleren.</p>
-<p><strong>Action-uitvoering is ondoorzichtig</strong> — Er is geen dashboard-weergave die de uitvoeringsgeschiedenis of foutaantallen van actions toont. Debugging vereist end-to-end testen: inloggen als testgebruiker en vervolgens de resulterende JWT in NetBird inspecteren om te verifieren dat group claims aanwezig en correct gemapt zijn.</p>
+<p><strong>Geen stdout/console-logging in Actions.</strong> Zitadel Actions hebben geen mechanisme voor debug-uitvoer. Er is geen mogelijkheid om tussenliggende waarden te loggen of uitvoering te traceren binnen een action-script. De enige verificatiemethode is het onderzoeken van JWT-claims in NetBird na een geslaagde login, wat iteratieve ontwikkeling traag en foutgevoelig maakt.</p>
+<p><strong>GitHub #5399 (embedded-Dex scope-drop, niet van toepassing op deze stack).</strong> Upstream #5399 meldt dat op NetBird-builds met <em>embedded Dex</em> + Zitadel de JWT group sync niet out-of-the-box werkt omdat <code>AUTH_SUPPORTED_SCOPES</code> de groups-scope mist. Deze sandbox draait de <strong>oudere multi-container NetBird-stack zonder Dex-container</strong> (Management v0.67.0 valideert Zitadel's token rechtstreeks, Verslag30), dus de door de action geïnjecteerde <code>groups</code>-claim stroomt zonder scope-fix door. De scope-drop-variant van #5399 is hier dus niet van toepassing; er is geen Docker Compose-aanpassing nodig voor group sync. (Het aparte gevaar "gevuld JWT allow-groups → 401-lockout", soms ook onder #5399 bijgehouden, geldt nog steeds; zie hieronder en <a href="../netbird/">NetBird</a>.)</p>
+<p><strong><code>cloud_displayname</code>-afhankelijkheid:</strong> Als <code>cloud_displayname</code> niet in het app-manifest aan de <code>groups</code>-claim is gekoppeld, draagt de claim GUID's in plaats van namen en matcht Action 1's allowlist niets, waardoor elke groep stilzwijgend wordt weggelaten. De gebruiker authenticeert succesvol maar zonder groepsresolutie. Omdat <code>allowed-to-fail: true</code> de fout onderdrukt, is deze faalwijze onzichtbaar zonder downstream JWT-claims te controleren.</p>
+<p><strong>Action-uitvoering is ondoorzichtig.</strong> Er is geen dashboard-weergave die de uitvoeringsgeschiedenis of foutaantallen van actions toont. Debugging vereist end-to-end testen: inloggen als testgebruiker en vervolgens de resulterende JWT in NetBird inspecteren om te verifieren dat group claims aanwezig en correct gemapt zijn.</p>
 <hr />
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

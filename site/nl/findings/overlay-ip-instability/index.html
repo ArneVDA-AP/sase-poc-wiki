@@ -3569,13 +3569,13 @@
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>NetBird overlay-IPs verschuiven bij herinschrijvingscycli. Addendum H had IP <code>.95.98</code> hardcoded; na herinschrijving (peer verwijderen + opnieuw registreren) was het werkelijke IP <code>.218.100</code>. Na een daaropvolgende hernoeming en reboot verschoof het opnieuw naar <code>.64.80</code>. Elke configuratie of documentatie die naar het oude IP verwees brak stilzwijgend.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>NetBird wijst overlay-IPs dynamisch toe vanuit zijn CGNAT-pool. Herinschrijving (een peer verwijderen en opnieuw registreren) wijst een nieuw IP toe uit de pool. Er is geen IP-reserveringsmechanisme in NetBird CE — de peer-identiteit is het peer-ID, niet het overlay-IP.</p>
+<p>NetBird wijst overlay-IPs dynamisch toe vanuit zijn CGNAT-pool. Herinschrijving (een peer verwijderen en opnieuw registreren) wijst een nieuw IP toe uit de pool. Er is geen IP-reserveringsmechanisme in NetBird CE; de peer-identiteit is het peer-ID, niet het overlay-IP.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p>De cache-invalidatielogica van de Identity Bridge moet op peer-ID gebaseerd zijn, niet op IP. Het <code>/api/peers</code>-endpoint retourneert zowel het stabiele peer-ID als het huidige overlay-IP, zodat de bridge identiteit kan volgen op peer-ID en zijn IP-mappings kan bijwerken wanneer ze veranderen.</p>
 <p>Verwijs in configuratiebestanden en documentatie waar mogelijk naar peers op naam of peer-ID in plaats van overlay-IP.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Hardcode nooit overlay-IPs in configuratie of documentatie — behandel ze als efemeer, vergelijkbaar met DHCP-leases</li>
+<li>Hardcode nooit overlay-IPs in configuratie of documentatie; behandel ze als efemeer, vergelijkbaar met DHCP-leases</li>
 <li>Peer-ID is de enige stabiele identifier voor een NetBird-peer over herinschrijvingscycli heen</li>
 <li>Elk systeem dat overlay-IPs cachet of ernaar verwijst moet IP-wijzigingen graceful afhandelen</li>
 </ul>

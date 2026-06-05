@@ -3569,7 +3569,7 @@
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>De Wazuh indexer (gebouwd op Amazon Linux 2023) crashte onmiddellijk bij het opstarten met illegal instruction-fouten. De container stopte voordat de initialisatie voltooid was, waardoor de volledige Wazuh-stack niet functioneel was.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
-<p>De Wazuh indexer vereist de glibc x86-64-v2 instructieset (Haswell en later). Dit omvat SSE4.2, POPCNT en gerelateerde instructies. Het standaard QEMU <code>kvm64</code> CPU-model maskeert deze instructies — het emuleert een generieke x86-64 baseline-CPU die de vereiste feature flags mist.</p>
+<p>De Wazuh indexer vereist de glibc x86-64-v2 instructieset (Haswell en later). Dit omvat SSE4.2, POPCNT en gerelateerde instructies. Het standaard QEMU <code>kvm64</code> CPU-model maskeert deze instructies: het emuleert een generieke x86-64 baseline-CPU die de vereiste feature flags mist.</p>
 <p>Wanneer glibc of OpenSearch (de indexer-engine) probeert deze instructies te gebruiken, genereert de CPU een illegal instruction-exceptie en wordt het proces beëindigd.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
 <p>Stel het QEMU CPU-model in op <code>host</code> in de GNS3 node-instellingen voor mgmt01:</p>
@@ -3578,9 +3578,9 @@
 <p>Het <code>host</code>-model geeft de fysieke host-CPU-features door aan de gast-VM, waardoor alle moderne instructiesets beschikbaar worden. Na het wijzigen van deze instelling en het herstarten van het node startte de Wazuh indexer succesvol.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Verifieer bij het draaien van moderne Linux-containers of -applicaties in GNS3/QEMU altijd de CPU-featurevereisten — <code>kvm64</code> is te conservatief voor veel huidige containerimages</li>
+<li>Verifieer bij het draaien van moderne Linux-containers of -applicaties in GNS3/QEMU altijd de CPU-featurevereisten; <code>kvm64</code> is te conservatief voor veel huidige containerimages</li>
 <li>Amazon Linux 2023 en afgeleiden nemen x86-64-v2 als baseline aan, wat niet gegarandeerd wordt door <code>kvm64</code></li>
-<li>Het symptoom (illegal instruction-crash bij opstart) is kenmerkend — als een container onmiddellijk crasht op een QEMU-guest, controleer dan eerst het CPU-model</li>
+<li>Het symptoom (illegal instruction-crash bij opstart) is kenmerkend: als een container onmiddellijk crasht op een QEMU-guest, controleer dan eerst het CPU-model</li>
 </ul>
 
 

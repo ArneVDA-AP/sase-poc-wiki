@@ -33,7 +33,7 @@
     
     
       
-        <title>Concept: RPZ — DNS Response Policy Zones - Security Project Wiki</title>
+        <title>Concept: RPZ (DNS Response Policy Zones) - Security Project Wiki</title>
       
     
     
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Concept: RPZ — DNS Response Policy Zones
+              Concept: RPZ (DNS Response Policy Zones)
             
           </span>
         </div>
@@ -3570,10 +3570,10 @@
 
 
 
-<h1 id="concept-rpz-dns-response-policy-zones">Concept: RPZ — DNS Response Policy Zones<a class="headerlink" href="#concept-rpz-dns-response-policy-zones" title="Permanent link">&para;</a></h1>
+<h1 id="concept-rpz-dns-response-policy-zones">Concept: RPZ (DNS Response Policy Zones)<a class="headerlink" href="#concept-rpz-dns-response-policy-zones" title="Permanent link">&para;</a></h1>
 <p><strong>Definitie:</strong> Een uitbreiding op de DNS-autoritaire zone-serving die een resolver in staat stelt synthetische antwoorden (NXDOMAIN, NODATA, een walled garden-IP) te retourneren voor overeenkomende querynamen, waardoor DNS-niveau blokkering van bekende kwaadaardige domeinen mogelijk is voordat een netwerkverbinding wordt opgezet.</p>
 <h2 id="hoe-het-hier-van-toepassing-is">Hoe het hier van toepassing is<a class="headerlink" href="#hoe-het-hier-van-toepassing-is" title="Permanent link">&para;</a></h2>
-<p>RPZ onderschept op het vroegst mogelijke punt in de bedreigingslevenscyclus: naamresolutie. Als een client de hostnaam van een bekende C2-server probeert te resolven, retourneert Unbound NXDOMAIN — de TCP-verbinding start nooit, ongeacht poort of protocol.</p>
+<p>RPZ onderschept op het vroegst mogelijke punt in de bedreigingslevenscyclus: naamresolutie. Als een client de hostnaam van een bekende C2-server probeert te resolven, retourneert Unbound NXDOMAIN; de TCP-verbinding start nooit, ongeacht poort of protocol.</p>
 <p>De RPZ-zone in deze stack bevat ~71 767 records uit twee Abuse.ch-feeds (URLhaus + ThreatFox), bijgewerkt door ioc2rpz uit live threat intelligence-feeds. Wanneer een client een hostnaam queryet die overeenkomt met een RPZ-record, vervangt Unbound de geconfigureerde actie (NXDOMAIN) in plaats van het echte antwoord te retourneren.</p>
 <p><strong>Zone-transferketen:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>URLhaus + ThreatFox (Abuse.ch-feeds)
@@ -3582,15 +3582,15 @@
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                                        ↓
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                             Alle client DNS-queries
 </code></pre></div>
-<p>Unbound laadt de RPZ-zone in het geheugen. De prestatieimpact per query is verwaarloosbaar — de zone is al aanwezig.</p>
+<p>Unbound laadt de RPZ-zone in het geheugen. De prestatieimpact per query is verwaarloosbaar; de zone is al aanwezig.</p>
 <h2 id="waar-het-in-de-stack-voorkomt">Waar het in de stack voorkomt<a class="headerlink" href="#waar-het-in-de-stack-voorkomt" title="Permanent link">&para;</a></h2>
-<p><strong><a href="../../components/ioc2rpz/">ioc2rpz</a></strong> — de zonebron. Aggregeert URLhaus- en ThreatFox-feeds in één RPZ-zone (<code>threat-intel.rpz.sase</code>). Fungeert als een autoritatieve DNS-server waarvan BIND overneemt.</p>
-<p><strong><a href="../../components/netbird/">NetBird</a></strong> — de primaire nameserver-configuratie routeert alle DNS-queries van overlay-clients via pop01 Unbound. Zonder dit omzeilen externe queries Unbound volledig, waardoor RPZ-bescherming voor niet-interne domeinen teniet wordt gedaan.</p>
-<p><strong><a href="../../components/suricata/">Suricata</a></strong> — aanvullende controle. Suricata detecteert verbindingen naar bekende kwaadaardige IP's (van Abuse.ch SSL IP Blacklist en vergelijkbaar); RPZ voorkomt DNS-resolutie van bekende kwaadaardige domeinen. Beide gebruiken Abuse.ch als bron; ze bestrijken verschillende bedreigingsoppervlakken (verbinding vs. naamresolutie).</p>
+<p><strong><a href="../../components/ioc2rpz/">ioc2rpz</a>:</strong> de zonebron. Aggregeert URLhaus- en ThreatFox-feeds in één RPZ-zone (<code>threat-intel.rpz.sase</code>). Fungeert als een autoritatieve DNS-server waarvan BIND overneemt.</p>
+<p><strong><a href="../../components/netbird/">NetBird</a>:</strong> de primaire nameserver-configuratie routeert alle DNS-queries van overlay-clients via pop01 Unbound. Zonder dit omzeilen externe queries Unbound volledig, waardoor RPZ-bescherming voor niet-interne domeinen teniet wordt gedaan.</p>
+<p><strong><a href="../../components/suricata/">Suricata</a>:</strong> aanvullende controle. Suricata detecteert verbindingen naar bekende kwaadaardige IP's (van Abuse.ch SSL IP Blacklist en vergelijkbaar); RPZ voorkomt DNS-resolutie van bekende kwaadaardige domeinen. Beide gebruiken Abuse.ch als bron; ze bestrijken verschillende bedreigingsoppervlakken (verbinding vs. naamresolutie).</p>
 <h2 id="belangrijke-onderscheidingen">Belangrijke onderscheidingen<a class="headerlink" href="#belangrijke-onderscheidingen" title="Permanent link">&para;</a></h2>
-<p><strong>RPZ-actie = NXDOMAIN + autoritatieve vlag</strong> — het RPZ-antwoord van Unbound retourneert NXDOMAIN met de <code>aa</code>-vlag (autoritatief antwoord) ingesteld. Dit onderscheidt een lokaal RPZ-getriggerde NXDOMAIN van een echte NXDOMAIN van het internet. De <code>aa</code>-vlag in een testantwoord (<code>drill @127.0.0.1 testentry.rpz.urlhaus.abuse.ch</code>) bevestigt dat de RPZ actief is, niet dat het domein daadwerkelijk niet bestaat.</p>
-<p><strong>RPZ blokkeert geen IP-gebaseerde bedreigingen</strong> — een client die DNS omzeilt (gebruikt een hard-gecodeerd IP) wordt niet beschermd door RPZ. Suricata op vtnet0 dekt dit geval via IP-gebaseerde signatuurregels.</p>
-<p><strong><code>respip</code>-modulepositie in Unbound</strong> — RPZ-handhaving vereist de <code>respip</code>-module in Unbound's module-config. Het moet als eerste worden vermeld: <code>"respip python validator iterator"</code>. De <code>python</code>-module moet blijven (OPNsense gebruikt het voor de ingebouwde DNSBL-functie). Het verwijderen van een van beide breekt ofwel RPZ of de eigen blokkeerlijst van OPNsense.</p>
+<p><strong>RPZ-actie = NXDOMAIN + autoritatieve vlag:</strong> het RPZ-antwoord van Unbound retourneert NXDOMAIN met de <code>aa</code>-vlag (autoritatief antwoord) ingesteld. Dit onderscheidt een lokaal RPZ-getriggerde NXDOMAIN van een echte NXDOMAIN van het internet. De <code>aa</code>-vlag in een testantwoord (<code>drill @127.0.0.1 testentry.rpz.urlhaus.abuse.ch</code>) bevestigt dat de RPZ actief is, niet dat het domein daadwerkelijk niet bestaat.</p>
+<p><strong>RPZ blokkeert geen IP-gebaseerde bedreigingen:</strong> een client die DNS omzeilt (gebruikt een hard-gecodeerd IP) wordt niet beschermd door RPZ. Suricata op vtnet0 dekt dit geval via IP-gebaseerde signatuurregels.</p>
+<p><strong><code>respip</code>-modulepositie in Unbound:</strong> RPZ-handhaving vereist de <code>respip</code>-module in Unbound's module-config. Het moet als eerste worden vermeld: <code>"respip python validator iterator"</code>. De <code>python</code>-module moet blijven (OPNsense gebruikt het voor de ingebouwde DNSBL-functie). Het verwijderen van een van beide breekt ofwel RPZ of de eigen blokkeerlijst van OPNsense.</p>
 <h2 id="bronnen">Bronnen<a class="headerlink" href="#bronnen" title="Permanent link">&para;</a></h2>
 <ul>
 <li><code>raw/Doc4_DNS_Threat_Intelligence.md</code> (volledige RPZ-architectuur, ioc2rpz + BIND + Unbound)</li>

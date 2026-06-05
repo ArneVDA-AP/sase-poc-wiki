@@ -3603,7 +3603,7 @@
 <p><strong>Status:</strong> Geïmplementeerd<br />
 <strong>Datum:</strong> Maart/april 2026 (Verslag21)</p>
 <h2 id="context">Context<a class="headerlink" href="#context" title="Permanent link">&para;</a></h2>
-<p>De ICAP-pipeline moet zowel uploads (POST-aanvraagbodies) als downloads (HTTP-antwoordbodies) inspecteren op gevoelige gegevens. De aanvankelijke aanpak was ClamAV/c-icap te gebruiken voor beide richtingen. ClamAV biedt StructuredDataDetection (Luhn-gevalideerde creditcards) en YARA-regels — beide nuttig voor DLP.</p>
+<p>De ICAP-pipeline moet zowel uploads (POST-aanvraagbodies) als downloads (HTTP-antwoordbodies) inspecteren op gevoelige gegevens. De aanvankelijke aanpak was ClamAV/c-icap te gebruiken voor beide richtingen. ClamAV biedt StructuredDataDetection (Luhn-gevalideerde creditcards) en YARA-regels, beide nuttig voor DLP.</p>
 <h2 id="overwogen-opties">Overwogen opties<a class="headerlink" href="#overwogen-opties" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -3617,7 +3617,7 @@
 <tr>
 <td><strong>Alleen ClamAV (beide richtingen)</strong></td>
 <td>Één component, geen extra service</td>
-<td>c-icap <code>virus_scan</code> parseert <code>multipart/form-data</code> niet correct — POST-bodies arriveren als ruwe bytes, waardoor DLP-matching onbetrouwbaar is</td>
+<td>c-icap <code>virus_scan</code> parseert <code>multipart/form-data</code> niet correct: POST-bodies arriveren als ruwe bytes, waardoor DLP-matching onbetrouwbaar is</td>
 </tr>
 <tr>
 <td><strong>ClamAV (RESPMOD) + Python DLP (REQMOD)</strong></td>
@@ -3633,14 +3633,14 @@
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>Twee-laags architectuur: ClamAV/c-icap als ICAP RESPMOD voor downloads, Python DLP-server als ICAP REQMOD voor uploads.</p>
-<p>De c-icap-ontwikkelaar bevestigde dat <code>virus_scan</code> <code>multipart/form-data</code> niet correct parseert — geüploade inhoud wordt als ruwe bytes doorgegeven aan ClamAV. Dit maakt DLP-patroonherkenning op webformulieruploads onbetrouwbaar. De Python DLP-server is specifiek geschreven om dit geval te verwerken: hij implementeert correcte multipart-parsing en past algoritmische validators toe (Luhn voor creditcards, mod-97 voor IBAN, 11-proef voor BSN).</p>
+<p>De c-icap-ontwikkelaar bevestigde dat <code>virus_scan</code> <code>multipart/form-data</code> niet correct parseert: geüploade inhoud wordt als ruwe bytes doorgegeven aan ClamAV. Dit maakt DLP-patroonherkenning op webformulieruploads onbetrouwbaar. De Python DLP-server is specifiek geschreven om dit geval te verwerken: hij implementeert correcte multipart-parsing en past algoritmische validators toe (Luhn voor creditcards, mod-97 voor IBAN, 11-proef voor BSN).</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Python DLP-container (<code>/opt/dlp-icap/</code> op mgmt01) moet actief zijn voor upload-DLP om te functioneren</li>
 <li><code>bypass=on</code> in Squid's ICAP-configuratie voor de Python DLP-service: als de container uitvalt, gaan uploads door (fail-open). ClamAV blijft actief voor downloadscanning</li>
-<li>Alleen POST/PUT/PATCH-aanvragen worden naar Python DLP gerouteerd — GET-aanvragen bevatten geen door gebruikers geüploade inhoud en ze toevoegen verhoogt alleen de latency</li>
+<li>Alleen POST/PUT/PATCH-aanvragen worden naar Python DLP gerouteerd. GET-aanvragen bevatten geen door gebruikers geüploade inhoud en ze toevoegen verhoogt alleen de latency</li>
 <li>ClamAV YARA-regels bieden download-DLP (matching na bestandsdecompositie, dus <code>.docx</code>-uitpakken werkt); Python DLP biedt upload-DLP met volledige algoritmische validatie</li>
-<li>pyicap-bibliotheek vereist een Python 3.10+-compatibiliteitspatch in de Dockerfile — zie <a href="../../findings/pyicap-collections-bug/">Bevinding: pyicap collections bug</a></li>
+<li>pyicap-bibliotheek vereist een Python 3.10+-compatibiliteitspatch in de Dockerfile; zie <a href="../../findings/pyicap-collections-bug/">Bevinding: pyicap collections bug</a></li>
 </ul>
 <h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
 <ul>

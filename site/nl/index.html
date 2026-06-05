@@ -3501,9 +3501,9 @@
 
 
 <h1 id="project-wiki">Project Wiki<a class="headerlink" href="#project-wiki" title="Permanent link">&para;</a></h1>
-<p>Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge) proof-of-concept voor Atlascollege — een school met 4 000 gebruikers op beheerde Windows-apparaten (Intune-beheerd, Entra joined). De stack vervangt het traditionele perimetermodel door identiteitsgebaseerde, contextbewuste toegangscontrole met open-source componenten: NetBird (ZTNA), Squid (SWG), ClamAV + Python DLP (ICAP-inspectie), Suricata (IDS), ioc2rpz + Unbound (DNS threat intelligence), Entra ID (identiteit), NATS JetStream (event bus), Wazuh (SIEM) en een Python control daemon (real-time quarantaine). Alle componenten draaien op een GNS3-topologie gehost op Proxmox.</p>
+<p>Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge) proof-of-concept voor Atlascollege (een school met 4 000 gebruikers op beheerde Windows-apparaten, Intune-beheerd, Entra joined). De stack vervangt het traditionele perimetermodel door identiteitsgebaseerde, contextbewuste toegangscontrole met open-source componenten: NetBird (ZTNA), Squid (SWG), ClamAV + Python DLP (ICAP-inspectie), Suricata (IDS), ioc2rpz + Unbound (DNS threat intelligence), Entra ID (identiteit), NATS JetStream (event bus), Wazuh (SIEM) en een Python control daemon (real-time quarantaine). Alle componenten draaien op een GNS3-topologie gehost op Proxmox.</p>
 <p><a class="md-button md-button--primary" href="../demos/functioneel-schema.html" target="_blank"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 2v6h2v3H5c-1.11 0-2 .89-2 2v3H1v6h6v-6H5v-3h6v3H9v6h6v-6h-2v-3h6v3h-2v6h6v-6h-2v-3c0-1.11-.89-2-2-2h-6V8h2V2z"/></svg></span> Open het functioneel schema &nearr;</a></p>
-<p>Een interactief end-to-end-diagram van de SASE PoC — elke component, verkeersstroom en
+<p>Een interactief end-to-end-diagram van de SASE PoC: elke component, verkeersstroom en
 policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 <h2 id="catalogus">Catalogus<a class="headerlink" href="#catalogus" title="Permanent link">&para;</a></h2>
 <table>
@@ -3528,7 +3528,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="components/squid/">Squid</a></td>
-<td>Expliciete HTTP/HTTPS-proxy — WPAD/PAC-distributie, SSL Bump, URL-filtering, ICAP-orchestratie</td>
+<td>Expliciete HTTP/HTTPS-proxy: WPAD/PAC-distributie, SSL Bump, URL-filtering, ICAP-orchestratie</td>
 </tr>
 <tr>
 <td><a href="components/clamav-cicap/">ClamAV/c-icap</a></td>
@@ -3536,7 +3536,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="components/python-dlp/">Python DLP</a></td>
-<td>Upload-DLP (ICAP REQMOD) — Luhn, IBAN mod-97, BSN 11-proef, AWS-sleuteldetectie op multipart-bodies</td>
+<td>Upload-DLP (ICAP REQMOD): Luhn, IBAN mod-97, BSN 11-proef, AWS-sleuteldetectie op multipart-bodies</td>
 </tr>
 <tr>
 <td><a href="components/suricata/">Suricata</a></td>
@@ -3544,11 +3544,11 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="components/ioc2rpz/">ioc2rpz</a></td>
-<td>DNS threat intelligence — URLhaus + ThreatFox → RPZ-zone → BIND → Unbound; 71 767 geblokkeerde domeinen</td>
+<td>DNS threat intelligence: URLhaus + ThreatFox → RPZ-zone → BIND → Unbound; 71 767 geblokkeerde domeinen</td>
 </tr>
 <tr>
 <td><a href="components/netbird/">NetBird</a></td>
-<td>WireGuard ZTNA-overlay — Zitadel + Entra ID IdP-keten; ACL-policies; DNS primaire nameserver</td>
+<td>WireGuard ZTNA-overlay: Zitadel + Entra ID IdP-keten; ACL-policies; DNS primaire nameserver</td>
 </tr>
 <tr>
 <td><a href="components/caddy/">Caddy</a></td>
@@ -3556,7 +3556,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="components/gns3/">GNS3</a></td>
-<td>Lab-virtualisatieplatform — geneste QEMU/KVM op Proxmox; meerdere gebruikers; GNS3 vs EVE-NG</td>
+<td>Lab-virtualisatieplatform: geneste QEMU/KVM op Proxmox; meerdere gebruikers; GNS3 vs EVE-NG</td>
 </tr>
 <tr>
 <td><a href="components/vyos/">VyOS</a></td>
@@ -3568,7 +3568,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="components/nats-jetstream/">NATS JetStream</a></td>
-<td>Centrale event bus — verbindt detectiesilo's</td>
+<td>Centrale event bus, verbindt detectiesilo's</td>
 </tr>
 <tr>
 <td><a href="components/control-daemon/">Control Daemon</a></td>
@@ -3576,11 +3576,11 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="components/wazuh/">Wazuh</a></td>
-<td>SIEM — NATS-forwarder + pop01-agent + M365 Active Response</td>
+<td>SIEM: NATS-forwarder + pop01-agent + M365 Active Response</td>
 </tr>
 <tr>
 <td><a href="components/zitadel/">Zitadel</a></td>
-<td>OIDC IdP-broker — Entra ID → JWT group sync → NetBird</td>
+<td>OIDC IdP-broker: Entra ID → JWT group sync → NetBird</td>
 </tr>
 <tr>
 <td><strong>Concepten</strong></td>
@@ -3624,11 +3624,11 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="decisions/wpad-vs-transparent-proxy/">WPAD/PAC vs Transparante Proxy</a></td>
-<td>Waarom expliciete proxy — pf rdr werkt niet op wt0</td>
+<td>Waarom expliciete proxy (pf rdr werkt niet op wt0)</td>
 </tr>
 <tr>
 <td><a href="decisions/two-layer-dlp/">Twee-laags DLP</a></td>
-<td>ClamAV (downloads) + Python DLP (uploads) — multipart-parseerprobleem</td>
+<td>ClamAV (downloads) + Python DLP (uploads), multipart-parseerprobleem</td>
 </tr>
 <tr>
 <td><a href="decisions/ioc2rpz-vs-unbound-native/">ioc2rpz vs Unbound native</a></td>
@@ -3636,15 +3636,15 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="decisions/bind-tsig-intermediary/">BIND als TSIG-tussenstap</a></td>
-<td>Unbound 1.24.2 mist TSIG — BIND overbrugt het gat</td>
+<td>Unbound 1.24.2 mist TSIG; BIND overbrugt het gat</td>
 </tr>
 <tr>
 <td><a href="decisions/ids-vs-ips/">IDS vs IPS</a></td>
-<td>Netmap IPS faalt op virtio-NICs — IDS-modus met policies klaar</td>
+<td>Netmap IPS faalt op virtio-NICs, IDS-modus met policies klaar</td>
 </tr>
 <tr>
 <td><a href="decisions/suricata-wan-lan/">Suricata WAN+LAN</a></td>
-<td>Waarom vtnet0 + vtnet1 — wt0 toont 0 pakketjes in BPF</td>
+<td>Waarom vtnet0 + vtnet1 (wt0 toont 0 pakketjes in BPF)</td>
 </tr>
 <tr>
 <td><a href="decisions/gns3-vs-eveng/">GNS3 vs EVE-NG</a></td>
@@ -3656,15 +3656,15 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="decisions/ca-posture-hybrid/">CA + Posture hybride (Drie-gate model)</a></td>
-<td>Gate 1 (Entra ID CA) + Gate 2 (posture) — complementair niet uitwisselbaar</td>
+<td>Gate 1 (Entra ID CA) + Gate 2 (posture), complementair niet uitwisselbaar</td>
 </tr>
 <tr>
 <td><a href="decisions/sdwan-descoped/">SD-WAN geschrapt (F12, F13, F14)</a></td>
-<td>Klassiek IPsec + uCPE verwijderd (site-to-site tunnels in strijd met Zero Trust); QoS + failover heringevoerd onder het ZT-Branch-model; sitepc01 → NetBird-inschrijving</td>
+<td>Klassiek IPsec + uCPE verwijderd (site-to-site tunnels in strijd met Zero Trust); QoS + failover heringevoerd onder het ZT-Branch-model; sitepc01 via NetBird-inschrijving</td>
 </tr>
 <tr>
 <td><a href="decisions/netbird-service-pat/">NetBird Service PAT</a></td>
-<td>Service-user PAT voor Identity Bridge API-auth — vermijdt NetBird issue #3127</td>
+<td>Service-user PAT voor Identity Bridge API-auth (vermijdt NetBird issue #3127)</td>
 </tr>
 <tr>
 <td><a href="decisions/nats-accounts-auth/">NATS accounts auth</a></td>
@@ -3672,7 +3672,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="decisions/groupsync-pad-b/">GroupSync Pad B</a></td>
-<td>Zitadel verwijdert <code>2ITCSC1A-</code>-prefix — schone persona-groepnamen</td>
+<td>Zitadel verwijdert <code>2ITCSC1A-</code>-prefix, schone persona-groepnamen</td>
 </tr>
 <tr>
 <td><a href="decisions/casb-three-layers/">CASB drie lagen</a></td>
@@ -3680,7 +3680,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="decisions/managed-devices-scope/">Beheerde apparaten scope</a></td>
-<td>BYOD → beheerde Windows-apparaten (lectoraatmandaat R11)</td>
+<td>BYOD naar beheerde Windows-apparaten (lectoraatmandaat R11)</td>
 </tr>
 <tr>
 <td><a href="decisions/zt-sdwan-branch/">ZT SD-WAN Branch</a></td>
@@ -3696,7 +3696,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="findings/wt0-pf-rdr-limitation/">wt0 pf rdr beperking</a></td>
-<td>WireGuard Laag 3 — pf rdr kan niet onderscheppen op wt0</td>
+<td>WireGuard Laag 3: pf rdr kan niet onderscheppen op wt0</td>
 </tr>
 <tr>
 <td><a href="findings/pre-auth-ssl-bump-params/">pre-auth ssl-bump parameters</a></td>
@@ -3704,15 +3704,15 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="findings/squid-clearlog-destroys-file/">Squid clearlog vernietigt bestand</a></td>
-<td>WebUI "Clear log" verwijdert in plaats van afkapt; gebruik <code>&gt; access.log</code></td>
+<td>WebUI "Clear log" verwijdert in plaats van afkappen; gebruik <code>&gt; access.log</code></td>
 </tr>
 <tr>
 <td><a href="findings/stevenblack-incompatible/">StevenBlack incompatibel</a></td>
-<td>Hosts-formaat incompatibel met OPNsense Remote ACL — gebruik UT1 Toulouse</td>
+<td>Hosts-formaat incompatibel met OPNsense Remote ACL; gebruik UT1 Toulouse</td>
 </tr>
 <tr>
 <td><a href="findings/suricata-interface-default-bug/">Suricata interface default bug</a></td>
-<td><code>interface: default</code> vangt alleen vtnet0 — expliciete declaraties vereist</td>
+<td><code>interface: default</code> vangt alleen vtnet0; expliciete declaraties vereist</td>
 </tr>
 <tr>
 <td><a href="findings/suricata-netmap-virtio/">Suricata Netmap/virtio</a></td>
@@ -3724,19 +3724,19 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="findings/unbound-config-path/">Unbound config-pad</a></td>
-<td><code>/var/unbound/etc/</code> wordt verwijderd bij herstart — gebruik <code>/usr/local/etc/unbound.opnsense.d/</code></td>
+<td><code>/var/unbound/etc/</code> wordt verwijderd bij herstart; gebruik <code>/usr/local/etc/unbound.opnsense.d/</code></td>
 </tr>
 <tr>
 <td><a href="findings/ioc2rpz-gui-js-bug/">ioc2rpz GUI JS bug</a></td>
-<td>Ontbrekende e.preventDefault() in signIn — sed-fix na containerstart</td>
+<td>Ontbrekende e.preventDefault() in signIn; sed-fix na containerstart</td>
 </tr>
 <tr>
 <td><a href="findings/pyicap-collections-bug/">pyicap collections bug</a></td>
-<td><code>collections.Callable</code> verwijderd in Python 3.10 — sed-patch in Dockerfile</td>
+<td><code>collections.Callable</code> verwijderd in Python 3.10; sed-patch in Dockerfile</td>
 </tr>
 <tr>
 <td><a href="findings/iptables-forward-ordering/">iptables FORWARD-volgorde</a></td>
-<td>libvirt REJECT vóór toegevoegde regels — gebruik altijd <code>-I FORWARD 1</code></td>
+<td>libvirt REJECT vóór toegevoegde regels; gebruik altijd <code>-I FORWARD 1</code></td>
 </tr>
 <tr>
 <td><a href="findings/netbird-primary-nameserver/">NetBird primaire nameserver</a></td>
@@ -3744,31 +3744,31 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="findings/netbird-config-zero-bytes/">NetBird config nul bytes</a></td>
-<td>FreeBSD UFS + QEMU SIGKILL = 0-byte config.json — back-up na elke sessie</td>
+<td>FreeBSD UFS + QEMU SIGKILL = 0-byte config.json; back-up na elke sessie</td>
 </tr>
 <tr>
 <td><a href="findings/docker-volume-recreation/">Docker volume hermaak</a></td>
-<td><code>docker compose restart</code> past volume-mount wijzigingen niet toe — gebruik <code>up -d</code></td>
+<td><code>docker compose restart</code> past volume-mount wijzigingen niet toe; gebruik <code>up -d</code></td>
 </tr>
 <tr>
 <td><a href="findings/curl-ssl-no-revoke/">curl --ssl-no-revoke op Windows</a></td>
-<td>Schannel CRL-controle faalt op SASE-PoC-CA — voeg <code>--ssl-no-revoke</code> toe aan alle proxytests vanaf Windows</td>
+<td>Schannel CRL-controle faalt op SASE-PoC-CA; voeg <code>--ssl-no-revoke</code> toe aan alle proxytests vanaf Windows</td>
 </tr>
 <tr>
 <td><a href="findings/suricata-connection-pooling/">Suricata connection pooling</a></td>
-<td>Squid hergebruikt upstream TCP-verbindingen — een Suricata-alert per SID per flow is correct, geen suppressie</td>
+<td>Squid hergebruikt upstream TCP-verbindingen; een Suricata-alert per SID per flow is correct, geen suppressie</td>
 </tr>
 <tr>
 <td><a href="findings/netbird-issue-3127/">NetBird issue #3127</a></td>
-<td>Management API weigert peer-level groepswijzigingen — service-user PAT als workaround</td>
+<td>Management API weigert peer-level groepswijzigingen; service-user PAT als workaround</td>
 </tr>
 <tr>
 <td><a href="findings/squid-overlay-bind-race/">Squid overlay bind race</a></td>
-<td>Squid overlay-listener verloren bij herstart — <code>commBind EADDRNOTAVAIL</code> race</td>
+<td>Squid overlay-listener verloren bij herstart (<code>commBind EADDRNOTAVAIL</code> race)</td>
 </tr>
 <tr>
 <td><a href="findings/overlay-ip-instability/">Overlay IP-instabiliteit</a></td>
-<td>NetBird overlay-IP's kunnen wijzigen — Identity Bridge moet stale cache afhandelen</td>
+<td>NetBird overlay-IP's kunnen wijzigen; Identity Bridge moet stale cache afhandelen</td>
 </tr>
 <tr>
 <td><a href="findings/nats-store-dir/">NATS store dir</a></td>
@@ -3780,7 +3780,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td><a href="findings/wazuh-dashboard-airgate/">Wazuh dashboard airgate</a></td>
-<td>Dashboard Offline door lege UUID na down -v — opgelost via in-place 4.14.5 GA bump</td>
+<td>Dashboard Offline door lege UUID na down -v, opgelost via in-place 4.14.5 GA bump</td>
 </tr>
 <tr>
 <td><a href="findings/netbird-jwt-allow-groups-lockout/">NetBird JWT allow-groups lockout</a></td>
@@ -3799,7 +3799,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 <td>Volledige F1–F15-statustabel, testcommando's, werkelijke output, dekking per pijler, geplande tests</td>
 </tr>
 <tr>
-<td><a href="testing/attack-scenarios/">Aanvals- &amp; bypass-scenario's</a></td>
+<td><a href="testing/attack-scenarios/">Aanvals- en bypass-scenario's</a></td>
 <td>Demovalidatie-scenario's per SASE-pijler: ZTNA, SWG, CASB, FWaaS/IDS, DNS, NATS-handhaving</td>
 </tr>
 <tr>
@@ -3815,47 +3815,47 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 <td>Bouwvolgorde, afhankelijkheidsgraph, stapsgewijze handleidingen</td>
 </tr>
 <tr>
-<td><a href="runbooks/01-lab-environment/">01 — Labomgeving</a></td>
+<td><a href="runbooks/01-lab-environment/">01: Labomgeving</a></td>
 <td>Proxmox VM, GNS3 Server, topologie, IP-adressering, snapshots</td>
 </tr>
 <tr>
-<td><a href="runbooks/02-ztna-overlay/">02 — ZTNA Overlay</a></td>
+<td><a href="runbooks/02-ztna-overlay/">02: ZTNA Overlay</a></td>
 <td>NetBird + Zitadel + Entra ID, groepen, ACL's, exit node, DNS</td>
 </tr>
 <tr>
-<td><a href="runbooks/03-proxy-wpad/">03 — Proxy &amp; WPAD</a></td>
+<td><a href="runbooks/03-proxy-wpad/">03: Proxy &amp; WPAD</a></td>
 <td>Squid expliciete proxy, WPAD/PAC via Caddy, SSL Bump, URL-filtering</td>
 </tr>
 <tr>
-<td><a href="runbooks/04-malware-dlp/">04 — Malware &amp; DLP</a></td>
+<td><a href="runbooks/04-malware-dlp/">04: Malware &amp; DLP</a></td>
 <td>ClamAV/c-icap RESPMOD, YARA-regels, Python DLP REQMOD</td>
 </tr>
 <tr>
-<td><a href="runbooks/05-ids/">05 — IDS</a></td>
+<td><a href="runbooks/05-ids/">05: IDS</a></td>
 <td>Suricata op WAN+LAN, Hyperscan, 79.620+ regels</td>
 </tr>
 <tr>
-<td><a href="runbooks/06-dns-threat-intel/">06 — DNS Threat Intel</a></td>
+<td><a href="runbooks/06-dns-threat-intel/">06: DNS Threat Intel</a></td>
 <td>ioc2rpz, BIND TSIG, Unbound RPZ, 71.767 records</td>
 </tr>
 <tr>
-<td><a href="runbooks/07-access-policy/">07 — Toegangsbeleid</a></td>
+<td><a href="runbooks/07-access-policy/">07: Toegangsbeleid</a></td>
 <td>Conditional Access, posturecontroles, validatiescenario's (gepland)</td>
 </tr>
 <tr>
-<td><a href="runbooks/08-groupsync/">08 — GroupSync</a></td>
+<td><a href="runbooks/08-groupsync/">08: GroupSync</a></td>
 <td>JWT group sync, Entra ID token config, Zitadel Actions</td>
 </tr>
 <tr>
-<td><a href="runbooks/09-identity-bridge/">09 — Identity Bridge</a></td>
+<td><a href="runbooks/09-identity-bridge/">09: Identity Bridge</a></td>
 <td>FastAPI overlay-IP → persona-groep, Squid external_acl</td>
 </tr>
 <tr>
-<td><a href="runbooks/10-nats-jetstream/">10 — NATS JetStream</a></td>
+<td><a href="runbooks/10-nats-jetstream/">10: NATS JetStream</a></td>
 <td>Event bus, producers, Control Daemon, Redis</td>
 </tr>
 <tr>
-<td><a href="runbooks/11-wazuh/">11 — Wazuh</a></td>
+<td><a href="runbooks/11-wazuh/">11: Wazuh</a></td>
 <td>SIEM-stack, NATS-forwarder, M365 Active Response</td>
 </tr>
 </tbody>
@@ -3941,18 +3941,18 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </tr>
 <tr>
 <td>mobile01</td>
-<td>—</td>
+<td>n.v.t.</td>
 <td><code>100.70.95.98</code></td>
 </tr>
 <tr>
 <td>dc01</td>
-<td>—</td>
+<td>n.v.t.</td>
 <td><code>10.0.0.100</code></td>
 </tr>
 <tr>
 <td>GNS3 host</td>
 <td><code>10.158.10.67</code></td>
-<td>—</td>
+<td>n.v.t.</td>
 </tr>
 </tbody>
 </table>
@@ -3967,17 +3967,17 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.</p>
 </thead>
 <tbody>
 <tr>
-<td>Gate 1 — Identiteit</td>
+<td>Gate 1 (Identiteit)</td>
 <td>✅ Operationeel</td>
 <td>Entra ID Conditional Access (5 policies)</td>
 </tr>
 <tr>
-<td>Gate 2 — Apparaat</td>
+<td>Gate 2 (Apparaat)</td>
 <td>✅ Operationeel</td>
 <td>Intune-apparaatconformiteit (Report-only tot demo)</td>
 </tr>
 <tr>
-<td>Gate 3 — Inhoud</td>
+<td>Gate 3 (Inhoud)</td>
 <td>✅ Operationeel</td>
 <td>Squid + ClamAV + Python DLP + Unbound RPZ + Suricata</td>
 </tr>

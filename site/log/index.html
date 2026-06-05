@@ -3752,6 +3752,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#2026-06-05-nl-style-corrections-phases-1-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-05 — NL style corrections (phases 1 + 2)
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4145,6 +4156,17 @@
     <span class="md-ellipsis">
       
         2026-06-05 — Wazuh dashboard airgate finding rewrite (new source: Wazuh_DB_Fix.md)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2026-06-05-nl-style-corrections-phases-1-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2026-06-05 — NL style corrections (phases 1 + 2)
       
     </span>
   </a>
@@ -4551,6 +4573,14 @@ discrepancy was based on V34's point-in-time observation; the live server config
 - <code>runbooks/11-wazuh.md</code> + <code>.nl.md</code> — gotcha callout updated (resolved); checklist item corrected (app modules no longer gated)
 - <code>index.md</code> + <code>.nl.md</code> — finding blurb corrected (was "hostname resolution issue", now reflects empty UUID cause)</p>
 <p><strong>Source documents ingested:</strong> <code>Wazuh_DB_Fix.md</code> (1 versie-herstel runbook). No <code>raw/</code> files modified.</p>
+<hr />
+<h2 id="2026-06-05-nl-style-corrections-phases-1-2">2026-06-05 — NL style corrections (phases 1 + 2)<a class="headerlink" href="#2026-06-05-nl-style-corrections-phases-1-2" title="Permanent link">&para;</a></h2>
+<p><strong>Phase 1 — Calques, compounds, sentence structure (34 NL files):</strong>
+Dutch calque fixes across all <code>.nl.md</code> files: verb calques (bevragen→queryen, oplossen→resolven in DNS context, doorsturen→forwarden), forced compounds (uitgangsknoop→exit node, beveiligingsstapel→security stack), English participium-constructions removed, passive→active rewrites. Based on empirical NL style guide derived from user's actual technical writing style.</p>
+<p><strong>Phase 2 — Em dash removal (82 NL files, ~900 instances):</strong>
+All em dashes (—) in running text replaced with contextually appropriate Dutch punctuation: parentheses (preferred for interjections), colons, periods, commas, or semicolons. En dashes in numeric ranges (F1–F15) preserved. Em dashes inside code blocks preserved. Empty table-cell placeholders normalized from <code>—</code> to <code>n.v.t.</code>. <code>attack-scenarios.nl.md</code> double-hyphen (<code>--</code>) patterns also fixed for consistency.</p>
+<p><strong>Audit:</strong> Independent Opus auditor agents verified both phases before edits were applied. Phase 1: 10/10 PASS. Phase 2: 18/18 sampled files PASS, 1 pre-existing issue (attack-scenarios.nl.md) caught and fixed.</p>
+<p><strong>Files changed:</strong> 82 NL wiki pages. No EN pages or <code>raw/</code> files modified.</p>
 
 
 

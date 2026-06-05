@@ -3581,24 +3581,24 @@
 <tr>
 <td><strong>Reguliere gebruikers-PAT</strong></td>
 <td>Eenvoudig op te zetten; hergebruik van bestaand admin-account</td>
-<td>Triggert issue #3127 — elke API-poll verwijdert JWT-gepropageerde auto-groups van alle peers van de PAT-eigenaar. Verbreekt groepsgebaseerde toegangspolicies stilzwijgend</td>
+<td>Triggert issue #3127: elke API-poll verwijdert JWT-gepropageerde auto-groups van alle peers van de PAT-eigenaar. Verbreekt groepsgebaseerde toegangspolicies stilzwijgend</td>
 </tr>
 <tr>
 <td><strong>Service-user PAT met admin-rol</strong></td>
-<td>Service-user heeft geen JWT-gepropageerde auto-groups en geen peers — het verwijdereffect heeft niets om op te werken</td>
+<td>Service-user heeft geen JWT-gepropageerde auto-groups en geen peers, het verwijdereffect heeft niets om op te werken</td>
 <td>Vereist het aanmaken van een dedicated service-user met admin-rol in NetBird; PAT moet veilig opgeslagen worden</td>
 </tr>
 </tbody>
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>Een dedicated service-user genaamd <code>identity-bridge</code> met admin-rol wordt aangemaakt in NetBird. De PAT van deze service-user wordt gebruikt voor alle API-polling door Identity Bridge.</p>
-<p>Het kernpunt: issue #3127 verwijdert JWT-gepropageerde auto-groups van alle peers van de PAT-eigenaar. Een service-user heeft geen JWT-gepropageerde auto-groups (deze authenticeert nooit via OIDC) en heeft geen peers (het is geen apparaat). Daarom heeft het verwijdereffect niets om op te werken — het wordt uitgevoerd op een lege set.</p>
+<p>Het kernpunt: issue #3127 verwijdert JWT-gepropageerde auto-groups van alle peers van de PAT-eigenaar. Een service-user heeft geen JWT-gepropageerde auto-groups (deze authenticeert nooit via OIDC) en heeft geen peers (het is geen apparaat). Daarom heeft het verwijdereffect niets om op te werken: het wordt uitgevoerd op een lege set.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Er moet een service-user met admin-rol bestaan in NetBird management. Dit is een geprivilegieerd account dat uitsluitend voor API-toegang wordt gebruikt.</li>
 <li>De PAT moet veilig opgeslagen worden in het <code>.env</code>-bestand van de Identity Bridge-deployment. Deze mag niet worden gecommit naar versiebeheer.</li>
 <li>Als de service-user per ongeluk peers of groepen krijgt toegewezen, kan issue #3127 opnieuw optreden. De service-user moet peer-vrij en groep-vrij blijven.</li>
-<li>De workaround is specifiek voor de huidige NetBird-versie — als #3127 upstream wordt opgelost, zou een reguliere gebruikers-PAT weer veilig zijn, maar de service-user-aanpak blijft hoe dan ook schoner.</li>
+<li>De workaround is specifiek voor de huidige NetBird-versie. Als #3127 upstream wordt opgelost, zou een reguliere gebruikers-PAT weer veilig zijn, maar de service-user-aanpak blijft hoe dan ook schoner.</li>
 </ul>
 <p>Zie ook: <a href="../../findings/netbird-issue-3127/">Bevinding: NetBird issue #3127</a>, <a href="../../components/netbird/">Component: NetBird</a>, <a href="../../components/identity-bridge/">Component: Identity Bridge</a></p>
 

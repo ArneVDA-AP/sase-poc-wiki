@@ -3757,7 +3757,7 @@
 <p><strong>Bron:</strong> <code>raw/Doc4_DNS_Threat_Intelligence.md</code>
 <strong>Node(s):</strong> mgmt01 Docker (ioc2rpz + GUI) + pop01 (BIND 9.20 + Unbound RPZ)
 <strong>Vereisten:</strong> <a href="../02-ztna-overlay/">Runbook 02: ZTNA Overlay</a> afgerond (NetBird DNS-relay operationeel)
-<strong>Status:</strong> Operationeel — 71.767 RPZ-records, drie testpunten gevalideerd</p>
+<strong>Status:</strong> Operationeel. 71.767 RPZ-records, drie testpunten gevalideerd</p>
 <hr />
 <h2 id="vereistenchecklist">Vereistenchecklist<a class="headerlink" href="#vereistenchecklist" title="Permanent link">&para;</a></h2>
 <ul>
@@ -3813,7 +3813,7 @@
 <hr />
 <h2 id="stap-2-iptables-forward-regels-configureren-voor-gui-toegang">Stap 2: iptables FORWARD-regels configureren voor GUI-toegang<a class="headerlink" href="#stap-2-iptables-forward-regels-configureren-voor-gui-toegang" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Valkuil: Gebruik altijd <code>-I FORWARD 1</code>, nooit <code>-A FORWARD</code>.</strong> De FORWARD-keten op de GNS3-host heeft een libvirt <code>LIBVIRT_FWI</code>-keten op positie ~22 die nieuwe verbindingen WEIGERT voordat toegevoegde regels worden bereikt. Je ziet 0 pakketten op je ACCEPT-regels — de meest verborgen valkuil van de hele implementatie.
+<p><strong>Valkuil: Gebruik altijd <code>-I FORWARD 1</code>, nooit <code>-A FORWARD</code>.</strong> De FORWARD-keten op de GNS3-host heeft een libvirt <code>LIBVIRT_FWI</code>-keten op positie ~22 die nieuwe verbindingen WEIGERT voordat toegevoegde regels worden bereikt. Je ziet 0 pakketten op je ACCEPT-regels. Dit is de meest verborgen valkuil van de hele implementatie.
 Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWARD-volgorde</a>.</p>
 </blockquote>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>sudo<span class="w"> </span>iptables<span class="w"> </span>-I<span class="w"> </span>FORWARD<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span><span class="m">192</span>.168.122.23<span class="w"> </span>-p<span class="w"> </span>tcp<span class="w"> </span>--dport<span class="w"> </span><span class="m">8080</span><span class="w"> </span>-j<span class="w"> </span>ACCEPT
@@ -3833,7 +3833,7 @@ Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWAR
 <p><strong>Valkuil: Deze patch is niet persistent.</strong> Hij leeft in de containerlaag. Een <code>docker compose down &amp;&amp; up</code> met een nieuw image verliest de patch. Pas opnieuw toe na containerrebuilds.</p>
 </blockquote>
 <p><strong>Wachtwoordvereisten:</strong> &gt;7 tekens + minstens 1 cijfer, 1 kleine letter, 1 hoofdletter, 1 speciaal teken. OF &gt;15 tekens.</p>
-<p><strong>Caddy reverse proxy</strong> voor browsertoegang via <code>ioc2rpz.sandbox.local</code> — voeg toe aan het Caddyfile op mgmt01:</p>
+<p><strong>Caddy reverse proxy</strong> voor browsertoegang via <code>ioc2rpz.sandbox.local</code>; voeg toe aan het Caddyfile op mgmt01:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ioc2rpz.sandbox.local {
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    tls internal
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    reverse_proxy https://192.168.122.23:8444 {
@@ -3854,8 +3854,8 @@ Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWAR
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>ACL:        127.0.0.1, 172.20.0.2 (GUI-container), 172.20.0.1
 </code></pre></div></p>
 <p><strong>TSIG-sleutels (maak er twee aan):</strong>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>tkey_mgmt_1        — beheersleutel, hmac-md5
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>tkey_rpz_transfer  — zone transfer key, hmac-sha256
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>tkey_mgmt_1        : beheersleutel, hmac-md5
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>tkey_rpz_transfer  : zone transfer key, hmac-sha256
 </code></pre></div></p>
 <p><strong>Bronnen (Threat Feeds):</strong>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>urlhaus_rpz:   https://urlhaus.abuse.ch/downloads/rpz/
@@ -3918,14 +3918,14 @@ Zie <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWAR
 <p>Verwacht:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Transfer completed: 97 messages, 71767 records, 1557644 bytes, 0.645 secs
 </code></pre></div></p>
-<p><strong>TSIG-probleemoplossing</strong> — als <code>tsig indicates error</code> in named.log:
+<p><strong>TSIG-probleemoplossing:</strong> als <code>tsig indicates error</code> in named.log:
 1. Controleer klokverschil: <code>date -u</code> op zowel pop01 als mgmt01 (max 300s tolerantie)
 2. Verifieer dat sleutelnaam exact overeenkomt tussen ioc2rpz en BIND-configuraties
 3. In ioc2rpz GUI: zorg dat de TSIG-sleutel gekoppeld is aan de zone (niet alleen aangemaakt)</p>
 <hr />
 <h2 id="stap-6-unbound-rpz-activeren-op-pop01">Stap 6: Unbound RPZ activeren op pop01<a class="headerlink" href="#stap-6-unbound-rpz-activeren-op-pop01" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p><strong>Valkuil: Configuratiepad is <code>/usr/local/etc/unbound.opnsense.d/rpz.conf</code>, NIET <code>/var/unbound/etc/rpz.conf</code>.</strong> De <code>/var/unbound/</code> chroot wordt hergenererd bij elke Unbound-herstart — bestanden die daar geplaatst worden, worden verwijderd.
+<p><strong>Valkuil: Configuratiepad is <code>/usr/local/etc/unbound.opnsense.d/rpz.conf</code>, NIET <code>/var/unbound/etc/rpz.conf</code>.</strong> De <code>/var/unbound/</code> chroot wordt hergenererd bij elke Unbound-herstart; bestanden die daar geplaatst worden, worden verwijderd.
 Zie <a href="../../findings/unbound-config-path/">Finding: Unbound configuratiepad</a>.</p>
 </blockquote>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>vi<span class="w"> </span>/usr/local/etc/unbound.opnsense.d/rpz.conf
@@ -3956,7 +3956,7 @@ Zie <a href="../../findings/unbound-config-path/">Finding: Unbound configuratiep
 <a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="c1"># init module 2: validator</span>
 <a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="c1"># init module 3: iterator</span>
 </code></pre></div>
-<p>De OPNsense WebUI toont "The configuration contains manual overwrites" — dit is verwacht en correct.</p>
+<p>De OPNsense WebUI toont "The configuration contains manual overwrites"; dit is verwacht en correct.</p>
 <hr />
 <h2 id="stap-7-netbird-dns-primaire-nameserver-configureren">Stap 7: NetBird DNS primaire nameserver configureren<a class="headerlink" href="#stap-7-netbird-dns-primaire-nameserver-configureren" title="Permanent link">&para;</a></h2>
 <p>Deze stap is een <strong>vereiste voor client RPZ-bescherming</strong>. Zonder dit omzeilen externe queries van mobile01 Unbound volledig.</p>
@@ -3970,30 +3970,30 @@ Zie <a href="../../findings/netbird-primary-nameserver/">Finding: NetBird primai
 </blockquote>
 <hr />
 <h2 id="eindverificatie">Eindverificatie<a class="headerlink" href="#eindverificatie" title="Permanent link">&para;</a></h2>
-<p><strong>Testdomein:</strong> <code>testentry.rpz.urlhaus.abuse.ch</code> — een permanente testvermelding in de URLhaus RPZ-feed.</p>
+<p><strong>Testdomein:</strong> <code>testentry.rpz.urlhaus.abuse.ch</code>, een permanente testvermelding in de URLhaus RPZ-feed.</p>
 <p><strong>Onderscheid tussen RPZ en reguliere NXDOMAIN:</strong> Een RPZ-blokkering heeft de <code>aa</code>-vlag (authoritative answer). Reguliere internet NXDOMAIN heeft deze niet.</p>
-<p><strong>Testpunt 1 — pop01 lokaal:</strong></p>
+<p><strong>Testpunt 1: pop01 lokaal:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>drill<span class="w"> </span>@127.0.0.1<span class="w"> </span>testentry.rpz.urlhaus.abuse.ch
 <a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="c1"># Verwacht: rcode: NXDOMAIN, flags: aa</span>
 </code></pre></div>
-<p><strong>Testpunt 2 — mobile01 via NetBird:</strong></p>
+<p><strong>Testpunt 2: mobile01 via NetBird:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">nslookup</span> <span class="n">testentry</span><span class="p">.</span><span class="n">rpz</span><span class="p">.</span><span class="n">urlhaus</span><span class="p">.</span><span class="n">abuse</span><span class="p">.</span><span class="n">ch</span>
 <a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="c"># Verwacht: Non-existent domain</span>
 </code></pre></div>
 <p>RPZ-log moet bron-IP <code>100.70.95.98</code> (mobile01) tonen.</p>
-<p><strong>Testpunt 3 — dc01 via DC-LAN:</strong></p>
+<p><strong>Testpunt 3: dc01 via DC-LAN:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>drill<span class="w"> </span>@10.0.0.1<span class="w"> </span>testentry.rpz.urlhaus.abuse.ch
 <a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="c1"># Verwacht: rcode: NXDOMAIN, flags: aa</span>
 </code></pre></div>
-<p><strong>Controletest — normaal domein werkt:</strong></p>
+<p><strong>Controletest: normaal domein werkt:</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>drill<span class="w"> </span>@127.0.0.1<span class="w"> </span>google.com
 <a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="c1"># Verwacht: rcode: NOERROR, geen aa-vlag, geldig A-record</span>
 </code></pre></div>
 <hr />
 <h2 id="bekende-openstaande-punten">Bekende openstaande punten<a class="headerlink" href="#bekende-openstaande-punten" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>ioc2rpz GUI JS-fix is niet persistent</strong> — opnieuw toepassen na containerrebuilds</li>
-<li><strong>DNS NOTIFY bereikt BIND niet direct</strong> — ioc2rpz stuurt NOTIFY naar poort 53, BIND luistert op 53530. Feeds worden bijgewerkt op het poll-interval van 3600s. Handmatige trigger: <code>rndc retransfer threat-intel.rpz.sase</code></li>
+<li><strong>ioc2rpz GUI JS-fix is niet persistent:</strong> opnieuw toepassen na containerrebuilds</li>
+<li><strong>DNS NOTIFY bereikt BIND niet direct:</strong> ioc2rpz stuurt NOTIFY naar poort 53, BIND luistert op 53530. Feeds worden bijgewerkt op het poll-interval van 3600s. Handmatige trigger: <code>rndc retransfer threat-intel.rpz.sase</code></li>
 </ul>
 <hr />
 <h2 id="checklist">Checklist<a class="headerlink" href="#checklist" title="Permanent link">&para;</a></h2>

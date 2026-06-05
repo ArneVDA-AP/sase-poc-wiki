@@ -3799,13 +3799,13 @@
 
 <h1 id="runbook-proxy-wpad">Runbook: Proxy &amp; WPAD<a class="headerlink" href="#runbook-proxy-wpad" title="Permanent link">&para;</a></h1>
 <p><strong>Bron:</strong> <code>raw/Doc1_Squid_WPAD_PAC.md</code>
-<strong>Node(s):</strong> pop01 (OPNsense — Squid) + mgmt01 (Caddy — WPAD)
+<strong>Node(s):</strong> pop01 (OPNsense, Squid) + mgmt01 (Caddy, WPAD)
 <strong>Vereisten:</strong> <a href="../02-ztna-overlay/">Runbook 02: ZTNA Overlay</a> afgerond
 <strong>Status:</strong> Operationeel</p>
 <hr />
 <h2 id="vereistenchecklist">Vereistenchecklist<a class="headerlink" href="#vereistenchecklist" title="Permanent link">&para;</a></h2>
 <ul>
-<li>[ ] NetBird overlay operationeel — pop01 heeft overlay-IP <code>100.70.154.79</code></li>
+<li>[ ] NetBird overlay operationeel; pop01 heeft overlay-IP <code>100.70.154.79</code></li>
 <li>[ ] mgmt01 heeft overlay-IP <code>100.70.135.241</code></li>
 <li>[ ] Caddy draait op mgmt01 (onderdeel van NetBird Docker-stack)</li>
 <li>[ ] OPNsense 25.1 met Squid ingeschakeld op pop01</li>
@@ -3815,7 +3815,7 @@
 <p>Via OPNsense GUI → Services → Squid Web Proxy → Forward Proxy → General: schakel transparante HTTP-proxy uit. Squid moet alleen hebben:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>http_port 10.0.0.1:3128
 </code></pre></div>
-<p>De LAN-interface blijft geconfigureerd — Squid vereist minstens één interface met een geldig IP om te starten.</p>
+<p>De LAN-interface blijft geconfigureerd; Squid vereist minstens één interface met een geldig IP om te starten.</p>
 <hr />
 <h2 id="stap-2-netbird-overlay-subnet-toevoegen-aan-squid-acl">Stap 2: NetBird overlay-subnet toevoegen aan Squid ACL<a class="headerlink" href="#stap-2-netbird-overlay-subnet-toevoegen-aan-squid-acl" title="Permanent link">&para;</a></h2>
 <p>Zonder dit geeft <code>curl -x http://100.70.154.79:3128 http://example.com</code> een <code>TCP_DENIED/403</code> terug.</p>
@@ -3832,7 +3832,7 @@
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>configctl<span class="w"> </span>proxy<span class="w"> </span>restart
 </code></pre></div>
 <blockquote>
-<p><strong>Valkuil: SSL-Bump-parameters MOETEN later aan deze listener worden toegevoegd (Stap 9).</strong> Een bare <code>http_port</code> zonder ssl-bump-vlaggen betekent dat verkeer via deze listener doorkomt als een CONNECT-tunnel zonder inspectie. Dit wordt hersteld in Stap 9 — vergeet dit niet.
+<p><strong>Valkuil: SSL-Bump-parameters MOETEN later aan deze listener worden toegevoegd (Stap 9).</strong> Een bare <code>http_port</code> zonder ssl-bump-vlaggen betekent dat verkeer via deze listener doorkomt als een CONNECT-tunnel zonder inspectie. Dit wordt hersteld in Stap 9; vergeet dit niet.
 Zie <a href="../../findings/pre-auth-ssl-bump-params/">Finding: pre-auth ssl-bump params</a>.</p>
 </blockquote>
 <p><strong>Verificatie:</strong></p>
@@ -3854,7 +3854,7 @@ Zie <a href="../../findings/pre-auth-ssl-bump-params/">Finding: pre-auth ssl-bum
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>sudo<span class="w"> </span>netbird<span class="w"> </span>service<span class="w"> </span>restart
 </code></pre></div>
 <blockquote>
-<p><strong>Valkuil: Service-herstart is verplicht na CA-import.</strong> Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded" — de daemon draait met de oude trust store.</p>
+<p><strong>Valkuil: Service-herstart is verplicht na CA-import.</strong> Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded"; de daemon draait met de oude trust store.</p>
 </blockquote>
 <p><strong>Verificatie:</strong> <code>netbird status</code> toont Connected, overlay-IP <code>100.70.135.241</code>.</p>
 <hr />
@@ -3865,7 +3865,7 @@ Zie <a href="../../findings/pre-auth-ssl-bump-params/">Finding: pre-auth ssl-bum
 <a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./Caddyfile:/etc/caddy/Caddyfile</span>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./wpad:/srv/wpad:ro</span>
 </code></pre></div>
-<p>Voeg twee serverblokken toe aan het Caddyfile — <strong>beide zijn vereist</strong>:</p>
+<p>Voeg twee serverblokken toe aan het Caddyfile (<strong>beide zijn vereist</strong>):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>http://wpad.sandbox.local {
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    header /wpad.dat Content-Type application/x-ns-proxy-autoconfig
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    root * /srv/wpad
@@ -3892,7 +3892,7 @@ Zie <a href="../../findings/pre-auth-ssl-bump-params/">Finding: pre-auth ssl-bum
 <a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;PROXY 100.70.154.79:3128&quot;</span><span class="p">;</span>
 <a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">}</span>
 </code></pre></div>
-<p>Gebruik <code>shExpMatch</code> in plaats van <code>dnsResolve</code> of <code>isInNet</code> — DNS-gebaseerde PAC-functies kunnen een time-out hebben in de WinHTTP-context.</p>
+<p>Gebruik <code>shExpMatch</code> in plaats van <code>dnsResolve</code> of <code>isInNet</code>; DNS-gebaseerde PAC-functies kunnen een time-out hebben in de WinHTTP-context.</p>
 <blockquote>
 <p><strong>Valkuil: Containerrecreatie vereist, geen herstart.</strong>
 Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-recreatie</a>.</p>
@@ -3913,9 +3913,9 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 </code></pre></div>
 <hr />
 <h2 id="stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren">Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren<a class="headerlink" href="#stap-7-het-acl-beleid-voor-proxy-dns-bereikbaarheid-verifieren" title="Permanent link">&para;</a></h2>
-<p>Onder het V34-personamodel (zie <a href="../../components/netbird/">Component: NetBird</a>) draagt één allow-beleid alle connectiviteit: <strong><code>Personas-to-Core-Services</code></strong> — sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.</p>
+<p>Onder het V34-personamodel (zie <a href="../../components/netbird/">Component: NetBird</a>) draagt één allow-beleid alle connectiviteit: <strong><code>Personas-to-Core-Services</code></strong>: sources <code>Studenten</code>/<code>Docenten</code>/<code>Admins</code> → destination <code>Core-Services</code> (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.</p>
 <blockquote>
-<p><strong>Verouderd:</strong> eerdere builds gebruikten aparte <code>Admin-Infrastructure</code>-, <code>Mobile-to-Services</code>- en <code>Datacenter Access</code>-policies op <code>SASE-*</code>-groepen. Die policies en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.</p>
+<p><strong>Verouderd:</strong> eerdere builds gebruikten aparte <code>Admin-Infrastructure</code>-, <code>Mobile-to-Services</code>- en <code>Datacenter Access</code>-policies op <code>SASE-*</code>-groepen. Die policies en groepen zijn verwijderd in de V34-migratie; maak ze niet opnieuw aan.</p>
 </blockquote>
 <p><strong>DNS-bereikbaarheidsvalkuil:</strong> een peer die de pop01-naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft, toont <code>Nameservers: 0/1 Available</code> in <code>netbird status</code>. Zorg dat de groep van de peer een ACL-pad naar <code>Core-Services</code> (pop01 Unbound) heeft.</p>
 <hr />
@@ -3963,17 +3963,17 @@ Zie <a href="../../findings/docker-volume-recreation/">Finding: Docker volume-re
 <a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>.bet365.com
 <a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>.pokerstars.com
 </code></pre></div>
-<p><strong>Verificatie</strong> — gebruik curl, niet een browser (browsercache maskeert blokkering):</p>
+<p><strong>Verificatie:</strong> gebruik curl, niet een browser (browsercache maskeert blokkering):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="n">curl</span><span class="p">.</span><span class="n">exe</span> <span class="n">-x</span> <span class="n">http</span><span class="p">://</span><span class="n">100</span><span class="p">.</span><span class="n">70</span><span class="p">.</span><span class="n">154</span><span class="p">.</span><span class="n">79</span><span class="p">:</span><span class="n">3128</span> <span class="n">http</span><span class="p">://</span><span class="n">gambling</span><span class="p">.</span><span class="n">com</span> <span class="n">-v</span>
 <a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="c"># Verwacht: HTTP/1.1 403 Forbidden, X-Squid-Error: ERR_ACCESS_DENIED 0</span>
 </code></pre></div>
 <hr />
 <h2 id="bekende-cosmetische-problemen">Bekende cosmetische problemen<a class="headerlink" href="#bekende-cosmetische-problemen" title="Permanent link">&para;</a></h2>
-<p><strong>OPNsense "Clear log" verwijdert het logbestand</strong> — de WebUI-knop verwijdert in plaats van afkapt. Squid stopt met loggen. Oplossing:</p>
+<p><strong>OPNsense "Clear log" verwijdert het logbestand:</strong> de WebUI-knop verwijdert in plaats van afkapt. Squid stopt met loggen. Oplossing:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>&gt;<span class="w"> </span>/var/log/squid/access.log<span class="w">   </span><span class="c1"># afkappen zonder verwijderen</span>
 </code></pre></div>
 <p>Zie <a href="../../findings/squid-clearlog-destroys-file/">Finding: Squid clearlog vernietigt bestand</a>.</p>
-<p><strong>Squid segfault bij stoppen is cosmetisch</strong> — treedt op tijdens de stopfase van <code>configctl proxy restart</code> op FreeBSD. De daemon herstart correct. Geen functionele impact.</p>
+<p><strong>Squid segfault bij stoppen is cosmetisch:</strong> treedt op tijdens de stopfase van <code>configctl proxy restart</code> op FreeBSD. De daemon herstart correct. Geen functionele impact.</p>
 <hr />
 <h2 id="eindverificatie">Eindverificatie<a class="headerlink" href="#eindverificatie" title="Permanent link">&para;</a></h2>
 <ul>

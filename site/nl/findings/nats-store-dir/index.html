@@ -3577,7 +3577,7 @@
 <p>NATS maakt dan <code>/data/jetstream/</code> aan zoals verwacht. Dit werd empirisch bevestigd via het NATS-opstartlog (V32).</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Verifieer altijd NATS JetStream-opslagpaden in opstartlogs na deployment — de documentatie kan misleidend zijn over automatische pad-suffixing</li>
+<li>Verifieer altijd NATS JetStream-opslagpaden in opstartlogs na deployment; de documentatie kan misleidend zijn over automatische pad-suffixing</li>
 <li>De dubbele nesting veroorzaakt geen dataverlies maar breekt aannames van tooling over waar streamdata zich bevindt</li>
 <li>Geef bij het configureren van JetStream alleen de bovenliggende directory op; NATS voegt zelf de <code>jetstream/</code>-subdirectory toe</li>
 </ul>

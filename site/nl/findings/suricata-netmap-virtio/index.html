@@ -3564,14 +3564,14 @@
 <p>Terugkeren naar IDS-modus (PCAP) herstelde de normale alertactiviteit.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p>Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning: Intel igb, ixgbe; Broadcom bge. Het QEMU virtio NIC-stuurprogramma (<code>vtnet</code>) heeft geen Netmap-ondersteuning.</p>
-<p>Wanneer Netmap wordt ingeschakeld op een niet-ondersteunde NIC, start Suricata maar worden de Netmap-ringbuffers nooit gevuld. Suricata wacht op paketten die nooit aankomen. Er wordt geen fout gelogd — vanuit het perspectief van Suricata bestaat de interface en is Netmap geïnitialiseerd, maar de ring is simpelweg leeg.</p>
+<p>Wanneer Netmap wordt ingeschakeld op een niet-ondersteunde NIC, start Suricata maar worden de Netmap-ringbuffers nooit gevuld. Suricata wacht op paketten die nooit aankomen. Er wordt geen fout gelogd: vanuit het perspectief van Suricata bestaat de interface en is Netmap geïnitialiseerd, maar de ring is simpelweg leeg.</p>
 <p><code>sysctl hw.model</code> op QEMU-VM's toont een generieke processorstring en helpt niet bij het identificeren van NIC-ondersteuning. De betrouwbare controle is <code>dmesg | grep -i features</code> voor SSE4.2 (nodig voor Hyperscan, niet voor Netmap), en het verifiëren van het NIC-stuurprogramma via <code>dmesg | grep vtnet</code>.</p>
 <h2 id="oplossing-workaround">Oplossing / workaround<a class="headerlink" href="#oplossing-workaround" title="Permanent link">&para;</a></h2>
-<p>Blijf in IDS-modus (PCAP). De gedifferentieerde drop/alert-beleidstabel is geconfigureerd en gereed. Op fysieke hardware met Intel igb/ixgbe of Broadcom bge NIC's kan IPS-modus worden geactiveerd door de schakelaar in te schakelen — het beleid is al correct.</p>
+<p>Blijf in IDS-modus (PCAP). De gedifferentieerde drop/alert-beleidstabel is geconfigureerd en gereed. Op fysieke hardware met Intel igb/ixgbe of Broadcom bge NIC's kan IPS-modus worden geactiveerd door de schakelaar in te schakelen; het beleid is al correct.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Netmap-ondersteuning is NIC-stuurprogrammaspecifiek, geen kernelmogelijkheid</li>
-<li>virtio-NIC's (de QEMU-standaard) ondersteunen Netmap niet — dit is een harde beperking</li>
+<li>virtio-NIC's (de QEMU-standaard) ondersteunen Netmap niet; dit is een harde beperking</li>
 <li>Wanneer IPS-modus 0 paketten produceert zonder fout, is de eerste verdachte Netmap/NIC-incompatibiliteit</li>
 <li>Test altijd IPS-modusactivering in een lab vóór productie: terugkeren naar IDS-modus herstelt de vorige toestand onmiddellijk</li>
 </ul>

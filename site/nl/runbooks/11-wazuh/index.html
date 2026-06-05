@@ -2593,7 +2593,7 @@
   <a href="#stap-5-casb-laag-2-configureren-m365-api-integratie" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 5: CASB Laag 2 configureren — M365 API-integratie
+        Stap 5: CASB Laag 2 configureren (M365 API-integratie)
       
     </span>
   </a>
@@ -3595,7 +3595,7 @@
   <a href="#stap-5-casb-laag-2-configureren-m365-api-integratie" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Stap 5: CASB Laag 2 configureren — M365 API-integratie
+        Stap 5: CASB Laag 2 configureren (M365 API-integratie)
       
     </span>
   </a>
@@ -3703,7 +3703,7 @@
 
 
 <h1 id="runbook-wazuh-siem">Runbook: Wazuh SIEM<a class="headerlink" href="#runbook-wazuh-siem" title="Permanent link">&para;</a></h1>
-<p><strong>Node(s):</strong> mgmt01 (Docker — Wazuh-stack + NATS-forwarder), pop01 (Wazuh-agent)
+<p><strong>Node(s):</strong> mgmt01 (Docker, Wazuh-stack + NATS-forwarder), pop01 (Wazuh-agent)
 <strong>Vereisten:</strong> <a href="../10-nats-jetstream/">Runbook 10: NATS JetStream</a> afgerond (NATS operationeel), Docker op mgmt01
 <strong>Status:</strong> Operationeel</p>
 <hr />
@@ -3758,7 +3758,7 @@
 <p>Deploy een Python-container op mgmt01 die NATS-events naar Wazuh overbrugt:</p>
 <ol>
 <li>De forwarder is een <strong>durable PULL-consumer</strong> (<code>DeliverPolicy.NEW</code>, <code>AckPolicy.EXPLICIT</code>) op <code>security.alert.&gt;</code></li>
-<li>Voor elk ontvangen event schrijft het een regel NDJSON naar het gedeelde <code>wazuh_nats_ingest</code>-volume (<code>/ingest/security_alerts.json</code>). De Wazuh manager tailt dat bestand via een <code>&lt;localfile&gt;&lt;log_format&gt;json&lt;/log_format&gt;&lt;/localfile&gt;</code>-blok — dit is het werkende ingestiepad; rechtstreeks naar de manager-socket schrijven en naar de Wazuh-API posten zijn beide geëvalueerd en verworpen.</li>
+<li>Voor elk ontvangen event schrijft het een regel NDJSON naar het gedeelde <code>wazuh_nats_ingest</code>-volume (<code>/ingest/security_alerts.json</code>). De Wazuh manager tailt dat bestand via een <code>&lt;localfile&gt;&lt;log_format&gt;json&lt;/log_format&gt;&lt;/localfile&gt;</code>-blok. Dit is het werkende ingestiepad; rechtstreeks naar de manager-socket schrijven en naar de Wazuh-API posten zijn beide geëvalueerd en verworpen.</li>
 <li>Dit creëert een <strong>dual-write-architectuur</strong>: beveiligingsevents stromen onafhankelijk naar zowel de Control Daemon (voor geautomatiseerde respons) als Wazuh (voor logging, correlatie en onderzoek)</li>
 </ol>
 <blockquote>
@@ -3779,7 +3779,7 @@
 <li>Configureer de agent om verbinding te maken met de Wazuh Manager op mgmt01</li>
 <li>Registreer de agent (agent-ID: 001)</li>
 </ol>
-<p>Configureer logverzameling op hostniveau. De agent levert de OPNsense-<strong>host</strong>telemetrie (hij monitort <strong>niet</strong> Suricata/Squid/c-icap/Unbound — die bereiken Wazuh via hun eigen NATS-producers en de forwarder, dus de agent heeft <code>intrusion_detection_events=false</code> om dubbel-ingest te vermijden):</p>
+<p>Configureer logverzameling op hostniveau. De agent levert de OPNsense-<strong>host</strong>telemetrie (hij monitort <strong>niet</strong> Suricata/Squid/c-icap/Unbound; die bereiken Wazuh via hun eigen NATS-producers en de forwarder, dus de agent heeft <code>intrusion_detection_events=false</code> om dubbel-ingest te vermijden):</p>
 <table>
 <thead>
 <tr>
@@ -3817,12 +3817,12 @@
 </tbody>
 </table>
 <ol>
-<li>De agent heeft ook <code>active_response=false</code> — Active Response (handhaving) is eigendom van de Control Daemon (Laag 3), niet van de agent op pop01.</li>
+<li>De agent heeft ook <code>active_response=false</code>. Active Response (handhaving) is eigendom van de Control Daemon (Laag 3), niet van de agent op pop01.</li>
 </ol>
 <p>Herstart de agent en verifieer registratie:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Op Wazuh Manager (mgmt01)</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>/var/ossec/bin/agent_control<span class="w"> </span>-l
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Verwacht: agent 001 (pop01) — Active</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Verwacht: agent 001 (pop01), Active</span>
 </code></pre></div>
 <hr />
 <h2 id="stap-4-aangepaste-wazuh-regels-configureren">Stap 4: Aangepaste Wazuh-regels configureren<a class="headerlink" href="#stap-4-aangepaste-wazuh-regels-configureren" title="Permanent link">&para;</a></h2>
@@ -3838,7 +3838,7 @@
 <tbody>
 <tr>
 <td>100500</td>
-<td c-icap_="c-icap," dlp_="dlp," squid_="squid," suricata_="suricata," unbound="unbound">basis — <code>producer</code> ∈</td>
+<td c-icap_="c-icap," dlp_="dlp," squid_="squid," suricata_="suricata," unbound="unbound">basis, <code>producer</code> ∈</td>
 <td>0</td>
 </tr>
 <tr>
@@ -3881,12 +3881,12 @@
 <blockquote>
 <p><strong>Valkuil:</strong> de kinderen hangen aan de basis via <code>if_sid 100500</code>, dus de pcre2-alternatie van de basis moet elke producer bevatten. <code>unbound</code> ontbrak aanvankelijk, waardoor regel 100540 nooit afvuurde totdat het werd toegevoegd (V38.9).</p>
 </blockquote>
-<p>Plaats aangepaste regels in <code>config/mgmt01/wazuh/local_rules.xml</code> (gemount in de manager). Herstart na het bewerken van regels de manager — nooit <code>docker restart</code>:</p>
+<p>Plaats aangepaste regels in <code>config/mgmt01/wazuh/local_rules.xml</code> (gemount in de manager). Herstart na het bewerken van regels de manager (nooit <code>docker restart</code>):</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>single-node-wazuh.manager-1<span class="w"> </span>/var/ossec/bin/wazuh-control<span class="w"> </span>restart
 </code></pre></div>
 <hr />
-<h2 id="stap-5-casb-laag-2-configureren-m365-api-integratie">Stap 5: CASB Laag 2 configureren — M365 API-integratie<a class="headerlink" href="#stap-5-casb-laag-2-configureren-m365-api-integratie" title="Permanent link">&para;</a></h2>
-<p>CASB Laag 2 pollt de Microsoft 365-auditactiviteit en remedieert riskante shares. Er is <strong>geen</strong> "Wazuh office365-module" in deze opstelling — een aangepaste producer doet de polling:</p>
+<h2 id="stap-5-casb-laag-2-configureren-m365-api-integratie">Stap 5: CASB Laag 2 configureren (M365 API-integratie)<a class="headerlink" href="#stap-5-casb-laag-2-configureren-m365-api-integratie" title="Permanent link">&para;</a></h2>
+<p>CASB Laag 2 pollt de Microsoft 365-auditactiviteit en remedieert riskante shares. Er is <strong>geen</strong> "Wazuh office365-module" in deze opstelling; een aangepaste producer doet de polling:</p>
 <ol>
 <li>Deploy de <code>o365_producer</code>-container op mgmt01:</li>
 <li>Pollt de <strong>Office 365 Management Activity API</strong> (<code>contentType=Audit.SharePoint</code>) met app-registration-referenties voor de aplab.be-tenant</li>
@@ -3909,7 +3909,7 @@
 <tbody>
 <tr>
 <td>100600</td>
-<td>basis — <code>producer</code> = <code>o365</code></td>
+<td>basis, <code>producer</code> = <code>o365</code></td>
 <td>0</td>
 </tr>
 <tr>
@@ -3931,12 +3931,12 @@
 </table>
 <ol>
 <li>Deploy de Active Response-scripts (geport uit het CASB-project van het team), achter een <code>ENFORCE</code>-gate die <strong>standaard op detect-only staat</strong> (<code>ENFORCE=false</code>):</li>
-<li><code>sharepoint_remediate.sh</code> — getriggerd door regels <strong>100601, 100602</strong>; trekt de anonieme / anyone-link in via de Microsoft Graph API</li>
-<li><code>guest_remediate.sh</code> — getriggerd door regel <strong>100603</strong>; verwijdert de gasttoekenning</li>
+<li><code>sharepoint_remediate.sh</code>: getriggerd door regels <strong>100601, 100602</strong>; trekt de anonieme / anyone-link in via de Microsoft Graph API</li>
+<li><code>guest_remediate.sh</code>: getriggerd door regel <strong>100603</strong>; verwijdert de gasttoekenning</li>
 <li>Beide lezen Graph-referenties uit <code>graph.env</code> (in het <code>wazuh_etc</code>-volume, nooit gecommit) en loggen de herstelactie</li>
 </ol>
 <blockquote>
-<p><strong>Valkuil: jq-afhankelijkheid.</strong> De Active Response-scripts hebben <code>jq</code> nodig, dat niet in de standaard manager-image zit — zonder dit faalt het script stilletjes bij de eerste aanroep. Installeer het persistent via de <code>install_deps.sh</code>-entrypointwrapper plus een compose <code>entrypoint:</code>-override (V39); een gewone <code>yum install</code> overleeft een recreate niet.</p>
+<p><strong>Valkuil: jq-afhankelijkheid.</strong> De Active Response-scripts hebben <code>jq</code> nodig, dat niet in de standaard manager-image zit; zonder dit faalt het script stilletjes bij de eerste aanroep. Installeer het persistent via de <code>install_deps.sh</code>-entrypointwrapper plus een compose <code>entrypoint:</code>-override (V39); een gewone <code>yum install</code> overleeft een recreate niet.</p>
 <p><strong>Opmerking:</strong> Dit is CASB Laag 2 in de drielaagse CASB-architectuur. Zie <a href="../../decisions/casb-three-layers/">Beslissing: CASB drie lagen</a> voor het volledige ontwerp.</p>
 </blockquote>
 <hr />
@@ -3950,7 +3950,7 @@
 </code></pre></div>
 <p><strong>Verwacht:</strong> Events van Suricata, Squid, DNS RPZ en DLP verschijnen in het dashboard met correct geparseerde velden.</p>
 <blockquote>
-<p><strong>Opmerking:</strong> Het dashboard toonde eerder "Status: Offline" door een lege manager-UUID (gewist door <code>docker compose down -v</code>) — opgelost op 2 juni 2026 via in-place bump naar 4.14.5. De <code>Error checking updates</code> CTI-500 (air-gap, cosmetisch) blijft aanwezig maar is non-blocking in 4.14.5+. App-modules en Discover werken beide volledig. Zie <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
+<p><strong>Opmerking:</strong> Het dashboard toonde eerder "Status: Offline" door een lege manager-UUID (gewist door <code>docker compose down -v</code>), opgelost op 2 juni 2026 via in-place bump naar 4.14.5. De <code>Error checking updates</code> CTI-500 (air-gap, cosmetisch) blijft aanwezig maar is non-blocking in 4.14.5+. App-modules en Discover werken beide volledig. Zie <a href="../../findings/wazuh-dashboard-airgate/">Finding: Wazuh Dashboard airgate</a>.</p>
 </blockquote>
 <hr />
 <h2 id="stap-7-casb-active-response-verifieren">Stap 7: CASB Active Response verifiëren<a class="headerlink" href="#stap-7-casb-active-response-verifieren" title="Permanent link">&para;</a></h2>

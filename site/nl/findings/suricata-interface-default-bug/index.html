@@ -3561,7 +3561,7 @@
 <strong>Ernst:</strong> Blokker</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
 <p>Suricata was geconfigureerd om WAN- en LAN-interfaces te bewaken. vtnet1 (LAN) genereerde geen alerts ondanks dat dc01 verkeer produceerde (apt update, SSH-sessies). Testcases voor regels die op vtnet1 zouden moeten activeren, leverden geen events op.</p>
-<p><code>procstat -f &lt;PID&gt; | grep bpf</code> bevestigde dat vtnet1 een BPF-apparaat open had op OS-niveau, maar Suricata stuurde er geen pakketten naartoe — de BPF-descriptor bestond maar produceerde nul events.</p>
+<p><code>procstat -f &lt;PID&gt; | grep bpf</code> bevestigde dat vtnet1 een BPF-apparaat open had op OS-niveau, maar Suricata stuurde er geen pakketten naartoe: de BPF-descriptor bestond maar produceerde nul events.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p><code>custom.yaml</code> bevatte:
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">pcap</span><span class="p">:</span>
@@ -3584,8 +3584,8 @@
 <p>Na de correctie: <code>procstat -f &lt;PID&gt; | grep bpf</code> toont twee BPF-descriptors en vtnet1-events verschijnen binnen minuten.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Gebruik nooit <code>interface: default</code> in Suricata custom.yaml — vermeld altijd elke interface expliciet</li>
-<li><code>sockstat</code> toont geen Suricata-sockets (het gebruikt BPF, geen TCP/UDP) — gebruik <code>procstat -f &lt;PID&gt; | grep bpf</code></li>
+<li>Gebruik nooit <code>interface: default</code> in Suricata custom.yaml; vermeld altijd elke interface expliciet</li>
+<li><code>sockstat</code> toont geen Suricata-sockets (het gebruikt BPF, geen TCP/UDP); gebruik <code>procstat -f &lt;PID&gt; | grep bpf</code></li>
 <li>Verifieer dat het aantal BPF-descriptors overeenkomt met het aantal geconfigureerde interfaces</li>
 </ul>
 

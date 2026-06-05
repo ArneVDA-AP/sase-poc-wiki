@@ -3560,7 +3560,7 @@
 <p><strong>Component:</strong> <a href="../../components/netbird/">NetBird</a><br />
 <strong>Ernst:</strong> Valkuil</p>
 <h2 id="wat-er-gebeurde">Wat er gebeurde<a class="headerlink" href="#wat-er-gebeurde" title="Permanent link">&para;</a></h2>
-<p>Nadat GNS3 het pop01 node stopte met een SIGKILL (in plaats van een correcte <code>shutdown -h now</code>) startte NetBird niet op bij de volgende opstart zonder nuttige foutmelding. Interface <code>wt0</code> bestond niet. Alle services afhankelijk van het overlay-IP (<code>100.70.154.79</code>) — de Squid pre-auth listener, WPAD — waren niet functioneel.</p>
+<p>Nadat GNS3 het pop01 node stopte met een SIGKILL (in plaats van een correcte <code>shutdown -h now</code>) startte NetBird niet op bij de volgende opstart zonder nuttige foutmelding. Interface <code>wt0</code> bestond niet. Alle services afhankelijk van het overlay-IP (<code>100.70.154.79</code>, waaronder de Squid pre-auth listener en WPAD) waren niet functioneel.</p>
 <p><code>ls -la /var/db/netbird/config.json</code> toonde 0 bytes.</p>
 <h2 id="oorzaak">Oorzaak<a class="headerlink" href="#oorzaak" title="Permanent link">&para;</a></h2>
 <p>FreeBSD's UFS-bestandssysteem met soft updates schrijft journaalupdates asynchroon. Wanneer QEMU wordt gedood (GNS3 "Stop node" = SIGKILL naar het QEMU-proces), gaan gegevens in de schrijfbuffer die nog niet naar schijf zijn geleegd verloren. Het inode van het configuratiebestand bestaat (de bestandsnaam is bewaard) maar de inhoud was niet vastgelegd op schijf vóór de kill.</p>
@@ -3577,10 +3577,10 @@
 <p><strong>Voorkoming aan de bron:</strong> Sluit OPNsense altijd af via <code>shutdown -h now</code> vóór het stoppen van het GNS3 node.</p>
 <h2 id="lessen">Lessen<a class="headerlink" href="#lessen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>GNS3 "Stop node" = QEMU SIGKILL — behandel het als een stroomonderbreking</li>
+<li>GNS3 "Stop node" = QEMU SIGKILL; behandel het als een stroomonderbreking</li>
 <li>FreeBSD UFS soft updates zijn kwetsbaar voor schrijfbufferverlies bij abrupte beëindiging</li>
 <li>Maak een back-up van kritieke configuratiebestanden (NetBird config.json, andere applicatiestatus) aan het einde van de sessie</li>
-<li>Het symptoom (0-byte configuratiebestand, service start niet) is kenmerkend — controleer dit eerst wanneer NetBird niet reageert na het stoppen van een GNS3 node</li>
+<li>Het symptoom (0-byte configuratiebestand, service start niet) is kenmerkend; controleer dit eerst wanneer NetBird niet reageert na het stoppen van een GNS3 node</li>
 </ul>
 
 
