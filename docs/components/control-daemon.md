@@ -17,7 +17,7 @@ The control daemon is the real-time enforcement engine. It subscribes to `securi
 2. **Scoring:** Dispatches on `producer` field (not subject). Each event type has a configurable weight. Scores use sliding-window decay via Redis sorted sets.
 3. **Decision:** When a peer's score exceeds the quarantine threshold (default: 80), the daemon removes the peer from all policy-bearing persona groups via NetBird Groups API. Without persona group membership, deny-by-default blocks all connectivity.
 
-**Current state:** `ENFORCE=false` (dry-run) until demo preparation (Session 11).
+**Current state:** `ENFORCE=false` (dry-run) until demo preparation.
 
 ## Configuration
 

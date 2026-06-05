@@ -55,10 +55,10 @@ Because Intune reports actual device state through the management agent (attesta
 | Policy | Status |
 |--------|--------|
 | CA Policy 1 — MFA required | ✅ Active |
-| CA Policy 2 — Geo-block (Belgium only) | Report-only: Success proven — → On at Session 11 |
+| CA Policy 2 — Geo-block (Belgium only) | Report-only: Success proven — → On at demo |
 | CA Policy 3 — Legacy auth blocking | ✅ Active |
 | CA Policy 4 — Risk-based blocking | ✅ Active |
-| CA Policy 5 — Compliant device required | Report-only: Success proven — → On at Session 11 |
+| CA Policy 5 — Compliant device required | Report-only: Success proven — → On at demo |
 
 All policies target ALL resources (not a specific app) — CA policies targeting a specific app never fire on NetBird/Zitadel OIDC sign-ins because CA matches on token resource (Microsoft Graph), not client app. This disproves Addendum E section E.2.2's core scoping strategy. User-scoping via persona groups with admin1 as break-glass exclude.
 
@@ -69,11 +69,11 @@ All policies target ALL resources (not a specific app) — CA policies targeting
 | Intune compliance policy (OS version, Defender AV + firewall, real-time protection) | ✅ Active |
 | mobile01 (`2ITCSC1A-MOB-1`) Entra joined + Intune enrolled + compliant | ✅ Verified |
 
-BitLocker/TPM dropped — rubric requires "device posture", not encryption. Three posture checks: OS version, AV, firewall. Policy on Report-only until demo preparation (Session 11).
+BitLocker/TPM dropped — rubric requires "device posture", not encryption. Three posture checks: OS version, AV, firewall. Policy on Report-only until demo preparation.
 
 ## Consequences
 
-- Gate 1 (Entra ID CA) and Gate 2 (Intune compliance) are both live as of Verslag40: four CA policies enforcing (MFA, legacy-auth block, risk-block) plus Policy 5 (compliant device) and Geo-Block held at Report-only until Session 11. Gate 3 (SWG pipeline) operates independently of identity/device on every request — so all three gates are operational, not just Gate 3
+- Gate 1 (Entra ID CA) and Gate 2 (Intune compliance) are both live as of Verslag40: four CA policies enforcing (MFA, legacy-auth block, risk-block) plus Policy 5 (compliant device) and Geo-Block held at Report-only until demo. Gate 3 (SWG pipeline) operates independently of identity/device on every request — so all three gates are operational, not just Gate 3
 - Activation of Gate 1 requires MFA pre-registration for test accounts before enabling policies (unregistered MFA produces a loop that blocks even the verification session)
 - The admins persona falls under no CA policy — `2itcsc1a_admin1` is its sole member and is the break-glass exclude on every policy, so it is deliberately ungoverned to prevent lockout
 - Intune Gate 2 depends on the Microsoft control plane being reachable un-bumped: `*.microsoftonline.com` and `enterpriseregistration.windows.net` are on the Squid splice/no-bump list, otherwise device registration and the compliant-device check (Policy 5) break

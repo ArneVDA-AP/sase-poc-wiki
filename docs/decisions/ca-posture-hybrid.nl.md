@@ -55,10 +55,10 @@ Omdat Intune de werkelijke apparaatstatus rapporteert via de beheeragent (attest
 | Policy | Status |
 |--------|--------|
 | CA Policy 1 (MFA vereist) | ✅ Actief |
-| CA Policy 2 (Geo-blokkering, alleen België) | Report-only: Success bewezen, On bij Sessie 11 |
+| CA Policy 2 (Geo-blokkering, alleen België) | Report-only: Success bewezen, On bij demo |
 | CA Policy 3 (Legacy-auth blokkering) | ✅ Actief |
 | CA Policy 4 (Risico-gebaseerde blokkering) | ✅ Actief |
-| CA Policy 5 (Conform apparaat vereist) | Report-only: Success bewezen, On bij Sessie 11 |
+| CA Policy 5 (Conform apparaat vereist) | Report-only: Success bewezen, On bij demo |
 
 Alle policies richten zich op ALLE resources (niet een specifieke app): CA-policies gericht op een specifieke app vuren nooit bij NetBird/Zitadel OIDC-aanmeldingen omdat CA matcht op tokenresource (Microsoft Graph), niet op client-app. Dit weerlegt de kernscopingstrategie van Addendum E sectie E.2.2. User-scoping via persona-groepen met admin1 als break-glass uitsluiting.
 
@@ -69,11 +69,11 @@ Alle policies richten zich op ALLE resources (niet een specifieke app): CA-polic
 | Intune-conformiteitsbeleid (OS-versie, Defender AV + firewall, real-time protection) | ✅ Actief |
 | mobile01 (`2ITCSC1A-MOB-1`) Entra joined + Intune enrolled + conform | ✅ Geverifieerd |
 
-BitLocker/TPM geschrapt: rubric vereist "device posture", niet encryptie. Drie posturecontroles: OS-versie, AV, firewall. Policy op Report-only tot demo-voorbereiding (Sessie 11).
+BitLocker/TPM geschrapt: rubric vereist "device posture", niet encryptie. Drie posturecontroles: OS-versie, AV, firewall. Policy op Report-only tot demo-voorbereiding.
 
 ## Gevolgen
 
-- Gate 1 (Entra ID CA) en Gate 2 (Intune-conformiteit) zijn beide live sinds Verslag40: vier CA-policies die handhaven (MFA, legacy-auth-blokkering, risico-blokkering) plus Policy 5 (conform apparaat) en Geo-Block op Report-only tot Sessie 11. Gate 3 (SWG-pipeline) werkt onafhankelijk van identiteit/apparaat bij elke aanvraag, dus alle drie de gates zijn operationeel, niet alleen Gate 3
+- Gate 1 (Entra ID CA) en Gate 2 (Intune-conformiteit) zijn beide live sinds Verslag40: vier CA-policies die handhaven (MFA, legacy-auth-blokkering, risico-blokkering) plus Policy 5 (conform apparaat) en Geo-Block op Report-only tot demo. Gate 3 (SWG-pipeline) werkt onafhankelijk van identiteit/apparaat bij elke aanvraag, dus alle drie de gates zijn operationeel, niet alleen Gate 3
 - Activering van Gate 1 vereist MFA-pre-registratie voor testaccounts vóór het inschakelen van policies (niet-geregistreerde MFA veroorzaakt een lus die zelfs de verificatiesessie blokkeert)
 - De admins-persona valt onder geen enkele CA-policy: `2itcsc1a_admin1` is het enige lid en is de break-glass-uitsluiting op elke policy, dus deze is bewust ongereguleerd om uitsluiting te voorkomen
 - Intune Gate 2 is afhankelijk van het un-bumped bereikbaar zijn van de Microsoft control plane: `*.microsoftonline.com` en `enterpriseregistration.windows.net` staan op de Squid splice/no-bump-lijst, anders breken apparaatregistratie en de conform-apparaatcontrole (Policy 5)

@@ -50,6 +50,6 @@ echo 'http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem \
 
 ## Sources
 
-- `raw/Doc1_Squid_WPAD_PAC.md` §2 (SSL Bump configuration, no-bump list)
-- `raw/Verslag20.md` (ssl-bump finding for pre-auth include)
-- `raw/Doc2_ClamAV_DLP_Pipeline.md` (dependency on SSL Bump for inspection)
+- `Doc1_Squid_WPAD_PAC.md` §2 (SSL Bump configuration, no-bump list)
+- `Verslag20.md` (ssl-bump finding for pre-auth include)
+- `Doc2_ClamAV_DLP_Pipeline.md` (dependency on SSL Bump for inspection)

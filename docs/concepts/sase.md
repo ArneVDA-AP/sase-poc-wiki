@@ -42,9 +42,9 @@ The PoC replaces the perimeter model with a SASE stack where:
 
 ## Sources
 
-- `raw/SASE_Architectuur_Overzicht.md` §1–3 (conceptual framing, five pillars, three-gate model)
-- `raw/Doc1_Squid_WPAD_PAC.md` §1 (SWG positioning)
-- `raw/Doc6_NetBird_ZTNA.md` §1 (ZTNA positioning)
+- `SASE_Architectuur_Overzicht.md` §1–3 (conceptual framing, five pillars, three-gate model)
+- `Doc1_Squid_WPAD_PAC.md` §1 (SWG positioning)
+- `Doc6_NetBird_ZTNA.md` §1 (ZTNA positioning)
 
 ## CASB three-layer model
 

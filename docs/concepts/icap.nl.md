@@ -49,6 +49,6 @@ Beide ICAP-services draaien gelijktijdig en onafhankelijk. ICAP REQMOD verwerkt 
 
 ## Bronnen
 
-- `raw/Doc1_Squid_WPAD_PAC.md` §2 (Squid ICAP-orchestratie)
-- `raw/Doc2_ClamAV_DLP_Pipeline.md` (ClamAV RESPMOD, waarom REQMOD niet werkt voor uploads)
-- `raw/Verslag21.md` (Python DLP-beslissing, twee-laags architectuur)
+- `Doc1_Squid_WPAD_PAC.md` §2 (Squid ICAP-orchestratie)
+- `Doc2_ClamAV_DLP_Pipeline.md` (ClamAV RESPMOD, waarom REQMOD niet werkt voor uploads)
+- `Verslag21.md` (Python DLP-beslissing, twee-laags architectuur)

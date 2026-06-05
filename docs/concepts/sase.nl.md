@@ -42,9 +42,9 @@ De PoC vervangt het perimetermodel door een SASE-stack waarbij:
 
 ## Bronnen
 
-- `raw/SASE_Architectuur_Overzicht.md` §1–3 (conceptueel kader, vijf pijlers, drie-gate model)
-- `raw/Doc1_Squid_WPAD_PAC.md` §1 (SWG-positionering)
-- `raw/Doc6_NetBird_ZTNA.md` §1 (ZTNA-positionering)
+- `SASE_Architectuur_Overzicht.md` §1–3 (conceptueel kader, vijf pijlers, drie-gate model)
+- `Doc1_Squid_WPAD_PAC.md` §1 (SWG-positionering)
+- `Doc6_NetBird_ZTNA.md` §1 (ZTNA-positionering)
 
 ## CASB drie-lagenmodel
 

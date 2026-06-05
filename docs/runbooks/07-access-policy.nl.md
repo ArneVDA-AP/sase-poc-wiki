@@ -5,12 +5,12 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 
 # Runbook: Toegangsbeleid
 
-**Bron:** `raw/Verslag40.md` (implementatie, 2 juni 2026); `raw/Doc7_ZTNA_Context_Aware.md` + Addendum E.2 (ontwerpintentie)
+**Bron:** `Verslag40.md` (implementatie, 2 juni 2026); `Doc7_ZTNA_Context_Aware.md` + Addendum E.2 (ontwerpintentie)
 **Node(s):** Entra ID (`aplab.be`-tenant) + Intune + NetBird Dashboard
 **Vereisten:** Alle voorgaande runbooks afgerond (volledige SASE-stack operationeel)
 **Status:** Geïmplementeerd (Verslag40). Gate 1: 5 CA policies (3 Aan, 2 Report-only); Gate 2: Intune device compliance operationeel; Gate 3 volledig operationeel.
 
-> **Gates 1 en 2 zijn geïmplementeerd (Verslag40).** Gate 1 = vijf Conditional Access-policies: MFA Required (Aan), Block Legacy Auth (Aan), Risk-Based Block (Aan), Geo-Block alleen België (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). De twee Report-only-policies blijven zo tot de demo-voorbereiding (Sessie 11). Gate 2 = Intune device compliance (`2ITCSC1A-SASE-Windows-Compliance`), attestatie-gebaseerd. Dit is de gedeployde apparaat-gate, **niet** NetBird-posturecontroles (die een optionele, niet-gedeployde defense-in-depth-laag blijven). Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.
+> **Gates 1 en 2 zijn geïmplementeerd (Verslag40).** Gate 1 = vijf Conditional Access-policies: MFA Required (Aan), Block Legacy Auth (Aan), Risk-Based Block (Aan), Geo-Block alleen België (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). De twee Report-only-policies blijven zo tot de demo-voorbereiding. Gate 2 = Intune device compliance (`2ITCSC1A-SASE-Windows-Compliance`), attestatie-gebaseerd. Dit is de gedeployde apparaat-gate, **niet** NetBird-posturecontroles (die een optionele, niet-gedeployde defense-in-depth-laag blijven). Gate 3 is operationeel en wordt gedekt door Runbooks 03-06.
 
 ---
 
@@ -90,7 +90,7 @@ Assignments:
 Access controls:
   Verlenen: Toegang blokkeren
 
-Beleid inschakelen: Report-only (→ Aan bij Sessie 11)
+Beleid inschakelen: Report-only (→ Aan bij demo)
 ```
 
 ### Beleid 3: 2ITCSC1A-SASE-PoC-Block-Legacy-Auth
@@ -154,7 +154,7 @@ Assignments:
 Access controls:
   Verlenen: Apparaat moet als conform zijn gemarkeerd
 
-Beleid inschakelen: Report-only (→ Aan bij Sessie 11), gaf "Report-only: Success" bij een conforme mobile01-login
+Beleid inschakelen: Report-only (→ Aan bij demo), gaf "Report-only: Success" bij een conforme mobile01-login
 ```
 
 **Controlepunt Gate 1:**
@@ -281,7 +281,7 @@ Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat de per
 
 ### Scenario 1: Positieve test, conform apparaat, juiste locatie [GEVALIDEERD]
 
-> **Status:** Gevalideerd (Verslag40). 5 CA policies geïmplementeerd (3 Aan, 2 Report-only). MFA, blokkering van verouderde authenticatie en risicogebaseerde blokkering zijn Aan. Geo-Block en Require-Compliant-Device staan op Report-only tot Sessie 11; beide bewezen al "Report-only: Success".
+> **Status:** Gevalideerd (Verslag40). 5 CA policies geïmplementeerd (3 Aan, 2 Report-only). MFA, blokkering van verouderde authenticatie en risicogebaseerde blokkering zijn Aan. Geo-Block en Require-Compliant-Device staan op Report-only tot demo; beide bewezen al "Report-only: Success".
 
 | Stap | Actie | Verwacht |
 |------|-------|---------|
@@ -294,7 +294,7 @@ Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat de per
 
 ### Scenario 2: Negatieve test Gate 1, geoblokkering
 
-> Geo-Block staat op Report-only tot Sessie 11, dus het sign-in log registreert wat er *zou* gebeuren (`Report-only: Failure`); een echte weigering treedt pas op zodra het beleid op Aan wordt gezet.
+> Geo-Block staat op Report-only tot demo, dus het sign-in log registreert wat er *zou* gebeuren (`Report-only: Failure`); een echte weigering treedt pas op zodra het beleid op Aan wordt gezet.
 
 | Stap | Actie | Verwacht |
 |------|-------|---------|
@@ -345,7 +345,7 @@ Posturecontroles zijn per beleid, niet globaal. Koppel aan elk beleid dat de per
 
 | Beperking | Waarom | Status / mitigatie |
 |-----------|--------|--------------------|
-| Twee policies op Report-only | Geo-Block en Require-Compliant-Device staan bewust op Report-only tot Sessie 11 | Op Aan zetten bij demo-voorbereiding; beide bewezen al "Report-only: Success" (B40.23) |
+| Twee policies op Report-only | Geo-Block en Require-Compliant-Device staan bewust op Report-only tot demo | Op Aan zetten bij demo-voorbereiding; beide bewezen al "Report-only: Success" (B40.23) |
 | Admins-persona onder geen enkel CA-beleid | `2itcsc1a_admin1` is het enige admins-lid en is de break-glass-uitsluiting op elk beleid (B40.6) | Voeg een tweede admin-account toe om de admins-persona onder CA te brengen |
 | docent1/admin1 niet gedekt door Beleid 5 | Bewust ongelicenseerd gelaten; Beleid 5 is studenten-only gescoped om een lockout te voorkomen (B40.20) | Licenseer docenten/admins voor Intune om Gate 2 naar die persona's uit te breiden |
 | Geen Continuous Access Evaluation (CAE) | Gate 2 herevalueert bij authenticatie en op Intune's periodieke cyclus, niet continu per sessie | Schakel CAE in voor near-real-time intrekking |

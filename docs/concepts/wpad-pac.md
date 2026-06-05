@@ -45,5 +45,5 @@ With explicit proxy mode, Squid can also handle HTTPS via `CONNECT` tunnel (and 
 
 ## Sources
 
-- `raw/Doc1_Squid_WPAD_PAC.md` §1–2 (WPAD/PAC architecture, PAC file, why not transparent proxy)
-- `raw/Verslag19.md` (WPAD/PAC implementation session)
+- `Doc1_Squid_WPAD_PAC.md` §1–2 (WPAD/PAC architecture, PAC file, why not transparent proxy)
+- `Verslag19.md` (WPAD/PAC implementation session)

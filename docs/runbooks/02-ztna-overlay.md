@@ -5,7 +5,7 @@ tags: [runbook, netbird, zitadel, entra-id, wireguard, ztna]
 
 # Runbook: ZTNA Overlay
 
-**Source:** `raw/Doc6_NetBird_ZTNA.md`
+**Source:** `Doc6_NetBird_ZTNA.md`
 **Node(s):** mgmt01 (Docker stack) + pop01 (NetBird agent) + all peers
 **Prerequisites:** [Runbook 01: Lab Environment](01-lab-environment.md) completed, Entra ID tenant with A5 license
 **Status:** Operational — snapshot `Fase2-ZTNA-Complete`

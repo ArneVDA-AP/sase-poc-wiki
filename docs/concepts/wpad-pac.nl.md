@@ -45,5 +45,5 @@ Met expliciete proxymodus kan Squid ook HTTPS verwerken via `CONNECT`-tunnel (en
 
 ## Bronnen
 
-- `raw/Doc1_Squid_WPAD_PAC.md` §1–2 (WPAD/PAC-architectuur, PAC-bestand, waarom geen transparante proxy)
-- `raw/Verslag19.md` (WPAD/PAC-implementatiesessie)
+- `Doc1_Squid_WPAD_PAC.md` §1–2 (WPAD/PAC-architectuur, PAC-bestand, waarom geen transparante proxy)
+- `Verslag19.md` (WPAD/PAC-implementatiesessie)

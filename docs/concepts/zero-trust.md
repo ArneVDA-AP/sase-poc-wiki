@@ -17,7 +17,7 @@ Traditional VPN grants network access — once authenticated, users can reach al
 | **Gate 2** | Authentication + continuous (8h) | Intune device compliance | Outdated OS, no antivirus, no firewall, non-compliant device state |
 | **Gate 3** | Every HTTP/DNS request | SWG pipeline (Squid + ClamAV + DLP + Unbound RPZ) | Malware, data exfiltration, blocked domains, known-bad IOCs |
 
-All three gates are operational. Gates 1 and 2 were activated in V40 (CA policies) and V40 (Intune compliance). Some policies are in Report-only mode pending demo preparation (Session 11).
+All three gates are operational. Gates 1 and 2 were activated in V40 (CA policies) and V40 (Intune compliance). Some policies are in Report-only mode pending demo preparation.
 
 **Why gates are complementary, not redundant:** Gate 1 (CA) enforces MFA and evaluates sign-in risk — but identity alone says nothing about the device's security state. Gate 2 (Intune compliance) attests OS version, antivirus, and firewall — but cannot evaluate stolen-credential risk or enforce MFA. Neither gate can substitute for the other. Gate 3 catches threats in the content that bypass both.
 
@@ -53,6 +53,6 @@ See: [Decision: CA + Posture hybrid](../decisions/ca-posture-hybrid.md)
 
 ## Sources
 
-- `raw/Doc7_ZTNA_Context_Aware.md` §1–3 (three-gate model, CA vs posture, implementation plan)
-- `raw/SASE_Architectuur_Overzicht.md` §3 (Zero Trust chapter)
-- `raw/Doc6_NetBird_ZTNA.md` §1 (Zero Trust network access)
+- `Doc7_ZTNA_Context_Aware.md` §1–3 (three-gate model, CA vs posture, implementation plan)
+- `SASE_Architectuur_Overzicht.md` §3 (Zero Trust chapter)
+- `Doc6_NetBird_ZTNA.md` §1 (Zero Trust network access)

@@ -5,7 +5,7 @@ tags: [runbook, suricata, ids, hyperscan]
 
 # Runbook: IDS
 
-**Bron:** `raw/Doc3_Suricata_IDS.md`
+**Bron:** `Doc3_Suricata_IDS.md`
 **Node(s):** pop01 (OPNsense, vtnet0 WAN + vtnet1 LAN)
 **Vereisten:** [Runbook 03: Proxy & WPAD](03-proxy-wpad.nl.md) afgerond (Squid operationeel)
 **Status:** Operationeel (IDS-modus; IPS gereed voor fysieke hardware)

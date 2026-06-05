@@ -47,5 +47,5 @@ Wanneer een overeenkomst de drempel overschrijdt, retourneert de server een blok
 
 ## Bronnen
 
-- `raw/Doc2_ClamAV_DLP_Pipeline.md` (volledige DLP-pipeline-architectuur)
-- `raw/Verslag21.md` (beslissing om Python DLP-server toe te voegen)
+- `Doc2_ClamAV_DLP_Pipeline.md` (volledige DLP-pipeline-architectuur)
+- `Verslag21.md` (beslissing om Python DLP-server toe te voegen)

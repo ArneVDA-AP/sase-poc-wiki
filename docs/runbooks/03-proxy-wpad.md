@@ -5,7 +5,7 @@ tags: [runbook, squid, ssl-bump, wpad-pac, caddy, swg]
 
 # Runbook: Proxy & WPAD
 
-**Source:** `raw/Doc1_Squid_WPAD_PAC.md`
+**Source:** `Doc1_Squid_WPAD_PAC.md`
 **Node(s):** pop01 (OPNsense — Squid) + mgmt01 (Caddy — WPAD)
 **Prerequisites:** [Runbook 02: ZTNA Overlay](02-ztna-overlay.md) completed
 **Status:** Operational

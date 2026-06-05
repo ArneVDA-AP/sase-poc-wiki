@@ -91,6 +91,6 @@ This is deliberate: Gate 3 (SWG pipeline — content inspection, malware scannin
 
 ## Sources
 
-- `raw/18_mei_SASE_PoC_Addendum_H_Identity_Bridge_v1.md` (Identity Bridge architecture)
-- `raw/18_mei_SASE_PoC_Addendum_GroupSync.md` (JWT group sync, Path B)
-- `raw/GroupSync_Correcties_Sessie1(1).md` (Zitadel Actions implementation)
+- `18_mei_SASE_PoC_Addendum_H_Identity_Bridge_v1.md` (Identity Bridge architecture)
+- `18_mei_SASE_PoC_Addendum_GroupSync.md` (JWT group sync, Path B)
+- `GroupSync_Correcties_Sessie1(1).md` (Zitadel Actions implementation)

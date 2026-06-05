@@ -43,5 +43,5 @@ Unbound laadt de RPZ-zone in het geheugen. De prestatieimpact per query is verwa
 
 ## Bronnen
 
-- `raw/Doc4_DNS_Threat_Intelligence.md` (volledige RPZ-architectuur, ioc2rpz + BIND + Unbound)
-- `raw/Verslag24.md`, `raw/Verslag25.md`, `raw/Verslag26.md` (implementatiesessies)
+- `Doc4_DNS_Threat_Intelligence.md` (volledige RPZ-architectuur, ioc2rpz + BIND + Unbound)
+- `Verslag24.md`, `Verslag25.md`, `Verslag26.md` (implementatiesessies)

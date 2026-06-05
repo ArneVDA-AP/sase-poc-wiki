@@ -17,7 +17,7 @@ De control daemon is de real-time handhavingsmotor. Het abonneert zich op `secur
 2. **Scoring:** Dispatcht op het `producer`-veld (niet het subject). Elk eventtype heeft een configureerbaar gewicht. Scores gebruiken sliding-window decay via Redis sorted sets.
 3. **Beslissing:** Wanneer de score van een peer de quarantainedrempel overschrijdt (standaard: 80), verwijdert de daemon de peer uit alle policy-bearing persona-groepen via de NetBird Groups API. Zonder lidmaatschap van een persona-groep blokkeert deny-by-default alle connectiviteit.
 
-**Huidige staat:** `ENFORCE=false` (dry-run) tot demovoorbereiding (Sessie 11).
+**Huidige staat:** `ENFORCE=false` (dry-run) tot demovoorbereiding.
 
 ## Configuratie
 

@@ -7,6 +7,8 @@ tags: [sase, architecture]
 
 Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge) proof-of-concept voor Atlascollege (een school met 4 000 gebruikers op beheerde Windows-apparaten, Intune-beheerd, Entra joined). De stack vervangt het traditionele perimetermodel door identiteitsgebaseerde, contextbewuste toegangscontrole met open-source componenten: NetBird (ZTNA), Squid (SWG), ClamAV + Python DLP (ICAP-inspectie), Suricata (IDS), ioc2rpz + Unbound (DNS threat intelligence), Entra ID (identiteit), NATS JetStream (event bus), Wazuh (SIEM) en een Python control daemon (real-time quarantaine). Alle componenten draaien op een GNS3-topologie gehost op Proxmox.
 
+> Alle brondocumenten (verslagen, addenda, implementatiedocumenten) zijn beschikbaar op Microsoft Teams: **1A › project-wiki.rar**
+
 [:material-sitemap: Open het functioneel schema &nearr;](demos/functioneel-schema.html){ .md-button .md-button--primary target=_blank }
 
 Een interactief end-to-end-diagram van de SASE PoC: elke component, verkeersstroom en

@@ -58,7 +58,6 @@ plugins:
             Decisions: Beslissingen
             Findings: Bevindingen
             Tags: Tags
-            Log: Logboek
             Squid: Squid
             ClamAV / c-icap: ClamAV / c-icap
             Python DLP: Python DLP
@@ -260,7 +259,6 @@ nav:
     - NetBird JWT allow-groups lockout: findings/netbird-jwt-allow-groups-lockout.md
     - DC LAN isolation route ACL: findings/dc-lan-isolation-route-acl.md
   - Tags: tags.md
-  - Log: log.md
 
 extra:
   social:

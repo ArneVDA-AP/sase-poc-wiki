@@ -25,7 +25,7 @@ Tijdens de implementatie onthulde analyse dat de IDS-correlatiebranch de quarant
 
 De IDS-correlatiebranch is verwijderd uit de Control Daemon. IDS-events van Suricata worden nog steeds opgenomen via NATS JetStream maar dragen alleen bij aan logging, niet aan de threat score of geautomatiseerde quarantaineacties.
 
-De malware-branch dekt dezelfde real-time quarantainemogelijkheid met native attributie: wanneer ClamAV malware detecteert in de ICAP-pipeline, resolvet de daemon het overlay IP naar een NetBird-peeridentiteit en voert quarantaine uit. C2 beacon-respons wordt uitgesteld naar Zeek/RITA, dat gedragsanalyse over tijd uitvoert in plaats van single-event correlatie.
+De malware-branch dekt dezelfde real-time quarantainemogelijkheid met native attributie: wanneer ClamAV malware detecteert in de ICAP-pipeline, koppelt de daemon het overlay IP aan een NetBird-peeridentiteit en voert quarantaine uit. C2 beacon-respons wordt uitgesteld naar Zeek/RITA, dat gedragsanalyse over tijd uitvoert in plaats van single-event correlatie.
 
 Daarnaast zijn `proxy_block`-events verwijderd uit het scoringsmodel. Omgevingsruis van het besturingssysteem (Windows-telemetrie, updatecontroles, certificate revocation lookups) veroorzaakte frequente proxy-blocks die threat scores opbliezen zonder werkelijke dreigingen aan te duiden, wat leidde tot vals-positieve quarantainetriggers.
 

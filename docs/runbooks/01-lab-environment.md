@@ -5,7 +5,7 @@ tags: [runbook, gns3, proxmox, virtualization]
 
 # Runbook: Lab Environment
 
-**Source:** `raw/Doc5_Virtualisatie_Topologie.md`
+**Source:** `Doc5_Virtualisatie_Topologie.md`
 **Node(s):** GNS3 host (poc-1a, `10.158.10.67`) on Proxmox
 **Prerequisites:** Proxmox hypervisor with nested virtualization support, QCOW2 images for all VMs
 **Status:** Operational

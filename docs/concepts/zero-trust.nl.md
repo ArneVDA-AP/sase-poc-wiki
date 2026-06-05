@@ -17,7 +17,7 @@ Traditionele VPN verleent netwerktoegang: eenmaal geauthenticeerd kunnen gebruik
 | **Gate 2** | Authenticatie + continu (8u) | Intune-apparaatconformiteit | Verouderd OS, geen antivirus, geen firewall, niet-conform apparaat |
 | **Gate 3** | Elke HTTP/DNS-aanvraag | SWG-pipeline (Squid + ClamAV + DLP + Unbound RPZ) | Malware, data-exfiltratie, geblokkeerde domeinen, bekende kwaadaardige IOC's |
 
-Alle drie de gates zijn operationeel. Gates 1 en 2 zijn geactiveerd in V40 (CA-policies) en V40 (Intune-conformiteit). Sommige policies staan op Report-only in afwachting van demo-voorbereiding (Sessie 11).
+Alle drie de gates zijn operationeel. Gates 1 en 2 zijn geactiveerd in V40 (CA-policies) en V40 (Intune-conformiteit). Sommige policies staan op Report-only in afwachting van demo-voorbereiding.
 
 **Waarom gates aanvullend zijn, niet redundant:** Gate 1 (CA) dwingt MFA af en evalueert aanmeldingsrisico, maar identiteit alleen zegt niets over de beveiligingsstatus van het apparaat. Gate 2 (Intune-conformiteit) attesteert OS-versie, antivirus en firewall, maar kan gestolen-inloggegevenrisico niet evalueren of MFA afdwingen. Geen enkele gate kan de andere vervangen. Gate 3 vangt bedreigingen in de inhoud op die beide gates omzeilen.
 
@@ -53,6 +53,6 @@ Zie: [Beslissing: CA + Posture hybride](../decisions/ca-posture-hybrid.md)
 
 ## Bronnen
 
-- `raw/Doc7_ZTNA_Context_Aware.md` §1–3 (drie-gate model, CA vs posture, implementatieplan)
-- `raw/SASE_Architectuur_Overzicht.md` §3 (Zero Trust-hoofdstuk)
-- `raw/Doc6_NetBird_ZTNA.md` §1 (Zero Trust network access)
+- `Doc7_ZTNA_Context_Aware.md` §1–3 (drie-gate model, CA vs posture, implementatieplan)
+- `SASE_Architectuur_Overzicht.md` §3 (Zero Trust-hoofdstuk)
+- `Doc6_NetBird_ZTNA.md` §1 (Zero Trust network access)

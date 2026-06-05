@@ -5,12 +5,12 @@ tags: [runbook, entra-id, zero-trust, conditional-access, posture-check]
 
 # Runbook: Access Policy
 
-**Source:** `raw/Verslag40.md` (implementation, 2 June 2026); `raw/Doc7_ZTNA_Context_Aware.md` + Addendum E.2 (design intent)
+**Source:** `Verslag40.md` (implementation, 2 June 2026); `Doc7_ZTNA_Context_Aware.md` + Addendum E.2 (design intent)
 **Node(s):** Entra ID (`aplab.be` tenant) + Intune + NetBird Dashboard
 **Prerequisites:** All prior runbooks completed (full SASE stack operational)
 **Status:** Implemented (Verslag40) — Gate 1: 5 CA policies (3 On, 2 Report-only); Gate 2: Intune device compliance operational; Gate 3 fully operational.
 
-> **Gates 1 and 2 are implemented (Verslag40).** Gate 1 = five Conditional Access policies: MFA Required (On), Block Legacy Auth (On), Risk-Based Block (On), Geo-Block Belgium only (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). The two Report-only policies stay that way until demo preparation (Session 11). Gate 2 = Intune device compliance (`2ITCSC1A-SASE-Windows-Compliance`), attestation-based — this is the deployed device gate, **not** NetBird posture checks (which remain an optional, undeployed defense-in-depth layer). Gate 3 is operational and covered by Runbooks 03-06.
+> **Gates 1 and 2 are implemented (Verslag40).** Gate 1 = five Conditional Access policies: MFA Required (On), Block Legacy Auth (On), Risk-Based Block (On), Geo-Block Belgium only (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). The two Report-only policies stay that way until demo preparation. Gate 2 = Intune device compliance (`2ITCSC1A-SASE-Windows-Compliance`), attestation-based — this is the deployed device gate, **not** NetBird posture checks (which remain an optional, undeployed defense-in-depth layer). Gate 3 is operational and covered by Runbooks 03-06.
 
 ---
 
@@ -90,7 +90,7 @@ Assignments:
 Access controls:
   Grant: Block access
 
-Enable policy: Report-only (→ On at Session 11)
+Enable policy: Report-only (→ On at demo)
 ```
 
 ### Policy 3 — 2ITCSC1A-SASE-PoC-Block-Legacy-Auth
@@ -154,7 +154,7 @@ Assignments:
 Access controls:
   Grant: Require device to be marked as compliant
 
-Enable policy: Report-only (→ On at Session 11) — gave "Report-only: Success" on a compliant mobile01 login
+Enable policy: Report-only (→ On at demo) — gave "Report-only: Success" on a compliant mobile01 login
 ```
 
 **Checkpoint Gate 1:**
@@ -281,7 +281,7 @@ Posture checks are per-policy, not global. Link to every policy the persona peer
 
 ### Scenario 1 — Positive test: compliant device, correct location [VALIDATED]
 
-> **Status:** Validated (Verslag40). 5 CA policies implemented (3 On, 2 Report-only). MFA, legacy-auth blocking, and risk-based blocking are On. Geo-Block and Require-Compliant-Device are Report-only until Session 11 — both already proved "Report-only: Success".
+> **Status:** Validated (Verslag40). 5 CA policies implemented (3 On, 2 Report-only). MFA, legacy-auth blocking, and risk-based blocking are On. Geo-Block and Require-Compliant-Device are Report-only until demo — both already proved "Report-only: Success".
 
 | Step | Action | Expected |
 |------|--------|----------|
@@ -294,7 +294,7 @@ Posture checks are per-policy, not global. Link to every policy the persona peer
 
 ### Scenario 2 — Negative test Gate 1: geo-block
 
-> Geo-Block is Report-only until Session 11, so the sign-in log records what *would* happen (`Report-only: Failure`); an actual denial occurs only once the policy is flipped On.
+> Geo-Block is Report-only until demo, so the sign-in log records what *would* happen (`Report-only: Failure`); an actual denial occurs only once the policy is flipped On.
 
 | Step | Action | Expected |
 |------|--------|----------|
@@ -345,7 +345,7 @@ Posture checks are per-policy, not global. Link to every policy the persona peer
 
 | Limitation | Why | Status / mitigation |
 |-----------|-----|---------------------|
-| Two policies in Report-only | Geo-Block and Require-Compliant-Device are deliberately Report-only until Session 11 | Flip to On at demo prep; both already proved "Report-only: Success" (B40.23) |
+| Two policies in Report-only | Geo-Block and Require-Compliant-Device are deliberately Report-only until demo | Flip to On at demo prep; both already proved "Report-only: Success" (B40.23) |
 | Admins persona under no CA policy | `2itcsc1a_admin1` is the only admins member and is the break-glass exclude on every policy (B40.6) | Add a second admin account to govern the admins persona under CA |
 | docent1/admin1 not covered by Policy 5 | Left unlicensed on purpose; Policy 5 is scoped studenten-only to avoid a lockout (B40.20) | License docenten/admins for Intune to extend Gate 2 to those personas |
 | No Continuous Access Evaluation (CAE) | Gate 2 re-evaluates at authentication and on Intune's periodic cycle, not continuously per-session | Enable CAE for near-real-time revocation |

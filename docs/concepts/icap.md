@@ -49,6 +49,6 @@ Both ICAP services run concurrently and independently. ICAP REQMOD processes the
 
 ## Sources
 
-- `raw/Doc1_Squid_WPAD_PAC.md` §2 (Squid ICAP orchestration)
-- `raw/Doc2_ClamAV_DLP_Pipeline.md` (ClamAV RESPMOD, why REQMOD doesn't work for uploads)
-- `raw/Verslag21.md` (Python DLP decision, two-layer architecture)
+- `Doc1_Squid_WPAD_PAC.md` §2 (Squid ICAP orchestration)
+- `Doc2_ClamAV_DLP_Pipeline.md` (ClamAV RESPMOD, why REQMOD doesn't work for uploads)
+- `Verslag21.md` (Python DLP decision, two-layer architecture)

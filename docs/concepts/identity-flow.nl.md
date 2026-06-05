@@ -91,6 +91,6 @@ Dit is bewust: Gate 3 (SWG-pijplijn: inhoudsinspectie, malwarescanning, DLP) wer
 
 ## Bronnen
 
-- `raw/18_mei_SASE_PoC_Addendum_H_Identity_Bridge_v1.md` (Identity Bridge-architectuur)
-- `raw/18_mei_SASE_PoC_Addendum_GroupSync.md` (JWT group sync, Path B)
-- `raw/GroupSync_Correcties_Sessie1(1).md` (Zitadel Actions-implementatie)
+- `18_mei_SASE_PoC_Addendum_H_Identity_Bridge_v1.md` (Identity Bridge-architectuur)
+- `18_mei_SASE_PoC_Addendum_GroupSync.md` (JWT group sync, Path B)
+- `GroupSync_Correcties_Sessie1(1).md` (Zitadel Actions-implementatie)

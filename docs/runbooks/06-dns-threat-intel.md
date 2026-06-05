@@ -5,7 +5,7 @@ tags: [runbook, ioc2rpz, rpz, bind, unbound, dns]
 
 # Runbook: DNS Threat Intelligence
 
-**Source:** `raw/Doc4_DNS_Threat_Intelligence.md`
+**Source:** `Doc4_DNS_Threat_Intelligence.md`
 **Node(s):** mgmt01 Docker (ioc2rpz + GUI) + pop01 (BIND 9.20 + Unbound RPZ)
 **Prerequisites:** [Runbook 02: ZTNA Overlay](02-ztna-overlay.md) completed (NetBird DNS relay operational)
 **Status:** Operational — 71,767 RPZ records, three test points validated

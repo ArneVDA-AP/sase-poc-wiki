@@ -7,7 +7,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 **Version:** 1.0 — April 2026  
 **Scope:** Full sandbox test coverage — all F1–F15 acceptance tests (Handboek v4 §46) plus additional validation tests outside the original framework.  
-**Source:** `raw/SASE_PoC_Testrapport.md`
+**Source:** `SASE_PoC_Testrapport.md`
 
 ---
 

@@ -43,5 +43,5 @@ Unbound loads the RPZ zone into memory. Per-query performance impact is negligib
 
 ## Sources
 
-- `raw/Doc4_DNS_Threat_Intelligence.md` (full RPZ architecture, ioc2rpz + BIND + Unbound)
-- `raw/Verslag24.md`, `raw/Verslag25.md`, `raw/Verslag26.md` (implementation sessions)
+- `Doc4_DNS_Threat_Intelligence.md` (full RPZ architecture, ioc2rpz + BIND + Unbound)
+- `Verslag24.md`, `Verslag25.md`, `Verslag26.md` (implementation sessions)

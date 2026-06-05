@@ -47,5 +47,5 @@ When a match exceeds the threshold, the server returns a block response. Squid p
 
 ## Sources
 
-- `raw/Doc2_ClamAV_DLP_Pipeline.md` (full DLP pipeline architecture)
-- `raw/Verslag21.md` (decision to add Python DLP server)
+- `Doc2_ClamAV_DLP_Pipeline.md` (full DLP pipeline architecture)
+- `Verslag21.md` (decision to add Python DLP server)
