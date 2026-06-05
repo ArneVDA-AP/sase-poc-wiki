@@ -317,3 +317,28 @@ was een bewuste eerdere keuze; de V44 Tiny11-enrollment staat als een geslaagde 
 
 **Audit:** Onafhankelijke Opus-auditors verifieerden de batch: feiten tegen de verslagen (PASS) en NL-stijl +
 naadloosheid (PASS na één em-dash-fix). `mkdocs build` schoon (EN + NL). Geen `raw/`-bestanden gewijzigd.
+
+---
+
+## 2026-06-06: NL-terminologie genormaliseerd (calques → Engelse technische termen)
+
+**Doel:** De Nederlandse pagina's in lijn brengen met de huisstijlregel dat technische termen, config en
+UI-strings Engels blijven in plaats van Nederlandse calques. NL-only toegepast; de EN-pagina's waren al
+correct en dienden als anker voor elke UI-string.
+
+**Toegepaste termmappings over de `.nl.md`-pagina's:**
+- `beleid` → `policy` (alle samenstellingen; `Toegangsbeleid` → `Access Policy` in titel, nav en links)
+- `conformiteit` / `apparaatconformiteit` / `naleving` / `conform` → `compliance` / `device compliance` / `compliant`
+- `eindpunt` → `endpoint`; `attestatie` → `attestation`; `postuur` / `apparaatpostuur` → `posture` / `device posture`
+- `posturecontrole` → `posture check`; `poortdoorsturing` → `port forwarding`
+- UI / config / settings-strings → Engels, exact gespiegeld op de EN-sibling (Windows-, OPNsense- en
+  NetBird-menupaden; de Tamper Protection-regel; `Enable policy: On`; `General Settings`; enz.)
+
+**Proces:** vijf Opus-edit-agents (twee passes) plus één onafhankelijke Opus-auditor als gate vóór deploy.
+De auditor ving één gemiste UI-pad (`clamav-cicap.nl.md`) en enkele consistentie-nits (`policymodel` →
+`policy model`, `posture-checks` → `posture checks`, `compliant apparaat` → `compliant device`), allemaal opgelost.
+
+**Bestanden gewijzigd:** 41 NL-wikipagina's + `mkdocs.yml`-nav_translations. Geen EN-pagina's of `raw/`-bestanden gewijzigd.
+
+**Audit:** Onafhankelijke Opus-auditor PASS na de genoemde fixes. `mkdocs build` schoon (EN + NL, geen
+broken links). Gedeployed naar gh-pages.
