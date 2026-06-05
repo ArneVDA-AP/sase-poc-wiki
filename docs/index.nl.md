@@ -99,7 +99,7 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [04: Malware & DLP](runbooks/04-malware-dlp.md) | ClamAV/c-icap RESPMOD, YARA-regels, Python DLP REQMOD |
 | [05: IDS](runbooks/05-ids.md) | Suricata op WAN+LAN, Hyperscan, 79.620+ regels |
 | [06: DNS Threat Intel](runbooks/06-dns-threat-intel.md) | ioc2rpz, BIND TSIG, Unbound RPZ, 71.767 records |
-| [07: Toegangsbeleid](runbooks/07-access-policy.md) | Conditional Access, posturecontroles, validatiescenario's (gepland) |
+| [07: Toegangsbeleid](runbooks/07-access-policy.md) | Conditional Access, posturecontroles, validatiescenario's |
 | [08: GroupSync](runbooks/08-groupsync.md) | JWT group sync, Entra ID token config, Zitadel Actions |
 | [09: Identity Bridge](runbooks/09-identity-bridge.md) | FastAPI overlay-IP → persona-groep, Squid external_acl |
 | [10: NATS JetStream](runbooks/10-nats-jetstream.md) | Event bus, producers, Control Daemon, Redis |

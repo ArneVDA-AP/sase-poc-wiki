@@ -6,7 +6,7 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 # Acceptance Test Results (F1–F15)
 
 **Version:** 1.0 — April 2026  
-**Scope:** Full sandbox test coverage — all F1–F15 acceptance tests (Handboek v4 §46) plus additional validation tests outside the original framework.  
+**Scope:** Full sandbox test coverage — all F1–F15 acceptance tests (Handboek v4 §46) plus additional validation tests outside the original framework. Pages are organised by rubric criterion with evidence tables mapping each test to what it proves.  
 **Source:** `SASE_PoC_Testrapport.md`
 
 ---
@@ -22,9 +22,9 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 | **F5** | URL Filtering | SWG | ✅ Validated |
 | **F6** | SSL Bump Inspection | SWG | ✅ Validated |
 | **F7** | Malware Detection (ClamAV) | SWG | ✅ Validated |
-| **F8** | Firewall Segmentation | FWaaS | ✅ Validated — DC-LAN isolation holds (unenrolled = no route); positive ACL path removed in V34 |
-| **F9** | Suricata Alert Generation | FWaaS | ✅ Validated (extended beyond original definition) |
-| **F10** | Central Log Aggregation (SIEM) | SIEM | ✅ Operational — Wazuh + NATS forwarder + pop01 agent |
+| **F8** | Firewall Segmentation | ZTNA | ✅ Validated — DC-LAN isolation holds (unenrolled = no route); positive ACL path removed in V34 |
+| **F9** | Suricata Alert Generation | General | ✅ Validated (extended beyond original definition) |
+| **F10** | Central Log Aggregation (SIEM) | General | ✅ Operational — Wazuh + NATS forwarder + pop01 agent |
 | **F11** | CASB Alert and Remediation | CASB | ✅ Functional — Wazuh + M365 Management Activity API + Active Response |
 | **F12** | IPsec Tunnel Connectivity | SD-WAN | ✖ N/A — architectural decision (see [SD-WAN Descoped](../decisions/sdwan-descoped.md)) |
 | **F13** | QoS Traffic Classification | SD-WAN | ✖ N/A as a classic-IPsec test — QoS is instead implemented + validated under the ZT-Branch model (V43 Test #5; see [ZT SD-WAN Branch](../decisions/zt-sdwan-branch.md)) |
@@ -55,381 +55,315 @@ tags: [sase, ztna, swg, fwaas, casb, sd-wan, testing]
 
 | Pillar | Validated | Planned | N/A |
 |--------|-----------|---------|-----|
-| **ZTNA** | F1, F2, F4 | F3 (architecture ready) | — |
-| **SWG** | F5, F6, F7, T-A1, T-A2, T-A3, T-A4–A6 | — | — |
-| **FWaaS** | F8, F9, F10, T-A7, T-A8, T-A9 | — | — |
+| **SWG** | F5, F6, F7, T-A1, T-A2, T-A3, T-A4/A5/A6 | — | — |
 | **CASB** | F11, T-A10, T-A11, T-A12, T-A13 | — | — |
+| **ZTNA** | F1, F2, F4, F8 | F3 (architecture ready) | — |
 | **SD-WAN** | QoS + failover detection (ZT-Branch, V43 Test #5/#6) | — | F12, F13, F14 (classic IPsec) |
+| **General / Integration** | F9, F10, F15 | — | — |
 
 ---
 
-## Validated tests — rationale and key output
+## 1. SWG (Secure Web Gateway)
 
-### F1 — ZTNA Tunnel Connectivity
+### 1.1 Traffic routing (no local breakout)
 
-`InterfaceAlias: wt0` in the Test-NetConnection output proves that all traffic exits via the WireGuard tunnel, not the VMware host NIC. If wt0 were not routing, the reply would arrive via the default adapter.
+**Rubric excellent:** Fully forced through SWG
 
-```powershell
-# mobile01 (PowerShell)
-netbird status
-Test-NetConnection 8.8.8.8 -Port 443
-```
+| Test | What it proves |
+|------|----------------|
+| F1 | `InterfaceAlias: wt0` proves all traffic exits via the WireGuard tunnel |
+| F5 | `curl -x http://100.70.154.79:3128` proves traffic flows through Squid (SWG) |
+| PAC file | `FindProxyForURL` returns `PROXY 100.70.154.79:3128` for all external traffic |
+| Wiki evidence | Runbook 03 (WPAD/PAC configuration), Decision: WPAD vs transparent proxy |
 
-Expected output:
+### 1.2 Identity-based access
 
-```
-FQDN: mobile01.netbird.selfhosted
-NetBird IP: 100.70.95.98/16
-Peers count: 1/1 Connected
+**Rubric excellent:** Fully integrated with Microsoft Entra ID
 
-InterfaceAlias   : wt0          ← WireGuard tunnel, not host NIC
-SourceAddress    : 100.70.95.98
-TcpTestSucceeded : True
-```
+| Test | What it proves |
+|------|----------------|
+| T-A10 | Identity Bridge resolves overlay IP to Entra ID persona group |
+| F2 | OIDC chain: NetBird to Zitadel to Entra ID to JWT with group claims |
+| Wiki evidence | Component: Identity Bridge, Concept: Identity Flow, Runbook 09 |
 
-See [NetBird](../components/netbird.md).
+### 1.3 DNS filtering
 
----
+**Rubric excellent:** Advanced (threat intel, logging, policy-based)
 
-### F2 — Entra ID SSO
+| Test | What it proves |
+|------|----------------|
+| T-A4 | RPZ NXDOMAIN + aa-flag locally on pop01 |
+| T-A5 | RPZ NXDOMAIN via overlay (mobile01) |
+| T-A6 | RPZ NXDOMAIN via DC-LAN (dc01) |
+| Wiki evidence | Component: ioc2rpz (71,767 records, URLhaus + ThreatFox feeds), Concept: RPZ |
 
-Validates the full OIDC chain: mobile01 → NetBird → Zitadel → Entra ID (login.microsoftonline.com) → back to NetBird. The peer appearing in the NetBird Dashboard with the Entra ID username proves end-to-end identity linkage — not a local account.
+### 1.4 Malware inspection (DPI)
 
-Test procedure:
+**Rubric excellent:** DPI + TLS decryption + malware detection
 
-1. `netbird down` on mobile01
-2. `netbird up` → browser redirects to `https://netbird.sandbox.local` → Zitadel → `login.microsoftonline.com`
-3. Authenticate as `2ITCSC1A-mobile_user1@aplab.be`
-4. Tunnel becomes active; peer appears in Dashboard, assigned to its persona group (`Studenten`/`Docenten`/`Admins`) via the Entra ID group claim in the OIDC token — the group materializes in NetBird on first connect (Pad B strips the `2ITCSC1A-` prefix to the internal group name)
+| Test | What it proves |
+|------|----------------|
+| F6 | SSL Bump active: cert issuer = "SASE PoC" (TLS decryption) |
+| F7 | EICAR blocked via ClamAV/c-icap RESPMOD (malware detection) |
+| T-A1 | YARA DLP: CONFIDENTIAL label detection on download |
+| T-A2 | SDD: Luhn-validated credit card detection with threshold |
+| T-A3 | Python DLP REQMOD: upload blocking (DPI on uploads) |
+| Wiki evidence | Component: ClamAV/c-icap, Component: Python DLP, Concept: DLP, Decision: two-layer DLP |
 
-See [NetBird](../components/netbird.md), [Decision: Zitadel as IdP broker](../decisions/zitadel-idp-broker.md).
+### 1.5 Configuration and documentation
 
----
+**Rubric excellent:** Highly detailed
 
-### F3 — Posture Check (Partly proven)
+| Evidence | What it proves |
+|----------|----------------|
+| Wiki itself | Component pages with configuration, runbooks with step-by-step instructions |
+| Handboek v4 | 5,350-line implementation handbook |
+| Decisions section | 17 ADRs with context, options, and consequences |
+| Findings section | 24 documented gotchas with root cause and resolution |
 
-**Gate 1 — Entra ID Conditional Access:** Five CA policies implemented:
+### 1.6 Testing and validation
 
-| Policy | Mode | Effect |
-|--------|------|--------|
-| SASE-PoC-MFA-Required | Active | MFA enforced on NetBird app |
-| SASE-PoC-Geo-Block | Report-only | Belgium-only geo-restriction (report-only until demo) |
-| SASE-PoC-Block-Legacy-Auth | Active | Exchange ActiveSync + legacy clients blocked |
-| SASE-PoC-Risk-Block | Active | Medium/High sign-in risk triggers MFA |
-| SASE-PoC-Compliant-Device | Report-only | Intune-compliant device required (report-only until demo) |
+**Rubric excellent:** Includes malware test and DNS blocking validation
 
-**Gate 2 — Intune device compliance:** Device compliance policies enforce OS version, Defender AV + firewall enabled, and real-time protection active.
-
-Enrolled devices:
-
-- **mobile01** — enrolled as `2ITCSC1A-MOB-1`, compliant
-- **sitepc01** — enrolled in NetBird as `docent1` (Docenten); separately Entra joined + Intune enrolled via `student1` (the only Intune-licensed sandbox account)
-
-Two policies remain in report-only mode (geo-block, compliant device) until the demo to avoid lockout during testing.
-
-**Critical precondition:** Verify MFA registration on the test account before activating CA policies. Without prior MFA setup, the first login triggers an unrecoverable "MFA required but not configured" block, making the account inaccessible.
-
-See [Decision: CA + Posture hybrid](../decisions/ca-posture-hybrid.md).
-
----
-
-### F4 — Datacenter Access via ZTNA
-
-**✅ Validated at build-time (May 2026); the path was subsequently removed in V34.** At the time of validation, DC-LAN (10.0.0.0/24) was reachable through the NetBird Networks mechanism: a host not enrolled in NetBird had no route to this subnet regardless of IP connectivity, while an enrolled peer holding the `Datacenter Access` ACL policy could reach it.
-
-```powershell
-# mobile01 (PowerShell) — as tested in May 2026
-Test-NetConnection 10.0.0.100 -Port 80
-```
-
-At validation time: `InterfaceAlias: wt0`, `TcpTestSucceeded: True`, exercising the `Datacenter Access` ACL policy and the Networks routing configuration.
-
-**Current state:** The `Internal-DC` Network and the `Datacenter Access` policy were removed in the V34 persona migration — site-to-site-style resource access contradicts the Zero-Trust per-resource model. DC-LAN-over-overlay is deferred and may resume in the Cosmos session. See [runbook 02](../runbooks/02-ztna-overlay.md) and [NetBird](../components/netbird.md).
+| Test | What it proves |
+|------|----------------|
+| F7 | EICAR malware test end-to-end |
+| T-A4/5/6 | DNS blocking validation across three segments |
+| Attack scenarios | Bypass attempts per pillar |
+| Wiki evidence | Testing: attack-scenarios, Testing: demo-script |
 
 ---
 
-### F5 — URL Filtering
+## 2. CASB (Cloud Access Security Broker)
 
-`curl.exe` with an explicit proxy argument bypasses the browser cache, which could otherwise mask blocking. `X-Squid-Error: ERR_ACCESS_DENIED` identifies the Squid block page — not a server-side 403.
+### 2.1 Blocking cloud apps
 
-```powershell
-# mobile01 (PowerShell)
-curl.exe -x http://100.70.154.79:3128 http://gambling.com -v
-```
+**Rubric excellent:** Dynamic and context-based blocking
 
-Expected:
+| Test | What it proves |
+|------|----------------|
+| F5 | URL filtering blocks specific sites (gambling.com, etc.) |
+| F11 | CASB alert: SharePoint SharingSet/AnonymousLinkCreated detection |
+| T-A12 | Control Daemon quarantine: peer removed from persona group results in deny-by-default |
+| Wiki evidence | Decision: CASB three layers, Component: Wazuh (Layer 2), Component: Control Daemon (Layer 3) |
 
-```
-< HTTP/1.1 403 Forbidden
-< X-Squid-Error: ERR_ACCESS_DENIED 0
+### 2.2 Identity integration
 
-# Squid access log (pop01)
-TCP_DENIED/403 ... GET http://gambling.com/ - HIER_NONE/-
-```
+**Rubric excellent:** Fully integrated with Microsoft Entra ID
 
-Blocked categories: adult, malware, phishing, gambling (UT1 Toulouse Remote ACL) plus manual blacklist entries (`gambling.com`, `.bet365.com`, `.pokerstars.com`). See [Squid](../components/squid.md).
+| Test | What it proves |
+|------|----------------|
+| T-A10 | Identity Bridge: overlay IP to Entra ID persona group |
+| T-A11 | NATS event bus: identity events flow cross-component |
+| F2 | Entra ID SSO via OIDC chain |
+| Wiki evidence | Concept: Identity Flow, Component: Identity Bridge, Runbook 08 (GroupSync) |
 
----
+### 2.3 Policy configuration
 
-### F6 — SSL Bump Inspection
+**Rubric excellent:** Advanced policies (groups, risk, device)
 
-Two complementary tests prove selective, intentional HTTPS interception:
+| Test | What it proves |
+|------|----------------|
+| F3 | CA policies: MFA, geo-block, legacy-auth, risk-based, compliant device |
+| T-A10 | Persona groups (Studenten/Docenten/Admins) drive policy |
+| Wiki evidence | Runbook 07 (5 CA policies), Decision: CA + Posture hybrid |
 
-- **Normal HTTPS:** Navigate to `https://google.com` → certificate issuer = `O = SASE PoC` (not Google)
-- **No-bump exception:** Navigate to `https://login.microsoftonline.com` → issuer = Microsoft Corporation (original certificate, not replaced)
+### 2.4 Test results
 
-The second test is critical: it proves the implementation is deliberate, not blanket decryption. Microsoft login is in the no-bump list specifically because SSL Bump would break the Entra ID OIDC flow.
+**Rubric excellent:** Extensive test cases and bypass attempts
 
-See [SSL Bump](../concepts/ssl-bump.md), [Squid](../components/squid.md).
+| Test | What it proves |
+|------|----------------|
+| T-A12 | Control Daemon: EICAR score 80/80, quarantine, recovery |
+| T-A13 | Wazuh SIEM: NATS event ingestion and dashboard query |
+| Attack scenarios | C1–C5: CASB-specific bypass scenarios |
+| Wiki evidence | Testing: attack-scenarios (CASB section), Testing: demo-script |
 
----
+### 2.5 Limitations and analysis
 
-### F7 — Malware Detection (ClamAV/EICAR)
+**Rubric excellent:** Critical reflection and improvement proposals
 
-The 68-byte vs. 8245-byte comparison is the proof of active blocking: 68 bytes is the EICAR file; 8245 bytes is the Squid block page generated by the ICAP pipeline.
-
-```powershell
-# mobile01 (PowerShell)
-curl.exe -x http://100.70.154.79:3128 --ssl-no-revoke -o eicar_test.txt https://secure.eicar.org/eicar.com
-```
-
-> `--ssl-no-revoke` is required on Windows: Schannel attempts CRL/OCSP validation against the SASE-PoC-CA certificate, which has no published CRL endpoint. See [Finding: curl --ssl-no-revoke](../findings/curl-ssl-no-revoke.md).
-
-Expected:
-
-```
-# c-icap log (pop01)
-VIRUS DETECTED: Eicar-Test-Signature,
-  http client ip: 100.70.95.98,
-  http url: https://secure.eicar.org/eicar.com
-
-# Squid access log
-TCP_MISS/403 8245 GET https://secure.eicar.org/eicar.com
-```
-
-See [ClamAV/c-icap](../components/clamav-cicap.md).
+| Evidence | What it proves |
+|----------|----------------|
+| Decision: CASB three layers | Honest gap analysis: "thinner dimensions" explicitly named |
+| Decision: Control Daemon scope | proxy_block false positives removed, IDS correlation deliberately not implemented |
+| Findings | 24 findings with root cause analysis |
+| Wiki evidence | "Possible improvements" section in casb-three-layers |
 
 ---
 
-### F8 — Firewall Segmentation
+## 3. ZTNA (Zero Trust Network Access)
 
-**✅ Validated.** The core segmentation property — an unenrolled device has no route to DC-LAN (10.0.0.0/24) — holds independently of any overlay access path and remains true today.
+### 3.1 Per-application access
 
-Validated by contrast (May 2026, while the positive path still existed):
+**Rubric excellent:** Full zero trust model (no network exposure)
 
-- mobile01 **without** NetBird: `ping 10.0.0.100` → Destination unreachable (no route) — *still true*
-- mobile01 **with** NetBird + the `Datacenter Access` policy: `Test-NetConnection 10.0.0.100 -Port 80` → `TcpTestSucceeded: True` via `wt0` — *positive path removed in V34*
+| Test | What it proves |
+|------|----------------|
+| F4 | DC-LAN reachable only via NetBird Networks and group membership |
+| F8 | Unenrolled device: no route to 10.0.0.0/24 |
+| Wiki evidence | Component: NetBird (ACL policies, Networks vs Routes), Concept: Zero Trust |
 
-**Architectural note:** DC-LAN used NetBird Networks (not Network Routes). The positive path required overlay enrollment plus membership in the `SASE-InternalResources` group; both the `Internal-DC` Network and that group were removed in the V34 persona migration (see [runbook 02](../runbooks/02-ztna-overlay.md)). The negative isolation property — unenrolled = no route — is unaffected.
+### 3.2 Identity and context awareness
 
-See [NetBird](../components/netbird.md).
+**Rubric excellent:** Identity + context (geoIP, device posture, malware check)
 
----
+| Test | What it proves |
+|------|----------------|
+| F2 | Identity: Entra ID SSO, peer appears with Entra ID username |
+| F3 | Context: 5 CA policies (MFA, geo-block, legacy-auth, risk-based, compliant device) |
+| F3 | Device posture: Intune compliance (OS version, Defender AV, firewall) |
+| Wiki evidence | Decision: CA + Posture hybrid (three-gate model), Runbook 07 |
 
-### F9 — Suricata Alert Generation
+### 3.3 Per-application tunnel
 
-Four test categories validate four independent inspection domains across two interfaces:
+**Rubric excellent:** Dynamic per-app tunnels correctly established
 
-| Test | Method | SID | Interface |
-|------|--------|-----|-----------|
-| F9-1: HTTP content | `curl.exe -x ... http://testmyids.com/` | 2100498 (GPL ATTACK_RESPONSE id check returned root) | vtnet0 |
-| F9-2: DNS anomaly | Automatic — Unbound `.biz` TLD queries during normal operation | 2027863 (ET DNS Non-Compliant DNS Reply UDP) | vtnet0 |
-| F9-3: User-Agent | `curl.exe -x ... -A "BlackSun" http://example.com` | 2008983 (ET MALWARE User-Agent BlackSun) | vtnet0 |
-| F9-4: LAN traffic | `apt update` on dc01 | 2013504 (ET INFO GNU/Linux APT User-Agent Outbound) | vtnet1 |
+| Test | What it proves |
+|------|----------------|
+| F1 | WireGuard tunnel operational: `InterfaceAlias: wt0`, peer count 1/1 Connected |
+| F8 | ACL policy per resource: Datacenter Access requires explicit group membership |
+| Wiki evidence | Component: NetBird (ACL policies per resource group) |
 
-vtnet1 verification:
+### 3.4 Access to on-premises resources
 
-```bash
-grep '"in_iface":"vtnet1".*"event_type":"alert"' /var/log/suricata/eve.json | wc -l
-# Expected: > 0
-```
+**Rubric excellent:** Secure, conditional, and logged
 
-**Differentiated alert policy:**
+| Test | What it proves |
+|------|----------------|
+| F4 | DC-LAN reachable via wt0 (WireGuard-encrypted) |
+| F3 | Conditional: CA policies evaluated at every login |
+| T-A13 | Logged: Wazuh SIEM receives and indexes events |
+| Wiki evidence | Component: Wazuh, Runbook 11 |
 
-| Category | Policy | Rationale |
-|----------|--------|-----------|
-| emerging-malware, botcc, C2, Abuse.ch | Drop | Always malicious — no legitimate traffic possible |
-| tor, info, policy, dns, web | Alert | False positive risk — monitor, do not block |
+### 3.5 Testing and validation
 
-> The Handboek originally defined F9 as "verify alert visible in Wazuh Dashboard." Wazuh is now operational (F10) and Suricata alerts flow through NATS to Wazuh, closing this gap. Suricata detection and Wazuh integration are both fully validated.
+**Rubric excellent:** Attacks simulated and logging analysed
 
-> Multiple curl requests to the same destination generate one Suricata alert per SID per flow — this is correct behavior, not suppression. Root cause: Squid connection pooling reuses upstream TCP connections; Suricata sees one flow. See [Finding: Suricata connection pooling](../findings/suricata-connection-pooling.md).
-
-See [Suricata](../components/suricata.md).
-
----
-
-### T-A1 — DLP YARA: CONFIDENTIAL label in download
-
-YARA operates after ClamAV's file decomposition engine — it matches on extracted document text, not raw bytes. Full pipeline: Squid SSL Bump → c-icap RESPMOD → ClamAV parse → YARA match → HTTP 403.
-
-```bash
-# pop01 — local verification
-clamdscan /tmp/dlp_test.txt   # file contains "Dit document is CONFIDENTIAL..."
-# Output: YARA.DLP_Confidential_Label.UNOFFICIAL FOUND
-```
-
-```powershell
-# mobile01 — end-to-end via ICAP
-curl.exe -x http://100.70.154.79:3128 --ssl-no-revoke -o dlp_result.txt http://wpad.sandbox.local/dlp_test.txt -w "%{http_code}"
-# Output: 403
-```
-
-YARA rules validated in sandbox:
-
-| Rule | Pattern | Scope |
-|------|---------|-------|
-| `DLP_Confidential_Label` | CONFIDENTIAL, VERTROUWELIJK, GEHEIM, DO NOT DISTRIBUTE (nocase) | ✅ End-to-end |
-| `DLP_IBAN_Pattern` | NL/DE/BE IBAN format regex | ✅ Local clamdscan |
-| `DLP_BSN_Candidate` | Cluster of 9-digit sequences (threshold >2) | ✅ Local clamdscan |
-| `DLP_AWS_AccessKey` | `AKIA[0-9A-Z]{16}` | ✅ Local clamdscan |
-
-**Limitation:** YARA rules do not perform algorithmic validation — no mod-97 for IBAN, no 11-proof for BSN. False positives are possible on download. The Python DLP layer (T-A3) provides algorithmic validation for uploads.
-
-See [ClamAV/c-icap](../components/clamav-cicap.md), [DLP](../concepts/dlp.md).
+| Test | What it proves |
+|------|----------------|
+| F8 | Negative test: unenrolled device cannot reach DC-LAN |
+| Attack scenarios | A1–A3: ZTNA-specific attack scenarios |
+| T-A13 | Wazuh logging: events queryable in Discover dashboard |
+| Wiki evidence | Testing: attack-scenarios (ZTNA section) |
 
 ---
 
-### T-A2 — DLP SDD: StructuredDataDetection threshold
+## 4. SD-WAN
 
-ClamAV's StructuredDataDetection (SDD) uses Luhn validation — arbitrary 16-digit strings do not trigger. The threshold is `StructuredMinCreditCardCount: 3` (configured), so detection fires at 4+ valid CC numbers.
+### 4.1 Basic connectivity
 
-```bash
-# 4 valid Luhn CC numbers → detected
-echo "CC1: 4532015112830366 CC2: 4916338506082832 CC3: 5425233430109903 CC4: 2223000048410010" > /tmp/sdd_test.txt
-clamdscan /tmp/sdd_test.txt
-# Output: Heuristics.Structured.CreditCardNumber FOUND
+**Rubric excellent:** Fully operational with failover
 
-# 1 valid CC number → passes (below threshold)
-echo "CC: 4532015112830366" > /tmp/sdd_test_single.txt
-clamdscan /tmp/sdd_test_single.txt
-# Output: OK
-```
+| Test | What it proves |
+|------|----------------|
+| V43 Test #6 | Failover detection: CRITICAL within 30 s on interface-down, recovery logged |
+| sitepc01 enrollment | NetBird-enrolled via Entra ID, operational on Site-LAN |
+| Wiki evidence | Component: VyOS, Decision: ZT SD-WAN Branch |
 
-See [ClamAV/c-icap](../components/clamav-cicap.md).
+### 4.2 Routing and policies
 
----
+**Rubric excellent:** Smart routing (latency, failover)
 
-### T-A3 — Python DLP ICAP REQMOD: upload CC blocking
+| Test | What it proves |
+|------|----------------|
+| V43 Test #5 | QoS: DSCP EF 300/300 packets, 0 drops; bulk: 26 drops and 17k overlimits |
+| VyOS tc shaper | `tc` policy on eth0 with EF/default classes |
+| Wiki evidence | Component: VyOS (QoS configuration), Decision: ZT SD-WAN Branch |
 
-ClamAV c-icap cannot parse `multipart/form-data` POST bodies — this is a confirmed upstream limitation (SourceForge: not implemented in the `virus_scan` service). Python DLP fills this gap via ICAP REQMOD.
+### 4.3 Integration with SASE
 
-```powershell
-# mobile01 (PowerShell)
-curl.exe -x http://100.70.154.79:3128 --ssl-no-revoke -X POST `
-  -d "payment_info=4532015112830366&name=Test+User" `
-  https://httpbin.org/post
-# Expected: HTML DLP block page, HTTP 403
-```
+**Rubric excellent:** Clear role within SASE
 
-The DLP block page is distinguishable from Squid's generic 403 by its DLP-specific error message.
+| Evidence | What it proves |
+|----------|----------------|
+| Decision: ZT SD-WAN Branch | VyOS as SASE gateway, aligned with Zscaler ZT-SD-WAN model |
+| Decision: SD-WAN descoped | Classic IPsec rejected on architectural grounds (Zero Trust) |
+| Wiki evidence | Architecture page, Concept: SASE |
 
-ICAP OPTIONS verification (confirms REQMOD is active):
+### 4.4 Configuration
 
-```bash
-# pop01 (FreeBSD) — use printf, not echo -e (FreeBSD /bin/sh does not interpret -e as escape flag)
-printf "OPTIONS icap://192.168.122.23:1345/dlpscan ICAP/1.0\r\nHost: 192.168.122.23\r\n\r\n" | nc -w 5 192.168.122.23 1345
-# Output: ICAP/1.0 200 OK
-#         Methods: REQMOD
-```
+**Rubric excellent:** Well documented
 
-Validation matrix:
+| Evidence | What it proves |
+|----------|----------------|
+| Component: VyOS | Full configuration: QoS shaper, health check, NAT |
+| Wiki evidence | Decision: ZT SD-WAN Branch with test results |
 
-| Input | Algorithm | Status |
-|-------|-----------|--------|
-| `4532015112830366` (CC) | Luhn | ✅ End-to-end validated |
-| `NL91ABNA0417164300` (IBAN) | mod-97 | ✅ Code present, not end-to-end tested |
-| `111222333` (BSN) | 11-proof | ✅ Code present, not end-to-end tested |
+### 4.5 Testing
 
-See [Python DLP](../components/python-dlp.md), [Decision: Two-Layer DLP](../decisions/two-layer-dlp.md).
+**Rubric excellent:** Multiple scenarios tested
 
----
-
-### T-A4, T-A5, T-A6 — DNS RPZ: three network segments
-
-Test domain: `testentry.rpz.urlhaus.abuse.ch` — a permanent abuse.ch validation entry, always present in the URLhaus RPZ feed.
-
-The `aa` (authoritative answer) flag is the key discriminator: a real internet NXDOMAIN lacks `aa`; an RPZ block is answered authoritatively by the local resolver without an upstream query.
-
-Control test confirms no over-blocking: `drill @127.0.0.1 google.com` returns `NOERROR` without the `aa` flag.
-
-| Segment | Command | Result |
-|---------|---------|--------|
-| **T-A4** pop01 (local) | `drill @127.0.0.1 testentry.rpz.urlhaus.abuse.ch` | `rcode: NXDOMAIN, flags: aa` |
-| **T-A5** mobile01 (overlay) | `nslookup testentry.rpz.urlhaus.abuse.ch` | Non-existent domain |
-| **T-A6** dc01 (DC-LAN) | `drill @10.0.0.1 testentry.rpz.urlhaus.abuse.ch` | `rcode: NXDOMAIN, flags: aa` |
-
-Unbound RPZ log confirms the zone name and source IP for each query:
-
-```
-rpz: applied [ioc2rpz-threat-intel] testentry.rpz.urlhaus.abuse.ch.
-  rpz-nxdomain 100.70.95.98@58107 testentry.rpz.urlhaus.abuse.ch. A IN
-```
-
-DNS path for T-A5: mobile01 → NetBird DNS relay (100.70.255.254) → pop01 Unbound → RPZ check → NXDOMAIN.
-
-See [ioc2rpz](../components/ioc2rpz.md), [RPZ](../concepts/rpz.md).
+| Test | What it proves |
+|------|----------------|
+| V43 Test #5 | QoS under load |
+| V43 Test #6 | Failover detection |
+| F12/13/14 | N/A as classic IPsec, replaced by ZT-Branch tests |
+| Wiki evidence | Decision: ZT SD-WAN Branch (evidence section) |
 
 ---
 
-### T-A10 — Identity Bridge: overlay IP to persona group resolution
+## 5. General
 
-Tests that the Identity Bridge correctly resolves overlay IPs to Entra ID persona groups. Validates by querying the `/lookup` endpoint with a known overlay IP and verifying the returned group matches the expected persona.
+### 5.1 Architecture
 
----
+**Rubric excellent:** Professional
 
-### T-A11 — NATS Event Bus: cross-component event delivery
+Wiki evidence: Architecture page, control/data plane split, node roles.
 
-Tests end-to-end event delivery from a producer (e.g., Suricata) through NATS to both the Control Daemon and Wazuh. Validates by triggering a Suricata alert and checking that the event appears in both NATS monitoring and Wazuh.
+### 5.2 Functional diagram (packet flow)
 
----
+**Rubric excellent:** Complete SASE flow
 
-### T-A12 — Control Daemon: threat score accumulation + quarantine
+Wiki evidence: Interactive functional diagram (`demos/functioneel-schema.html`).
 
-Tests threat score accumulation and quarantine. Validates by sending multiple medium-severity events for the same client, observing the Redis score increase, and verifying that the peer is removed from persona groups when the threshold is exceeded.
+### 5.3 Packet flow explanation
 
----
+**Rubric excellent:** Step-by-step analysis
 
-### T-A13 — Wazuh SIEM: NATS event ingestion + dashboard query
+Wiki evidence: Architecture §5.1–5.4 (four traffic flows written out).
 
-Tests NATS-to-Wazuh event ingestion. Validates by triggering a detection event, then querying the Wazuh Discover dashboard for the event with correct fields.
+### 5.4 Transparency for the customer (logging and insight)
 
----
+**Rubric excellent:** Clear explanation of why traffic is blocked or allowed
 
-## Operational tests — previously planned
+Wiki evidence: F5 (Squid ERR_ACCESS_DENIED), F7 (ClamAV VIRUS DETECTED log), T-A4/5/6 (RPZ NXDOMAIN + aa-flag), Component: Wazuh (SIEM dashboard), F10.
 
-### F10 — Central Log Aggregation (SIEM)
+### 5.5 Performance optimisation
 
-Wazuh is deployed and operational. The NATS forwarder bridges Suricata alerts from the event bus into Wazuh, and the pop01 agent feeds local log sources (Squid access log, Suricata `eve.json`, OPNsense firewall log, Python DLP Docker log). Events are queryable in the Wazuh Discover dashboard.
+**Rubric excellent:** Actively optimised (routing, caching, tuning)
 
-### F11 — CASB Alert and Remediation
+Wiki evidence: Suricata Hyperscan engine, Squid `dynamic_cert_mem_cache`, VyOS QoS shaper tuning.
 
-Wazuh is deployed with M365 Management Activity API integration and Active Response:
+### 5.6 Choice of open-source tools
 
-- **Inline layer:** Squid + ICAP (operational)
-- **API layer:** Wazuh + M365 Management Activity API
-- **Custom rules:** base rule `100600` (`producer=o365`), with `100601` (`AnonymousLinkCreated`), `100602` (`SharingLinkCreated` + scope `Anyone`), `100603` (`SharingSet` + guest)
-- **Active Response:** `sharepoint_remediate.sh` (rules 100601/100602), `guest_remediate.sh` (rule 100603) — behind the ENFORCE gate, detect-only by default (live revoke pending)
+**Rubric excellent:** Strongly justified
 
-Graph API tenant permissions confirmed 1 April 2026 (admin consent granted on `aplab.be`).
+Wiki evidence: 17 decision pages (ADR format), Concept: SASE (commercial equivalents table).
 
----
+### 5.7 Component integration
 
-## F15 — Full-Stack Validation step-by-step
+**Rubric excellent:** Fully integrated
 
-| Step | Description | Status |
-|------|-------------|--------|
-| 1 | Mobile user logs in via Entra ID | ✅ Validated (F2) |
-| 2 | Visits HTTPS site → SSL Bump active | ✅ Validated (F6) |
-| 3 | Visits blocked site → Blocked | ✅ Validated (F5) |
-| 4 | Downloads EICAR → Blocked | ✅ Validated (F7) |
-| 5 | Visits testmyids.com → Alert in IDS | ✅ Validated (F9-1) |
-| 6 | Opens datacenter site → Success | ✅ Validated at build-time (F4); DC-LAN-over-overlay path removed in V34, deferred |
-| 7 | Site user pings datacenter via tunnel | ✖ N/A — classic IPsec site-to-site descoped; the ZT-Branch uses per-device NetBird enrollment instead |
-| 8 | QoS marking visible on VyOS | ✅ Validated — DSCP marking visible via `tc` on VyOS eth0 (V43 Test #5: EF classified, 0 drops under load) |
-| 9 | Management dashboard shows all services UP | ✅ Operational (Wazuh SIEM deployed) |
+Wiki evidence: T-A11 (NATS cross-component event delivery), T-A12 (Control Daemon end-to-end), NATS event bus architecture, Identity Bridge SWG+ZTNA coupling.
 
-Steps 1–5, 8, and 9 reflect the current stack. Step 6 was validated at build-time (F4) but its DC-LAN-over-overlay path was removed in V34 (deferred). Step 7 is architectural N/A — classic IPsec SD-WAN, replaced by the ZT-Branch model.
+### 5.8 Troubleshooting
+
+**Rubric excellent:** In-depth analysis
+
+Wiki evidence: 24 findings pages with root cause, diagnosis, resolution, and verification.
+
+### 5.9 Reporting
+
+**Rubric excellent:** Professional
+
+Wiki evidence: Wiki itself, Handboek v4, Doc1–Doc7, Addenda A–J, 44 session reports.
+
+### 5.10 Collaboration (teamwork)
+
+**Rubric excellent:** Proactive collaboration, knowledge sharing, and joint problem solving
+
+Wiki evidence: Sandbox as reference implementation for the team, Doc1–Doc7 as comparison documents, wiki as shared knowledge base.
 
 ---
 

@@ -36,7 +36,7 @@ Step-by-step deployment guides for building the SASE PoC stack from scratch. Eac
 | 4 | [Malware & DLP](04-malware-dlp.md) | pop01 + mgmt01 | Operational | ClamAV/c-icap RESPMOD, YARA rules, Python DLP REQMOD |
 | 5 | [IDS](05-ids.md) | pop01 | Operational | Suricata on WAN+LAN, Hyperscan, 79,620+ rules, drop/alert policies |
 | 6 | [DNS Threat Intel](06-dns-threat-intel.md) | mgmt01 + pop01 | Operational | ioc2rpz feeds, BIND TSIG intermediary, Unbound RPZ, 71,767 records |
-| 7 | [Access Policy](07-access-policy.md) | Entra ID + NetBird | Planned | Conditional Access (5 policies), posture checks, validation scenarios |
+| 7 | [Access Policy](07-access-policy.md) | Entra ID + NetBird | Operational | Conditional Access (5 policies), posture checks, validation scenarios |
 | 8 | [GroupSync](08-groupsync.md) | Entra ID + Zitadel + NetBird | Operational | JWT group sync, Entra ID token config, Zitadel Actions |
 | 9 | [Identity Bridge](09-identity-bridge.md) | mgmt01 + pop01 | Operational | FastAPI overlay-IP → persona group, Squid external_acl |
 | 10 | [NATS JetStream](10-nats-jetstream.md) | mgmt01 + pop01 | Operational | Event bus, producers, Control Daemon, Redis |

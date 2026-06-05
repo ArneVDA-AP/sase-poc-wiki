@@ -74,7 +74,7 @@ decision point. Opens full-width in a new tab.
 | [04 — Malware & DLP](runbooks/04-malware-dlp.md) | ClamAV/c-icap RESPMOD, YARA rules, Python DLP REQMOD |
 | [05 — IDS](runbooks/05-ids.md) | Suricata on WAN+LAN, Hyperscan, 79,620+ rules |
 | [06 — DNS Threat Intel](runbooks/06-dns-threat-intel.md) | ioc2rpz, BIND TSIG, Unbound RPZ, 71,767 records |
-| [07 — Access Policy](runbooks/07-access-policy.md) | Conditional Access, posture checks, validation scenarios (planned) |
+| [07 — Access Policy](runbooks/07-access-policy.md) | Conditional Access, posture checks, validation scenarios |
 | [08 — GroupSync](runbooks/08-groupsync.md) | JWT group sync, Entra ID token config, Zitadel Actions |
 | [09 — Identity Bridge](runbooks/09-identity-bridge.md) | FastAPI overlay-IP → persona group, Squid external_acl |
 | [10 — NATS JetStream](runbooks/10-nats-jetstream.md) | Event bus, producers, Control Daemon, Redis |
