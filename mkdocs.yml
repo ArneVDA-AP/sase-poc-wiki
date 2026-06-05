@@ -8,6 +8,8 @@ docs_dir: docs
 exclude_docs: |
   log.md
   log.nl.md
+  docs.zip
+  .understand-anything/
 
 theme:
   name: material
