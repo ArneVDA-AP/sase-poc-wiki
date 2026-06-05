@@ -19,11 +19,11 @@ De antwoordstroom: Squid stuurt `<IP> <group>` → helper queryet `GET /lookup?i
 
 ## Configuratie
 
-- **Service-gebruiker:** `identity-bridge` met admin-rol — gewone user-PAT's veroorzaken issue #3127 (JWT-gepropageerde auto-groepen worden bij elke poll van alle peers gestript)
+- **Service-gebruiker:** `identity-bridge` met admin-rol; gewone user-PAT's veroorzaken issue #3127 (JWT-gepropageerde auto-groepen worden bij elke poll van alle peers gestript)
 - **Cache TTL:** 30s (Squid `external_acl_type ttl=30 negative_ttl=10 concurrency=0`)
-- **Endpoint:** `GET /lookup?ip=<overlay_ip>` — vereist de `X-Bridge-Secret`-header (env `LOOKUP_SECRET`; fail-secure: een leeg geheim weigert elk verzoek). Retourneert het volledige groepslidmaatschap van de peer (`status`/`user`/`groups`/`os`) of ERR
-- **Health:** `GET /health` — open, geen auth, lekt geen identiteit
-- **Enkel verbonden peers** worden gecachet — niet-verbonden peers vallen terug op GUI-gegenereerde regels
+- **Endpoint:** `GET /lookup?ip=<overlay_ip>`, vereist de `X-Bridge-Secret`-header (env `LOOKUP_SECRET`; fail-secure: een leeg geheim weigert elk verzoek). Retourneert het volledige groepslidmaatschap van de peer (`status`/`user`/`groups`/`os`) of ERR
+- **Health:** `GET /health` (open, geen auth, lekt geen identiteit)
+- **Enkel verbonden peers** worden gecachet; niet-verbonden peers vallen terug op GUI-gegenereerde regels
 - **Fail-open ontwerp:** Wanneer onbereikbaar matchen geen identiteitsgebaseerde ACL's, en valt verkeer door naar niet-identiteitsgebonden URL-filtering. Alle andere beveiligingslagen blijven actief.
 
 ## Integratiepunten

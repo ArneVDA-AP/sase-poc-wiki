@@ -28,7 +28,7 @@ Navigeer in de Azure-portal naar de app registration (`11803ee8-eb15-462c-a286-5
 2. Open de **Manifest**-editor en koppel `cloud_displayname` aan de groups claim (geconfigureerd in Stap 2): voeg onder `optionalClaims` bij de `groups`-entry `"additionalProperties": ["cloud_displayname"]` toe, en stel `"groupMembershipClaims": "ApplicationGroup"` in
 3. Sla het manifest op
 
-> **Valkuil: `cloud_displayname` is niet selecteerbaar in de Token Configuration UI** — het moet worden toegevoegd door het manifest rechtstreeks te bewerken. Het zorgt ervoor dat de `groups` claim de *weergavenaam* van elke groep uitstuurt (bijv. `2ITCSC1A-Studenten`) in plaats van zijn ObjectID-GUID — de harde voorwaarde voor Pad B, aangezien Zitadels allowlist matcht op de weergavenaam-string en niet op een GUID. Vereist Azure AD Premium (aplab.be heeft A5/P2) en cloud-only beveiligingsgroepen.
+> **Valkuil: `cloud_displayname` is niet selecteerbaar in de Token Configuration UI;** het moet worden toegevoegd door het manifest rechtstreeks te bewerken. Het zorgt ervoor dat de `groups` claim de *weergavenaam* van elke groep uitstuurt (bijv. `2ITCSC1A-Studenten`) in plaats van zijn ObjectID-GUID (de harde voorwaarde voor Pad B, aangezien Zitadels allowlist matcht op de weergavenaam-string en niet op een GUID). Vereist Azure AD Premium (aplab.be heeft A5/P2) en cloud-only beveiligingsgroepen.
 
 ---
 
@@ -54,9 +54,9 @@ Navigeer naar **Enterprise Applications** → zoek de bijbehorende Enterprise Ap
 
 | Entra ID-beveiligingsgroep | NetBird-groep (Pad B) | Doel |
 |----------------------------|-----------------------|------|
-| `2ITCSC1A-Studenten` | `Studenten` | Studentenpersona — proxytoegang via Core-Services |
-| `2ITCSC1A-Docenten` | `Docenten` | Docentenpersona — proxytoegang via Core-Services |
-| `2ITCSC1A-Admins` | `Admins` | Adminpersona — volledige beheerderstoegang |
+| `2ITCSC1A-Studenten` | `Studenten` | Studentenpersona, proxytoegang via Core-Services |
+| `2ITCSC1A-Docenten` | `Docenten` | Docentenpersona, proxytoegang via Core-Services |
+| `2ITCSC1A-Admins` | `Admins` | Adminpersona, volledige beheerderstoegang |
 
 3. Bevestig dat alle 3 groepen in de toewijzingslijst verschijnen
 
@@ -78,18 +78,18 @@ Dit voorkomt dat niet-toegewezen gebruikers zich authenticeren via de applicatie
 
 Navigeer in de Zitadel-beheerconsole op mgmt01 naar **Actions**:
 
-### Action 1 — External Authentication
+### Action 1: External Authentication
 
 **Trigger:** External Authentication
 **Allowed to fail:** true
 
 Deze actie:
 
-- Leest de groeps-weergavenamen uit de `groups` claim van het Entra ID-token (aanwezig als namen, niet als GUID's, omdat `cloud_displayname` is ingeschakeld — Stap 1)
+- Leest de groeps-weergavenamen uit de `groups` claim van het Entra ID-token (aanwezig als namen, niet als GUID's, omdat `cloud_displayname` is ingeschakeld, Stap 1)
 - Mapt elke weergavenaam naar zijn schone personanaam via een hardgecodeerde allowlist (`2ITCSC1A-Studenten` → `Studenten`, `2ITCSC1A-Docenten` → `Docenten`, `2ITCSC1A-Admins` → `Admins`); een groep die niet in de allowlist staat wordt weggelaten (fail-closed)
 - Schrijft de overeenkomende schone namen naar de gebruikersmetadata-sleutel `sase_groups` (komma-gescheiden)
 
-### Action 2 — Complement Token
+### Action 2: Complement Token
 
 **Trigger:** Complement Token
 **Allowed to fail:** true
@@ -99,7 +99,7 @@ Deze actie:
 - Leest `sase_groups` uit de metadata van de gebruiker en roept `setClaim('groups', [...])` aan om die schone namen in het door Zitadel uitgegeven JWT te injecteren
 - NetBird leest deze `groups` claim om gebruikers aan personagroepen toe te wijzen
 
-> **Valkuil: Beide acties moeten `allowed-to-fail: true` hebben.** Als een actie faalt (bijv. Entra ID retourneert niet de verwachte claim voor een gebruiker), moet authenticatie toch slagen — de gebruiker heeft dan alleen geen personagroepen toegewezen. Zie [Beslissing: GroupSync PAD B](../decisions/groupsync-pad-b.nl.md).
+> **Valkuil: Beide acties moeten `allowed-to-fail: true` hebben.** Als een actie faalt (bijv. Entra ID retourneert niet de verwachte claim voor een gebruiker), moet authenticatie toch slagen; de gebruiker heeft dan alleen geen personagroepen toegewezen. Zie [Beslissing: GroupSync PAD B](../decisions/groupsync-pad-b.nl.md).
 
 ---
 

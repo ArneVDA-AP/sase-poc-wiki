@@ -16,9 +16,9 @@ Transparante proxy via `pf rdr` werd geconfigureerd om TCP-verkeer op de `wt0`-i
 
 ## Oorzaak
 
-WireGuard creëert een Layer 3 gerouteerde interface. Verkeer dat via `wt0` wordt gerouteerd verschijnt vanuit het perspectief van de packet filter niet als inkomende frames op die interface. `pf rdr` werkt op inkomend verkeer — het kan via WireGuard doorgestuurd verkeer niet zien en dus ook niet omleiden.
+WireGuard creëert een Layer 3 gerouteerde interface. Verkeer dat via `wt0` wordt gerouteerd verschijnt vanuit het perspectief van de packet filter niet als inkomende frames op die interface. `pf rdr` werkt op inkomend verkeer: het kan via WireGuard doorgestuurd verkeer niet zien en dus ook niet omleiden.
 
-Dit is een gedocumenteerde, bekende beperking. OPNsense GitHub issue #3857 — gesloten als "not planned".
+Dit is een gedocumenteerde, bekende beperking. OPNsense GitHub issue #3857, gesloten als "not planned".
 
 ## Oplossing / workaround
 

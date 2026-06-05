@@ -418,3 +418,17 @@ discrepancy was based on V34's point-in-time observation; the live server config
 - `index.md` + `.nl.md` — finding blurb corrected (was "hostname resolution issue", now reflects empty UUID cause)
 
 **Source documents ingested:** `Wazuh_DB_Fix.md` (1 versie-herstel runbook). No `raw/` files modified.
+
+---
+
+## 2026-06-05 — NL style corrections (phases 1 + 2)
+
+**Phase 1 — Calques, compounds, sentence structure (34 NL files):**
+Dutch calque fixes across all `.nl.md` files: verb calques (bevragen→queryen, oplossen→resolven in DNS context, doorsturen→forwarden), forced compounds (uitgangsknoop→exit node, beveiligingsstapel→security stack), English participium-constructions removed, passive→active rewrites. Based on empirical NL style guide derived from user's actual technical writing style.
+
+**Phase 2 — Em dash removal (82 NL files, ~900 instances):**
+All em dashes (—) in running text replaced with contextually appropriate Dutch punctuation: parentheses (preferred for interjections), colons, periods, commas, or semicolons. En dashes in numeric ranges (F1–F15) preserved. Em dashes inside code blocks preserved. Empty table-cell placeholders normalized from `—` to `n.v.t.`. `attack-scenarios.nl.md` double-hyphen (`--`) patterns also fixed for consistency.
+
+**Audit:** Independent Opus auditor agents verified both phases before edits were applied. Phase 1: 10/10 PASS. Phase 2: 18/18 sampled files PASS, 1 pre-existing issue (attack-scenarios.nl.md) caught and fixed.
+
+**Files changed:** 82 NL wiki pages. No EN pages or `raw/` files modified.

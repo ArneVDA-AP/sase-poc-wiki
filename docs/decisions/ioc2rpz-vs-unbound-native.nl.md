@@ -16,14 +16,14 @@ DNS threat intelligence vereist een bron die feed-URL's (URLhaus, ThreatFox) agg
 
 | Optie | Voor | Tegen |
 |-------|------|-------|
-| **Unbound native RPZ** | Geen extra component; Unbound 1.24.2 ondersteunt native `rpz:`-blok | Unbound laadt zonebestanden alleen van schijf of via zone-transfer — geen ingebouwde HTTP-feed-ophaling; cron-job zou nodig zijn om feeds te downloaden en te converteren |
+| **Unbound native RPZ** | Geen extra component; Unbound 1.24.2 ondersteunt native `rpz:`-blok | Unbound laadt zonebestanden alleen van schijf of via zone-transfer, zonder ingebouwde HTTP-feed-ophaling; cron-job zou nodig zijn om feeds te downloaden en te converteren |
 | **ioc2rpz** | Speciaal gebouwde feed-aggregator; HTTP-pull + RPZ-zone-compilatie; GUI voor beheer; NOTIFY naar downstream-resolvers | Extra Docker-container; ioc2rpz.gui heeft een JavaScript-loginbug |
 
 ## Beslissing
 
 ioc2rpz als RPZ-zonebron, gedeployed als Docker-container op mgmt01.
 
-ioc2rpz verwerkt de feed-levenscyclus: het haalt periodiek URLhaus- en ThreatFox-RPZ-feeds op via HTTP, voegt ze samen tot één zone (`threat-intel.rpz.sase`) en stuurt DNS NOTIFY naar downstream-servers wanneer de zone wordt bijgewerkt. Zonder ioc2rpz zouden cron-jobs nodig zijn om feeds op te halen, te converteren en zone-bestanden opnieuw te laden — het opnieuw implementeren van wat ioc2rpz al doet.
+ioc2rpz verwerkt de feed-levenscyclus: het haalt periodiek URLhaus- en ThreatFox-RPZ-feeds op via HTTP, voegt ze samen tot één zone (`threat-intel.rpz.sase`) en stuurt DNS NOTIFY naar downstream-servers wanneer de zone wordt bijgewerkt. Zonder ioc2rpz zouden cron-jobs nodig zijn om feeds op te halen, te converteren en zone-bestanden opnieuw te laden, oftewel het opnieuw implementeren van wat ioc2rpz al doet.
 
 De GUI-JavaScript-bug is een bekend upstream-probleem met een eenvoudige sed-fix die na het starten van de container wordt toegepast. Zie [Bevinding: ioc2rpz GUI JS bug](../findings/ioc2rpz-gui-js-bug.md).
 

@@ -1,11 +1,11 @@
 ---
-title: "GNS3 — Virtualisatie en Lab-topologie"
+title: "GNS3: Virtualisatie en Lab-topologie"
 tags: [network, architecture, sase]
 ---
 
-# GNS3 — Virtualisatie en Lab-topologie
+# GNS3: Virtualisatie en Lab-topologie
 
-**Rol:** Lab-infrastructuurplatform — host alle SASE-stack-VMs en simuleert de netwerktopologie (WAN-segment, DC-LAN, Site-LAN) op één fysieke server met geneste QEMU/KVM-virtualisatie.  
+**Rol:** Lab-infrastructuurplatform dat alle SASE-stack-VMs host en de netwerktopologie simuleert (WAN-segment, DC-LAN, Site-LAN) op één fysieke server met geneste QEMU/KVM-virtualisatie.  
 **Status:** ✅ Volledig operationeel  
 **Configuratielocatie:** GNS3-project op `poc-1a` (Ubuntu 24.04 VM op `10.158.10.67`), Proxmox VM-103
 
@@ -13,13 +13,13 @@ tags: [network, architecture, sase]
 
 ## Hoe het werkt in deze stack
 
-GNS3 draait als een systemd-service op een Ubuntu 24.04 VM (`poc-1a`) binnen Proxmox. De GNS3 Server beheert QEMU/KVM-virtuele machines en Ethernet-switch-nodes. Teamleden verbinden via de GNS3 GUI-applicatie van hun eigen laptop naar `10.158.10.67:3080` — meerdere mensen kunnen gelijktijdig aan dezelfde topologie werken, elk op hun eigen VM-console.
+GNS3 draait als een systemd-service op een Ubuntu 24.04 VM (`poc-1a`) binnen Proxmox. De GNS3 Server beheert QEMU/KVM-virtuele machines en Ethernet-switch-nodes. Teamleden verbinden via de GNS3 GUI-applicatie van hun eigen laptop naar `10.158.10.67:3080`: meerdere mensen kunnen gelijktijdig aan dezelfde topologie werken, elk op hun eigen VM-console.
 
-**Waarom GNS3 en niet EVE-NG:** EVE-NG heeft één webinterface — twee gebruikers die aan dezelfde node werken blokkeren elkaar. Het client-server-model van GNS3 stelt alle vier teamleden in staat gelijktijdig te werken. EVE-NG gebruikt ook OVA-imports die incompatibel zijn met de QCOW2-images die OPNsense, VyOS en Ubuntu als primair downloadformaat distribueren.
+**Waarom GNS3 en niet EVE-NG:** EVE-NG heeft één webinterface: twee gebruikers die aan dezelfde node werken blokkeren elkaar. Het client-server-model van GNS3 stelt alle vier teamleden in staat gelijktijdig te werken. EVE-NG gebruikt ook OVA-imports die incompatibel zijn met de QCOW2-images die OPNsense, VyOS en Ubuntu als primair downloadformaat distribueren.
 
-**Geneste virtualisatie:** GNS3 gebruikt QEMU/KVM voor VMs binnen de topologie. De Proxmox-host geeft CPU-virtualisatie-extensies (VMX/SVM) door naar de Ubuntu VM met `cpu type = host`. Verifieer met `egrep -c '(vmx|svm)' /proc/cpuinfo` — moet > 0 zijn.
+**Geneste virtualisatie:** GNS3 gebruikt QEMU/KVM voor VMs binnen de topologie. De Proxmox-host geeft CPU-virtualisatie-extensies (VMX/SVM) door naar de Ubuntu VM met `cpu type = host`. Verifieer met `egrep -c '(vmx|svm)' /proc/cpuinfo` (moet > 0 zijn).
 
-**libvirt als WAN-segment:** De NAT-node van GNS3 koppelt aan het standaardnetwerk van libvirt (`virbr0`, `192.168.122.0/24`). libvirt verwerkt NAT en internetrouting automatisch — geen handmatige iptables-regels nodig voor internettoegang van VMs. Dit vervangt de EVE-NG IP-forwarding- en NAT-stappen uit het handboek.
+**libvirt als WAN-segment:** De NAT-node van GNS3 koppelt aan het standaardnetwerk van libvirt (`virbr0`, `192.168.122.0/24`). libvirt verwerkt NAT en internetrouting automatisch; geen handmatige iptables-regels nodig voor internettoegang van VMs. Dit vervangt de EVE-NG IP-forwarding- en NAT-stappen uit het handboek.
 
 ---
 
@@ -35,7 +35,7 @@ GNS3 draait als een systemd-service op een Ubuntu 24.04 VM (`poc-1a`) binnen Pro
 | site01 | QEMU (QCOW2) | VyOS | 1024 MB | 1 |
 | sitepc01 | QEMU (QCOW2) | Tiny11 (Windows 11) | 4096 MB | 2 |
 
-pop01 vereist 8 GB RAM voor ClamAV + Suricata + Squid die gelijktijdig draaien (het handboek specificeert 4 GB — dit is onvoldoende).
+pop01 vereist 8 GB RAM voor ClamAV + Suricata + Squid die gelijktijdig draaien (het handboek specificeert 4 GB, dit is onvoldoende).
 
 ### Bekabeling
 
@@ -54,7 +54,7 @@ Switch-Site  ──── sitepc01 Ethernet (sitepc01 Site-LAN)
 NAT-Internet ──── mobile01 NIC1     (aparte TAP — simulatie van extern netwerk)
 ```
 
-mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het verbindt direct via zijn eigen netwerkadapter en simuleert een echte remote gebruiker buiten de GNS3-topologie. Het bereikt de SASE-stack uitsluitend via de NetBird WireGuard-tunnel.
+mobile01 is een VMware VM op de laptop van een teamlid, geen GNS3-node. Het verbindt direct via zijn eigen netwerkadapter en simuleert een echte remote gebruiker buiten de GNS3-topologie. Het bereikt de SASE-stack uitsluitend via de NetBird WireGuard-tunnel.
 
 ### IP-adressering
 
@@ -83,7 +83,7 @@ mobile01 is een VMware VM op de laptop van een teamlid — geen GNS3-node. Het v
 
 ### Port-forwards voor externe toegang
 
-Port-forwards via iptables DNAT op de GNS3-host (`10.158.10.67`). Volgorde van regels is kritiek — zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
+Port-forwards via iptables DNAT op de GNS3-host (`10.158.10.67`). Volgorde van regels is kritiek; zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
 
 ```bash
 iptables -t nat -A PREROUTING -p tcp --dport 7022 -j DNAT --to 192.168.122.13:22
@@ -107,7 +107,7 @@ Twee SNI-entries vermijden poortconflicten tussen de sandbox- en de teamprojects
 
 ## Snapshots
 
-GNS3-snapshots omvatten het volledige project — alle VMs tegelijk. In tegenstelling tot VMware/Proxmox-snapshots per VM legt een GNS3-snapshot de volledige topologiestatus vast.
+GNS3-snapshots omvatten het volledige project (alle VMs tegelijk). In tegenstelling tot VMware/Proxmox-snapshots per VM legt een GNS3-snapshot de volledige topologiestatus vast.
 
 **Voor het maken van een snapshot:** Stop eerst alle nodes (Edit → Stop all nodes, wacht tot alle nodes grijs zijn).
 
@@ -118,25 +118,25 @@ Huidige snapshots:
 | Naam | Inhoud |
 |------|--------|
 | `Fase2-ZTNA-Complete` | Volledige ZTNA-stack operationeel (NetBird, Zitadel, Entra ID-federatie) |
-| `Fase3-Security-Complete` | Gepland — na Zeek/RITA-uitrol |
+| `Fase3-Security-Complete` | Gepland, na Zeek/RITA-uitrol |
 
 ---
 
 ## Bekende problemen / valkuilen
 
-**"Stop Node" = QEMU SIGKILL → bestandssysteemcorruptie op OPNsense** — de stopknop van GNS3 stuurt SIGKILL direct naar QEMU. OPNsense draait op FreeBSD UFS met soft updates, dat asynchroon schrijft. Een abrupte kill kan een inconsistente bestandssysteemstatus of verloren configuratie veroorzaken. Sluit OPNsense altijd correct af voordat je de GNS3-node stopt:
+**"Stop Node" = QEMU SIGKILL → bestandssysteemcorruptie op OPNsense:** de stopknop van GNS3 stuurt SIGKILL direct naar QEMU. OPNsense draait op FreeBSD UFS met soft updates, dat asynchroon schrijft. Een abrupte kill kan een inconsistente bestandssysteemstatus of verloren configuratie veroorzaken. Sluit OPNsense altijd correct af voordat je de GNS3-node stopt:
 ```bash
 # Vanuit OPNsense-console of SSH:
 shutdown -h now
 # Wacht tot de node stopt in GNS3, ga dan verder
 ```
-Mitigatie: voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01 — FreeBSD draait dan automatisch fsck bij de volgende boot na een onregelmatige afsluiting.
+Mitigatie: voeg `fsck_y_enable="YES"` toe aan `/etc/rc.conf` op pop01. FreeBSD draait dan automatisch fsck bij de volgende boot na een onregelmatige afsluiting.
 
-**iptables FORWARD-volgorde** — libvirt plaatst zijn eigen REJECT-regels in de FORWARD-keten. Regels toegevoegd met `-A FORWARD` komen na die REJECT-regels terecht en matchen nooit. Gebruik altijd `-I FORWARD 1` voor ACCEPT-regels. Zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
+**iptables FORWARD-volgorde:** libvirt plaatst zijn eigen REJECT-regels in de FORWARD-keten. Regels toegevoegd met `-A FORWARD` komen na die REJECT-regels terecht en matchen nooit. Gebruik altijd `-I FORWARD 1` voor ACCEPT-regels. Zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
 
-**ubridge learning bridge beperkt verkeerzichtbaarheid** — Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort — niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet. Dit heeft impact op elke toekomstige Zeek/RITA-uitrol: valideer met `tcpdump -i ens3 -n host 8.8.8.8` op mgmt01 vóór uitrol.
+**ubridge learning bridge beperkt verkeerzichtbaarheid:** Switch-WAN gebruikt ubridge, een lerende L2-brug. Na MAC-learning gaan unicast-frames alleen naar de juiste poort, niet geflood. mgmt01 in promiscuous mode op ens3 ziet het verkeer van pop01 naar internet niet. Dit heeft impact op elke toekomstige Zeek/RITA-uitrol: valideer met `tcpdump -i ens3 -n host 8.8.8.8` op mgmt01 vóór uitrol.
 
-**sitepc01 draait nu Tiny11 (Windows 11)** — aanvankelijk aangemaakt als een lege node (geen OS), werd het later geïmporteerd als een Tiny11-image en ge-enrolld in de NetBird-overlay als `docent1` (Entra ID joined + Intune enrolled). Het is operationeel actief.
+**sitepc01 draait nu Tiny11 (Windows 11):** aanvankelijk aangemaakt als een lege node (geen OS), werd het later geïmporteerd als een Tiny11-image en ge-enrolld in de NetBird-overlay als `docent1` (Entra ID joined + Intune enrolled). Het is operationeel actief.
 
 ---
 

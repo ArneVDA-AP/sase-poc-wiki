@@ -10,13 +10,13 @@ tags: [decision, sd-wan, vyos, netbird, zero-trust]
 
 ## Context
 
-Traditioneel SD-WAN (IPsec site-to-site-tunnels, uCPE, QoS) maakte aanvankelijk deel uit van de architectuur. Herziening v3 (maart 2026) schrapte de klassieke IPsec/uCPE-aanpak (zie [Beslissing: SD-WAN geschrapt](sdwan-descoped.md)). De vraag bleef: wat vervangt het branch-connectiviteitsmodel? Simpelweg elk apparaat individueel enrollen via NetBird is functioneel, maar adresseert geen QoS of failover — twee mogelijkheden die SD-WAN traditioneel biedt.
+Traditioneel SD-WAN (IPsec site-to-site-tunnels, uCPE, QoS) maakte aanvankelijk deel uit van de architectuur. Herziening v3 (maart 2026) schrapte de klassieke IPsec/uCPE-aanpak (zie [Beslissing: SD-WAN geschrapt](sdwan-descoped.md)). De vraag bleef: wat vervangt het branch-connectiviteitsmodel? Simpelweg elk apparaat individueel enrollen via NetBird is functioneel, maar adresseert geen QoS of failover, twee mogelijkheden die SD-WAN traditioneel biedt.
 
 ## Overwogen opties
 
 | Optie | Voor | Tegen |
 |-------|------|-------|
-| **Klassiek IPsec-gebaseerd SD-WAN** | Traditionele aanpak; site-to-site-tunnel biedt transparante subnettoegang; goed begrepen QoS-modellen | Verleent impliciete subnetniveau-toegang op basis van netwerklocatie — in strijd met Zero Trust. Dupliceert de ZTNA-overlay. F12-F14 testkader meet het verkeerde paradigma |
+| **Klassiek IPsec-gebaseerd SD-WAN** | Traditionele aanpak; site-to-site-tunnel biedt transparante subnettoegang; goed begrepen QoS-modellen | Verleent impliciete subnetniveau-toegang op basis van netwerklocatie, in strijd met Zero Trust. Dupliceert de ZTNA-overlay. F12-F14 testkader meet het verkeerde paradigma |
 | **Zero Trust Branch (NetBird-overlay + VyOS QoS)** | Per-apparaat authenticatie; geen impliciet subnetvertrouwen; sluit aan op Zscaler/Netskope ZT-SD-WAN-model; VyOS biedt QoS via DSCP zonder IPsec | VyOS QoS wordt toegepast op de site-gateway, niet end-to-end; failover is enkel detectie-en-alerting (single-WAN-lab), geen automatische dual-WAN-omschakeling |
 
 ## Beslissing
@@ -28,7 +28,7 @@ Zero Trust Branch-model: VyOS site01 fungeert als SASE-gateway op Site-LAN (172.
 De ZT-Branch-implementatie is gevalideerd door twee specifieke tests:
 
 - **Test #5 (QoS onder last, V43):** DSCP EF-verkeer: 300/300 pakketten, 0 drops. Bulkverkeer onder dezelfde last: 26 drops + 17.000+ overlimits. Demonstreert effectieve verkeerspriorisering zonder IPsec-tunnels.
-- **Test #6 (Failover-detectie, V43):** een VyOS-health-check-script dat pop01, de internet-gateway en `8.8.8.8` pingt, produceerde een CRITICAL-detectie binnen 30 seconden toen pop01's interface werd neergehaald, met herstel gelogd zodra die terugkwam. Dit is eerlijke single-WAN-framing — detectie en alerting, geen automatische dual-WAN-omschakeling.
+- **Test #6 (Failover-detectie, V43):** een VyOS-health-check-script dat pop01, de internet-gateway en `8.8.8.8` pingt, produceerde een CRITICAL-detectie binnen 30 seconden toen pop01's interface werd neergehaald, met herstel gelogd zodra die terugkwam. Dit is eerlijke single-WAN-framing: detectie en alerting, geen automatische dual-WAN-omschakeling.
 
 Spoor-1-contract acceptatiecriteria B1-B4 zijn volledig gesloten op basis van deze resultaten.
 
@@ -36,7 +36,7 @@ Spoor-1-contract acceptatiecriteria B1-B4 zijn volledig gesloten op basis van de
 
 - **F12-F14 (klassieke IPsec-tests) zijn N.v.t.** Deze tests maten een ander paradigma. De ZT-Branch tests (#5 en #6) zijn het correcte validatiekader voor de geïmplementeerde architectuur.
 - **VyOS-rol is herdefinieerd:** VyOS site01 is een SASE-gateway met DSCP-markering, geen IPsec-router. De configuratie is `tc`-gebaseerde QoS + NAT, niet IPsec + BGP.
-- **Per-apparaat authenticatie is verplicht:** Elk apparaat op Site-LAN moet een eigen NetBird-enrollment hebben. Er is geen site-niveau vertrouwen — een gecompromitteerd apparaat op Site-LAN verleent geen toegang tot datacenterresources voor andere apparaten.
+- **Per-apparaat authenticatie is verplicht:** Elk apparaat op Site-LAN moet een eigen NetBird-enrollment hebben. Er is geen site-niveau vertrouwen: een gecompromitteerd apparaat op Site-LAN verleent geen toegang tot datacenterresources voor andere apparaten.
 - **QoS is alleen site-egress:** DSCP-markering op VyOS is van toepassing op verkeer dat de site verlaat. End-to-end QoS is afhankelijk van tussenliggende netwerkhops die DSCP-markeringen respecteren, wat niet gegarandeerd is op het publieke internet.
 
 Zie ook: [Beslissing: SD-WAN geschrapt](sdwan-descoped.md), [Component: VyOS](../components/vyos.md), [Component: NetBird](../components/netbird.md), [Concept: Zero Trust](../concepts/zero-trust.md)

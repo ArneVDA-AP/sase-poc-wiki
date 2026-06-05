@@ -5,7 +5,7 @@ tags: [runbook, identity-bridge, fastapi, squid, docker]
 
 # Runbook: Identity Bridge
 
-**Node(s):** mgmt01 (Docker — Identity Bridge-container), pop01 (Squid external ACL)
+**Node(s):** mgmt01 (Docker, Identity Bridge-container), pop01 (Squid external ACL)
 **Vereisten:** [Runbook 02: ZTNA Overlay](02-ztna-overlay.nl.md) afgerond (NetBird operationeel), [Runbook 08: GroupSync](08-groupsync.nl.md) afgerond
 **Status:** Operationeel
 
@@ -14,7 +14,7 @@ tags: [runbook, identity-bridge, fastapi, squid, docker]
 ## Vereistenchecklist
 
 - [ ] NetBird-overlay operationeel ([Runbook 02](02-ztna-overlay.nl.md))
-- [ ] GroupSync afgerond — personagroepen (Studenten/Docenten/Admins) gevuld in NetBird ([Runbook 08](08-groupsync.nl.md))
+- [ ] GroupSync afgerond; personagroepen (Studenten/Docenten/Admins) gevuld in NetBird ([Runbook 08](08-groupsync.nl.md))
 - [ ] Docker geïnstalleerd op mgmt01
 - [ ] NetBird service user PAT beschikbaar voor API-authenticatie
 
@@ -48,7 +48,7 @@ Bouw en start de Docker-container op mgmt01:
 # Controleer of container actief is
 docker ps | grep identity-bridge
 
-# Test het lookup-endpoint direct (de X-Bridge-Secret-header is vereist — een kale
+# Test het lookup-endpoint direct (de X-Bridge-Secret-header is vereist; een kale
 # aanvraag retourneert HTTP 401, fail-secure)
 curl -H "X-Bridge-Secret: <secret>" "http://192.168.122.23:<port>/lookup?ip=<bekend-peer-ip>"
 # Verwacht: JSON met het volledige groepslidmaatschap van de peer (status/user/groups/os)

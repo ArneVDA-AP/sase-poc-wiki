@@ -10,13 +10,13 @@ tags: [finding, network, workaround]
 
 ## Wat er gebeurde
 
-Poortdoorsturing ACCEPT-regels werden toegevoegd aan de FORWARD-keten op de GNS3-host met `iptables -A FORWARD` (toevoegen). De poortdoorsturingen werkten niet — paketten werden gedropt ondanks dat overeenkomende regels aanwezig leken.
+Poortdoorsturing ACCEPT-regels werden toegevoegd aan de FORWARD-keten op de GNS3-host met `iptables -A FORWARD` (toevoegen). De poortdoorsturingen werkten niet: paketten werden gedropt ondanks dat overeenkomende regels aanwezig leken.
 
 `iptables -L FORWARD --line-numbers` toonde de ACCEPT-regels op positie 24+, terwijl de `LIBVIRT_FWI`-keten op positie 22 stond met een REJECT-beleid.
 
 ## Oorzaak
 
-libvirt installeert zijn eigen FORWARD-ketenregels die een REJECT bevatten voor verkeer dat niet door libvirt wordt beheerd. Wanneer regels worden toegevoegd (`-A FORWARD`), worden ze geplaatst na de libvirt REJECT-keten. De eerste overeenkomende regel wint — het REJECT van libvirt activeert vóór de ACCEPT-regel wordt bereikt.
+libvirt installeert zijn eigen FORWARD-ketenregels die een REJECT bevatten voor verkeer dat niet door libvirt wordt beheerd. Wanneer regels worden toegevoegd (`-A FORWARD`), worden ze geplaatst na de libvirt REJECT-keten. De eerste overeenkomende regel wint: het REJECT van libvirt activeert vóór de ACCEPT-regel wordt bereikt.
 
 ## Oplossing / workaround
 
@@ -41,5 +41,5 @@ iptables -I FORWARD 1 -d 192.168.122.33 -j ACCEPT
 
 - Gebruik bij het toevoegen van FORWARD-regels op een host met libvirt altijd `-I FORWARD 1` (invoegen bovenaan), nooit `-A FORWARD` (toevoegen)
 - Diagnose: `iptables -L FORWARD --line-numbers` om regelposities en de libvirt-ketenlocatie te zien
-- De REJECT-regel van libvirt is by design — het voorkomt dat onbeheerd verkeer libvirt-netwerken kruist
+- De REJECT-regel van libvirt is by design: het voorkomt dat onbeheerd verkeer libvirt-netwerken kruist
 - Deze iptables-regels zijn **niet persistent over reboots** van de GNS3-host. Installeer `netfilter-persistent` (`apt install iptables-persistent`) en draai `netfilter-persistent save` na het toevoegen van regels. Zonder dit gaan alle poortdoorsturingen en FORWARD-regels verloren bij een reboot

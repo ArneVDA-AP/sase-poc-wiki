@@ -33,7 +33,7 @@ IP:     10.158.10.67 (DHCP-reservering op VLAN labo158)
 Gebruiker: admin-1a
 ```
 
-Stel het Proxmox CPU-type in op `host` — dit stuurt VMX/SVM-instructies door naar de VM, wat vereist is voor geneste QEMU binnen GNS3.
+Stel het Proxmox CPU-type in op `host`; dit stuurt VMX/SVM-instructies door naar de VM, wat vereist is voor geneste QEMU binnen GNS3.
 
 **Verificatie:**
 
@@ -62,7 +62,7 @@ Tijdens de installatie: beantwoord **Ja** op beide dialoogvensters (pakketopname
 sudo usermod -aG kvm,libvirt,ubridge,wireshark admin-1a
 ```
 
-Activeer het libvirt standaardnetwerk — dit levert het WAN-segment (`192.168.122.0/24`) met NAT:
+Activeer het libvirt standaardnetwerk; dit levert het WAN-segment (`192.168.122.0/24`) met NAT:
 
 ```bash
 sudo virsh net-start default
@@ -101,7 +101,7 @@ Verbind de GNS3 GUI vanaf je laptop: `Edit → Preferences → Server → Remote
 | VyOS | QEMU (QCOW2) | `site01` |
 | Tiny11 (Windows 11) | QEMU (QCOW2) | `sitepc01` |
 
-`mobile01` (Windows 11) draait als VMware VM op de laptop van een teamlid — het is **geen** GNS3-node. Het maakt uitsluitend verbinding via de NetBird WireGuard-tunnel.
+`mobile01` (Windows 11) draait als VMware VM op de laptop van een teamlid; het is **geen** GNS3-node. Het maakt uitsluitend verbinding via de NetBird WireGuard-tunnel.
 
 **Bekabeling:**
 
@@ -126,11 +126,11 @@ Klik met rechts op elke node → Configure → General settings:
 
 | VM | RAM | vCPU | Adapters | Opmerking |
 |----|-----|------|----------|-----------|
-| pop01 (OPNsense) | 8192 MB | 2 | 3 (vtnet0, vtnet1, vtnet2) | **8 GB vereist** — zie waarschuwing hieronder |
+| pop01 (OPNsense) | 8192 MB | 2 | 3 (vtnet0, vtnet1, vtnet2) | **8 GB vereist**, zie waarschuwing hieronder |
 | mgmt01 (Ubuntu) | 16384 MB | 4 | 1 | Docker-stack |
 | dc01 (Ubuntu) | 4096 MB | 2 | 1 | Datacentersimulatie |
 | site01 (VyOS) | 1024 MB | 1 | 2 (eth0, eth1) | SD-WAN-gateway |
-| sitepc01 (Tiny11) | 4096 MB | 2 | 1 | Tiny11 / Windows 11 — overlay-ge-enrolld (docent1) |
+| sitepc01 (Tiny11) | 4096 MB | 2 | 1 | Tiny11 / Windows 11, overlay-ge-enrolld (docent1) |
 
 > **Valkuil: pop01 heeft 8 GB nodig, niet 4 GB.** Het handboek schrijft 4 GB voor, maar ClamAV (~1,2 GB) + Suricata (~760 MB + 4 GB Hyperscan-compilatiepiek) + Squid (~400 MB) gelijktijdig overschrijden 6 GB. Bij 4 GB beëindigt de OOM-killer van FreeBSD processen zonder logboekregels te schrijven.
 > Zie [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.nl.md) voor geheugenanalyse.
@@ -224,7 +224,7 @@ Alle nodes **moeten** gestopt zijn vóór het aanmaken van een snapshot.
 | Naam | Inhoud |
 |------|--------|
 | `Fase2-ZTNA-Complete` | Volledige ZTNA-stack operationeel |
-| `Fase3-Security-Complete` | Gepland — na volledige beveiligingsstack |
+| `Fase3-Security-Complete` | Gepland, na volledige beveiligingsstack |
 
 ---
 

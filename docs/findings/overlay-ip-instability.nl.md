@@ -14,7 +14,7 @@ NetBird overlay-IPs verschuiven bij herinschrijvingscycli. Addendum H had IP `.9
 
 ## Oorzaak
 
-NetBird wijst overlay-IPs dynamisch toe vanuit zijn CGNAT-pool. Herinschrijving (een peer verwijderen en opnieuw registreren) wijst een nieuw IP toe uit de pool. Er is geen IP-reserveringsmechanisme in NetBird CE — de peer-identiteit is het peer-ID, niet het overlay-IP.
+NetBird wijst overlay-IPs dynamisch toe vanuit zijn CGNAT-pool. Herinschrijving (een peer verwijderen en opnieuw registreren) wijst een nieuw IP toe uit de pool. Er is geen IP-reserveringsmechanisme in NetBird CE; de peer-identiteit is het peer-ID, niet het overlay-IP.
 
 ## Oplossing / workaround
 
@@ -24,6 +24,6 @@ Verwijs in configuratiebestanden en documentatie waar mogelijk naar peers op naa
 
 ## Lessen
 
-- Hardcode nooit overlay-IPs in configuratie of documentatie — behandel ze als efemeer, vergelijkbaar met DHCP-leases
+- Hardcode nooit overlay-IPs in configuratie of documentatie; behandel ze als efemeer, vergelijkbaar met DHCP-leases
 - Peer-ID is de enige stabiele identifier voor een NetBird-peer over herinschrijvingscycli heen
 - Elk systeem dat overlay-IPs cachet of ernaar verwijst moet IP-wijzigingen graceful afhandelen

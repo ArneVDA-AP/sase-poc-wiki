@@ -10,7 +10,7 @@ tags: [finding, ioc2rpz, workaround]
 
 ## Wat er gebeurde
 
-Inloggen op de ioc2rpz-GUI op `https://ioc2rpz.sandbox.local` mislukte met de melding "Unknown error!!!" in de browser — de pagina leek het inlogverzoek even te verwerken en laadde vervolgens opnieuw zonder authenticatie.
+Inloggen op de ioc2rpz-GUI op `https://ioc2rpz.sandbox.local` mislukte met de melding "Unknown error!!!" in de browser. De pagina leek het inlogverzoek even te verwerken en laadde vervolgens opnieuw zonder authenticatie.
 
 ## Oorzaak
 
@@ -37,6 +37,6 @@ Dit moet opnieuw worden toegepast na elke containeropbouw (het image bevat de co
 
 ## Lessen
 
-- JavaScript-formulierinzending met zowel native inzending als axios vereist `e.preventDefault()` op de formulierverwerker — een veelvoorkomende frontend-bug
+- JavaScript-formulierinzending met zowel native inzending als axios vereist `e.preventDefault()` op de formulierverwerker (een veelvoorkomende frontend-bug)
 - Pas de correctie direct na containerstart toe, vóór eventuele inlogpogingen
-- Documenteer de correctieopdracht in het operationele runbook — het is een terugkerende onderhoudsstap na containerrecreatie
+- Documenteer de correctieopdracht in het operationele runbook; het is een terugkerende onderhoudsstap na containerrecreatie

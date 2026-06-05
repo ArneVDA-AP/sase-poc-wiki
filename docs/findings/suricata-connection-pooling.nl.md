@@ -6,7 +6,7 @@ tags: [suricata, fwaas, squid, finding]
 # Bevinding: Suricata vuurt één keer per SID per flow (Squid connection pooling)
 
 **Component:** [Suricata](../components/suricata.md)  
-**Ernst:** Inzicht — geen bug
+**Ernst:** Inzicht (geen bug)
 
 ## Wat er gebeurde
 
@@ -22,13 +22,13 @@ curl.exe -x http://100.70.154.79:3128 http://testmyids.com/
 
 ## Oorzaak
 
-Squid connection pooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow — dit is verwacht gedrag by design, geen onderdrukking.
+Squid connection pooling hergebruikt upstream TCP-verbindingen. Vanuit het perspectief van Suricata op vtnet0 verschijnen meerdere opeenvolgende HTTP-verzoeken naar dezelfde server als verkeer binnen één TCP-flow. Suricata vuurt correct één keer per SID per flow. Dit is verwacht gedrag by design, geen onderdrukking.
 
 Het aantal alerts in `eve.json` weerspiegelt het aantal afzonderlijke upstream TCP-flows, niet het aantal HTTP-verzoeken van de client.
 
 ## Oplossing
 
-Geen oplossing nodig — dit is correct gedrag. Voor tests die een nieuwe Suricata-alert vereisen voor dezelfde SID:
+Geen oplossing nodig; dit is correct gedrag. Voor tests die een nieuwe Suricata-alert vereisen voor dezelfde SID:
 
 - Gebruik een andere bestemmingshost per testrun
 - Wacht tot de upstream Squid-inactieve time-out verstrijkt, waardoor de gepoolde verbinding wordt gesloten

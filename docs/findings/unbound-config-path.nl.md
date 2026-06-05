@@ -14,7 +14,7 @@ Een RPZ-configuratiebestand werd geplaatst op `/var/unbound/etc/rpz.conf`. Na ee
 
 ## Oorzaak
 
-`/var/unbound/` is de Unbound-chroot-map. OPNsense regenereert deze map bij elke Unbound-herstart — alle bestanden direct in `/var/unbound/etc/` geplaatst worden verwijderd en vervangen door de door OPNsense-template gegenereerde configuratie.
+`/var/unbound/` is de Unbound-chroot-map. OPNsense regenereert deze map bij elke Unbound-herstart: alle bestanden direct in `/var/unbound/etc/` geplaatst worden verwijderd en vervangen door de door OPNsense-template gegenereerde configuratie.
 
 ## Oplossing / workaround
 
@@ -40,10 +40,10 @@ rpz:
     rpz-log-name: "ioc2rpz-threat-intel"
 ```
 
-Opmerking: `zonefile` verwijst nog steeds naar `/var/unbound/` — dit is correct. Het zonebestandpad is waar Unbound de overgedragen zone opslaat, die het regenereert via zone transfer. Alleen persistente *configuratie*bestanden moeten in `/usr/local/etc/unbound.opnsense.d/` staan.
+Opmerking: `zonefile` verwijst nog steeds naar `/var/unbound/`; dit is correct. Het zonebestandpad is waar Unbound de overgedragen zone opslaat, die het regenereert via zone transfer. Alleen persistente *configuratie*bestanden moeten in `/usr/local/etc/unbound.opnsense.d/` staan.
 
 ## Lessen
 
-- Plaats nooit persistente Unbound-configuratiebestanden in `/var/unbound/etc/` — OPNsense overschrijft deze map bij herstart
+- Plaats nooit persistente Unbound-configuratiebestanden in `/var/unbound/etc/`. OPNsense overschrijft deze map bij herstart
 - Het juiste pad voor OPNsense Unbound-aanpassing is `/usr/local/etc/unbound.opnsense.d/*.conf`
-- Dit is hetzelfde patroon als de `pre-auth/*.conf` van Squid — gebruik de aangewezen include-map, niet de chroot/template-map
+- Dit is hetzelfde patroon als de `pre-auth/*.conf` van Squid: gebruik de aangewezen include-map, niet de chroot/template-map

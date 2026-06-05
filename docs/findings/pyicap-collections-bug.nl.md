@@ -19,7 +19,7 @@ Squid logde ICAP-verbindingsfouten en DLP-scanning was niet functioneel.
 
 ## Oorzaak
 
-De `pyicap`-bibliotheek op PyPI gebruikt `collections.Callable` — een attribuut dat was verouderd in Python 3.3 en verwijderd in Python 3.10. Het Docker-image gebruikt Python 3.11, waardoor de import mislukt bij het eerste ICAP-verzoek.
+De `pyicap`-bibliotheek op PyPI gebruikt `collections.Callable`, een attribuut dat was verouderd in Python 3.3 en verwijderd in Python 3.10. Het Docker-image gebruikt Python 3.11, waardoor de import mislukt bij het eerste ICAP-verzoek.
 
 De bug bevindt zich in het geïnstalleerde `pyicap.py` site-package, niet in de projectcode. Het PyPI-pakket is niet bijgewerkt om `collections.abc.Callable` te gebruiken.
 
@@ -37,7 +37,7 @@ RUN pip install --no-cache-dir pyicap python-docx openpyxl pypdf && \
 
 De twee sed-opdrachten: (1) `import collections.abc` toevoegen naast het bestaande `import collections`, (2) alle gebruiken van `collections.Callable` vervangen door `collections.abc.Callable`.
 
-Deze patch maakt deel uit van de Dockerfile en wordt automatisch toegepast bij elke build — geen handmatige tussenkomst vereist na containeropbouw.
+Deze patch maakt deel uit van de Dockerfile en wordt automatisch toegepast bij elke build; geen handmatige tussenkomst vereist na containeropbouw.
 
 ## Lessen
 

@@ -7,7 +7,7 @@ tags: [runbook]
 
 Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aan. Elke runbook herstelt de lineaire opbouwvolgorde uit de originele implementatiedocumenten, met waarschuwingen en valkuilen op exact het moment dat ze zich voordoen.
 
-**Gebruik:** Volg de runbooks op volgorde. Elke runbook vermeldt zijn vereisten — welke voorgaande runbooks eerst afgerond moeten zijn. Elke stap eindigt met een verificatie zodat je weet wanneer je door kunt gaan. Voor dieper conceptueel begrip kun je de links naar de bijbehorende component-, concept- en beslissingsartikelen volgen.
+**Gebruik:** Volg de runbooks op volgorde. Elke runbook vermeldt zijn vereisten (welke voorgaande runbooks eerst afgerond moeten zijn). Elke stap eindigt met een verificatie zodat je weet wanneer je door kunt gaan. Voor dieper conceptueel begrip kun je de links naar de bijbehorende component-, concept- en beslissingsartikelen volgen.
 
 ---
 
@@ -46,7 +46,7 @@ Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aa
 
 | Runbook | Afhankelijk van |
 |---------|-----------------|
-| 01 Labomgeving | — |
+| 01 Labomgeving | n.v.t. |
 | 02 ZTNA Overlay | 01 |
 | 03 Proxy & WPAD | 02 |
 | 04 Malware & DLP | 03 (SSL Bump vereist) |
@@ -58,7 +58,7 @@ Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aa
 | 10 NATS JetStream | 03, 04, 05, 06 (alle producers operationeel) |
 | 11 Wazuh | 10 (NATS operationeel) |
 
-## Snelreferentie — belangrijkste poorten
+## Snelreferentie: belangrijkste poorten
 
 | Service | Adres | Poort |
 |---------|-------|-------|

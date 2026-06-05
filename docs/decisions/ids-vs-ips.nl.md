@@ -11,8 +11,8 @@ tags: [decision, suricata, network, opnsense]
 ## Context
 
 Suricata kan in twee modi werken:
-- **IDS (Intrusion Detection System):** PCAP-opname — leest pakketkopieën passief, genereert alerts, kan geen verkeer droppen
-- **IPS (Intrusion Prevention System):** Inline — bevindt zich in het verkeerspad, kan pakketten in realtime droppen
+- **IDS (Intrusion Detection System):** PCAP-opname, leest pakketkopieën passief, genereert alerts, kan geen verkeer droppen
+- **IPS (Intrusion Prevention System):** Inline, bevindt zich in het verkeerspad, kan pakketten in realtime droppen
 
 OPNsense biedt twee IPS-activeringsroutes: Netmap (native kernel bypass) en Divert (pf divert-to-regels).
 
@@ -30,13 +30,13 @@ IDS-modus (PCAP), met de drop/alert-beleidstabel geconfigureerd en klaar voor IP
 
 Netmap IPS werd getest en bevestigd niet-functioneel op virtio-NIC's. Wanneer Netmap IPS werd geactiveerd: Suricata rapporteerde 0 verwerkte pakketten en alle eerdere alertactiviteit stopte. Terugkeren naar PCAP IDS herstelde de normale werking. (Verslag23, Bevinding 23.3/23.4/23.5)
 
-De gedifferentieerde beleidstabel (drop vs. alert per categorie) is geconfigureerd in OPNsense. Op fysieke hardware met ondersteunde NIC's vereist overschakelen naar IPS-modus alleen het inschakelen van de IPS-schakelaar — de policies zijn al correct.
+De gedifferentieerde beleidstabel (drop vs. alert per categorie) is geconfigureerd in OPNsense. Op fysieke hardware met ondersteunde NIC's vereist overschakelen naar IPS-modus alleen het inschakelen van de IPS-schakelaar; de policies zijn al correct.
 
 ## Gevolgen
 
 - Suricata detecteert en waarschuwt, maar blokkeert geen verkeer in realtime in de huidige sandbox
 - Drop-categorie-bedreigingen (emerging-malware, botcc, Abuse.ch) verschijnen in logs; blokkering vindt alleen plaats via Gate 3 (Unbound RPZ voor DNS, ClamAV voor downloads, Python DLP voor uploads)
-- `procstat -f <PID> | grep bpf` is de juiste manier om te verifiëren dat Suricata opneemt — `sockstat` toont niets omdat Suricata BPF gebruikt, geen TCP/UDP-sockets
+- `procstat -f <PID> | grep bpf` is de juiste manier om te verifiëren dat Suricata opneemt. `sockstat` toont niets omdat Suricata BPF gebruikt, geen TCP/UDP-sockets
 - Overschakelen naar IPS op fysieke hardware vereist `pf divert-to`-regels of native Netmap NIC-drivers
 
 Zie ook: [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md), [Beslissing: Suricata WAN+LAN](suricata-wan-lan.md)

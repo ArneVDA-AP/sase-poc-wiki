@@ -16,7 +16,7 @@ NATS vereist een authenticatiemodel om de toegang tot JetStream-streams en -cons
 
 | Optie | Voor | Tegen |
 |-------|------|-------|
-| **`authorization{}` (single-account)** | Eenvoudigere configuratie; minder regels in `nats-server.conf` | Weigert JetStream API-operaties op `$JS.API.>` stilzwijgend. Geen foutmeldingen — operaties falen simpelweg zonder uitleg. Empirisch bevestigd als niet-functioneel voor JetStream |
+| **`authorization{}` (single-account)** | Eenvoudigere configuratie; minder regels in `nats-server.conf` | Weigert JetStream API-operaties op `$JS.API.>` stilzwijgend. Geen foutmeldingen; operaties falen simpelweg zonder uitleg. Empirisch bevestigd als niet-functioneel voor JetStream |
 | **`accounts{}` (multi-account)** | Volledige JetStream API-toegang via expliciete `$JS.API.>`-permissietoekenningen; ondersteunt account-niveau isolatie | Uitgebreidere configuratie; gebruikers moeten binnen benoemde accounts worden gedefinieerd |
 
 ## Beslissing
@@ -30,6 +30,6 @@ Alle NATS-gebruikers (Identity Bridge, Control Daemon) worden gedefinieerd binne
 - Alle NATS-gebruikers moeten worden gedefinieerd binnen benoemde accounts in `nats-server.conf`. Het top-level `authorization{}`-blok kan niet naast `accounts{}` worden gebruikt.
 - Secrets (wachtwoorden/tokens van gebruikers) worden geïnjecteerd via omgevingsvariabele-interpolatie met hex-gecodeerde waarden, niet base64. NATS ondersteunt `$ENV_VAR`-syntax in het configuratiebestand.
 - Het toevoegen van een nieuwe NATS-client vereist het definiëren van de gebruiker binnen het juiste account en het expliciet toekennen van subject-niveau permissies.
-- Het `accounts{}`-model biedt account-niveau isolatie als bijkomend voordeel — als toekomstige componenten gescheiden permissiedomeinen nodig hebben, kunnen extra accounts worden toegevoegd zonder herstructurering.
+- Het `accounts{}`-model biedt account-niveau isolatie als bijkomend voordeel: als toekomstige componenten gescheiden permissiedomeinen nodig hebben, kunnen extra accounts worden toegevoegd zonder herstructurering.
 
 Zie ook: [Component: NATS](../components/nats-jetstream.md), [Component: Identity Bridge](../components/identity-bridge.md), [Component: Control Daemon](../components/control-daemon.md)

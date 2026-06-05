@@ -14,7 +14,7 @@ Na het toevoegen van een nieuwe volume-mount aan de `caddy`-service in `docker-c
 
 ## Oorzaak
 
-`docker compose restart` stuurt SIGTERM dan SIGKILL naar het containerproces en herstart het — maar hergebruikt de bestaande containerconfiguratie, inclusief de volume-mounts die aanwezig waren toen de container voor het eerst werd aangemaakt. Nieuwe volume-mounts in `docker-compose.yml` worden alleen toegepast wanneer de container opnieuw wordt aangemaakt.
+`docker compose restart` stuurt SIGTERM dan SIGKILL naar het containerproces en herstart het, maar hergebruikt de bestaande containerconfiguratie, inclusief de volume-mounts die aanwezig waren toen de container voor het eerst werd aangemaakt. Nieuwe volume-mounts in `docker-compose.yml` worden alleen toegepast wanneer de container opnieuw wordt aangemaakt.
 
 ## Oplossing / workaround
 
@@ -28,6 +28,6 @@ docker compose up -d caddy
 
 ## Lessen
 
-- `docker compose restart` ≠ "configuratiewijzigingen toepassen" — het herstart alleen de bestaande container
+- `docker compose restart` ≠ "configuratiewijzigingen toepassen"; het herstart alleen de bestaande container
 - `docker compose up -d` past configuratiewijzigingen toe door containers opnieuw aan te maken waar nodig
-- Dit is een veelvoorkomend Docker Compose-misverstand dat aanzienlijke debugtijd verspilt — wanneer een configuratiewijziging niet van kracht lijkt te zijn, probeer altijd `up -d` vóór de aanname dat de configuratie fout is
+- Dit is een veelvoorkomend Docker Compose-misverstand dat aanzienlijke debugtijd verspilt. Wanneer een configuratiewijziging niet van kracht lijkt te zijn, probeer altijd `up -d` vóór de aanname dat de configuratie fout is

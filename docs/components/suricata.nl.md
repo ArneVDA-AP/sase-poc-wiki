@@ -1,11 +1,11 @@
 ---
-title: "Suricata IDS — WAN + LAN-netwerkinspectie"
+title: "Suricata IDS: WAN + LAN-netwerkinspectie"
 tags: [suricata, opnsense, ids, ips, network, firewall, sase]
 ---
 
-# Suricata IDS — WAN + LAN-netwerkinspectie
+# Suricata IDS: WAN + LAN-netwerkinspectie
 
-**Rol:** Parallelle network-layer inspectie op pop01 — detecteert bedreigingen in ruwe pakketstromen op WAN (vtnet0) en LAN (vtnet1) met behulp van signature-based rules. Complementair aan de ICAP-pijplijn, die HTTP-inhoud inspecteert; Suricata inspecteert netwerkstromen die de proxy volledig omzeilen.  
+**Rol:** Parallelle network-layer inspectie op pop01 die bedreigingen detecteert in ruwe pakketstromen op WAN (vtnet0) en LAN (vtnet1) met behulp van signature-based rules. Complementair aan de ICAP-pijplijn, die HTTP-inhoud inspecteert; Suricata inspecteert netwerkstromen die de proxy volledig omzeilen.  
 **Versie:** Suricata 7.x (meegeleverd met OPNsense 25.1)  
 **Configuratielocatie:** `/usr/local/opnsense/service/templates/OPNsense/IDS/custom.yaml` (persistente configuratie), `/var/log/suricata/suricata_JJJJMMDD.log`, `/var/log/suricata/eve.json`
 
@@ -17,11 +17,11 @@ Suricata draait in PCAP-opnamemodus op pop01 en leest ruwe frames van BPF-appara
 
 **Wat vtnet0 (WAN) ziet:** De opnieuw versleutelde upstream HTTPS-verbindingen van Squid, DNS-query's van de resolver van pop01, overig direct TCP/UDP-verkeer dat de proxy omzeilt. Suricata extraheert TLS-metadata (SNI, JA3/JA4 fingerprints), HTTP-headers in platte tekst (van niet-HTTPS-stromen), DNS-query/response-gegevens en vergelijkt met C2/botnet IP- en domain signatures.
 
-**Wat vtnet1 (LAN) ziet:** Al het interne DC-LAN-verkeer van dc01 — onversleuteld, alle protocollen. Dit detecteert bedreigingen op het interne segment (lateral movement, verkenning, software-update-afwijkingen van dc01).
+**Wat vtnet1 (LAN) ziet:** Al het interne DC-LAN-verkeer van dc01 (onversleuteld, alle protocollen). Dit detecteert bedreigingen op het interne segment (lateral movement, verkenning, software-update-afwijkingen van dc01).
 
-**Waarom niet wt0 (NetBird):** WireGuard is een Layer 3 VPN. Verkeer dat via wt0 wordt gerouteerd verschijnt vanuit het perspectief van BPF niet als inkomende frames op die interface. `tcpdump` op wt0 met een TCP-filter toont 0 paketten. Suricata op wt0 zou niets zien. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
+**Waarom niet wt0 (NetBird).** WireGuard is een Layer 3 VPN. Verkeer dat via wt0 wordt gerouteerd verschijnt vanuit het perspectief van BPF niet als inkomende frames op die interface. `tcpdump` op wt0 met een TCP-filter toont 0 paketten. Suricata op wt0 zou niets zien. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
 
-**IDS-modus, niet IPS:** Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge) — virtio-NIC's in QEMU hebben geen van deze. Zelfs `sysctl dev.netmap.admode=2` (geëmuleerde Netmap-modus) loste dit niet op — geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete `pf divert-to`-firewallregels (`pfctl -s rules | grep divert` retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert-beleidstabel staat klaar voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie [Beslissing: IDS vs. IPS](../decisions/ids-vs-ips.md) en [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
+**IDS-modus, niet IPS:** Suricata draait in IDS-modus (PCAP, geen pakketdropping). Netmap IPS-modus vereist NIC-stuurprogramma's met native Netmap-ondersteuning (Intel igb/ixgbe, Broadcom bge); virtio-NIC's in QEMU hebben geen van deze. Zelfs `sysctl dev.netmap.admode=2` (geëmuleerde Netmap-modus) loste dit niet op: geëmuleerde Netmap ondersteunt IDS-opname, niet het IPS-droppad. Divert IPS vereist expliciete `pf divert-to`-firewallregels (`pfctl -s rules | grep divert` retourneert leeg, wat bevestigt dat er geen zijn geconfigureerd). De OPNsense-documentatie stelt: "To use the 'Divert (IPS)' mode, you must use Firewall → Rules and create firewall rules that contain the 'Divert-to' setting." De drop/alert-beleidstabel staat klaar voor IPS-activering op fysieke hardware met ondersteunde NIC's (Dell PowerEdge-servers in de productieomgeving van Atlascollege hebben Intel/Broadcom-NIC's met native Netmap-ondersteuning). Zie [Beslissing: IDS vs. IPS](../decisions/ids-vs-ips.md) en [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md).
 
 **RAM-vereiste:** Suricata + ClamAV + Squid gelijktijdig uitvoeren vereist **minimaal 8 GB RAM** op pop01. Hyperscan-patrooncompilatie van ET Open-regels piekt op ~4 GB RSS. Bij 6 GB beëindigt de OOM-killer services stilzwijgend zonder log output.
 
@@ -48,7 +48,7 @@ Thuisnetwerken:     10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 100.64.0.0/10
 
 ### Regelsets
 
-Downloaden via Administratie → Download. Na het downloaden zijn regels **niet automatisch actief** — ga naar Administratie → Regels en schakel alle regelbestanden afzonderlijk in.
+Downloaden via Administratie → Download. Na het downloaden zijn regels **niet automatisch actief**: ga naar Administratie → Regels en schakel alle regelbestanden afzonderlijk in.
 
 | Regelset | Regels |
 |----------|--------|
@@ -66,7 +66,7 @@ Via Administratie → Beleid. Geconfigureerd en gereed voor IPS-activering:
 | **Drop** | emerging-malware, emerging-exploit, emerging-worm, emerging-botcc, emerging-botcc.portgrouped, compromised, drop (Spamhaus), ciarmy, Threatview Cobalt Strike C2, alle Abuse.ch-feeds |
 | **Alert** | tor, emerging-info, emerging-policy, emerging-dns, emerging-web_client, emerging-web_server, emerging-misc, emerging-games, emerging-chat, emerging-p2p, emerging-attack_response |
 
-Drop-categorieën zijn die waarbij een overeenkomst **altijd** kwaadaardig is — geen legitiem verkeer mogelijk. Alert-categorieën hebben risico op valse positieven.
+Drop-categorieën zijn die waarbij een overeenkomst **altijd** kwaadaardig is (geen legitiem verkeer mogelijk). Alert-categorieën hebben risico op valse positieven.
 
 ### custom.yaml (persistente configuratie)
 
@@ -120,7 +120,7 @@ Vier detectiecategorieën bevestigd na vtnet1-correctie:
 | # | Categorie | Test | SID | Interface |
 |---|-----------|------|-----|-----------|
 | 1 | Aanvalsrespons | `curl.exe -x http://100.70.154.79:3128 http://testmyids.com/` | 2100498 | vtnet0 |
-| 2 | DNS-afwijking | Automatisch — DNS .biz TLD-query's van pop01-resolver | 2027863 | vtnet0 |
+| 2 | DNS-afwijking | Automatisch, DNS .biz TLD-query's van pop01-resolver | 2027863 | vtnet0 |
 | 3 | Verdachte user-agent | `curl.exe -x ... -A "BlackSun" http://example.com` | 2008983 | vtnet0 |
 | 4 | Softwaredetectie (LAN) | dc01 `apt update`-activiteit | 2013504 | vtnet1 |
 
@@ -130,7 +130,7 @@ Vier detectiecategorieën bevestigd na vtnet1-correctie:
 
 | Component | Richting | Wat |
 |-----------|----------|-----|
-| [Squid](squid.md) | parallel | Suricata op vtnet0 ziet de upstreamverbindingen van Squid — opnieuw versleuteld HTTPS; TLS-metadata zichtbaar; XFF-headers onthullen het oorspronkelijke client-IP (SID 2031071 toonde `100.70.95.98` van mobile01) |
+| [Squid](squid.md) | parallel | Suricata op vtnet0 ziet de upstreamverbindingen van Squid (opnieuw versleuteld HTTPS; TLS-metadata zichtbaar; XFF-headers onthullen het oorspronkelijke client-IP, SID 2031071 toonde `100.70.95.98` van mobile01) |
 | [NetBird](netbird.md) | HOME_NET-afhankelijkheid | `100.64.0.0/10` moet in HOME_NET staan voor correcte regelevaluatie |
 | [ioc2rpz/RPZ](ioc2rpz.md) | aanvullend | Abuse.ch URLhaus in Suricata signatures en RPZ-feeds overlappen in bron; Suricata detecteert verbindingen, RPZ voorkomt DNS-resolutie |
 
@@ -144,15 +144,15 @@ Suricata publiceert IDS-alerts naar de NATS event bus. Een Python-producerscript
 
 ## Bekende problemen / valkuilen
 
-**vtnet1 `interface: default` genereert geen events** — het gebruik van `interface: default` in custom.yaml resulteert in alleen de primaire opname-interface (vtnet0), niet alle interfaces. vtnet1 had een BPF-apparaat open maar ontving geen paketten. Oplossing: expliciete per-interface-declaraties. Zie [Bevinding: Suricata interface default-bug](../findings/suricata-interface-default-bug.md).
+**vtnet1 `interface: default` genereert geen events:** het gebruik van `interface: default` in custom.yaml resulteert in alleen de primaire opname-interface (vtnet0), niet alle interfaces. vtnet1 had een BPF-apparaat open maar ontving geen paketten. Oplossing: expliciete per-interface-declaraties. Zie [Bevinding: Suricata interface default-bug](../findings/suricata-interface-default-bug.md).
 
-**`sockstat` werkt niet voor Suricata-verificatie** — Suricata gebruikt BPF, geen TCP/UDP-sockets. `sockstat -4 | grep suricata` retourneert niets, ook als Suricata correct draait. Gebruik in plaats daarvan `procstat -f <PID> | grep bpf`.
+**`sockstat` werkt niet voor Suricata-verificatie:** Suricata gebruikt BPF, geen TCP/UDP-sockets. `sockstat -4 | grep suricata` retourneert niets, ook als Suricata correct draait. Gebruik in plaats daarvan `procstat -f <PID> | grep bpf`.
 
-**Logbestand heeft datumstempel** — `/var/log/suricata/suricata.log` bestaat niet. Het juiste pad is `/var/log/suricata/suricata_JJJJMMDD.log`.
+**Logbestand heeft datumstempel:** `/var/log/suricata/suricata.log` bestaat niet. Het juiste pad is `/var/log/suricata/suricata_JJJJMMDD.log`.
 
-**Squid connection pooling verklaart enkele alerts per test** — wanneer dezelfde testmyids.com-URL meerdere keren via Squid wordt opgevraagd, ziet Suricata slechts één stroom (Squid hergebruikt de upstream TCP-verbinding). Dit genereert één alert per SID per stroom — correct gedrag, geen drempelprobleem.
+**Squid connection pooling verklaart enkele alerts per test:** wanneer dezelfde testmyids.com-URL meerdere keren via Squid wordt opgevraagd, ziet Suricata slechts één stroom (Squid hergebruikt de upstream TCP-verbinding). Dit genereert één alert per SID per stroom (correct gedrag, geen drempelprobleem).
 
-**Netmap IPS mislukt op virtio-NIC's** — zie [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md). Overschakelen naar Netmap zorgt voor nul verwerkte paketten en maakt alle eerder actieve alertactiviteit ongedaan.
+**Netmap IPS mislukt op virtio-NIC's:** zie [Bevinding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md). Overschakelen naar Netmap zorgt voor nul verwerkte paketten en maakt alle eerder actieve alertactiviteit ongedaan.
 
 ---
 

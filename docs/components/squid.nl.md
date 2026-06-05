@@ -1,11 +1,11 @@
 ---
-title: "Squid — Expliciete proxy, WPAD/PAC, SSL Bump, URL-filtering"
+title: "Squid: Expliciete proxy, WPAD/PAC, SSL Bump, URL-filtering"
 tags: [squid, opnsense, proxy, wpad, pac, ssl-bump, tls, icap, sase, caddy, netbird]
 ---
 
-# Squid — Expliciete proxy, WPAD/PAC, SSL Bump, URL-filtering
+# Squid: Expliciete proxy, WPAD/PAC, SSL Bump, URL-filtering
 
-**Rol:** Het SWG entry point — elke HTTP/HTTPS-transactie van een overlay-client passeert Squid voordat die het internet bereikt. Squid voert URL-filtering en HTTPS-decryptie (SSL Bump) uit en orkestreert de ICAP inspection pipeline.  
+**Rol:** Het SWG entry point. Elke HTTP/HTTPS-transactie van een overlay-client passeert Squid voordat die het internet bereikt. Squid voert URL-filtering en HTTPS-decryptie (SSL Bump) uit en orkestreert de ICAP inspection pipeline.  
 **Versie:** Squid 6.x (meegeleverd met OPNsense 25.1)  
 **Configuratielocatie:** `/usr/local/etc/squid/squid.conf` (door OPNsense gegenereerd) + `/usr/local/etc/squid/pre-auth/*.conf` (persistente aangepaste directives)
 
@@ -15,7 +15,7 @@ tags: [squid, opnsense, proxy, wpad, pac, ssl-bump, tls, icap, sase, caddy, netb
 
 Squid draait in **expliciete proxymodus**: clients worden via een PAC-bestand geconfigureerd om hun HTTP/HTTPS-verkeer rechtstreeks naar Squid te sturen op `100.70.154.79:3128` (de NetBird-overlay-IP van pop01). Dit is het tegenovergestelde van een transparante proxy, waarbij de firewall verkeer stilzwijgend onderschept.
 
-De keuze voor expliciete modus is niet optioneel — transparante proxy via `pf rdr` kan geen via WireGuard gerouteerd verkeer op de `wt0`-interface onderscheppen. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md).
+De keuze voor expliciete modus is niet optioneel: transparante proxy via `pf rdr` kan geen via WireGuard gerouteerd verkeer op de `wt0`-interface onderscheppen. Zie [Bevinding: wt0 pf rdr-beperking](../findings/wt0-pf-rdr-limitation.md) en [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md).
 
 **WPAD/PAC-distributie:** Het PAC-bestand wordt gehost door [Caddy](caddy.md) op mgmt01 via `http://wpad.sandbox.local/wpad.dat`. Clients ontdekken dit via een NetBird Custom DNS Zone die `wpad.sandbox.local` omzet naar de overlay-IP van mgmt01. Mobile01 wordt geconfigureerd via Windows-instellingen → Proxy → "Installatiescript gebruiken".
 
@@ -23,7 +23,7 @@ De keuze voor expliciete modus is niet optioneel — transparante proxy via `pf 
 
 **URL-filtering:** Twee blokkeerlijstmechanismen worden uitgevoerd vóór elke `allow`-regel (eerste overeenkomst wint):
 1. Handmatige blokkeerlijst: `gambling.com`, `.bet365.com`, `.pokerstars.com`
-2. UT1 Toulouse Remote ACL (`dsi.ut-capitole.fr/blacklists`) — categorieën: adult, malware, phishing, gambling
+2. UT1 Toulouse Remote ACL (`dsi.ut-capitole.fr/blacklists`): categorieën adult, malware, phishing, gambling
 
 **ICAP-orkestratie:** Squid stuurt verkeer naar twee ICAP-services:
 - REQMOD → Python DLP-server op `mgmt01:1345` (POST/PUT/PATCH-uploads)
@@ -53,8 +53,8 @@ De `ssl-bump`-parameters moeten in deze directive worden opgenomen. De GUI voegt
 ### No-bump-lijst
 
 Sites uitgesloten van SSL-inspectie (geconfigureerd via GUI):
-- `login.microsoftonline.com` — **verplicht**: beschermt de Entra ID OIDC-flow. Als Squid de Microsoft-inlogpagina bumpt, mislukt NetBird-authenticatie voor alle clients.
-- `.microsoft.com`, `.paypal.com`, `.apple.com`, `.banking.example.com` — demonstratie-items.
+- `login.microsoftonline.com` (**verplicht**): beschermt de Entra ID OIDC-flow. Als Squid de Microsoft-inlogpagina bumpt, mislukt NetBird-authenticatie voor alle clients.
+- `.microsoft.com`, `.paypal.com`, `.apple.com`, `.banking.example.com` (demonstratie-items).
 
 ### ACL-volgorde in squid.conf
 
@@ -80,7 +80,7 @@ De weigeringsregels voor blokkeerlijsten staan voor alle toestemmingsregels. Squ
 | [NetBird](netbird.md) | afhankelijkheid | Overlay-IP `100.70.154.79` van wt0 moet bestaan; NetBird DNS-zone levert `wpad.sandbox.local`-resolutie |
 | [ClamAV/c-icap](clamav-cicap.md) | ICAP RESPMOD | Squid stuurt alle responses naar c-icap op `127.0.0.1:1344` voor malware- + DLP-scan |
 | [Python DLP](python-dlp.md) | ICAP REQMOD | Squid stuurt POST/PUT/PATCH-verzoeken naar mgmt01:1345 voor upload-DLP |
-| [Suricata](suricata.md) | parallel | Suricata op vtnet0 ziet de opnieuw versleutelde upstreamverbindingen van Squid; ze delen dezelfde WAN-interface |
+| [Suricata](suricata.md) | parallel | Suricata op vtnet0 ziet de opnieuw versleutelde upstreamverbindingen van Squid, ze delen dezelfde WAN-interface |
 | Entra ID / OIDC | no-bump | `login.microsoftonline.com` staat op de no-bump-lijst zodat CA-evaluatie niet verstoord wordt |
 
 ---
@@ -95,21 +95,21 @@ Daarnaast integreert Squid met de [Identity Bridge](identity-bridge.md) via `ext
 
 ## Bekende problemen / valkuilen
 
-**"Clear log" in WebUI verwijdert het logbestand** — zie [Bevinding: Squid clearlog](../findings/squid-clearlog-destroys-file.md). Gebruik `> /var/log/squid/access.log` om af te kappen zonder verwijdering.
+**"Clear log" in WebUI verwijdert het logbestand:** zie [Bevinding: Squid clearlog](../findings/squid-clearlog-destroys-file.md). Gebruik `> /var/log/squid/access.log` om af te kappen zonder verwijdering.
 
-**Squid-segfault bij stoppen is cosmetisch** — `configctl proxy restart` toont "Segmentation fault" bij het stoppen van Squid. De daemon herstart correct. Geen functionele impact. Gedocumenteerd in meerdere sessies.
+**Squid-segfault bij stoppen is cosmetisch.** `configctl proxy restart` toont "Segmentation fault" bij het stoppen van Squid. De daemon herstart correct. Geen functionele impact. Gedocumenteerd in meerdere sessies.
 
-**Browsercache maskeert URL-filtering** — gebruik bij het testen van URL-blokkades altijd `curl.exe -x http://100.70.154.79:3128 http://target.com` in plaats van een browser. De browsercache kan een gecachte response leveren ook nadat de URL geblokkeerd is.
+**Browsercache maskeert URL-filtering:** gebruik bij het testen van URL-blokkades altijd `curl.exe -x http://100.70.154.79:3128 http://target.com` in plaats van een browser. De browsercache kan een gecachte response leveren ook nadat de URL geblokkeerd is.
 
-**`squid -k parse` segfault aan het einde** — de parse-uitvoer vóór de crash is geldig en nuttig voor diagnose. De segfault is een OPNsense/FreeBSD-eigenaardigheid, geen configuratiefout.
+**`squid -k parse` segfault aan het einde.** De parse-uitvoer vóór de crash is geldig en nuttig voor diagnose. De segfault is een OPNsense/FreeBSD-eigenaardigheid, geen configuratiefout.
 
-**StevenBlack-hostsformaat is incompatibel** — OPNsense Remote ACL's verwachten een tar.gz-archief in Squid ACL-formaat, geen hostsbestand. Gebruik UT1 Toulouse in plaats daarvan. Zie [Bevinding: StevenBlack incompatibel](../findings/stevenblack-incompatible.md).
+**StevenBlack-hostsformaat is incompatibel:** OPNsense Remote ACL's verwachten een tar.gz-archief in Squid ACL-formaat, geen hostsbestand. Gebruik UT1 Toulouse in plaats daarvan. Zie [Bevinding: StevenBlack incompatibel](../findings/stevenblack-incompatible.md).
 
-**`--management-url` is verplicht voor zelf-gehoste NetBird** — bij het installeren van de NetBird-agent op pop01 moet de `--management-url`-vlag naar de zelf-gehoste managementserver wijzen. Zonder deze valt de client terug op het NetBird-cloud-managementeindpunt en treedt hij nooit toe tot de sandbox-overlay.
+**`--management-url` is verplicht voor zelf-gehoste NetBird:** bij het installeren van de NetBird-agent op pop01 moet de `--management-url`-vlag naar de zelf-gehoste managementserver wijzen. Zonder deze valt de client terug op het NetBird-cloud-managementeindpunt en treedt hij nooit toe tot de sandbox-overlay.
 
-**OPNsense-GUI kan Squid niet aan `wt0` binden** — de `wt0`-interface heeft `IPv4 Configuration Type: None` omdat het IP door WireGuard wordt beheerd, niet door de DHCP/statische stack van OPNsense. De Squid-GUI-dropdown toont alleen interfaces met door OPNsense beheerde IP's. Daarom is het pre-auth include-bestand nodig voor de overlay-listener.
+**OPNsense-GUI kan Squid niet aan `wt0` binden:** de `wt0`-interface heeft `IPv4 Configuration Type: None` omdat het IP door WireGuard wordt beheerd, niet door de DHCP/statische stack van OPNsense. De Squid-GUI-dropdown toont alleen interfaces met door OPNsense beheerde IP's. Daarom is het pre-auth include-bestand nodig voor de overlay-listener.
 
-**Handboek-NAT-regel (poort 443 → 3129) is irrelevant** — het handboek beschrijft een NAT-regel voor poort 443 → 3129. Dit is alleen nodig voor transparante proxymodus, waarbij de firewall uitgaand verkeer onderschept. In expliciete proxymodus stuurt de client een `CONNECT`-verzoek rechtstreeks naar Squid op poort 3128. Er is geen DNAT vereist.
+**Handboek-NAT-regel (poort 443 → 3129) is irrelevant.** Het handboek beschrijft een NAT-regel voor poort 443 → 3129. Dit is alleen nodig voor transparante proxymodus, waarbij de firewall uitgaand verkeer onderschept. In expliciete proxymodus stuurt de client een `CONNECT`-verzoek rechtstreeks naar Squid op poort 3128. Er is geen DNAT vereist.
 
 ---
 

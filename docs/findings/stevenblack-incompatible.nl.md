@@ -14,7 +14,7 @@ De handleiding (v4 §27.1) suggereerde StevenBlack unified hosts als Remote ACL-
 
 ## Oorzaak
 
-StevenBlack is een `hosts`-bestand: vermeldingen in het formaat `0.0.0.0 ads.example.com`. De Remote ACL-functie van OPNsense verwacht een tar.gz-archief met domeinlijsten in Squid ACL-formaat (één domein per regel). De formaten zijn incompatibel — OPNsense kan een hostsbestand niet parsen als een Squid ACL-lijst.
+StevenBlack is een `hosts`-bestand: vermeldingen in het formaat `0.0.0.0 ads.example.com`. De Remote ACL-functie van OPNsense verwacht een tar.gz-archief met domeinlijsten in Squid ACL-formaat (één domein per regel). De formaten zijn incompatibel: OPNsense kan een hostsbestand niet parsen als een Squid ACL-lijst.
 
 ## Oplossing / workaround
 

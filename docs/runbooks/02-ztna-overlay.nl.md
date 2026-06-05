@@ -8,7 +8,7 @@ tags: [runbook, netbird, zitadel, entra-id, wireguard, ztna]
 **Bron:** `raw/Doc6_NetBird_ZTNA.md`
 **Node(s):** mgmt01 (Docker-stack) + pop01 (NetBird-agent) + alle peers
 **Vereisten:** [Runbook 01: Labomgeving](01-lab-environment.nl.md) afgerond, Entra ID-tenant met A5-licentie
-**Status:** Operationeel — snapshot `Fase2-ZTNA-Complete`
+**Status:** Operationeel, snapshot `Fase2-ZTNA-Complete`
 
 ---
 
@@ -34,7 +34,7 @@ Entra ID → App Registrations → New Registration
   Ondersteunde accounttypen: Accounts in this organizational directory only
 ```
 
-> **App-registratiewissel (V30).** Een eerdere iteratie hergebruikte een gedeelde registratie (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`) over de sandbox en het teamproject, wat verborgen koppeling veroorzaakte. De sandbox gebruikt nu zijn eigen `2ITCSC1A-Netbird-Sandbox`-registratie (`11803ee8-eb15-462c-a286-5415c17a29c6`) — de huidige waarde die in deze runbook wordt gebruikt.
+> **App-registratiewissel (V30).** Een eerdere iteratie hergebruikte een gedeelde registratie (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`) over de sandbox en het teamproject, wat verborgen koppeling veroorzaakte. De sandbox gebruikt nu zijn eigen `2ITCSC1A-Netbird-Sandbox`-registratie (`11803ee8-eb15-462c-a286-5415c17a29c6`), de huidige waarde die in deze runbook wordt gebruikt.
 
 Noteer de Client-ID en Tenant-ID. De redirect-URI wordt later toegevoegd (na NetBird-deployment, Stap 8).
 
@@ -68,7 +68,7 @@ Enter the domain you want to use for NetBird: netbird.sandbox.local
 Select your Identity Provider setup: [0] None (use Zitadel built-in)
 ```
 
-> **Valkuil: Het script zal falen — dit is verwacht.** Het probeert Let's Encrypt te contacteren voor `netbird.sandbox.local` en de ACME-uitdaging mislukt (privéhostnaam). Stop met **Ctrl+C** en ga door naar Stap 4.
+> **Valkuil: Het script zal falen; dit is verwacht.** Het probeert Let's Encrypt te contacteren voor `netbird.sandbox.local` en de ACME-uitdaging mislukt (privéhostnaam). Stop met **Ctrl+C** en ga door naar Stap 4.
 
 ---
 
@@ -136,7 +136,7 @@ curl -k https://netbird.sandbox.local/zitadel/debug/ready
 # Moet "ok" of HTTP 200 teruggeven
 ```
 
-Controleer `management.json` — alle URL-verwijzingen moeten `https://netbird.sandbox.local` gebruiken, niet bare IP's. Controleer deze velden:
+Controleer `management.json`: alle URL-verwijzingen moeten `https://netbird.sandbox.local` gebruiken, niet bare IP's. Controleer deze velden:
 
 ```bash
 cat management.json | grep -i "netbird.sandbox.local"
@@ -193,7 +193,7 @@ Installeer vanuit de pop01-console (FreeBSD) de NetBird-client. De WireGuard-int
 > **Valkuil: `config.json` wordt 0 bytes na onregelmatige afsluiting.** FreeBSD's UFS met soft updates kan een leeg bestand achterlaten wanneer QEMU abrupt wordt beëindigd. NetBird start niet, `wt0` bestaat niet, en alle overlay-listeners falen.
 > Zie [Finding: NetBird config nul bytes](../findings/netbird-config-zero-bytes.nl.md).
 
-**Maatregel — maak na elke sessie een back-up:**
+**Maatregel: maak na elke sessie een back-up:**
 
 ```bash
 cp /var/db/netbird/config.json /var/db/netbird/config.json.bak
@@ -216,7 +216,7 @@ NetBird Dashboard → Peers → maak groepen aan:
 | `SASE-Services` | pop01, mgmt01 | Service-eindpunten (WPAD, DNS, proxy) |
 | `SASE-InternalResources` | (resourcegroep voor netwerk) | DC-LAN-resources |
 
-mgmt01 zit in zowel `SASE-Admins` als `SASE-Services` — dit scheidt de infrarol (beheertoegang) van de servicerol (WPAD via Caddy, ioc2rpz-feeds).
+mgmt01 zit in zowel `SASE-Admins` als `SASE-Services`; dit scheidt de infrarol (beheertoegang) van de servicerol (WPAD via Caddy, ioc2rpz-feeds).
 
 ---
 
@@ -224,7 +224,7 @@ mgmt01 zit in zowel `SASE-Admins` als `SASE-Services` — dit scheidt de infraro
 
 > **Valkuil: Volgorde is cruciaal.** Maak alle policies aan **vóór** het verwijderen van het standaard alles-naar-alles-beleid. Als je het standaardbeleid verwijdert zonder vervangers, valt alle peercommunicatie direct weg.
 
-**Beleid 1 — Admin-Infrastructuur:**
+**Beleid 1: Admin-Infrastructuur:**
 
 ```
 Naam:        Admin-Infrastructure
@@ -234,7 +234,7 @@ Protocol:    All
 Actie:       Accept
 ```
 
-**Beleid 2 — Mobiel-naar-Services:**
+**Beleid 2: Mobiel-naar-Services:**
 
 ```
 Naam:        Mobile-to-Services
@@ -244,7 +244,7 @@ Protocol:    All
 Actie:       Accept
 ```
 
-**Beleid 3 — Datacentertoegeng:**
+**Beleid 3: Datacentertoegeng:**
 
 ```
 Naam:        Datacenter Access
@@ -267,7 +267,7 @@ Beschrijving: Internet exit node
 Groepen:      SASE-MobileUsers
 ```
 
-Dit routeert al het niet-overlay-verkeer van overlay-clients via pop01 — vereist zodat Squid het verkeer kan inspecteren.
+Dit routeert al het niet-overlay-verkeer van overlay-clients via pop01; dit is vereist zodat Squid het verkeer kan inspecteren.
 
 ---
 
@@ -310,7 +310,7 @@ Primaire nameserver: pop01 (100.70.154.79)
 Match-domeinen:      (LEEG LATEN)
 ```
 
-> **Valkuil: Lege match-domeinen is cruciaal.** Leeg betekent dat pop01 de primaire nameserver wordt voor **alle** DNS-queries — niet alleen `*.sandbox.local`. Zonder dit omzeilen externe queries Unbound en biedt DNS RPZ geen bescherming voor externe domeinen.
+> **Valkuil: Lege match-domeinen is cruciaal.** Leeg betekent dat pop01 de primaire nameserver wordt voor **alle** DNS-queries, niet alleen `*.sandbox.local`. Zonder dit omzeilen externe queries Unbound en biedt DNS RPZ geen bescherming voor externe domeinen.
 > Zie [Finding: NetBird primaire nameserver](../findings/netbird-primary-nameserver.nl.md).
 
 ---
@@ -330,7 +330,7 @@ Test-NetConnection 100.70.154.79 -Port 3128
 Test-NetConnection 8.8.8.8
 # Verwacht: PingSucceeded: True
 
-# (DC-LAN-bereikbaarheid — Test-NetConnection 10.0.0.100 -Port 80 — geldt alleen
+# (DC-LAN-bereikbaarheid, Test-NetConnection 10.0.0.100 -Port 80, geldt alleen
 #  voor de verouderde Stap 13-build; DC-LAN-over-overlay is uitgesteld, zie Stap 10-notitie.)
 ```
 
@@ -348,7 +348,7 @@ Test-NetConnection 8.8.8.8
 - [ ] Internet bereikbaar vanuit mobile01 via exit node
 - [ ] `config.json` back-up aangemaakt op pop01
 
-> DC-LAN-bereikbaarheid (`10.0.0.100`) maakt **geen** deel uit van huidige-staat-validatie — het `Internal-DC`-netwerk is verwijderd in de V34-migratie (zie Stap 10-notitie).
+> DC-LAN-bereikbaarheid (`10.0.0.100`) maakt **geen** deel uit van huidige-staat-validatie; het `Internal-DC`-netwerk is verwijderd in de V34-migratie (zie Stap 10-notitie).
 
 ---
 

@@ -1,11 +1,11 @@
 ---
-title: "Caddy — WPAD-server, Reverse Proxy, TLS-terminator"
+title: "Caddy: WPAD-server, Reverse Proxy, TLS-terminator"
 tags: [caddy, network, sase, proxy, tls, wpad]
 ---
 
-# Caddy — WPAD-server, Reverse Proxy, TLS-terminator
+# Caddy: WPAD-server, Reverse Proxy, TLS-terminator
 
-**Rol:** Multifunctionele HTTP-server op mgmt01 — levert het WPAD PAC-bestand voor automatische browserconfiguratie, biedt TLS-terminatie voor de NetBird/Zitadel-stack en reverse-proxiet de ioc2rpz-beheer-GUI.  
+**Rol:** Multifunctionele HTTP-server op mgmt01 die het WPAD PAC-bestand levert voor automatische browserconfiguratie, biedt TLS-terminatie voor de NetBird/Zitadel-stack en reverse-proxiet de ioc2rpz-beheer-GUI.  
 **Versie:** Caddy 2.x (onderdeel van de NetBird Docker Compose-stack op mgmt01)  
 **Configuratielocatie:** `~/Caddyfile` op mgmt01, geleverd door de `caddy`-container in de NetBird Docker-stack
 
@@ -15,11 +15,11 @@ tags: [caddy, network, sase, proxy, tls, wpad]
 
 Caddy op mgmt01 vervult drie afzonderlijke rollen die toevallig hetzelfde proces delen:
 
-**1. WPAD/PAC-bestandsserver** — Caddy levert `/wpad.dat` op `http://wpad.sandbox.local` via de overlay-IP `100.70.135.241` van mgmt01. De browser haalt `wpad.sandbox.local/wpad.dat` op en voert het PAC-bestand JavaScript uit om te ontdekken dat al het verkeer naar `PROXY 100.70.154.79:3128` (pop01 Squid) moet. In de PoC wordt mobile01 handmatig op deze URL gericht ("Installatiescript gebruiken") — WPAD-autodiscovery wordt niet geactiveerd omdat NetBird het zoekdomein `sandbox.local` alleen op de `wt0`-adapter instelt, niet in de globale suffixlijst. Zie [Concept: WPAD/PAC](../concepts/wpad-pac.md).
+**1. WPAD/PAC-bestandsserver.** Caddy levert `/wpad.dat` op `http://wpad.sandbox.local` via de overlay-IP `100.70.135.241` van mgmt01. De browser haalt `wpad.sandbox.local/wpad.dat` op en voert het PAC-bestand JavaScript uit om te ontdekken dat al het verkeer naar `PROXY 100.70.154.79:3128` (pop01 Squid) moet. In de PoC wordt mobile01 handmatig op deze URL gericht ("Installatiescript gebruiken"); WPAD-autodiscovery wordt niet geactiveerd omdat NetBird het zoekdomein `sandbox.local` alleen op de `wt0`-adapter instelt, niet in de globale suffixlijst. Zie [Concept: WPAD/PAC](../concepts/wpad-pac.md).
 
-**2. NetBird TLS-terminator** — Het quickstart-script van NetBird installeert Caddy als de TLS-terminerende reverse proxy voor alle NetBird- en Zitadel-services op `netbird.sandbox.local`. Het TLS-certificaat is zelfondertekend via de `tls internal`-directive van Caddy (de ingebouwde lokale CA van Caddy). Let's Encrypt kan niet worden gebruikt omdat `netbird.sandbox.local` niet publiek oplosbaar is. Zie [Beslissing: Zitadel IdP-broker](../decisions/zitadel-idp-broker.md).
+**2. NetBird TLS-terminator.** Het quickstart-script van NetBird installeert Caddy als de TLS-terminerende reverse proxy voor alle NetBird- en Zitadel-services op `netbird.sandbox.local`. Het TLS-certificaat is zelfondertekend via de `tls internal`-directive van Caddy (de ingebouwde lokale CA van Caddy). Let's Encrypt kan niet worden gebruikt omdat `netbird.sandbox.local` niet publiek oplosbaar is. Zie [Beslissing: Zitadel IdP-broker](../decisions/zitadel-idp-broker.md).
 
-**3. ioc2rpz GUI-proxy** — Caddy reverse-proxiet de ioc2rpz GUI-container naar `https://ioc2rpz.sandbox.local`. Zie [Component: ioc2rpz](ioc2rpz.md).
+**3. ioc2rpz GUI-proxy.** Caddy reverse-proxiet de ioc2rpz GUI-container naar `https://ioc2rpz.sandbox.local`. Zie [Component: ioc2rpz](ioc2rpz.md).
 
 Caddy maakt deel uit van de control plane-rol van mgmt01: het distribueert configuratie (WPAD), maakt beheerinterfaces mogelijk (NetBird, ioc2rpz) en raakt het dataplaneverkeer dat via pop01 stroomt nooit aan.
 
@@ -42,9 +42,9 @@ function FindProxyForURL(url, host) {
 }
 ```
 
-Het PAC-bestand gebruikt `shExpMatch()` in plaats van `isInNet()` of `dnsResolve()` — DNS-gerelateerde PAC-functies kunnen een timeout veroorzaken in de WinHTTP-context. `isPlainHostName()` retourneert DIRECT voor single-label hostnamen (zonder punt). Het overlay-subnet (`100.64.*`), loopback (`127.*`), DC-LAN (`10.*`) en alle `*.sandbox.local` interne namen omzeilen de proxy. Al het andere gaat via Squid op pop01.
+Het PAC-bestand gebruikt `shExpMatch()` in plaats van `isInNet()` of `dnsResolve()`. DNS-gerelateerde PAC-functies kunnen een timeout veroorzaken in de WinHTTP-context. `isPlainHostName()` retourneert DIRECT voor single-label hostnamen (zonder punt). Het overlay-subnet (`100.64.*`), loopback (`127.*`), DC-LAN (`10.*`) en alle `*.sandbox.local` interne namen omzeilen de proxy. Al het andere gaat via Squid op pop01.
 
-### Caddyfile — NetBird TLS
+### Caddyfile: NetBird TLS
 
 Het Caddyfile wordt gegenereerd door het NetBird-quickstart-script en vervolgens gepatcht om `tls internal` toe te voegen:
 
@@ -69,7 +69,7 @@ services:
 
 Deze alias staat Zitadel en NetBird-beheercontainers toe Caddy intern te bereiken voor HTTPS-callbacks.
 
-### Caddyfile — WPAD en ioc2rpz
+### Caddyfile: WPAD en ioc2rpz
 
 De WPAD- en ioc2rpz-blokken worden toegevoegd aan hetzelfde Caddyfile:
 
@@ -123,11 +123,11 @@ docker compose up -d caddy   # past nieuwe mounts toe
 
 ## Bekende problemen / valkuilen
 
-**`tls internal` geeft browsercertificaatwaarschuwing** — de interne CA van Caddy wordt standaard door geen enkele browser vertrouwd. Voor het NetBird Dashboard betekent dit het accepteren van een beveiligingsuitzondering. De NetBird OIDC-flow vereist alleen HTTPS (niet een publiek vertrouwd certificaat), dus het zelfondertekende certificaat is functioneel voldoende.
+**`tls internal` geeft browsercertificaatwaarschuwing:** de interne CA van Caddy wordt standaard door geen enkele browser vertrouwd. Voor het NetBird Dashboard betekent dit het accepteren van een beveiligingsuitzondering. De NetBird OIDC-flow vereist alleen HTTPS (niet een publiek vertrouwd certificaat), dus het zelfondertekende certificaat is functioneel voldoende.
 
-**Docker-volumerecreatie** — nieuwe volume-mounts in `docker-compose.yml` voor de `caddy`-service zijn pas van kracht na `docker compose up -d caddy`, niet `docker compose restart caddy`. De `restart`-opdracht hergebruikt de bestaande container zonder volume-mount-wijzigingen opnieuw te lezen.
+**Docker-volumerecreatie:** nieuwe volume-mounts in `docker-compose.yml` voor de `caddy`-service zijn pas van kracht na `docker compose up -d caddy`, niet `docker compose restart caddy`. De `restart`-opdracht hergebruikt de bestaande container zonder volume-mount-wijzigingen opnieuw te lezen.
 
-**WPAD vereist zowel HTTP- als HTTPS-blokken** — WinHTTP probeert het PAC-bestand eerst via HTTPS op te halen, zelfs wanneer de geconfigureerde URL `http://` specificeert. Zonder een HTTPS-serverblok voor `wpad.sandbox.local` tonen Caddy-logs `TLS handshake error` van de client. Het Caddyfile moet zowel een `http://wpad.sandbox.local`-blok als een `wpad.sandbox.local`-blok met `tls internal` bevatten.
+**WPAD vereist zowel HTTP- als HTTPS-blokken:** WinHTTP probeert het PAC-bestand eerst via HTTPS op te halen, zelfs wanneer de geconfigureerde URL `http://` specificeert. Zonder een HTTPS-serverblok voor `wpad.sandbox.local` tonen Caddy-logs `TLS handshake error` van de client. Het Caddyfile moet zowel een `http://wpad.sandbox.local`-blok als een `wpad.sandbox.local`-blok met `tls internal` bevatten.
 
 ---
 

@@ -5,21 +5,21 @@ tags: [testing, sase, demo, swg, ztna, casb, fwaas, ids, dlp, rpz]
 
 # Aanvals- & bypass-scenario's (demovalidatie)
 
-Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen uit te voeren die de stack moet detecteren en blokkeren. Elk scenario verwijst naar een of meer acceptatietests (F1--F15, T-A1--T-A13) beschreven in [Acceptatietests](acceptance-tests.nl.md).
+Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen uit te voeren die de stack moet detecteren en blokkeren. Elk scenario verwijst naar een of meer acceptatietests (F1–F15, T-A1–T-A13) beschreven in [Acceptatietests](acceptance-tests.nl.md).
 
 ---
 
 ## Scenario's per pijler
 
-### ZTNA -- Identiteit & tunnel
+### ZTNA: Identiteit & tunnel
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
-| A1 | Niet-ge-enrolld apparaat probeert DC-LAN-toegang | Geen route naar 10.0.0.0/24 -- destination unreachable | F8 | `ping 10.0.0.100` vanaf niet-ge-enrollde host |
+| A1 | Niet-ge-enrolld apparaat probeert DC-LAN-toegang | Geen route naar 10.0.0.0/24: destination unreachable | F8 | `ping 10.0.0.100` vanaf niet-ge-enrollde host |
 | A2 | NetBird-login via Entra ID | OIDC-flow voltooid, tunnel actief, peer in juiste groep | F1, F2 | `netbird up` gevolgd door browser SSO |
 | A3 | Niet-conform apparaat logt in | Conditional Access blokkeert (report-only tot demo) | F3 | Apparaatcompliance aanpassen in Intune |
 
-### SWG -- Webgateway-inspectie
+### SWG: Webgateway-inspectie
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
@@ -27,11 +27,11 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 | B2 | EICAR-malwaredownload | ClamAV blokkeert, Squid 403 (8245 bytes vs 68) | F7 | `curl.exe -x ... --ssl-no-revoke https://secure.eicar.org/eicar.com` |
 | B3 | SSL Bump-verificatie | Certificate issuer = SASE-PoC-CA, niet het origineel | F6 | Browser naar google.com, certificaat inspecteren |
 | B4 | No-bump-uitzondering (Microsoft-login) | Certificate issuer = Microsoft (origineel) | F6 | Browser naar login.microsoftonline.com, certificaat inspecteren |
-| B5 | DLP-upload -- creditcardnummer in POST-body | Python DLP ICAP blokkeert, 403 | T-A3 | `curl.exe -x ... -X POST -d "CC: 4532015112830366"` naar httpbin |
-| B6 | DLP-download -- CONFIDENTIAL-label | ClamAV YARA blokkeert | T-A1 | Bestand downloaden met CONFIDENTIAL-markering |
-| B7 | DLP-threshold -- 4x CC-nummers blokkeren, 1x doorlaten | SDD-threshold enforcement | T-A2 | POST met 4 vs 1 creditcardnummers |
+| B5 | DLP-upload: creditcardnummer in POST-body | Python DLP ICAP blokkeert, 403 | T-A3 | `curl.exe -x ... -X POST -d "CC: 4532015112830366"` naar httpbin |
+| B6 | DLP-download: CONFIDENTIAL-label | ClamAV YARA blokkeert | T-A1 | Bestand downloaden met CONFIDENTIAL-markering |
+| B7 | DLP-threshold: 4x CC-nummers blokkeren, 1x doorlaten | SDD-threshold enforcement | T-A2 | POST met 4 vs 1 creditcardnummers |
 
-### CASB -- Identiteitsgebaseerde filtering
+### CASB: Identiteitsgebaseerde filtering
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
@@ -39,7 +39,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 | C2 | Docent surft naar ChatGPT | Toegestaan (Docenten-beleid) | CASB L1 | Zelfde URL als docentidentiteit |
 | C3 | SharePoint anonieme deellink | Gedetecteerd (regel 100601); Active Response trekt link in achter de ENFORCE-poort (standaard detect-only, live revoke nog niet actief) | CASB L2 | Anonieme deellink aanmaken in SharePoint |
 
-### FWaaS / IDS -- Netwerkdetectie
+### FWaaS / IDS: Netwerkdetectie
 
 | # | Scenario | Verwacht resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
@@ -69,14 +69,14 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of beleidsomzeilingen 
 ## Belangrijke testopmerkingen
 
 - Alle proxytests vanaf Windows vereisen `--ssl-no-revoke` wegens Schannel CRL-controlefout op SASE-PoC-CA (zie [Finding: curl --ssl-no-revoke](../findings/curl-ssl-no-revoke.nl.md)).
-- ICMP-ping naar overlay-peers faalt by design onder het ALLOW-only beleidsmodel -- gebruik altijd poortgebaseerde tests.
+- ICMP-ping naar overlay-peers faalt by design onder het ALLOW-only beleidsmodel. Gebruik altijd poortgebaseerde tests.
 - Elke Suricata SID vuurt eenmaal per TCP-flow door connection pooling (zie [Finding: Suricata connection pooling](../findings/suricata-connection-pooling.nl.md)).
 
 ---
 
 ## Gerelateerd
 
-- [Acceptatietests (F1--F15)](acceptance-tests.nl.md)
+- [Acceptatietests (F1–F15)](acceptance-tests.nl.md)
 - [Architectuur](../overview/architecture.nl.md)
 - [Concept: Zero Trust](../concepts/zero-trust.nl.md)
 - [Finding: curl --ssl-no-revoke](../findings/curl-ssl-no-revoke.nl.md)

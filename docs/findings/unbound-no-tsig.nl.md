@@ -26,6 +26,6 @@ Zie [Beslissing: BIND als TSIG-intermediary](../decisions/bind-tsig-intermediary
 
 ## Lessen
 
-- Controleer altijd de huidige functieondersteuning in release notes vóór het ontwerpen van een transferketen — ontbrekende functies in langlopende open issues zijn mogelijk niet opgelost binnen uw tijdlijn
+- Controleer altijd de huidige functieondersteuning in release notes vóór het ontwerpen van een transferketen; ontbrekende functies in langlopende open issues zijn mogelijk niet opgelost binnen uw tijdlijn
 - BIND is een goed ondersteund secundair zonemechanisme; het gebruiken als TSIG-capable intermediary is een schone workaround met minimale overhead
 - NLnetLabs/unbound issue #336 is de gezaghebbende referentie als deze beperking toekomstige projecten beïnvloedt

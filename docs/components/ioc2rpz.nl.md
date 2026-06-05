@@ -1,12 +1,12 @@
 ---
-title: "ioc2rpz + BIND + Unbound — DNS-threat intelligence"
+title: "ioc2rpz + BIND + Unbound: DNS-threat intelligence"
 tags: [ioc2rpz, dns, rpz, bind, unbound, docker, opnsense, sase, network]
 ---
 
-# ioc2rpz + BIND + Unbound — DNS-threat intelligence
+# ioc2rpz + BIND + Unbound: DNS-threat intelligence
 
 **Rol:** Proactieve DNS-blokkering van bekende kwaadaardige domeinen. ioc2rpz aggregeert threat intelligence-feeds (URLhaus, ThreatFox) in een RPZ-zone; BIND fungeert als TSIG-geauthenticeerde intermediary; Unbound dwingt het RPZ-beleid af voor alle DNS-query's van overlay-clients en DC-LAN-nodes.  
-**Status:** ✅ Volledig operationeel — 71.767 RPZ-records uit twee feeds, gevalideerd vanaf drie testpunten.  
+**Status:** ✅ Volledig operationeel (71.767 RPZ-records uit twee feeds, gevalideerd vanaf drie testpunten).  
 **Configuratielocaties:**
 - ioc2rpz: `/opt/ioc2rpz/` op mgmt01 (Docker)
 - BIND: `/usr/local/etc/namedb/` op pop01 (`os-bind`-plugin)
@@ -16,7 +16,7 @@ tags: [ioc2rpz, dns, rpz, bind, unbound, docker, opnsense, sase, network]
 
 ## Werking in deze stack
 
-DNS-threat intelligence onderschept zo vroeg mogelijk in de verbindingslevenscyclus — bij naamresolutie. Als een client de hostnaam van een bekende malware-C2-server probeert op te zoeken, retourneert Unbound NXDOMAIN voordat er een TCP-verbinding tot stand kan komen, ongeacht poort of protocol.
+DNS-threat intelligence onderschept zo vroeg mogelijk in de verbindingslevenscyclus, bij naamresolutie. Als een client de hostnaam van een bekende malware-C2-server probeert op te zoeken, retourneert Unbound NXDOMAIN voordat er een TCP-verbinding tot stand kan komen, ongeacht poort of protocol.
 
 **Driecomponentenketen:**
 
@@ -34,7 +34,7 @@ Overlay-clients + dc01
 
 ioc2rpz is een **zonebron**, geen resolver. Clients queryen ioc2rpz nooit direct. Ze queryen Unbound, dat de RPZ-zone in het geheugen heeft. Geen extra latency per query.
 
-BIND bestaat uitsluitend omdat Unbound 1.24.2 TSIG voor zone transfers niet ondersteunt — een ontbrekende functie gedocumenteerd in GitHub NLnetLabs/unbound issue #336 (open sinds oktober 2020). BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en presenteert de zone aan Unbound via loopback zonder authenticatie. Zie [Beslissing: BIND als TSIG-intermediary](../decisions/bind-tsig-intermediary.md).
+BIND bestaat uitsluitend omdat Unbound 1.24.2 TSIG voor zone transfers niet ondersteunt (een ontbrekende functie gedocumenteerd in GitHub NLnetLabs/unbound issue #336, open sinds oktober 2020). BIND verwerkt de TSIG-geauthenticeerde AXFR van ioc2rpz en presenteert de zone aan Unbound via loopback zonder authenticatie. Zie [Beslissing: BIND als TSIG-intermediary](../decisions/bind-tsig-intermediary.md).
 
 **NetBird primaire naamserver:** Om RPZ overlay-clients op externe domeinen te beschermen, moeten alle DNS-query's via pop01 Unbound verlopen. De primaire nameserver-instelling van NetBird (overeenkomende domeinen: leeg) bereikt dit. Zonder dit gebruiken clients de standaard-DNS van hun adapter voor niet-interne domeinen, waardoor Unbound volledig wordt omzeild. Zie [Bevinding: NetBird primaire naamserver](../findings/netbird-primary-nameserver.md).
 
@@ -83,12 +83,12 @@ Toegang via `https://ioc2rpz.sandbox.local` (door Caddy geproxied). Na de eerste
 **Server:** Publiek IP `192.168.122.23`, NS `ns1.ioc2rpz.local`, ACL: `127.0.0.1, 172.20.0.2` (GUI-container), `172.20.0.1`
 
 **TSIG-sleutels:**
-- `tkey_mgmt_1` — beheersleutel, hmac-md5
-- `tkey_rpz_transfer` — zone transfer key, hmac-sha256
+- `tkey_mgmt_1`: beheersleutel, hmac-md5
+- `tkey_rpz_transfer`: zone transfer key, hmac-sha256
 
 **Bronnen:**
-- `urlhaus_rpz` — `https://urlhaus.abuse.ch/downloads/rpz/`
-- `threatfox_rpz` — `https://threatfox.abuse.ch/downloads/threatfox.rpz` (let op: niet `/downloads/rpz/`)
+- `urlhaus_rpz`: `https://urlhaus.abuse.ch/downloads/rpz/`
+- `threatfox_rpz`: `https://threatfox.abuse.ch/downloads/threatfox.rpz` (let op: niet `/downloads/rpz/`)
 
 **RPZ-zone:**
 - Naam: `threat-intel.rpz.sase`
@@ -98,7 +98,7 @@ Toegang via `https://ioc2rpz.sandbox.local` (door Caddy geproxied). Na de eerste
 
 Controleer na "Publiceren" of het zonelog ~35.900 indicatoren (≈71.800 regels) toont en "DNS Notify sent".
 
-**ioc2rpz.gui JavaScript-bug:** Het aanmeldformulier mist een `e.preventDefault()` in de `signIn`-functie, waardoor de browser native indient terwijl axios ook post — de native inzending herlaadt de pagina en breekt het axios-verzoek af. Pas de correctie eenmalig toe na containerstart:
+**ioc2rpz.gui JavaScript-bug:** Het aanmeldformulier mist een `e.preventDefault()` in de `signIn`-functie, waardoor de browser native indient terwijl axios ook post. De native inzending herlaadt de pagina en breekt het axios-verzoek af. Pas de correctie eenmalig toe na containerstart:
 
 ```bash
 docker exec ioc2rpz-ioc2rpz-gui-1 sed -i \
@@ -123,7 +123,7 @@ Plugin installeren: Systeem → Firmware → Plugins → `os-bind`.
 - Type: Secundair
 - Primair IP: `192.168.122.23`
 - Transfersleutel: `tkey_rpz_transfer`, Algoritme: hmac-sha256
-- Query toestaan: `loopback_only` (expliciet instellen — niet leeg laten)
+- Query toestaan: `loopback_only` (expliciet instellen, niet leeg laten)
 
 De gegenereerde `named.conf` gebruikt moderne inline TSIG-syntaxis:
 ```
@@ -132,12 +132,12 @@ primaries { 192.168.122.23 key "tkey_rpz_transfer"; };
 
 ### Unbound RPZ op pop01
 
-Persistente configuratielocatie (overleeft OPNsense-herstarts — het juiste pad):
+Persistente configuratielocatie (overleeft OPNsense-herstarts, het juiste pad):
 ```
 /usr/local/etc/unbound.opnsense.d/rpz.conf
 ```
 
-⚠️ Gebruik **niet** `/var/unbound/etc/rpz.conf` — OPNsense regenereert de chroot-map bij elke Unbound-herstart en verwijdert alle bestanden die daar zijn geplaatst. Zie [Bevinding: Unbound-configuratiepad](../findings/unbound-config-path.md).
+⚠️ Gebruik **niet** `/var/unbound/etc/rpz.conf`. OPNsense regenereert de chroot-map bij elke Unbound-herstart en verwijdert alle bestanden die daar zijn geplaatst. Zie [Bevinding: Unbound-configuratiepad](../findings/unbound-config-path.md).
 
 ```
 server:
@@ -152,9 +152,9 @@ rpz:
     rpz-log-name: "ioc2rpz-threat-intel"
 ```
 
-**`python` moet in module-config blijven** — OPNsense gebruikt `unbound-dnsbl/dnsbl_module.py` voor de ingebouwde DNS-blokkeerlijstfunctie. Het verwijderen van `python` uit module-config breekt dit.
+**`python` moet in module-config blijven.** OPNsense gebruikt `unbound-dnsbl/dnsbl_module.py` voor de ingebouwde DNS-blokkeerlijstfunctie. Het verwijderen van `python` uit module-config breekt dit.
 
-**`configctl unbound check` fout-positief** — de controle heeft een vaste whitelist van "bekende" modulecombinaties. `respip python validator iterator` staat niet op de lijst maar werkt wel tijdens runtime. Negeer de fout en ga door met de herstart.
+**`configctl unbound check` fout-positief:** de controle heeft een vaste whitelist van "bekende" modulecombinaties. `respip python validator iterator` staat niet op de lijst maar werkt wel tijdens runtime. Negeer de fout en ga door met de herstart.
 
 Toepassen:
 ```bash
@@ -171,12 +171,12 @@ Controleer of vier modules geladen zijn:
 
 ### Validatie
 
-Testdomein: `testentry.rpz.urlhaus.abuse.ch` — altijd aanwezig in de URLhaus-feed, ontworpen voor RPZ-validatie.
+Testdomein: `testentry.rpz.urlhaus.abuse.ch` (altijd aanwezig in de URLhaus-feed, ontworpen voor RPZ-validatie).
 
 ```bash
 # pop01 lokaal
 drill @127.0.0.1 testentry.rpz.urlhaus.abuse.ch
-# Verwacht: rcode: NXDOMAIN, flags: aa (gezaghebbend — bevestigt lokale RPZ, niet internet-NXDOMAIN)
+# Verwacht: rcode: NXDOMAIN, flags: aa (gezaghebbend, bevestigt lokale RPZ, niet internet-NXDOMAIN)
 
 # mobile01 via NetBird
 nslookup testentry.rpz.urlhaus.abuse.ch
@@ -196,28 +196,28 @@ rpz: applied [ioc2rpz-threat-intel] testentry.rpz.urlhaus.abuse.ch. rpz-nxdomain
 |-----------|----------|-----|
 | [NetBird](netbird.md) | afhankelijkheid | Primaire nameserver-instelling routeert alle client-DNS via pop01 Unbound |
 | [Caddy](caddy.md) | → browser | Caddy proxiet ioc2rpz GUI op `https://ioc2rpz.sandbox.local` |
-| [GNS3/Topologie](gns3.md) | afhankelijkheid | ioc2rpz→BIND-zone transfer gebruikt 192.168.122.x (WAN-segment); iptables FORWARD-regels moeten `-I FORWARD 1` gebruiken |
+| [GNS3/Topologie](gns3.md) | afhankelijkheid | ioc2rpz→BIND-zone transfer gebruikt 192.168.122.x (WAN-segment), iptables FORWARD-regels moeten `-I FORWARD 1` gebruiken |
 | [Suricata](suricata.md) | aanvullend | Abuse.ch URLhaus-feeds verschijnen in beide; Suricata detecteert verbindingen met C2-IP's, RPZ voorkomt DNS-resolutie van C2-domeinen |
 
 ---
 
 ## NATS-integratie
 
-DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via `security.alert.dns`. Wanneer Unbound's RPZ-module NXDOMAIN retourneert voor een threat-intelligence-domein, wordt het event gepubliceerd met: opgevraagd domein, client-IP en de RPZ-zone die overeenkomt. Deze events dragen bij aan de per-peer threat score — herhaalde RPZ-hits van een enkele client kunnen duiden op malware die probeert C2-infrastructuur te bereiken, wat quarantaine door de [Control Daemon](control-daemon.md) kan activeren.
+DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via `security.alert.dns`. Wanneer Unbound's RPZ-module NXDOMAIN retourneert voor een threat-intelligence-domein, wordt het event gepubliceerd met: opgevraagd domein, client-IP en de RPZ-zone die overeenkomt. Deze events dragen bij aan de per-peer threat score. Herhaalde RPZ-hits van een enkele client kunnen duiden op malware die probeert C2-infrastructuur te bereiken, wat quarantaine door de [Control Daemon](control-daemon.md) kan activeren.
 
 ---
 
 ## Bekende problemen / valkuilen
 
-**iptables FORWARD-regelvolgorde** — gebruik bij het toevoegen van poortdoorsturingen voor GUI-toegang op de GNS3-host altijd `-I FORWARD 1`. Toevoegen (`-A`) plaatst de regel na de REJECT-keten van libvirt. Zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
+**iptables FORWARD-regelvolgorde:** gebruik bij het toevoegen van poortdoorsturingen voor GUI-toegang op de GNS3-host altijd `-I FORWARD 1`. Toevoegen (`-A`) plaatst de regel na de REJECT-keten van libvirt. Zie [Bevinding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.md).
 
-**ioc2rpz.gui JS-aanmeldbug** — upstream-bug in `io2auth.js`. Pas de sed-correctie toe na elke containeropbouw. Zie [Bevinding: ioc2rpz GUI JS-bug](../findings/ioc2rpz-gui-js-bug.md).
+**ioc2rpz.gui JS-aanmeldbug:** upstream-bug in `io2auth.js`. Pas de sed-correctie toe na elke containeropbouw. Zie [Bevinding: ioc2rpz GUI JS-bug](../findings/ioc2rpz-gui-js-bug.md).
 
-**DNS NOTIFY bereikt BIND niet** — ioc2rpz stuurt NOTIFY naar `192.168.122.13:53` (Unbound-poort), niet `53530` (BIND-poort). BIND ontdekt updates alleen bij de volgende SOA-poll (3600 s). Handmatige activering: `rndc retransfer threat-intel.rpz.sase`. Voeg in productie een `pf rdr`-regel toe die poort-53 NOTIFY van `192.168.122.23` doorstuurt naar poort 53530.
+**DNS NOTIFY bereikt BIND niet:** ioc2rpz stuurt NOTIFY naar `192.168.122.13:53` (Unbound-poort), niet `53530` (BIND-poort). BIND ontdekt updates alleen bij de volgende SOA-poll (3600 s). Handmatige activering: `rndc retransfer threat-intel.rpz.sase`. Voeg in productie een `pf rdr`-regel toe die poort-53 NOTIFY van `192.168.122.23` doorstuurt naar poort 53530.
 
-**OPNsense Unbound WebUI toont "handmatige overschrijvingen"-waarschuwing** — dit is verwacht en onschadelijk. Het rpz.conf overschrijft module-config, wat OPNsense detecteert. Documenteer dit in operationele runbooks zodat beheerders hier niet door verrast worden.
+**OPNsense Unbound WebUI toont "handmatige overschrijvingen"-waarschuwing.** Dit is verwacht en onschadelijk. Het rpz.conf overschrijft module-config, wat OPNsense detecteert. Documenteer dit in operationele runbooks zodat beheerders hier niet door verrast worden.
 
-**TSIG-sleutel moet gekoppeld zijn aan RPZ-zone in ioc2rpz** — de sleutel moet expliciet worden geselecteerd in GUI → Configuratie → RPZ-zones. Als leeg gelaten (`tkeys: [""]`), ontvangt BIND TSIG-fouten (`tsig indicates error`) bij elke AXFR-poging.
+**TSIG-sleutel moet gekoppeld zijn aan RPZ-zone in ioc2rpz:** de sleutel moet expliciet worden geselecteerd in GUI → Configuratie → RPZ-zones. Als leeg gelaten (`tkeys: [""]`), ontvangt BIND TSIG-fouten (`tsig indicates error`) bij elke AXFR-poging.
 
 ---
 

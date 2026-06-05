@@ -8,7 +8,7 @@ tags: [runbook, ioc2rpz, rpz, bind, unbound, dns]
 **Bron:** `raw/Doc4_DNS_Threat_Intelligence.md`
 **Node(s):** mgmt01 Docker (ioc2rpz + GUI) + pop01 (BIND 9.20 + Unbound RPZ)
 **Vereisten:** [Runbook 02: ZTNA Overlay](02-ztna-overlay.nl.md) afgerond (NetBird DNS-relay operationeel)
-**Status:** Operationeel — 71.767 RPZ-records, drie testpunten gevalideerd
+**Status:** Operationeel. 71.767 RPZ-records, drie testpunten gevalideerd
 
 ---
 
@@ -78,7 +78,7 @@ docker compose up -d
 
 ## Stap 2: iptables FORWARD-regels configureren voor GUI-toegang
 
-> **Valkuil: Gebruik altijd `-I FORWARD 1`, nooit `-A FORWARD`.** De FORWARD-keten op de GNS3-host heeft een libvirt `LIBVIRT_FWI`-keten op positie ~22 die nieuwe verbindingen WEIGERT voordat toegevoegde regels worden bereikt. Je ziet 0 pakketten op je ACCEPT-regels — de meest verborgen valkuil van de hele implementatie.
+> **Valkuil: Gebruik altijd `-I FORWARD 1`, nooit `-A FORWARD`.** De FORWARD-keten op de GNS3-host heeft een libvirt `LIBVIRT_FWI`-keten op positie ~22 die nieuwe verbindingen WEIGERT voordat toegevoegde regels worden bereikt. Je ziet 0 pakketten op je ACCEPT-regels. Dit is de meest verborgen valkuil van de hele implementatie.
 > Zie [Finding: iptables FORWARD-volgorde](../findings/iptables-forward-ordering.nl.md).
 
 ```bash
@@ -108,7 +108,7 @@ Hard vernieuwen (Ctrl+Shift+R) na de fix. Zie [Finding: ioc2rpz GUI JS-fout](../
 
 **Wachtwoordvereisten:** >7 tekens + minstens 1 cijfer, 1 kleine letter, 1 hoofdletter, 1 speciaal teken. OF >15 tekens.
 
-**Caddy reverse proxy** voor browsertoegang via `ioc2rpz.sandbox.local` — voeg toe aan het Caddyfile op mgmt01:
+**Caddy reverse proxy** voor browsertoegang via `ioc2rpz.sandbox.local`; voeg toe aan het Caddyfile op mgmt01:
 
 ```caddyfile
 ioc2rpz.sandbox.local {
@@ -138,8 +138,8 @@ ACL:        127.0.0.1, 172.20.0.2 (GUI-container), 172.20.0.1
 
 **TSIG-sleutels (maak er twee aan):**
 ```
-tkey_mgmt_1        — beheersleutel, hmac-md5
-tkey_rpz_transfer  — zone transfer key, hmac-sha256
+tkey_mgmt_1        : beheersleutel, hmac-md5
+tkey_rpz_transfer  : zone transfer key, hmac-sha256
 ```
 
 **Bronnen (Threat Feeds):**
@@ -224,7 +224,7 @@ Verwacht:
 Transfer completed: 97 messages, 71767 records, 1557644 bytes, 0.645 secs
 ```
 
-**TSIG-probleemoplossing** — als `tsig indicates error` in named.log:
+**TSIG-probleemoplossing:** als `tsig indicates error` in named.log:
 1. Controleer klokverschil: `date -u` op zowel pop01 als mgmt01 (max 300s tolerantie)
 2. Verifieer dat sleutelnaam exact overeenkomt tussen ioc2rpz en BIND-configuraties
 3. In ioc2rpz GUI: zorg dat de TSIG-sleutel gekoppeld is aan de zone (niet alleen aangemaakt)
@@ -233,7 +233,7 @@ Transfer completed: 97 messages, 71767 records, 1557644 bytes, 0.645 secs
 
 ## Stap 6: Unbound RPZ activeren op pop01
 
-> **Valkuil: Configuratiepad is `/usr/local/etc/unbound.opnsense.d/rpz.conf`, NIET `/var/unbound/etc/rpz.conf`.** De `/var/unbound/` chroot wordt hergenererd bij elke Unbound-herstart — bestanden die daar geplaatst worden, worden verwijderd.
+> **Valkuil: Configuratiepad is `/usr/local/etc/unbound.opnsense.d/rpz.conf`, NIET `/var/unbound/etc/rpz.conf`.** De `/var/unbound/` chroot wordt hergenererd bij elke Unbound-herstart; bestanden die daar geplaatst worden, worden verwijderd.
 > Zie [Finding: Unbound configuratiepad](../findings/unbound-config-path.nl.md).
 
 ```bash
@@ -274,7 +274,7 @@ cat /var/log/system.log | grep "init module"
 # init module 3: iterator
 ```
 
-De OPNsense WebUI toont "The configuration contains manual overwrites" — dit is verwacht en correct.
+De OPNsense WebUI toont "The configuration contains manual overwrites"; dit is verwacht en correct.
 
 ---
 
@@ -296,18 +296,18 @@ Match-domeinen: (LEEG LATEN)
 
 ## Eindverificatie
 
-**Testdomein:** `testentry.rpz.urlhaus.abuse.ch` — een permanente testvermelding in de URLhaus RPZ-feed.
+**Testdomein:** `testentry.rpz.urlhaus.abuse.ch`, een permanente testvermelding in de URLhaus RPZ-feed.
 
 **Onderscheid tussen RPZ en reguliere NXDOMAIN:** Een RPZ-blokkering heeft de `aa`-vlag (authoritative answer). Reguliere internet NXDOMAIN heeft deze niet.
 
-**Testpunt 1 — pop01 lokaal:**
+**Testpunt 1: pop01 lokaal:**
 
 ```bash
 drill @127.0.0.1 testentry.rpz.urlhaus.abuse.ch
 # Verwacht: rcode: NXDOMAIN, flags: aa
 ```
 
-**Testpunt 2 — mobile01 via NetBird:**
+**Testpunt 2: mobile01 via NetBird:**
 
 ```powershell
 nslookup testentry.rpz.urlhaus.abuse.ch
@@ -316,14 +316,14 @@ nslookup testentry.rpz.urlhaus.abuse.ch
 
 RPZ-log moet bron-IP `100.70.95.98` (mobile01) tonen.
 
-**Testpunt 3 — dc01 via DC-LAN:**
+**Testpunt 3: dc01 via DC-LAN:**
 
 ```bash
 drill @10.0.0.1 testentry.rpz.urlhaus.abuse.ch
 # Verwacht: rcode: NXDOMAIN, flags: aa
 ```
 
-**Controletest — normaal domein werkt:**
+**Controletest: normaal domein werkt:**
 
 ```bash
 drill @127.0.0.1 google.com
@@ -334,8 +334,8 @@ drill @127.0.0.1 google.com
 
 ## Bekende openstaande punten
 
-- **ioc2rpz GUI JS-fix is niet persistent** — opnieuw toepassen na containerrebuilds
-- **DNS NOTIFY bereikt BIND niet direct** — ioc2rpz stuurt NOTIFY naar poort 53, BIND luistert op 53530. Feeds worden bijgewerkt op het poll-interval van 3600s. Handmatige trigger: `rndc retransfer threat-intel.rpz.sase`
+- **ioc2rpz GUI JS-fix is niet persistent:** opnieuw toepassen na containerrebuilds
+- **DNS NOTIFY bereikt BIND niet direct:** ioc2rpz stuurt NOTIFY naar poort 53, BIND luistert op 53530. Feeds worden bijgewerkt op het poll-interval van 3600s. Handmatige trigger: `rndc retransfer threat-intel.rpz.sase`
 
 ---
 

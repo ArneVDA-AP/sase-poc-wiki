@@ -1,11 +1,11 @@
 ---
-title: "Python DLP ICAP-server — Upload-DLP-laag 2"
+title: "Python DLP ICAP-server: Upload-DLP-laag 2"
 tags: [python, dlp, icap, reqmod, docker, squid, multipart]
 ---
 
-# Python DLP ICAP-server — Upload-DLP-laag 2
+# Python DLP ICAP-server: Upload-DLP-laag 2
 
-**Rol:** ICAP REQMOD-service op mgmt01 — scant HTTP-verzoekbodies (uploads, formulierinzendingen) op gevoelige gegevens: creditcardnummers (Luhn), IBAN (mod-97), BSN (11-proef), AWS-toegangssleutels. Blokkeert POST/PUT/PATCH-verzoeken die overeenkomsten bevatten.  
+**Rol:** ICAP REQMOD-service op mgmt01 die HTTP-verzoekbodies (uploads, formulierinzendingen) scant op gevoelige gegevens: creditcardnummers (Luhn), IBAN (mod-97), BSN (11-proef), AWS-toegangssleutels. Blokkeert POST/PUT/PATCH-verzoeken die overeenkomsten bevatten.  
 **Versie:** Aangepaste Python 3.11, pyicap (gepatcht), Dockerfile op mgmt01  
 **Configuratielocatie:** `/opt/dlp-icap/` op mgmt01, `/usr/local/etc/squid/pre-auth/dlp-icap.conf` op pop01
 
@@ -16,10 +16,10 @@ tags: [python, dlp, icap, reqmod, docker, squid, multipart]
 De Python DLP-server draait als Docker-container op mgmt01 en luistert op `192.168.122.23:1345`. Squid op pop01 routeert POST-, PUT- en PATCH-verzoeken naar deze server via ICAP REQMOD voordat ze naar het internet worden doorgestuurd.
 
 De server ontvangt de volledige HTTP-verzoekbody, parseert `multipart/form-data`-inhoud correct (een mogelijkheid die ClamAV/c-icap mist) en past algoritmische validators toe:
-- **Creditcards** — Luhn-algoritme (valideert controlecijfer, niet alleen formaat)
-- **IBAN** — mod-97-controlesomvalidatie
-- **BSN** (Nederlands burgerservicenummer) — 11-proefvalidatie
-- **AWS-toegangssleutels** — regexpatroon `AKIA[A-Z0-9]{16}`
+- **Creditcards:** Luhn-algoritme (valideert controlecijfer, niet alleen formaat)
+- **IBAN:** mod-97-controlesomvalidatie
+- **BSN** (Nederlands burgerservicenummer): 11-proefvalidatie
+- **AWS-toegangssleutels:** regexpatroon `AKIA[A-Z0-9]{16}`
 
 Als een overeenkomst boven de threshold wordt gevonden, retourneert de server een ICAP-blokkeerrespons. Squid toont een opgemaakte DLP-blokpagina aan de client (onderscheiden van de generieke Squid 403-pagina).
 
@@ -62,9 +62,9 @@ adaptation_access svc_dlp_req deny all
 ```
 
 Belangrijke ontwerpkeuzes:
-- `bypass=on` — als de DLP-container niet beschikbaar is, passeert verkeer zonder inspectie (fail-open). ClamAV-malwarescanning blijft actief. Een DLP-storing blokkeert geen legitiem zakelijk verkeer.
-- Alleen POST/PUT/PATCH — GET-verzoeken bevatten geen uploads; ze door DLP routeren voegt alleen latency toe zonder voordeel.
-- Pre-auth include — overleeft GUI-wijzigingen en Squid-updates.
+- `bypass=on`: als de DLP-container niet beschikbaar is, passeert verkeer zonder inspectie (fail-open). ClamAV-malwarescanning blijft actief. Een DLP-storing blokkeert geen legitiem zakelijk verkeer.
+- Alleen POST/PUT/PATCH: GET-verzoeken bevatten geen uploads; ze door DLP routeren voegt alleen latency toe zonder voordeel.
+- Pre-auth include: overleeft GUI-wijzigingen en Squid-updates.
 
 Na het aanmaken van dit bestand: `configctl proxy restart`.
 
@@ -76,7 +76,7 @@ printf "OPTIONS icap://192.168.122.23:1345/dlpscan ICAP/1.0\r\nHost: 192.168.122
 # Verwacht: ICAP/1.0 200 OK, Methods: REQMOD
 ```
 
-Gebruik `printf`, niet `echo -e` — FreeBSD's `/bin/sh` interpreteert `-e` niet als escape-vlag, waardoor `\r\n` letterlijk wordt verzonden.
+Gebruik `printf`, niet `echo -e`. FreeBSD's `/bin/sh` interpreteert `-e` niet als escape-vlag, waardoor `\r\n` letterlijk wordt verzonden.
 
 ---
 
@@ -100,21 +100,21 @@ De Python DLP ICAP-server publiceert upload-inspection-events naar `security.ale
 
 ## Bekende problemen / valkuilen
 
-**pyicap Python 3.10+-incompatibiliteit** — zie [Bevinding: pyicap collections-bug](../findings/pyicap-collections-bug.md). De Dockerfile patcht dit automatisch.
+**pyicap Python 3.10+-incompatibiliteit:** zie [Bevinding: pyicap collections-bug](../findings/pyicap-collections-bug.md). De Dockerfile patcht dit automatisch.
 
-**Client-IP verschijnt als "unknown" in DLP-logs** — de server leest `X-Client-IP` uit `self.enc_req_headers` (ingekapselde headers), maar Squid stuurt het client-IP als een ICAP-niveauheader toegankelijk via `self.headers`. Dit is een cosmetisch probleem; blokkering werkt correct.
+**Client-IP verschijnt als "unknown" in DLP-logs:** de server leest `X-Client-IP` uit `self.enc_req_headers` (ingekapselde headers), maar Squid stuurt het client-IP als een ICAP-niveauheader toegankelijk via `self.headers`. Dit is een cosmetisch probleem; blokkering werkt correct.
 
-**Containerlogs in Docker stdout** — voor Wazuh SIEM-integratie, voeg een Docker-logging-driver toe (syslog gericht op Wazuh) of configureer de Wazuh-agent op mgmt01 om containerlogs te bewaken. Dit is een geplande taak voor Fase 4.
+**Containerlogs in Docker stdout:** voor Wazuh SIEM-integratie, voeg een Docker-logging-driver toe (syslog gericht op Wazuh) of configureer de Wazuh-agent op mgmt01 om containerlogs te bewaken. Dit is een geplande taak voor Fase 4.
 
-**Algoritmische validators hebben thresholdn** — één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas thresholdn aan in `dlp_server.py` op basis van de gebruikssituatie.
+**Algoritmische validators hebben thresholdn:** één creditcardnummer in een POST-body activeert standaard geen blokkering. Pas thresholdn aan in `dlp_server.py` op basis van de gebruikssituatie.
 
-**Code review — 10 problemen geïdentificeerd, 3 kritieke fixes toegepast:**
-- **OOM-risico:** De oorspronkelijke code had geen body-groottelimiet — een grote upload kon het containergeheugen uitputten. Fix: uploads > 10 MB worden doorgelaten (fail-open) zonder scanning.
-- **Log-injectie:** De `X-Client-IP`-headerwaarde werd zonder sanering rechtstreeks naar de log output geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
+**Code review (10 problemen geïdentificeerd, 3 kritieke fixes toegepast):**
+- **OOM-risico:** De oorspronkelijke code had geen body-groottelimiet. Een grote upload kon het containergeheugen uitputten. Fix: uploads > 10 MB worden doorgelaten (fail-open) zonder scanning.
+- **Log-injectie:** De `X-Client-IP`-headerwaarde werd zonder sanering rechtstreeks naar de log-output geschreven. Een vervaardigde header kon valse logregels injecteren. Fix: sanering vóór loggen.
 - **Geen uitzonderingsafhandeling:** Uitzonderingen in `dlpscan_REQMOD` zouden de handler laten crashen zonder respons naar Squid. Fix: scanuitzonderingen resulteren in fail-open (aanvraag passeert).
 - **PyPDF2 → pypdf:** PyPDF2 is end-of-life (niet langer onderhouden). Vervangen door `pypdf`, de actieve fork.
 
-**Docker-daemon-autostart vereist** — `restart: unless-stopped` in `docker-compose.yml` herstart de container alleen als de Docker-daemon draait. Bij een herstart van mgmt01 moet de Docker-daemon ook ingeschakeld zijn voor autostart (`systemctl enable docker`). Zonder dit start de DLP-container niet na een herstart.
+**Docker-daemon-autostart vereist:** `restart: unless-stopped` in `docker-compose.yml` herstart de container alleen als de Docker-daemon draait. Bij een herstart van mgmt01 moet de Docker-daemon ook ingeschakeld zijn voor autostart (`systemctl enable docker`). Zonder dit start de DLP-container niet na een herstart.
 
 ---
 

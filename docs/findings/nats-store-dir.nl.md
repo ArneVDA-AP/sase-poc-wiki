@@ -28,6 +28,6 @@ NATS maakt dan `/data/jetstream/` aan zoals verwacht. Dit werd empirisch bevesti
 
 ## Lessen
 
-- Verifieer altijd NATS JetStream-opslagpaden in opstartlogs na deployment — de documentatie kan misleidend zijn over automatische pad-suffixing
+- Verifieer altijd NATS JetStream-opslagpaden in opstartlogs na deployment; de documentatie kan misleidend zijn over automatische pad-suffixing
 - De dubbele nesting veroorzaakt geen dataverlies maar breekt aannames van tooling over waar streamdata zich bevindt
 - Geef bij het configureren van JetStream alleen de bovenliggende directory op; NATS voegt zelf de `jetstream/`-subdirectory toe

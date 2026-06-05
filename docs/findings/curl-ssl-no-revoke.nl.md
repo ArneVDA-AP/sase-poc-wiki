@@ -20,24 +20,24 @@ curl.exe -x http://100.70.154.79:3128 -o eicar_test.txt https://secure.eicar.org
 curl.exe -x http://100.70.154.79:3128 --ssl-no-revoke -o eicar_test.txt https://secure.eicar.org/eicar.com
 ```
 
-Zonder `--ssl-no-revoke` bereikt het verzoek de ICAP-pijplijn nooit — curl mislukt bij de TLS-handshake.
+Zonder `--ssl-no-revoke` bereikt het verzoek de ICAP-pijplijn nooit: curl mislukt bij de TLS-handshake.
 
 ## Oorzaak
 
-Windows `curl.exe` gebruikt de Schannel TLS-backend, die CRL- (Certificate Revocation List) en OCSP-validatie probeert voor elk certificaat in de keten. Wanneer Squid SSL Bump uitvoert, wordt het certificaat dat aan de client wordt gepresenteerd uitgegeven door de SASE-PoC-CA — een lokaal gegenereerde CA zonder gepubliceerd CRL- of OCSP-eindpunt. Schannel behandelt een ontbrekend revocation endpoint als een fout en breekt de verbinding af.
+Windows `curl.exe` gebruikt de Schannel TLS-backend, die CRL- (Certificate Revocation List) en OCSP-validatie probeert voor elk certificaat in de keten. Wanneer Squid SSL Bump uitvoert, wordt het certificaat dat aan de client wordt gepresenteerd uitgegeven door de SASE-PoC-CA, een lokaal gegenereerde CA zonder gepubliceerd CRL- of OCSP-eindpunt. Schannel behandelt een ontbrekend revocation endpoint als een fout en breekt de verbinding af.
 
 ## Oplossing
 
 Voeg `--ssl-no-revoke` toe aan alle `curl.exe`-opdrachten van Windows-hosts die via de SSL Bump-proxy naar HTTPS-bestemmingen routeren. Deze vlag instrueert Schannel om revocation checks over te slaan.
 
-Deze vlag heeft geen invloed op de testgeldigheid — het blokkeer- of doorlaatgedrag van de ICAP-pijplijn is volledig onafhankelijk van de CRL-controle die Schannel uitvoert.
+Deze vlag heeft geen invloed op de testgeldigheid: het blokkeer- of doorlaatgedrag van de ICAP-pijplijn is volledig onafhankelijk van de CRL-controle die Schannel uitvoert.
 
 ## Lessen
 
 - Alle Windows `curl.exe`-proxytests naar HTTPS-bestemmingen vereisen `--ssl-no-revoke` in deze omgeving.
 - Browsertests worden niet beïnvloed: browsers behandelen de SASE-PoC-CA via de geïnstalleerde vertrouwde CA en tolereren ontbrekende CRL-eindpunten soepeler.
-- PowerShell `Invoke-WebRequest` gebruikt dezelfde Schannel-backend en heeft hetzelfde gedrag — dezelfde workaround is van toepassing als Invoke-WebRequest wordt gebruikt voor tests.
-- In productie zou de SASE-PoC-CA worden gedistribueerd via Group Policy en zou een CRL-eindpunt worden geconfigureerd — waardoor dit probleem niet meer speelt.
+- PowerShell `Invoke-WebRequest` gebruikt dezelfde Schannel-backend en heeft hetzelfde gedrag; dezelfde workaround is van toepassing als Invoke-WebRequest wordt gebruikt voor tests.
+- In productie zou de SASE-PoC-CA worden gedistribueerd via Group Policy en zou een CRL-eindpunt worden geconfigureerd, waardoor dit probleem niet meer speelt.
 
 ## Gerelateerd
 

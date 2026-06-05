@@ -11,13 +11,13 @@ Deze pagina beschrijft de volledige architectuur van de SASE PoC: nodes, netwerk
 
 ## 1. Ontwerpfilosofie: Castle & Moat → Edge-handhaving
 
-Het project verwerpt het traditionele perimetermodel waarbij vertrouwen voortkomt uit netwerkpositie. In het traditionele model beschermt een firewall één grens; iedereen binnenin is vertrouwd. Dit werkt niet voor Atlascollege: 4 000 gebruikers op beheerde Windows-apparaten die vanuit thuis, cafés en treinen werken — er is geen "binnenste" meer.
+Het project verwerpt het traditionele perimetermodel waarbij vertrouwen voortkomt uit netwerkpositie. In het traditionele model beschermt een firewall één grens; iedereen binnenin is vertrouwd. Dit werkt niet voor Atlascollege: 4 000 gebruikers op beheerde Windows-apparaten die vanuit thuis, cafés en treinen werken; er is geen "binnenste" meer.
 
-In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats **op de PoP** (Point of Presence) — de edge-node tussen clients en internet. De PoP evalueert vertrouwen op basis van drie onafhankelijke factoren:
+In plaats daarvan vinden inspectie en vertrouwensbeslissingen plaats **op de PoP** (Point of Presence), de edge-node tussen clients en internet. De PoP evalueert vertrouwen op basis van drie onafhankelijke factoren:
 
-1. **Identiteit** — wie ben je? (Entra ID + MFA)
-2. **Apparaatposture** — wat is de toestand van je apparaat? (Intune-conformiteit + Entra ID CA)
-3. **Inhoud** — wat verstuur je? (SWG-inspectiepipeline)
+1. **Identiteit:** wie ben je? (Entra ID + MFA)
+2. **Apparaatposture:** wat is de toestand van je apparaat? (Intune-conformiteit + Entra ID CA)
+3. **Inhoud:** wat verstuur je? (SWG-inspectiepipeline)
 
 Dit is het [Zero Trust drie-gate model](../concepts/zero-trust.md).
 
@@ -29,10 +29,10 @@ Dit is het [Zero Trust drie-gate model](../concepts/zero-trust.md).
 |------|----------|-----|----------------|--------------|
 | **pop01** | OPNsense 25.1 (FreeBSD) | Data plane PoP: firewall, proxy, IDS, DNS-resolver | `192.168.122.13` | `100.70.154.79` |
 | **mgmt01** | Ubuntu 24.04 (Docker) | Management/control plane: NetBird-stack, ioc2rpz, DLP ICAP, WPAD | `192.168.122.23` | `100.70.135.241` |
-| **dc01** | Ubuntu 24.04 | Datacentersimulatie — interne resource-doelwit | `10.0.0.100` (DC-LAN) | — |
-| **site01** | VyOS | SASE-gateway voor remote site — WAN-connectiviteit + NAT | `192.168.122.33` | — |
-| **sitepc01** | Windows 11 (Tiny11) | Remote site-endpoint — dual-NIC op Site-LAN, sandbox-enrolled | `172.16.10.x` | — |
-| **mobile01** | Windows 11 (VMware, buiten GNS3) | Beheerde client — simuleert Intune-enrolled apparaat vanaf elke locatie | extern | `100.70.95.98` |
+| **dc01** | Ubuntu 24.04 | Datacentersimulatie, interne resource-doelwit | `10.0.0.100` (DC-LAN) | n.v.t. |
+| **site01** | VyOS | SASE-gateway voor remote site, WAN-connectiviteit + NAT | `192.168.122.33` | n.v.t. |
+| **sitepc01** | Windows 11 (Tiny11) | Remote site-endpoint, dual-NIC op Site-LAN, sandbox-enrolled | `172.16.10.x` | n.v.t. |
+| **mobile01** | Windows 11 (VMware, buiten GNS3) | Beheerde client, simuleert Intune-enrolled apparaat vanaf elke locatie | extern | `100.70.95.98` |
 
 Alle nodes behalve mobile01 draaien in GNS3 op een Proxmox-gehoste Ubuntu-VM. Zie [GNS3 / Topologie](../components/gns3.md) voor de volledige infrastructuurlaag.
 
@@ -43,9 +43,9 @@ Alle nodes behalve mobile01 draaien in GNS3 op een Proxmox-gehoste Ubuntu-VM. Zi
 | Segment | CIDR | Doel | Verbonden nodes |
 |---------|------|------|-----------------|
 | **WAN / beheer** | `192.168.122.0/24` | GNS3 libvirt NAT; underlay voor al het inter-node-verkeer; GNS3 host internet | pop01, mgmt01, site01 (allemaal via vtnet0/ens3) |
-| **DC-LAN** | `10.0.0.0/24` | Intern datacentersegment — simuleert on-premise resources | pop01 (vtnet1 = gateway `.1`), dc01 (`.100`) |
+| **DC-LAN** | `10.0.0.0/24` | Intern datacentersegment, simuleert on-premise resources | pop01 (vtnet1 = gateway `.1`), dc01 (`.100`) |
 | **Site-LAN** | `172.16.10.0/24` | Remote site-segment | site01 (eth1 = gateway `.1`), sitepc01 (`.10`, Windows 11) |
-| **NetBird Overlay** | `100.64.0.0/10` (WireGuard mesh) | Versleutelde overlay — client-transport voor al het SASE-verkeer | pop01, mgmt01, mobile01 |
+| **NetBird Overlay** | `100.64.0.0/10` (WireGuard mesh) | Versleutelde overlay, client-transport voor al het SASE-verkeer | pop01, mgmt01, mobile01 |
 
 mobile01 bevindt zich **niet** op het WAN-segment. Het verbindt uitsluitend via de NetBird WireGuard-overlay, als simulatie van een echte externe gebruiker zonder directe verbinding naar het interne netwerk.
 
@@ -56,15 +56,15 @@ mobile01 bevindt zich **niet** op het WAN-segment. Het verbindt uitsluitend via 
 Een bewuste architecturale splitsing die commerciële SASE weerspiegelt:
 
 **Management plane (mgmt01):**
-- NetBird management-stack (Zitadel OIDC, management server, Caddy reverse proxy) — via Docker Compose
-- ioc2rpz — threat intelligence-aggregatie en RPZ-zonepublicatie
-- Caddy — WPAD-server, ioc2rpz GUI-proxy
-- Identity Bridge (FastAPI) — mapt overlay-IP's naar Entra ID persona-groepen voor Squid
-- NATS JetStream — centrale event bus die alle detectiesilo's verbindt
-- Control Daemon — consumeert NATS-events, per-peer threat scoring, quarantaine via NetBird API
-- Wazuh (manager + indexer + dashboard) — SIEM met NATS→Wazuh forwarder
-- Redis — threat score store + sessiestatus voor control daemon
-- Python DLP ICAP-server — upload-scanning op poort `192.168.122.23:1345`
+- NetBird management-stack (Zitadel OIDC, management server, Caddy reverse proxy), via Docker Compose
+- ioc2rpz: threat intelligence-aggregatie en RPZ-zonepublicatie
+- Caddy: WPAD-server, ioc2rpz GUI-proxy
+- Identity Bridge (FastAPI): mapt overlay-IP's naar Entra ID persona-groepen voor Squid
+- NATS JetStream: centrale event bus die alle detectiesilo's verbindt
+- Control Daemon: consumeert NATS-events, per-peer threat scoring, quarantaine via NetBird API
+- Wazuh (manager + indexer + dashboard): SIEM met NATS→Wazuh forwarder
+- Redis: threat score store + sessiestatus voor control daemon
+- Python DLP ICAP-server: upload-scanning op poort `192.168.122.23:1345`
 
 **Data plane (pop01):**
 - OPNsense firewall en routing
@@ -115,7 +115,7 @@ Internet (via pop01 vtnet0 WAN)
 
 ```
 mobile01 of dc01
-  │ DNS-query (alle queries — via NetBird primaire nameserver)
+  │ DNS-query (alle queries, via NetBird primaire nameserver)
   ▼
 pop01 Unbound (poort 53, respip-module actief)
   │ RPZ-controle: staat het domein in threat-intel.rpz.sase?
@@ -142,10 +142,10 @@ netbird up (mobile01)
   │ OIDC-stroom → Zitadel (mgmt01) → Entra ID (aplab.be tenant)
   │ Gate 1: Entra ID Conditional Access evalueert (✅ operationeel)
   │   - CA Policy 1: MFA vereist ✅
-  │   - CA Policy 2: Geo-blokkering (alleen België) — Report-only
+  │   - CA Policy 2: Geo-blokkering (alleen België), Report-only
   │   - CA Policy 3: Legacy-auth geblokkeerd ✅
   │   - CA Policy 4: Risico-gebaseerde blokkering ✅
-  │   - CA Policy 5: Conform apparaat vereist — Report-only
+  │   - CA Policy 5: Conform apparaat vereist, Report-only
   │ OIDC-token ontvangen
   │
   │ Gate 2: Intune-apparaatconformiteit evalueert (✅ operationeel)
@@ -162,7 +162,7 @@ pop01 (wt0-interface, overlay IP 100.70.154.79)
 
 ## 6. De vier-laags inspectiepipeline
 
-Al het HTTP/HTTPS-verkeer van beheerde clients passeert vier afzonderlijke inspectielagen. De lagen zijn **aanvullend**, niet redundant — elke laag inspecteert een domein dat de anderen niet kunnen zien:
+Al het HTTP/HTTPS-verkeer van beheerde clients passeert vier afzonderlijke inspectielagen. De lagen zijn **aanvullend**, niet redundant: elke laag inspecteert een domein dat de anderen niet kunnen zien:
 
 | Laag | Component | Locatie | Inspecteert | Protocol |
 |------|-----------|---------|-------------|----------|
@@ -189,13 +189,13 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 | NetBird + Zitadel + Entra ID | [netbird.md](../components/netbird.md) | ZTNA-transportlaag | ✅ Operationeel |
 | Caddy | [caddy.md](../components/caddy.md) | WPAD-server + reverse proxy | ✅ Operationeel |
 | GNS3 / Topologie | [gns3.md](../components/gns3.md) | Virtualisatie-infrastructuur | ✅ Operationeel |
-| VyOS | [vyos.md](../components/vyos.md) | SASE-gateway — Zero Trust Branch model (Site-LAN) | ✅ Operationeel |
+| VyOS | [vyos.md](../components/vyos.md) | SASE-gateway, Zero Trust Branch model (Site-LAN) | ✅ Operationeel |
 | Identity Bridge | [identity-bridge.md](../components/identity-bridge.md) | NetBird overlay-IP → Entra ID groep (SWG↔ZTNA-koppellaag) | ✅ Operationeel |
-| NATS JetStream | [nats-jetstream.md](../components/nats-jetstream.md) | Centrale event bus — verbindt detectiesilo's | ✅ Operationeel |
+| NATS JetStream | [nats-jetstream.md](../components/nats-jetstream.md) | Centrale event bus, verbindt detectiesilo's | ✅ Operationeel |
 | Control Daemon | [control-daemon.md](../components/control-daemon.md) | Threat scoring + real-time quarantaine via NetBird API | ✅ Operationeel |
-| Wazuh | [wazuh.md](../components/wazuh.md) | SIEM — NATS forwarder + pop01-agent | ✅ Operationeel |
+| Wazuh | [wazuh.md](../components/wazuh.md) | SIEM, NATS forwarder + pop01-agent | ✅ Operationeel |
 | Entra ID CA + Intune | [ca-posture-hybrid.md](../decisions/ca-posture-hybrid.md) | Contextbewuste toegang (Gates 1+2) | ✅ Operationeel |
-| M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Laag 2 — Office 365 Management Activity API-detectie | ✅ Detectie operationeel; AR-handhaving detect-only (live revoke nog niet actief) |
+| M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Laag 2, Office 365 Management Activity API-detectie | ✅ Detectie operationeel; AR-handhaving detect-only (live revoke nog niet actief) |
 
 ---
 
@@ -206,12 +206,12 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 | WireGuard-tunnelopbouw | Identiteit (OIDC) + apparaatposture (Intune-conformiteit) | pop01 wt0 |
 | Squid ACL | Netwerkniveau toestaan/weigeren per subnet | pop01 Squid |
 | ICAP-pipeline | Inhoudsniveau toestaan/weigeren per transactie | pop01 + mgmt01 |
-| ICAP fail-open | `bypass=on` — uploads passeren ongeïnspecteerd als Python DLP-container uitvalt | pop01 Squid → mgmt01 |
+| ICAP fail-open | `bypass=on`, uploads passeren ongeïnspecteerd als Python DLP-container uitvalt | pop01 Squid → mgmt01 |
 | NetBird ACL-policies | Welke peer welke resource kan bereiken | NetBird management |
 | Unbound RPZ | DNS-niveau domein toestaan/weigeren | pop01 Unbound |
 | OPNsense pf | Stateful firewall (basisbeveiliging) | pop01 |
-| SWG-identiteitslaag | Squid queryet Identity Bridge voor persona-groep — identiteitsgebaseerde filtering per gebruiker (Studenten/Docenten/Admins) | pop01 Squid → mgmt01 Identity Bridge |
-| DC-LAN-uitgaand verkeer | Geen SWG-inspectie — gerouteerd door OPNsense, niet via proxy | pop01 vtnet1 gateway |
+| SWG-identiteitslaag | Squid queryet Identity Bridge voor persona-groep; identiteitsgebaseerde filtering per gebruiker (Studenten/Docenten/Admins) | pop01 Squid → mgmt01 Identity Bridge |
+| DC-LAN-uitgaand verkeer | Geen SWG-inspectie, gerouteerd door OPNsense, niet via proxy | pop01 vtnet1 gateway |
 
 ---
 
@@ -251,15 +251,15 @@ Drie gates handhaven toegangscontrole op verschillende punten in de verbindingsl
 
 | Gate | Technologie | Timing | Status |
 |------|-------------|--------|--------|
-| Gate 1 — Identiteit | Entra ID Conditional Access (5 policies) | Bij authenticatie (OIDC-login) | ✅ Operationeel |
-| Gate 2 — Apparaat | Intune-apparaatconformiteit | Bij authenticatie + continu (8u-cyclus) | ✅ Operationeel (Report-only tot demo) |
-| Gate 3 — Inhoud | Squid + ClamAV + Python DLP + Suricata + Unbound RPZ | Elke HTTP/DNS-aanvraag | ✅ Operationeel |
+| Gate 1, Identiteit | Entra ID Conditional Access (5 policies) | Bij authenticatie (OIDC-login) | ✅ Operationeel |
+| Gate 2, Apparaat | Intune-apparaatconformiteit | Bij authenticatie + continu (8u-cyclus) | ✅ Operationeel (Report-only tot demo) |
+| Gate 3, Inhoud | Squid + ClamAV + Python DLP + Suricata + Unbound RPZ | Elke HTTP/DNS-aanvraag | ✅ Operationeel |
 
 Gates zijn aanvullend, niet redundant. Gate 1 evalueert *wie* de gebruiker is (MFA, aanmeldingsrisico, geo-locatie). Gate 2 evalueert *wat* het apparaat is (OS-versie, AV-status, firewall). Gate 3 evalueert *wat* wordt overgedragen (malware, gevoelige data, geblokkeerde domeinen). Geen enkele gate kan de andere vervangen.
 
 ---
 
-**DC-LAN-inspectiegat:** dc01 gebruikt pop01 als standaardgateway (`10.0.0.1`) voor internettoegang. Dit verkeer wordt gerouteerd door OPNsense en geïnspecteerd door Suricata op vtnet1, maar gaat **niet** via Squid/ICAP — er is geen WPAD/PAC- of proxyconfiguratie op dc01. DNS-queries van dc01 gaan wel via Unbound RPZ. Dit is een geaccepteerde scopebeperking: DC-resources zijn serverworkloads, geen user browsers.
+**DC-LAN-inspectiegat:** dc01 gebruikt pop01 als standaardgateway (`10.0.0.1`) voor internettoegang. Dit verkeer wordt gerouteerd door OPNsense en geïnspecteerd door Suricata op vtnet1, maar gaat **niet** via Squid/ICAP; er is geen WPAD/PAC- of proxyconfiguratie op dc01. DNS-queries van dc01 gaan wel via Unbound RPZ. Dit is een geaccepteerde scopebeperking: DC-resources zijn serverworkloads, geen user browsers.
 
 ---
 

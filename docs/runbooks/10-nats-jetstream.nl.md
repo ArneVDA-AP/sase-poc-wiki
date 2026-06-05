@@ -5,7 +5,7 @@ tags: [runbook, nats-jetstream, docker, redis, event-bus]
 
 # Runbook: NATS JetStream Event Bus
 
-**Node(s):** mgmt01 (Docker — NATS + Redis + Control Daemon), pop01 (producers)
+**Node(s):** mgmt01 (Docker, NATS + Redis + Control Daemon), pop01 (producers)
 **Vereisten:** Docker op mgmt01, SSH-toegang tot pop01, Python 3 op pop01
 **Status:** Operationeel
 
@@ -30,7 +30,7 @@ Voeg de volgende services toe aan de Docker Compose-stack op mgmt01:
 
 **NATS 2.14.1:**
 
-- Pin de versie expliciet — gebruik niet `:latest`
+- Pin de versie expliciet; gebruik niet `:latest`
 - Configureer met het `accounts{}`-auth-model (niet `authorization{}`)
 - Stel poort 4222 (clientverbindingen) beschikbaar op `192.168.122.23`
 - Stel poort 8222 (monitoring) beschikbaar op `192.168.122.23`
@@ -132,9 +132,9 @@ nats sub "security.alert.>"
 
 - Geïntegreerd in de Identity Bridge-service ([Runbook 09](09-identity-bridge.nl.md))
 - Publiceert naar subjects:
-  - `identity.peer.connected` — wanneer een peer verbindt met de overlay
-  - `identity.peer.disconnected` — wanneer een peer de verbinding verbreekt
-  - `identity.multi_persona` — wanneer een peer in meer dan één personagroep wordt waargenomen (zero-trust-anomalie)
+  - `identity.peer.connected`: wanneer een peer verbindt met de overlay
+  - `identity.peer.disconnected`: wanneer een peer de verbinding verbreekt
+  - `identity.multi_persona`: wanneer een peer in meer dan één personagroep wordt waargenomen (zero-trust-anomalie)
 
 ---
 
@@ -144,8 +144,8 @@ De Control Daemon is de centrale eventprocessor die beveiligingsevents consumeer
 
 1. Deploy als Docker-container op mgmt01
 2. Configureer abonnementen:
-   - `security.alert.>` — durable consumer, `DeliverPolicy.NEW` (overleeft herstart, geen replay van historische events)
-   - `identity.>` — ephemeral consumer, `DeliverPolicy.ALL` (herbouwt de in-memory identiteitsmap bij elke start)
+   - `security.alert.>`: durable consumer, `DeliverPolicy.NEW` (overleeft herstart, geen replay van historische events)
+   - `identity.>`: ephemeral consumer, `DeliverPolicy.ALL` (herbouwt de in-memory identiteitsmap bij elke start)
 3. Configureer Redis-verbinding voor threat score-opslag
 
 **Threat scoring:**

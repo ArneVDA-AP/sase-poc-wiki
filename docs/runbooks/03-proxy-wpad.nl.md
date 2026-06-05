@@ -6,7 +6,7 @@ tags: [runbook, squid, ssl-bump, wpad-pac, caddy, swg]
 # Runbook: Proxy & WPAD
 
 **Bron:** `raw/Doc1_Squid_WPAD_PAC.md`
-**Node(s):** pop01 (OPNsense — Squid) + mgmt01 (Caddy — WPAD)
+**Node(s):** pop01 (OPNsense, Squid) + mgmt01 (Caddy, WPAD)
 **Vereisten:** [Runbook 02: ZTNA Overlay](02-ztna-overlay.nl.md) afgerond
 **Status:** Operationeel
 
@@ -14,7 +14,7 @@ tags: [runbook, squid, ssl-bump, wpad-pac, caddy, swg]
 
 ## Vereistenchecklist
 
-- [ ] NetBird overlay operationeel — pop01 heeft overlay-IP `100.70.154.79`
+- [ ] NetBird overlay operationeel; pop01 heeft overlay-IP `100.70.154.79`
 - [ ] mgmt01 heeft overlay-IP `100.70.135.241`
 - [ ] Caddy draait op mgmt01 (onderdeel van NetBird Docker-stack)
 - [ ] OPNsense 25.1 met Squid ingeschakeld op pop01
@@ -29,7 +29,7 @@ Via OPNsense GUI → Services → Squid Web Proxy → Forward Proxy → General:
 http_port 10.0.0.1:3128
 ```
 
-De LAN-interface blijft geconfigureerd — Squid vereist minstens één interface met een geldig IP om te starten.
+De LAN-interface blijft geconfigureerd; Squid vereist minstens één interface met een geldig IP om te starten.
 
 ---
 
@@ -59,7 +59,7 @@ echo 'http_port 100.70.154.79:3128' > /usr/local/etc/squid/pre-auth/netbird-list
 configctl proxy restart
 ```
 
-> **Valkuil: SSL-Bump-parameters MOETEN later aan deze listener worden toegevoegd (Stap 9).** Een bare `http_port` zonder ssl-bump-vlaggen betekent dat verkeer via deze listener doorkomt als een CONNECT-tunnel zonder inspectie. Dit wordt hersteld in Stap 9 — vergeet dit niet.
+> **Valkuil: SSL-Bump-parameters MOETEN later aan deze listener worden toegevoegd (Stap 9).** Een bare `http_port` zonder ssl-bump-vlaggen betekent dat verkeer via deze listener doorkomt als een CONNECT-tunnel zonder inspectie. Dit wordt hersteld in Stap 9; vergeet dit niet.
 > Zie [Finding: pre-auth ssl-bump params](../findings/pre-auth-ssl-bump-params.nl.md).
 
 **Verificatie:**
@@ -91,7 +91,7 @@ sudo update-ca-certificates
 sudo netbird service restart
 ```
 
-> **Valkuil: Service-herstart is verplicht na CA-import.** Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded" — de daemon draait met de oude trust store.
+> **Valkuil: Service-herstart is verplicht na CA-import.** Zonder herstart verandert de fout van "context canceled" naar "deadline exceeded"; de daemon draait met de oude trust store.
 
 **Verificatie:** `netbird status` toont Connected, overlay-IP `100.70.135.241`.
 
@@ -108,7 +108,7 @@ volumes:
   - ./wpad:/srv/wpad:ro
 ```
 
-Voeg twee serverblokken toe aan het Caddyfile — **beide zijn vereist**:
+Voeg twee serverblokken toe aan het Caddyfile (**beide zijn vereist**):
 
 ```caddyfile
 http://wpad.sandbox.local {
@@ -140,7 +140,7 @@ function FindProxyForURL(url, host) {
 }
 ```
 
-Gebruik `shExpMatch` in plaats van `dnsResolve` of `isInNet` — DNS-gebaseerde PAC-functies kunnen een time-out hebben in de WinHTTP-context.
+Gebruik `shExpMatch` in plaats van `dnsResolve` of `isInNet`; DNS-gebaseerde PAC-functies kunnen een time-out hebben in de WinHTTP-context.
 
 > **Valkuil: Containerrecreatie vereist, geen herstart.**
 > Zie [Finding: Docker volume-recreatie](../findings/docker-volume-recreation.nl.md).
@@ -173,9 +173,9 @@ nslookup wpad.sandbox.local
 
 ## Stap 7: Het ACL-beleid voor proxy-/DNS-bereikbaarheid verifiëren
 
-Onder het V34-personamodel (zie [Component: NetBird](../components/netbird.nl.md)) draagt één allow-beleid alle connectiviteit: **`Personas-to-Core-Services`** — sources `Studenten`/`Docenten`/`Admins` → destination `Core-Services` (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.
+Onder het V34-personamodel (zie [Component: NetBird](../components/netbird.nl.md)) draagt één allow-beleid alle connectiviteit: **`Personas-to-Core-Services`**: sources `Studenten`/`Docenten`/`Admins` → destination `Core-Services` (pop01 + mgmt01), protocol TCP 3128. Dit laat elke persona-peer (Studenten/Docenten/Admins) de pop01 Squid-proxy bereiken.
 
-> **Verouderd:** eerdere builds gebruikten aparte `Admin-Infrastructure`-, `Mobile-to-Services`- en `Datacenter Access`-policies op `SASE-*`-groepen. Die policies en groepen zijn verwijderd in de V34-migratie — maak ze niet opnieuw aan.
+> **Verouderd:** eerdere builds gebruikten aparte `Admin-Infrastructure`-, `Mobile-to-Services`- en `Datacenter Access`-policies op `SASE-*`-groepen. Die policies en groepen zijn verwijderd in de V34-migratie; maak ze niet opnieuw aan.
 
 **DNS-bereikbaarheidsvalkuil:** een peer die de pop01-naamserverconfig ontvangt maar er geen ACL-pad naartoe heeft, toont `Nameservers: 0/1 Available` in `netbird status`. Zorg dat de groep van de peer een ACL-pad naar `Core-Services` (pop01 Unbound) heeft.
 
@@ -247,7 +247,7 @@ gambling.com
 .pokerstars.com
 ```
 
-**Verificatie** — gebruik curl, niet een browser (browsercache maskeert blokkering):
+**Verificatie:** gebruik curl, niet een browser (browsercache maskeert blokkering):
 
 ```powershell
 curl.exe -x http://100.70.154.79:3128 http://gambling.com -v
@@ -258,7 +258,7 @@ curl.exe -x http://100.70.154.79:3128 http://gambling.com -v
 
 ## Bekende cosmetische problemen
 
-**OPNsense "Clear log" verwijdert het logbestand** — de WebUI-knop verwijdert in plaats van afkapt. Squid stopt met loggen. Oplossing:
+**OPNsense "Clear log" verwijdert het logbestand:** de WebUI-knop verwijdert in plaats van afkapt. Squid stopt met loggen. Oplossing:
 
 ```bash
 > /var/log/squid/access.log   # afkappen zonder verwijderen
@@ -266,7 +266,7 @@ curl.exe -x http://100.70.154.79:3128 http://gambling.com -v
 
 Zie [Finding: Squid clearlog vernietigt bestand](../findings/squid-clearlog-destroys-file.nl.md).
 
-**Squid segfault bij stoppen is cosmetisch** — treedt op tijdens de stopfase van `configctl proxy restart` op FreeBSD. De daemon herstart correct. Geen functionele impact.
+**Squid segfault bij stoppen is cosmetisch:** treedt op tijdens de stopfase van `configctl proxy restart` op FreeBSD. De daemon herstart correct. Geen functionele impact.
 
 ---
 

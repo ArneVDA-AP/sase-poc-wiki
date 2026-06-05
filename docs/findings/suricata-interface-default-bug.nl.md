@@ -12,7 +12,7 @@ tags: [finding, suricata, workaround]
 
 Suricata was geconfigureerd om WAN- en LAN-interfaces te bewaken. vtnet1 (LAN) genereerde geen alerts ondanks dat dc01 verkeer produceerde (apt update, SSH-sessies). Testcases voor regels die op vtnet1 zouden moeten activeren, leverden geen events op.
 
-`procstat -f <PID> | grep bpf` bevestigde dat vtnet1 een BPF-apparaat open had op OS-niveau, maar Suricata stuurde er geen pakketten naartoe — de BPF-descriptor bestond maar produceerde nul events.
+`procstat -f <PID> | grep bpf` bevestigde dat vtnet1 een BPF-apparaat open had op OS-niveau, maar Suricata stuurde er geen pakketten naartoe: de BPF-descriptor bestond maar produceerde nul events.
 
 ## Oorzaak
 
@@ -47,6 +47,6 @@ Na de correctie: `procstat -f <PID> | grep bpf` toont twee BPF-descriptors en vt
 
 ## Lessen
 
-- Gebruik nooit `interface: default` in Suricata custom.yaml — vermeld altijd elke interface expliciet
-- `sockstat` toont geen Suricata-sockets (het gebruikt BPF, geen TCP/UDP) — gebruik `procstat -f <PID> | grep bpf`
+- Gebruik nooit `interface: default` in Suricata custom.yaml; vermeld altijd elke interface expliciet
+- `sockstat` toont geen Suricata-sockets (het gebruikt BPF, geen TCP/UDP); gebruik `procstat -f <PID> | grep bpf`
 - Verifieer dat het aantal BPF-descriptors overeenkomt met het aantal geconfigureerde interfaces

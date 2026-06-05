@@ -7,7 +7,7 @@ tags: [control-daemon, nats, netbird, quarantine, threat-scoring]
 
 **Rol:** Python-daemon op mgmt01 die de NATS event bus consumeert, per-peer threat scores bijhoudt via sliding-window decay, en peers in quarantaine plaatst door ze te verwijderen uit policy-bearing persona-groepen (deny-by-default).  
 **Versie:** Python 3.12 (nats-py >= 2.13.0, redis >= 5.0.0, httpx >= 0.27.0)  
-**Configuratielocatie:** `config/mgmt01/control-daemon/` in de repo (gezaghebbend — Addendum J §J.6.7 is verouderd)
+**Configuratielocatie:** `config/mgmt01/control-daemon/` in de repo (gezaghebbend; Addendum J §J.6.7 is verouderd)
 
 ## Hoe het werkt in deze stack
 
@@ -21,11 +21,11 @@ De control daemon is de real-time handhavingsmotor. Het abonneert zich op `secur
 
 ## Configuratie
 
-- **Scoring-gewichten:** `malware=80` (single-event — overschrijdt drempel 80 alleen), `dlp_match=30` (accumulerend). `proxy_block` verwijderd uit scoring (ambient OS-ruis veroorzaakte false positives — Windows NCSI/telemetry). IDS-events zijn enkel log (C2 beacon response hoort bij Zeek/RITA, niet bij eigen correlatie). Gevalideerd in V35: docent1 triggerde EICAR → score 80/80 → gequarantaineerd binnen enkele seconden → hersteld.
+- **Scoring-gewichten:** `malware=80` (single-event, overschrijdt drempel 80 alleen), `dlp_match=30` (accumulerend). `proxy_block` verwijderd uit scoring (ambient OS-ruis veroorzaakte false positives, Windows NCSI/telemetry). IDS-events zijn enkel log (C2 beacon response hoort bij Zeek/RITA, niet bij eigen correlatie). Gevalideerd in V35: docent1 triggerde EICAR → score 80/80 → gequarantaineerd binnen enkele seconden → hersteld.
 - **Quarantainemechanisme:** Strip persona-groepen van peer → deny-by-default. NIET via een aparte deny-groep.
 - **Dequarantaine:** Herstelt originele groepen vanuit Redis-backup. Opgelost: NetBird retourneert `peers:null` voor lege groepen (niet `[]`), wat dequarantaine deed crashen.
 - **Redis:** Threat score opslag + sessiestatus op `redis:7-alpine`, poort 6379 enkel localhost.
-- **Beleidsgroepen:** `NETBIRD_POLICY_GROUPS=Studenten,Docenten,Admins` — enkel deze worden gestript tijdens quarantaine. Infrastructuurgroepen zijn structureel onaantastbaar.
+- **Beleidsgroepen:** `NETBIRD_POLICY_GROUPS=Studenten,Docenten,Admins` (enkel deze worden gestript tijdens quarantaine). Infrastructuurgroepen zijn structureel onaantastbaar.
 
 ## Integratiepunten
 

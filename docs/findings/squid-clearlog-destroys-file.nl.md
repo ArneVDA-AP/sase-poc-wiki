@@ -10,7 +10,7 @@ tags: [finding, squid, workaround]
 
 ## Wat er gebeurde
 
-Na het klikken op "Logboek wissen" (→ "dit logboek leegmaken?") in Services → Squid Web Proxy → Diagnostics → Access Log verdween het toegangslog volledig. Volgende proxytests toonden geen logvermeldingen, wat suggereerde dat de proxy niet werkte — maar die werkte correct.
+Na het klikken op "Logboek wissen" (→ "dit logboek leegmaken?") in Services → Squid Web Proxy → Diagnostics → Access Log verdween het toegangslog volledig. Volgende proxytests toonden geen logvermeldingen, wat suggereerde dat de proxy niet werkte, maar die werkte correct.
 
 Dit leidde tot een langdurige probleemoplossingssessie voor een probleem dat niet bestond.
 
@@ -34,6 +34,6 @@ Dit zorgt ervoor dat Squid het logbestand opnieuw aanmaakt bij het opstarten.
 
 ## Lessen
 
-- Gebruik nooit de WebUI-knop "Logboek wissen" voor Squid — kapt altijd af vanuit de shell
+- Gebruik nooit de WebUI-knop "Logboek wissen" voor Squid; kapt altijd af vanuit de shell
 - Wanneer proxytests geen log output tonen: controleer eerst of het logbestand bestaat (`ls -la /var/log/squid/access.log`) vóór de aanname dat de proxy kapot is
-- Loggerelateerde problemen kunnen onderliggende problemen maskeren — verifieer altijd dat het logbestand bestaat vóór het starten van proxy-diagnose
+- Loggerelateerde problemen kunnen onderliggende problemen maskeren; verifieer altijd dat het logbestand bestaat vóór het starten van proxy-diagnose

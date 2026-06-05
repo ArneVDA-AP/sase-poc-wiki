@@ -12,14 +12,14 @@ tags: [decision, control-daemon, ids, nats]
 
 Het threat scoring-model van de Control Daemon bevatte aanvankelijk een IDS-correlatiebranch ontworpen om te reageren op C2 (Command and Control) beacon-detectie. Wanneer Suricata een IDS-alert afvuurde die overeenkwam met een C2-signatuur, zou de daemon het alert correleren met gebruikersidentiteit en quarantaine triggeren. Deze branch werd toegevoegd naast de malware-branch (die reageert op ClamAV/ICAP malware-detecties) en de DLP-branch (die reageert op data-exfiltratiepatronen).
 
-Tijdens de implementatie onthulde analyse dat de IDS-correlatiebranch de quarantainemogelijkheid dupliceerde die al door de malware-branch werd geboden, maar met slechtere attributie. De malware-branch mapt overlay IP-adressen native naar peer-identiteit via de API van NetBird, wat schone gebruikersattributie biedt. De IDS-correlatiebranch zou dezelfde mapping moeten uitvoeren maar voegde geen unieke handhavingsactie toe — beide branches resulteren in dezelfde quarantaine-uitkomst.
+Tijdens de implementatie onthulde analyse dat de IDS-correlatiebranch de quarantainemogelijkheid dupliceerde die al door de malware-branch werd geboden, maar met slechtere attributie. De malware-branch mapt overlay IP-adressen native naar peer-identiteit via de API van NetBird, wat schone gebruikersattributie biedt. De IDS-correlatiebranch zou dezelfde mapping moeten uitvoeren maar voegde geen unieke handhavingsactie toe: beide branches resulteren in dezelfde quarantaine-uitkomst.
 
 ## Overwogen opties
 
 | Optie | Voor | Tegen |
 |-------|------|-------|
 | **IDS-correlatiebranch behouden** | Voegt expliciete C2 beacon-responsmogelijkheid toe; apart scoringsgewicht voor IDS-events | Dupliceert quarantainemogelijkheid van de malware-branch met slechtere attributie. C2 beacon-detectie hoort meer thuis bij Zeek/RITA (gedragsanalyse over tijd), niet bij op maat gemaakte single-event correlatie |
-| **IDS-correlatiebranch verwijderen** | Eenvoudiger scoringsmodel; malware-branch dekt al real-time quarantaine met native attributie; C2-respons uitgesteld naar geschikt tooling (Zeek/RITA) | IDS-events worden log-only in de daemon — geen geautomatiseerde respons op IDS-alerts |
+| **IDS-correlatiebranch verwijderen** | Eenvoudiger scoringsmodel; malware-branch dekt al real-time quarantaine met native attributie; C2-respons uitgesteld naar geschikt tooling (Zeek/RITA) | IDS-events worden log-only in de daemon; geen geautomatiseerde respons op IDS-alerts |
 
 ## Beslissing
 

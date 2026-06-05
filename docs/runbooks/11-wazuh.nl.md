@@ -5,7 +5,7 @@ tags: [runbook, wazuh, siem, docker, nats-jetstream]
 
 # Runbook: Wazuh SIEM
 
-**Node(s):** mgmt01 (Docker — Wazuh-stack + NATS-forwarder), pop01 (Wazuh-agent)
+**Node(s):** mgmt01 (Docker, Wazuh-stack + NATS-forwarder), pop01 (Wazuh-agent)
 **Vereisten:** [Runbook 10: NATS JetStream](10-nats-jetstream.nl.md) afgerond (NATS operationeel), Docker op mgmt01
 **Status:** Operationeel
 
@@ -52,7 +52,7 @@ docker compose ps
 Deploy een Python-container op mgmt01 die NATS-events naar Wazuh overbrugt:
 
 1. De forwarder is een **durable PULL-consumer** (`DeliverPolicy.NEW`, `AckPolicy.EXPLICIT`) op `security.alert.>`
-2. Voor elk ontvangen event schrijft het een regel NDJSON naar het gedeelde `wazuh_nats_ingest`-volume (`/ingest/security_alerts.json`). De Wazuh manager tailt dat bestand via een `<localfile><log_format>json</log_format></localfile>`-blok — dit is het werkende ingestiepad; rechtstreeks naar de manager-socket schrijven en naar de Wazuh-API posten zijn beide geëvalueerd en verworpen.
+2. Voor elk ontvangen event schrijft het een regel NDJSON naar het gedeelde `wazuh_nats_ingest`-volume (`/ingest/security_alerts.json`). De Wazuh manager tailt dat bestand via een `<localfile><log_format>json</log_format></localfile>`-blok. Dit is het werkende ingestiepad; rechtstreeks naar de manager-socket schrijven en naar de Wazuh-API posten zijn beide geëvalueerd en verworpen.
 3. Dit creëert een **dual-write-architectuur**: beveiligingsevents stromen onafhankelijk naar zowel de Control Daemon (voor geautomatiseerde respons) als Wazuh (voor logging, correlatie en onderzoek)
 
 > **Opmerking: Dual-write, niet serieel.** De NATS-forwarder en Control Daemon zijn onafhankelijke consumers. Als Wazuh uitvalt, blijft de Control Daemon events verwerken en andersom. Geen van beiden is afhankelijk van de ander.
@@ -78,7 +78,7 @@ Installeer en configureer de Wazuh-agent op pop01 (agent-ID 001):
 2. Configureer de agent om verbinding te maken met de Wazuh Manager op mgmt01
 3. Registreer de agent (agent-ID: 001)
 
-Configureer logverzameling op hostniveau. De agent levert de OPNsense-**host**telemetrie (hij monitort **niet** Suricata/Squid/c-icap/Unbound — die bereiken Wazuh via hun eigen NATS-producers en de forwarder, dus de agent heeft `intrusion_detection_events=false` om dubbel-ingest te vermijden):
+Configureer logverzameling op hostniveau. De agent levert de OPNsense-**host**telemetrie (hij monitort **niet** Suricata/Squid/c-icap/Unbound; die bereiken Wazuh via hun eigen NATS-producers en de forwarder, dus de agent heeft `intrusion_detection_events=false` om dubbel-ingest te vermijden):
 
 | Feed | Bron | Doel |
 |------|------|------|
@@ -88,14 +88,14 @@ Configureer logverzameling op hostniveau. De agent levert de OPNsense-**host**te
 | kernel | OPNsense-kernellog | Systeem-/kernelevents |
 | pkg | OPNsense-packagemanager | Package-installatie-/updateevents |
 
-4. De agent heeft ook `active_response=false` — Active Response (handhaving) is eigendom van de Control Daemon (Laag 3), niet van de agent op pop01.
+4. De agent heeft ook `active_response=false`. Active Response (handhaving) is eigendom van de Control Daemon (Laag 3), niet van de agent op pop01.
 
 Herstart de agent en verifieer registratie:
 
 ```bash
 # Op Wazuh Manager (mgmt01)
 docker exec single-node-wazuh.manager-1 /var/ossec/bin/agent_control -l
-# Verwacht: agent 001 (pop01) — Active
+# Verwacht: agent 001 (pop01), Active
 ```
 
 ---
@@ -106,7 +106,7 @@ Maak aangepaste regels voor de busproducers. Ze hangen allemaal aan één basisr
 
 | Regel | Producer / conditie | Niveau |
 |-------|---------------------|--------|
-| 100500 | basis — `producer` ∈ {suricata, squid, dlp, c-icap, unbound} | 0 |
+| 100500 | basis, `producer` ∈ {suricata, squid, dlp, c-icap, unbound} | 0 |
 | 100501 | Squid proxy-event | 5 |
 | 100510 | Suricata IDS-alert | 6 |
 | 100511 | Suricata IDS, severity 1 | 10 |
@@ -117,7 +117,7 @@ Maak aangepaste regels voor de busproducers. Ze hangen allemaal aan één basisr
 
 > **Valkuil:** de kinderen hangen aan de basis via `if_sid 100500`, dus de pcre2-alternatie van de basis moet elke producer bevatten. `unbound` ontbrak aanvankelijk, waardoor regel 100540 nooit afvuurde totdat het werd toegevoegd (V38.9).
 
-Plaats aangepaste regels in `config/mgmt01/wazuh/local_rules.xml` (gemount in de manager). Herstart na het bewerken van regels de manager — nooit `docker restart`:
+Plaats aangepaste regels in `config/mgmt01/wazuh/local_rules.xml` (gemount in de manager). Herstart na het bewerken van regels de manager (nooit `docker restart`):
 
 ```bash
 docker exec single-node-wazuh.manager-1 /var/ossec/bin/wazuh-control restart
@@ -125,9 +125,9 @@ docker exec single-node-wazuh.manager-1 /var/ossec/bin/wazuh-control restart
 
 ---
 
-## Stap 5: CASB Laag 2 configureren — M365 API-integratie
+## Stap 5: CASB Laag 2 configureren (M365 API-integratie)
 
-CASB Laag 2 pollt de Microsoft 365-auditactiviteit en remedieert riskante shares. Er is **geen** "Wazuh office365-module" in deze opstelling — een aangepaste producer doet de polling:
+CASB Laag 2 pollt de Microsoft 365-auditactiviteit en remedieert riskante shares. Er is **geen** "Wazuh office365-module" in deze opstelling; een aangepaste producer doet de polling:
 
 1. Deploy de `o365_producer`-container op mgmt01:
    - Pollt de **Office 365 Management Activity API** (`contentType=Audit.SharePoint`) met app-registration-referenties voor de aplab.be-tenant
@@ -138,17 +138,17 @@ CASB Laag 2 pollt de Microsoft 365-auditactiviteit en remedieert riskante shares
 
 | Regel | Detectie (`producer` = `o365`) | Niveau |
 |-------|--------------------------------|--------|
-| 100600 | basis — `producer` = `o365` | 0 |
+| 100600 | basis, `producer` = `o365` | 0 |
 | 100601 | `Operation` = AnonymousLinkCreated | 10 |
 | 100602 | `Operation` = SharingLinkCreated AND `SharingLinkScope` = Anyone | 10 |
 | 100603 | `Operation` = SharingSet AND `TargetUserOrGroupType` = Guest | 8 |
 
 3. Deploy de Active Response-scripts (geport uit het CASB-project van het team), achter een `ENFORCE`-gate die **standaard op detect-only staat** (`ENFORCE=false`):
-   - `sharepoint_remediate.sh` — getriggerd door regels **100601, 100602**; trekt de anonieme / anyone-link in via de Microsoft Graph API
-   - `guest_remediate.sh` — getriggerd door regel **100603**; verwijdert de gasttoekenning
+   - `sharepoint_remediate.sh`: getriggerd door regels **100601, 100602**; trekt de anonieme / anyone-link in via de Microsoft Graph API
+   - `guest_remediate.sh`: getriggerd door regel **100603**; verwijdert de gasttoekenning
    - Beide lezen Graph-referenties uit `graph.env` (in het `wazuh_etc`-volume, nooit gecommit) en loggen de herstelactie
 
-> **Valkuil: jq-afhankelijkheid.** De Active Response-scripts hebben `jq` nodig, dat niet in de standaard manager-image zit — zonder dit faalt het script stilletjes bij de eerste aanroep. Installeer het persistent via de `install_deps.sh`-entrypointwrapper plus een compose `entrypoint:`-override (V39); een gewone `yum install` overleeft een recreate niet.
+> **Valkuil: jq-afhankelijkheid.** De Active Response-scripts hebben `jq` nodig, dat niet in de standaard manager-image zit; zonder dit faalt het script stilletjes bij de eerste aanroep. Installeer het persistent via de `install_deps.sh`-entrypointwrapper plus een compose `entrypoint:`-override (V39); een gewone `yum install` overleeft een recreate niet.
 
 > **Opmerking:** Dit is CASB Laag 2 in de drielaagse CASB-architectuur. Zie [Beslissing: CASB drie lagen](../decisions/casb-three-layers.nl.md) voor het volledige ontwerp.
 
@@ -166,7 +166,7 @@ rule.groups: "sase" OR data.alert.signature_id: *
 
 **Verwacht:** Events van Suricata, Squid, DNS RPZ en DLP verschijnen in het dashboard met correct geparseerde velden.
 
-> **Opmerking:** Het dashboard toonde eerder "Status: Offline" door een lege manager-UUID (gewist door `docker compose down -v`) — opgelost op 2 juni 2026 via in-place bump naar 4.14.5. De `Error checking updates` CTI-500 (air-gap, cosmetisch) blijft aanwezig maar is non-blocking in 4.14.5+. App-modules en Discover werken beide volledig. Zie [Finding: Wazuh Dashboard airgate](../findings/wazuh-dashboard-airgate.nl.md).
+> **Opmerking:** Het dashboard toonde eerder "Status: Offline" door een lege manager-UUID (gewist door `docker compose down -v`), opgelost op 2 juni 2026 via in-place bump naar 4.14.5. De `Error checking updates` CTI-500 (air-gap, cosmetisch) blijft aanwezig maar is non-blocking in 4.14.5+. App-modules en Discover werken beide volledig. Zie [Finding: Wazuh Dashboard airgate](../findings/wazuh-dashboard-airgate.nl.md).
 
 ---
 
