@@ -431,25 +431,6 @@
   
 
       
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../log/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Log
-
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -3439,33 +3420,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../log/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Log
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -3682,7 +3636,7 @@
 </tr>
 <tr>
 <td>CA Policy 2 — Geo-block (Belgium only)</td>
-<td>Report-only: Success proven — → On at Session 11</td>
+<td>Report-only: Success proven — → On at demo</td>
 </tr>
 <tr>
 <td>CA Policy 3 — Legacy auth blocking</td>
@@ -3694,7 +3648,7 @@
 </tr>
 <tr>
 <td>CA Policy 5 — Compliant device required</td>
-<td>Report-only: Success proven — → On at Session 11</td>
+<td>Report-only: Success proven — → On at demo</td>
 </tr>
 </tbody>
 </table>
@@ -3718,10 +3672,10 @@
 </tr>
 </tbody>
 </table>
-<p>BitLocker/TPM dropped — rubric requires "device posture", not encryption. Three posture checks: OS version, AV, firewall. Policy on Report-only until demo preparation (Session 11).</p>
+<p>BitLocker/TPM dropped — rubric requires "device posture", not encryption. Three posture checks: OS version, AV, firewall. Policy on Report-only until demo preparation.</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Gate 1 (Entra ID CA) and Gate 2 (Intune compliance) are both live as of Verslag40: four CA policies enforcing (MFA, legacy-auth block, risk-block) plus Policy 5 (compliant device) and Geo-Block held at Report-only until Session 11. Gate 3 (SWG pipeline) operates independently of identity/device on every request — so all three gates are operational, not just Gate 3</li>
+<li>Gate 1 (Entra ID CA) and Gate 2 (Intune compliance) are both live as of Verslag40: four CA policies enforcing (MFA, legacy-auth block, risk-block) plus Policy 5 (compliant device) and Geo-Block held at Report-only until demo. Gate 3 (SWG pipeline) operates independently of identity/device on every request — so all three gates are operational, not just Gate 3</li>
 <li>Activation of Gate 1 requires MFA pre-registration for test accounts before enabling policies (unregistered MFA produces a loop that blocks even the verification session)</li>
 <li>The admins persona falls under no CA policy — <code>2itcsc1a_admin1</code> is its sole member and is the break-glass exclude on every policy, so it is deliberately ungoverned to prevent lockout</li>
 <li>Intune Gate 2 depends on the Microsoft control plane being reachable un-bumped: <code>*.microsoftonline.com</code> and <code>enterpriseregistration.windows.net</code> are on the Squid splice/no-bump list, otherwise device registration and the compliant-device check (Policy 5) break</li>
