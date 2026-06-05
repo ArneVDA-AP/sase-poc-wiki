@@ -431,25 +431,6 @@
   
 
       
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../log/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Logboek
-
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -3439,33 +3420,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../log/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logboek
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -3682,7 +3636,7 @@
 </tr>
 <tr>
 <td>CA Policy 2 (Geo-blokkering, alleen België)</td>
-<td>Report-only: Success bewezen, On bij Sessie 11</td>
+<td>Report-only: Success bewezen, On bij demo</td>
 </tr>
 <tr>
 <td>CA Policy 3 (Legacy-auth blokkering)</td>
@@ -3694,7 +3648,7 @@
 </tr>
 <tr>
 <td>CA Policy 5 (Conform apparaat vereist)</td>
-<td>Report-only: Success bewezen, On bij Sessie 11</td>
+<td>Report-only: Success bewezen, On bij demo</td>
 </tr>
 </tbody>
 </table>
@@ -3718,10 +3672,10 @@
 </tr>
 </tbody>
 </table>
-<p>BitLocker/TPM geschrapt: rubric vereist "device posture", niet encryptie. Drie posturecontroles: OS-versie, AV, firewall. Policy op Report-only tot demo-voorbereiding (Sessie 11).</p>
+<p>BitLocker/TPM geschrapt: rubric vereist "device posture", niet encryptie. Drie posturecontroles: OS-versie, AV, firewall. Policy op Report-only tot demo-voorbereiding.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Gate 1 (Entra ID CA) en Gate 2 (Intune-conformiteit) zijn beide live sinds Verslag40: vier CA-policies die handhaven (MFA, legacy-auth-blokkering, risico-blokkering) plus Policy 5 (conform apparaat) en Geo-Block op Report-only tot Sessie 11. Gate 3 (SWG-pipeline) werkt onafhankelijk van identiteit/apparaat bij elke aanvraag, dus alle drie de gates zijn operationeel, niet alleen Gate 3</li>
+<li>Gate 1 (Entra ID CA) en Gate 2 (Intune-conformiteit) zijn beide live sinds Verslag40: vier CA-policies die handhaven (MFA, legacy-auth-blokkering, risico-blokkering) plus Policy 5 (conform apparaat) en Geo-Block op Report-only tot demo. Gate 3 (SWG-pipeline) werkt onafhankelijk van identiteit/apparaat bij elke aanvraag, dus alle drie de gates zijn operationeel, niet alleen Gate 3</li>
 <li>Activering van Gate 1 vereist MFA-pre-registratie voor testaccounts vóór het inschakelen van policies (niet-geregistreerde MFA veroorzaakt een lus die zelfs de verificatiesessie blokkeert)</li>
 <li>De admins-persona valt onder geen enkele CA-policy: <code>2itcsc1a_admin1</code> is het enige lid en is de break-glass-uitsluiting op elke policy, dus deze is bewust ongereguleerd om uitsluiting te voorkomen</li>
 <li>Intune Gate 2 is afhankelijk van het un-bumped bereikbaar zijn van de Microsoft control plane: <code>*.microsoftonline.com</code> en <code>enterpriseregistration.windows.net</code> staan op de Squid splice/no-bump-lijst, anders breken apparaatregistratie en de conform-apparaatcontrole (Policy 5)</li>

@@ -431,25 +431,6 @@
   
 
       
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../log/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Logboek
-
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -3428,33 +3409,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../log/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logboek
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -3603,7 +3557,7 @@
 <li><strong>Scoring:</strong> Dispatcht op het <code>producer</code>-veld (niet het subject). Elk eventtype heeft een configureerbaar gewicht. Scores gebruiken sliding-window decay via Redis sorted sets.</li>
 <li><strong>Beslissing:</strong> Wanneer de score van een peer de quarantainedrempel overschrijdt (standaard: 80), verwijdert de daemon de peer uit alle policy-bearing persona-groepen via de NetBird Groups API. Zonder lidmaatschap van een persona-groep blokkeert deny-by-default alle connectiviteit.</li>
 </ol>
-<p><strong>Huidige staat:</strong> <code>ENFORCE=false</code> (dry-run) tot demovoorbereiding (Sessie 11).</p>
+<p><strong>Huidige staat:</strong> <code>ENFORCE=false</code> (dry-run) tot demovoorbereiding.</p>
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Scoring-gewichten:</strong> <code>malware=80</code> (single-event, overschrijdt drempel 80 alleen), <code>dlp_match=30</code> (accumulerend). <code>proxy_block</code> verwijderd uit scoring (ambient OS-ruis veroorzaakte false positives, Windows NCSI/telemetry). IDS-events zijn enkel log (C2 beacon response hoort bij Zeek/RITA, niet bij eigen correlatie). Gevalideerd in V35: docent1 triggerde EICAR → score 80/80 → gequarantaineerd binnen enkele seconden → hersteld.</li>

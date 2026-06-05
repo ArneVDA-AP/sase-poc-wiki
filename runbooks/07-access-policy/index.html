@@ -431,25 +431,6 @@
   
 
       
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../log/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Log
-
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -3633,33 +3614,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../log/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Log
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -4003,12 +3957,12 @@
 
 
 <h1 id="runbook-access-policy">Runbook: Access Policy<a class="headerlink" href="#runbook-access-policy" title="Permanent link">&para;</a></h1>
-<p><strong>Source:</strong> <code>raw/Verslag40.md</code> (implementation, 2 June 2026); <code>raw/Doc7_ZTNA_Context_Aware.md</code> + Addendum E.2 (design intent)
+<p><strong>Source:</strong> <code>Verslag40.md</code> (implementation, 2 June 2026); <code>Doc7_ZTNA_Context_Aware.md</code> + Addendum E.2 (design intent)
 <strong>Node(s):</strong> Entra ID (<code>aplab.be</code> tenant) + Intune + NetBird Dashboard
 <strong>Prerequisites:</strong> All prior runbooks completed (full SASE stack operational)
 <strong>Status:</strong> Implemented (Verslag40) — Gate 1: 5 CA policies (3 On, 2 Report-only); Gate 2: Intune device compliance operational; Gate 3 fully operational.</p>
 <blockquote>
-<p><strong>Gates 1 and 2 are implemented (Verslag40).</strong> Gate 1 = five Conditional Access policies: MFA Required (On), Block Legacy Auth (On), Risk-Based Block (On), Geo-Block Belgium only (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). The two Report-only policies stay that way until demo preparation (Session 11). Gate 2 = Intune device compliance (<code>2ITCSC1A-SASE-Windows-Compliance</code>), attestation-based — this is the deployed device gate, <strong>not</strong> NetBird posture checks (which remain an optional, undeployed defense-in-depth layer). Gate 3 is operational and covered by Runbooks 03-06.</p>
+<p><strong>Gates 1 and 2 are implemented (Verslag40).</strong> Gate 1 = five Conditional Access policies: MFA Required (On), Block Legacy Auth (On), Risk-Based Block (On), Geo-Block Belgium only (Report-only), Require Compliant Device (Report-only → "Report-only: Success"). The two Report-only policies stay that way until demo preparation. Gate 2 = Intune device compliance (<code>2ITCSC1A-SASE-Windows-Compliance</code>), attestation-based — this is the deployed device gate, <strong>not</strong> NetBird posture checks (which remain an optional, undeployed defense-in-depth layer). Gate 3 is operational and covered by Runbooks 03-06.</p>
 </blockquote>
 <hr />
 <h2 id="prerequisites-checklist">Prerequisites checklist<a class="headerlink" href="#prerequisites-checklist" title="Permanent link">&para;</a></h2>
@@ -4076,7 +4030,7 @@
 <a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>Access controls:
 <a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>  Grant: Block access
 <a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>Enable policy: Report-only (→ On at Session 11)
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>Enable policy: Report-only (→ On at demo)
 </code></pre></div>
 <h3 id="policy-3-2itcsc1a-sase-poc-block-legacy-auth">Policy 3 — 2ITCSC1A-SASE-PoC-Block-Legacy-Auth<a class="headerlink" href="#policy-3-2itcsc1a-sase-poc-block-legacy-auth" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Name: 2ITCSC1A-SASE-PoC-Block-Legacy-Auth
@@ -4130,7 +4084,7 @@
 <a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>Access controls:
 <a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>  Grant: Require device to be marked as compliant
 <a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
-<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>Enable policy: Report-only (→ On at Session 11) — gave &quot;Report-only: Success&quot; on a compliant mobile01 login
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>Enable policy: Report-only (→ On at demo) — gave &quot;Report-only: Success&quot; on a compliant mobile01 login
 </code></pre></div>
 <p><strong>Checkpoint Gate 1:</strong></p>
 <ul>
@@ -4227,7 +4181,7 @@
 <h2 id="step-5-validation-scenarios">Step 5: Validation scenarios<a class="headerlink" href="#step-5-validation-scenarios" title="Permanent link">&para;</a></h2>
 <h3 id="scenario-1-positive-test-compliant-device-correct-location-validated">Scenario 1 — Positive test: compliant device, correct location [VALIDATED]<a class="headerlink" href="#scenario-1-positive-test-compliant-device-correct-location-validated" title="Permanent link">&para;</a></h3>
 <blockquote>
-<p><strong>Status:</strong> Validated (Verslag40). 5 CA policies implemented (3 On, 2 Report-only). MFA, legacy-auth blocking, and risk-based blocking are On. Geo-Block and Require-Compliant-Device are Report-only until Session 11 — both already proved "Report-only: Success".</p>
+<p><strong>Status:</strong> Validated (Verslag40). 5 CA policies implemented (3 On, 2 Report-only). MFA, legacy-auth blocking, and risk-based blocking are On. Geo-Block and Require-Compliant-Device are Report-only until demo — both already proved "Report-only: Success".</p>
 </blockquote>
 <table>
 <thead>
@@ -4272,7 +4226,7 @@
 </table>
 <h3 id="scenario-2-negative-test-gate-1-geo-block">Scenario 2 — Negative test Gate 1: geo-block<a class="headerlink" href="#scenario-2-negative-test-gate-1-geo-block" title="Permanent link">&para;</a></h3>
 <blockquote>
-<p>Geo-Block is Report-only until Session 11, so the sign-in log records what <em>would</em> happen (<code>Report-only: Failure</code>); an actual denial occurs only once the policy is flipped On.</p>
+<p>Geo-Block is Report-only until demo, so the sign-in log records what <em>would</em> happen (<code>Report-only: Failure</code>); an actual denial occurs only once the policy is flipped On.</p>
 </blockquote>
 <table>
 <thead>
@@ -4461,7 +4415,7 @@
 <tbody>
 <tr>
 <td>Two policies in Report-only</td>
-<td>Geo-Block and Require-Compliant-Device are deliberately Report-only until Session 11</td>
+<td>Geo-Block and Require-Compliant-Device are deliberately Report-only until demo</td>
 <td>Flip to On at demo prep; both already proved "Report-only: Success" (B40.23)</td>
 </tr>
 <tr>

@@ -431,25 +431,6 @@
   
 
       
-        
-  
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../log/" class="md-tabs__link">
-        
-  
-  
-    
-  
-  Logboek
-
-      </a>
-    </li>
-  
-
-      
     </ul>
   </div>
 </nav>
@@ -3417,33 +3398,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../log/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Logboek
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -3593,7 +3547,7 @@
 </table>
 <h2 id="beslissing">Beslissing<a class="headerlink" href="#beslissing" title="Permanent link">&para;</a></h2>
 <p>De IDS-correlatiebranch is verwijderd uit de Control Daemon. IDS-events van Suricata worden nog steeds opgenomen via NATS JetStream maar dragen alleen bij aan logging, niet aan de threat score of geautomatiseerde quarantaineacties.</p>
-<p>De malware-branch dekt dezelfde real-time quarantainemogelijkheid met native attributie: wanneer ClamAV malware detecteert in de ICAP-pipeline, resolvet de daemon het overlay IP naar een NetBird-peeridentiteit en voert quarantaine uit. C2 beacon-respons wordt uitgesteld naar Zeek/RITA, dat gedragsanalyse over tijd uitvoert in plaats van single-event correlatie.</p>
+<p>De malware-branch dekt dezelfde real-time quarantainemogelijkheid met native attributie: wanneer ClamAV malware detecteert in de ICAP-pipeline, koppelt de daemon het overlay IP aan een NetBird-peeridentiteit en voert quarantaine uit. C2 beacon-respons wordt uitgesteld naar Zeek/RITA, dat gedragsanalyse over tijd uitvoert in plaats van single-event correlatie.</p>
 <p>Daarnaast zijn <code>proxy_block</code>-events verwijderd uit het scoringsmodel. Omgevingsruis van het besturingssysteem (Windows-telemetrie, updatecontroles, certificate revocation lookups) veroorzaakte frequente proxy-blocks die threat scores opbliezen zonder werkelijke dreigingen aan te duiden, wat leidde tot vals-positieve quarantainetriggers.</p>
 <h2 id="gevolgen">Gevolgen<a class="headerlink" href="#gevolgen" title="Permanent link">&para;</a></h2>
 <ul>
