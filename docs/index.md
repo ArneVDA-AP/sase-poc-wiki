@@ -61,7 +61,7 @@ decision point. Opens full-width in a new tab.
 | [Suricata WAN+LAN](decisions/suricata-wan-lan.md) | Why vtnet0 + vtnet1 — wt0 shows 0 packets in BPF |
 | [GNS3 vs EVE-NG](decisions/gns3-vs-eveng.md) | Multi-user requirement; QCOW2 format; EVE-NG single-session limitation |
 | [Zitadel as IdP broker](decisions/zitadel-idp-broker.md) | Quickstart installs Zitadel; Entra ID as external IdP; CA still fires |
-| [CA + Posture hybrid (Three-Gate Model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (posture) — complementary not substitutable; managed-device three-gate model |
+| [CA + Posture hybrid (Three-Gate Model)](decisions/ca-posture-hybrid.md) | Gate 1 (Entra ID CA) + Gate 2 (Intune compliance) — complementary not substitutable; managed-device three-gate model |
 | [SD-WAN Descoped (F12, F13, F14)](decisions/sdwan-descoped.md) | Classic IPsec + uCPE removed (site-to-site tunnels contradict Zero Trust); QoS + failover reimplemented under the ZT-Branch model; sitepc01 → NetBird enrollment |
 | [NetBird Service PAT](decisions/netbird-service-pat.md) | Service-user PAT for Identity Bridge API auth — avoids NetBird issue #3127 |
 | [NATS accounts auth](decisions/nats-accounts-auth.md) | `accounts{}` model required for JetStream API access |

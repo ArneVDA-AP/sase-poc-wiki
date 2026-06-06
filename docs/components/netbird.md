@@ -27,7 +27,7 @@ User → NetBird Dashboard → Zitadel (OIDC issuer, self-hosted on mgmt01)
 
 NetBird's quickstart script installs Zitadel as the primary OIDC issuer. Entra ID is connected as an external IdP *to Zitadel*, not directly to NetBird. This is an architectural reality of the quickstart script, not a limitation — Zitadel adds a central user-management layer with roles and groups independent of Entra ID configuration.
 
-**Entra ID Conditional Access** evaluates at the Entra ID `/authorize` endpoint, targeted at the NetBird app registration `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`). Whether the OIDC redirect originates from Zitadel or directly from a NetBird client is irrelevant — the user authenticates directly with Entra ID, and CA fires for that app registration. See [Decision: CA posture hybrid](../decisions/ca-posture-hybrid.md) and [Component: Three-Gate Model](../decisions/ca-posture-hybrid.md).
+**Entra ID Conditional Access** evaluates at the Entra ID `/authorize` endpoint. App-targeted policies never fire on NetBird/Zitadel OIDC sign-ins — CA matches on the token's resource (Microsoft Graph), not the NetBird app registration — so all five policies target **All resources** and contain blast radius through user-scoping: the persona groups (`2ITCSC1A-Studenten`/`-Docenten`/`-Admins`) as include, with `2itcsc1a_admin1` as break-glass exclude. See [Decision: CA posture hybrid](../decisions/ca-posture-hybrid.md) and [Component: Three-Gate Model](../decisions/ca-posture-hybrid.md).
 
 **WireGuard mesh vs per-app tunnels:** NetBird creates a full WireGuard mesh where ACL policies control which peers can communicate. This is architecturally equivalent to per-app Zero Trust tunnels (Zscaler ZPA): a peer with access to dc01 cannot reach mgmt01 without a separate ACL policy — resources are not visible, not just inaccessible.
 
@@ -158,7 +158,7 @@ The empty match-domains setting routes **all** DNS queries from NetBird clients 
 | [ioc2rpz/RPZ](ioc2rpz.md) | DNS dependency | Primary nameserver setting routes all client DNS through Unbound RPZ |
 | [Caddy](caddy.md) | → browser | WPAD PAC file served by Caddy on mgmt01 overlay IP, reachable only via NetBird |
 | [Suricata](suricata.md) | visibility | Suricata sees WireGuard as encrypted UDP (port 51820) on vtnet0 — inner payload not inspectable |
-| [Three-gate model](../decisions/ca-posture-hybrid.md) | auth layer | Gate 1 (Entra ID CA) + Gate 2 (posture checks) both hook into the NetBird login flow |
+| [Three-gate model](../decisions/ca-posture-hybrid.md) | auth layer | Gate 1 (Entra ID CA) hooks into the NetBird login flow; Gate 2 is Intune device compliance, surfaced at login via CA Policy 5 (NetBird posture checks were planned but not deployed) |
 
 ClamAV/Python DLP ICAP traffic from pop01 to mgmt01 travels over the `192.168.122.0/24` WAN segment, not the NetBird overlay. That communication path functions even when the NetBird tunnel is down.
 

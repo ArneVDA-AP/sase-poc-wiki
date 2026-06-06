@@ -4263,18 +4263,18 @@
 <h2 id="decision">Decision<a class="headerlink" href="#decision" title="Permanent link">&para;</a></h2>
 <p>Zitadel as primary OIDC issuer (installed by quickstart script), with Entra ID connected as an external IdP to Zitadel.</p>
 <p>This was an architectural reality of the quickstart script, not a deliberate choice between options. The quickstart produces a working stack with Zitadel as issuer. Entra ID is added afterward as an external IdP in Zitadel's console. The resulting chain is architecturally sound: Zitadel provides a central user management layer, and Entra ID provides school account authentication.</p>
-<p><strong>CA policies still work:</strong> Entra ID Conditional Access evaluates at the Entra ID <code>/authorize</code> endpoint targeted at the NetBird app registration <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>). Whether the redirect originates from Zitadel or from the NetBird Dashboard is irrelevant — the user authenticates directly with Entra ID, and CA fires for that app registration.</p>
+<p><strong>CA policies still work:</strong> Entra ID Conditional Access evaluates at the Entra ID <code>/authorize</code> endpoint. The user authenticates directly with Entra ID whether the redirect originates from Zitadel or from the NetBird Dashboard, so CA fires regardless. App-targeted policies do not fire on these OIDC sign-ins (CA matches on the token resource, Microsoft Graph), so the policies target <strong>All resources</strong> and scope by persona group instead.</p>
 <blockquote>
 <p><strong>App-registration switch (V30, May 2026).</strong> The earlier build reused a shared app registration (<code>cebe0d74-be9f-49ac-9f35-65f11586c1bb</code>), which created a hidden coupling between the sandbox and the team-project stack. V30 created a dedicated <code>2ITCSC1A-Netbird-Sandbox</code> registration (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>) and re-pointed Zitadel's Entra ID federation at it. The sandbox-specific registration is the current value; <code>cebe0d74…</code> is superseded.</p>
 </blockquote>
 <p><strong>TLS:</strong> The quickstart attempts Let's Encrypt for <code>netbird.sandbox.local</code> — this fails (non-public hostname). Caddy's <code>tls internal</code> directive (built-in local CA) is used instead. OIDC requires HTTPS, not a publicly trusted certificate.</p>
 <h2 id="consequences">Consequences<a class="headerlink" href="#consequences" title="Permanent link">&para;</a></h2>
 <ul>
-<li>All CA-targeted policies must reference the NetBird app registration <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>), not a Zitadel registration</li>
+<li>All five CA policies target <strong>All resources</strong> (not a Zitadel or NetBird app registration); blast radius is contained by user-scoping to the persona groups, with <code>2itcsc1a_admin1</code> as break-glass exclude</li>
 <li>New users authenticating via Entra ID appear as "pending" in NetBird Dashboard — manual approval required (security feature of the quickstart)</li>
 <li>Zitadel uses nested <code>roles</code> JSON; NetBird expects a flat <code>groups</code> array — groups claim transformation may be needed in Zitadel</li>
 <li><code>docker compose up -d caddy</code> (not <code>restart</code>) is required when volume mounts change</li>
-<li>CA policies must be app-specific (targeting the NetBird app registration only) because the <code>aplab.be</code> tenant is shared — tenant-wide policies would affect other projects and students</li>
+<li>Because the <code>aplab.be</code> tenant is shared, blast radius is contained by <strong>user-scoping</strong> (persona-group include, <code>2itcsc1a_admin1</code> break-glass exclude) rather than app-targeting — an app-scoped policy never fires on these OIDC sign-ins because CA matches on the token resource (Microsoft Graph)</li>
 </ul>
 <h2 id="implementation-detail-groups-claim-via-two-zitadel-actions">Implementation detail: groups-claim via two Zitadel Actions<a class="headerlink" href="#implementation-detail-groups-claim-via-two-zitadel-actions" title="Permanent link">&para;</a></h2>
 <p>The groups-claim mechanism that powers the entire identity chain is implemented via two Zitadel Actions (v1):</p>

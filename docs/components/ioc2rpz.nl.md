@@ -203,7 +203,7 @@ rpz: applied [ioc2rpz-threat-intel] testentry.rpz.urlhaus.abuse.ch. rpz-nxdomain
 
 ## NATS-integratie
 
-DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via `security.alert.dns`. Wanneer Unbound's RPZ-module NXDOMAIN retourneert voor een threat-intelligence-domein, wordt het event gepubliceerd met: opgevraagd domein, client-IP en de RPZ-zone die overeenkomt. Deze events dragen bij aan de per-peer threat score. Herhaalde RPZ-hits van een enkele client kunnen duiden op malware die probeert C2-infrastructuur te bereiken, wat quarantaine door de [Control Daemon](control-daemon.md) kan activeren.
+DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via `security.alert.dns`. Wanneer Unbound's RPZ-module NXDOMAIN retourneert voor een threat-intelligence-domein, wordt het event gepubliceerd met: opgevraagd domein, client-IP en de RPZ-zone die overeenkomt. De enige consument van dit subject is de [NATS→Wazuh-forwarder](nats-jetstream.md); Wazuh classificeert het onder regel 100540 voor SIEM-indexering. DNS-RPZ-events worden **niet** gescoord door de [Control Daemon](control-daemon.md): RPZ-hits zijn te ruisgevoelig om automatische quarantaine aan te sturen, dus de daemon negeert dit subject en handelt alleen op malware- en DLP-events.
 
 ---
 

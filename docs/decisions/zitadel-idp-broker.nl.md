@@ -27,7 +27,7 @@ Zitadel als primaire OIDC-uitgever (geïnstalleerd door quickstart-script), met 
 
 Dit was een architecturale realiteit van het quickstart-script, geen bewuste keuze tussen opties. Het quickstart produceert een werkende stack met Zitadel als uitgever. Entra ID wordt daarna toegevoegd als externe IdP in de console van Zitadel. De resulterende keten is architecturaal solide: Zitadel biedt een centrale gebruikersbeheerlaag, en Entra ID biedt schoolaccountauthenticatie.
 
-**CA-policies werken nog steeds:** Entra ID Conditional Access evalueert op het Entra ID `/authorize`-endpoint gericht op de NetBird-appregistratie `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`). Of de omleiding afkomstig is van Zitadel of van het NetBird Dashboard is irrelevant: de gebruiker authenticeert rechtstreeks met Entra ID, en CA valt in voor die appregistratie.
+**CA-policies werken nog steeds:** Entra ID Conditional Access evalueert op het Entra ID `/authorize`-endpoint. De gebruiker authenticeert rechtstreeks met Entra ID, of de omleiding nu van Zitadel of van het NetBird Dashboard komt, dus CA valt sowieso in. App-gerichte policies vuren niet bij deze OIDC-aanmeldingen (CA matcht op de tokenresource, Microsoft Graph), dus de policies richten zich op **alle resources** en scopen in plaats daarvan per persona-groep.
 
 > **App-registratiewissel (V30, mei 2026).** De eerdere build hergebruikte een gedeelde appregistratie (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`), wat een verborgen koppeling tussen de sandbox en de teamprojectstack veroorzaakte. V30 maakte een toegewijde `2ITCSC1A-Netbird-Sandbox`-registratie (`11803ee8-eb15-462c-a286-5415c17a29c6`) en richtte de Entra ID-federatie van Zitadel daarop. De sandbox-specifieke registratie is de huidige waarde; `cebe0d74…` is verouderd.
 
@@ -35,11 +35,11 @@ Dit was een architecturale realiteit van het quickstart-script, geen bewuste keu
 
 ## Gevolgen
 
-- Alle CA-gerichte policies moeten verwijzen naar de NetBird-appregistratie `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`), niet naar een Zitadel-registratie
+- De NetBird-appregistratie `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`) wordt alleen gebruikt voor NetBird-login, niet als CA-doel: CA-policies richten zich op alle resources en scopen per persona-groep, omdat app-gerichte policies nooit vuren bij de OIDC-aanmelding (tokenresource = Microsoft Graph)
 - Nieuwe gebruikers die authenticeren via Entra ID verschijnen als "in behandeling" in het NetBird Dashboard; handmatige goedkeuring vereist (beveiligingsfunctie van het quickstart-script)
 - Zitadel gebruikt geneste `roles` JSON; NetBird verwacht een platte `groups`-array; transformatie van groepsclaim kan nodig zijn in Zitadel
 - `docker compose up -d caddy` (niet `restart`) is vereist wanneer volume-mounts wijzigen
-- CA-policies moeten app-specifiek zijn (gericht op alleen de NetBird-appregistratie) omdat de `aplab.be`-tenant gedeeld is; tenant-brede policies zouden andere projecten en studenten beïnvloeden
+- De `aplab.be`-tenant is gedeeld, dus de blast radius moet beperkt worden via user-scoping: elke policy bevat de persona-groepen en sluit `2itcsc1a_admin1` uit als break-glass, in plaats van zich op één app te richten (app-targeting vuurt niet bij OIDC-aanmeldingen)
 
 ## Implementatiedetail: groups-claim via twee Zitadel Actions
 

@@ -27,7 +27,7 @@ Zitadel as primary OIDC issuer (installed by quickstart script), with Entra ID c
 
 This was an architectural reality of the quickstart script, not a deliberate choice between options. The quickstart produces a working stack with Zitadel as issuer. Entra ID is added afterward as an external IdP in Zitadel's console. The resulting chain is architecturally sound: Zitadel provides a central user management layer, and Entra ID provides school account authentication.
 
-**CA policies still work:** Entra ID Conditional Access evaluates at the Entra ID `/authorize` endpoint targeted at the NetBird app registration `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`). Whether the redirect originates from Zitadel or from the NetBird Dashboard is irrelevant — the user authenticates directly with Entra ID, and CA fires for that app registration.
+**CA policies still work:** Entra ID Conditional Access evaluates at the Entra ID `/authorize` endpoint. The user authenticates directly with Entra ID whether the redirect originates from Zitadel or from the NetBird Dashboard, so CA fires regardless. App-targeted policies do not fire on these OIDC sign-ins (CA matches on the token resource, Microsoft Graph), so the policies target **All resources** and scope by persona group instead.
 
 > **App-registration switch (V30, May 2026).** The earlier build reused a shared app registration (`cebe0d74-be9f-49ac-9f35-65f11586c1bb`), which created a hidden coupling between the sandbox and the team-project stack. V30 created a dedicated `2ITCSC1A-Netbird-Sandbox` registration (`11803ee8-eb15-462c-a286-5415c17a29c6`) and re-pointed Zitadel's Entra ID federation at it. The sandbox-specific registration is the current value; `cebe0d74…` is superseded.
 
@@ -35,11 +35,11 @@ This was an architectural reality of the quickstart script, not a deliberate cho
 
 ## Consequences
 
-- All CA-targeted policies must reference the NetBird app registration `2ITCSC1A-Netbird-Sandbox` (`11803ee8-eb15-462c-a286-5415c17a29c6`), not a Zitadel registration
+- All five CA policies target **All resources** (not a Zitadel or NetBird app registration); blast radius is contained by user-scoping to the persona groups, with `2itcsc1a_admin1` as break-glass exclude
 - New users authenticating via Entra ID appear as "pending" in NetBird Dashboard — manual approval required (security feature of the quickstart)
 - Zitadel uses nested `roles` JSON; NetBird expects a flat `groups` array — groups claim transformation may be needed in Zitadel
 - `docker compose up -d caddy` (not `restart`) is required when volume mounts change
-- CA policies must be app-specific (targeting the NetBird app registration only) because the `aplab.be` tenant is shared — tenant-wide policies would affect other projects and students
+- Because the `aplab.be` tenant is shared, blast radius is contained by **user-scoping** (persona-group include, `2itcsc1a_admin1` break-glass exclude) rather than app-targeting — an app-scoped policy never fires on these OIDC sign-ins because CA matches on the token resource (Microsoft Graph)
 
 ## Implementation detail: groups-claim via two Zitadel Actions
 

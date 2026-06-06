@@ -4471,7 +4471,7 @@
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                         Microsoft login page (aplab.be tenant)
 </code></pre></div>
 <p>NetBird's quickstart script installs Zitadel as the primary OIDC issuer. Entra ID is connected as an external IdP <em>to Zitadel</em>, not directly to NetBird. This is an architectural reality of the quickstart script, not a limitation — Zitadel adds a central user-management layer with roles and groups independent of Entra ID configuration.</p>
-<p><strong>Entra ID Conditional Access</strong> evaluates at the Entra ID <code>/authorize</code> endpoint, targeted at the NetBird app registration <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>). Whether the OIDC redirect originates from Zitadel or directly from a NetBird client is irrelevant — the user authenticates directly with Entra ID, and CA fires for that app registration. See <a href="../../decisions/ca-posture-hybrid/">Decision: CA posture hybrid</a> and <a href="../../decisions/ca-posture-hybrid/">Component: Three-Gate Model</a>.</p>
+<p><strong>Entra ID Conditional Access</strong> evaluates at the Entra ID <code>/authorize</code> endpoint. App-targeted policies never fire on NetBird/Zitadel OIDC sign-ins — CA matches on the token's resource (Microsoft Graph), not the NetBird app registration — so all five policies target <strong>All resources</strong> and contain blast radius through user-scoping: the persona groups (<code>2ITCSC1A-Studenten</code>/<code>-Docenten</code>/<code>-Admins</code>) as include, with <code>2itcsc1a_admin1</code> as break-glass exclude. See <a href="../../decisions/ca-posture-hybrid/">Decision: CA posture hybrid</a> and <a href="../../decisions/ca-posture-hybrid/">Component: Three-Gate Model</a>.</p>
 <p><strong>WireGuard mesh vs per-app tunnels:</strong> NetBird creates a full WireGuard mesh where ACL policies control which peers can communicate. This is architecturally equivalent to per-app Zero Trust tunnels (Zscaler ZPA): a peer with access to dc01 cannot reach mgmt01 without a separate ACL policy — resources are not visible, not just inaccessible.</p>
 <hr />
 <h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
@@ -4630,7 +4630,7 @@
 <tr>
 <td><a href="../../decisions/ca-posture-hybrid/">Three-gate model</a></td>
 <td>auth layer</td>
-<td>Gate 1 (Entra ID CA) + Gate 2 (posture checks) both hook into the NetBird login flow</td>
+<td>Gate 1 (Entra ID CA) hooks into the NetBird login flow; Gate 2 is Intune device compliance, surfaced at login via CA Policy 5 (NetBird posture checks were planned but not deployed)</td>
 </tr>
 </tbody>
 </table>
