@@ -4576,7 +4576,7 @@
 </table>
 <hr />
 <h2 id="nats-integration">NATS integration<a class="headerlink" href="#nats-integration" title="Permanent link">&para;</a></h2>
-<p>DNS RPZ block events are published to the NATS event bus via <code>security.alert.dns</code>. When Unbound's RPZ module returns NXDOMAIN for a threat-intelligence domain, the event is published with: queried domain, client IP, RPZ zone that matched. These events contribute to the per-peer threat score — repeated RPZ hits from a single client may indicate malware attempting to reach C2 infrastructure, which can trigger quarantine by the <a href="../control-daemon/">Control Daemon</a>.</p>
+<p>DNS RPZ block events are published to the NATS event bus via <code>security.alert.dns</code>. When Unbound's RPZ module returns NXDOMAIN for a threat-intelligence domain, the event is published with: queried domain, client IP, RPZ zone that matched. The sole consumer of this subject is the <a href="../nats-jetstream/">NATS→Wazuh forwarder</a>; Wazuh classifies it under rule 100540 for SIEM indexing. DNS-RPZ events are <strong>not</strong> scored by the <a href="../control-daemon/">Control Daemon</a> — RPZ hits are too noisy to drive automated quarantine, so the daemon ignores this subject and acts only on malware and DLP events.</p>
 <hr />
 <h2 id="known-issues-gotchas">Known issues / gotchas<a class="headerlink" href="#known-issues-gotchas" title="Permanent link">&para;</a></h2>
 <p><strong>iptables FORWARD rule ordering</strong> — when adding port forwards for GUI access on the GNS3 host, always use <code>-I FORWARD 1</code>. Appending (<code>-A</code>) places the rule after libvirt's REJECT chain. See <a href="../../findings/iptables-forward-ordering/">Finding: iptables FORWARD ordering</a>.</p>

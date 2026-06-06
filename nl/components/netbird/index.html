@@ -4471,7 +4471,7 @@
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                                Microsoft-inlogpagina (aplab.be-tenant)
 </code></pre></div>
 <p>Het quickstart-script van NetBird installeert Zitadel als primaire OIDC-uitgever. Entra ID is verbonden als externe IdP <em>aan Zitadel</em>, niet rechtstreeks aan NetBird. Dit is een architecturele realiteit van het quickstart-script, geen beperking. Zitadel voegt een centrale gebruikersbeheerlaag toe met rollen en groepen die onafhankelijk zijn van Entra ID-configuratie.</p>
-<p><strong>Entra ID Conditional Access</strong> evalueert bij het Entra ID <code>/authorize</code>-endpoint, gericht op de NetBird-app-registratie <code>2ITCSC1A-Netbird-Sandbox</code> (<code>11803ee8-eb15-462c-a286-5415c17a29c6</code>). Of de OIDC-omleiding afkomstig is van Zitadel of rechtstreeks van een NetBird-client is irrelevant: de gebruiker authenticeert zich rechtstreeks bij Entra ID en CA wordt geactiveerd voor die app-registratie. Zie <a href="../../decisions/ca-posture-hybrid/">Beslissing: CA-posture hybride</a>.</p>
+<p><strong>Entra ID Conditional Access</strong> evalueert bij het Entra ID <code>/authorize</code>-endpoint. App-gerichte policies vuren nooit bij NetBird/Zitadel OIDC-aanmeldingen, omdat CA matcht op de tokenresource (Microsoft Graph), niet op de NetBird-app-registratie. Daarom richten alle vijf de policies zich op <strong>alle resources</strong> en wordt de blast radius beperkt via user-scoping: de persona-groepen (<code>2ITCSC1A-Studenten</code>/<code>-Docenten</code>/<code>-Admins</code>) als include, met <code>2itcsc1a_admin1</code> als break-glass-uitsluiting. Zie <a href="../../decisions/ca-posture-hybrid/">Beslissing: CA-posture hybride</a>.</p>
 <p><strong>WireGuard-mesh vs. per-app-tunnels:</strong> NetBird creëert een volledige WireGuard-mesh waarbij ACL policy bepaalt welke peers kunnen communiceren. Dit is architectureel equivalent aan per-app Zero Trust-tunnels (Zscaler ZPA): een peer met toegang tot dc01 kan mgmt01 niet bereiken zonder een aparte ACL policy (resources zijn niet zichtbaar, niet alleen ontoegankelijk).</p>
 <hr />
 <h2 id="configuratie">Configuratie<a class="headerlink" href="#configuratie" title="Permanent link">&para;</a></h2>
@@ -4630,7 +4630,7 @@
 <tr>
 <td><a href="../../decisions/ca-posture-hybrid/">Drie-gate model</a></td>
 <td>authenticatielaag</td>
-<td>Gate 1 (Entra ID CA) + Gate 2 (posture checks) koppelen beide aan de NetBird-aanmeldflow</td>
+<td>Gate 1 (Entra ID CA) koppelt aan de NetBird-aanmeldflow; Gate 2 is Intune device compliance, zichtbaar bij login via CA Policy 5 (NetBird posture checks waren gepland maar niet gedeployd)</td>
 </tr>
 </tbody>
 </table>
