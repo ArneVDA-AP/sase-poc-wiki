@@ -138,7 +138,9 @@ Only the *classic* IPsec/uCPE SD-WAN approach was descoped — the original acce
 - [Architecture overview](../overview/architecture.md)
 - [Component: NetBird](netbird.md)
 - [Component: GNS3](gns3.md)
+- [Component: Zeek](zeek.md) — parallel-stack sensor fed by a GRE traffic mirror from the site gateway
 - [Concept: SASE](../concepts/sase.md)
 - [Decision: SD-WAN Descoped](../decisions/sdwan-descoped.md)
 - [Decision: ZT SD-WAN Branch](../decisions/zt-sdwan-branch.md)
 - [Finding: DC-LAN isolation route ACL](../findings/dc-lan-isolation-route-acl.md)
+- [Finding: VyOS GRE two-step commit](../findings/vyos-gre-two-step-commit.md) — GRE tunnel + mirror needs two separate commits

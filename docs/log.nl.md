@@ -342,3 +342,32 @@ De auditor ving één gemiste UI-pad (`clamav-cicap.nl.md`) en enkele consistent
 
 **Audit:** Onafhankelijke Opus-auditor PASS na de genoemde fixes. `mkdocs build` schoon (EN + NL, geen
 broken links). Gedeployed naar gh-pages.
+
+---
+
+## 2026-06-06: Teammate parallel-stack PoCs (transparent proxy, Cosmos, Zeek/RITA, Telemetry)
+
+**Doel:** De parallel-stack-capabilities van het team een plek geven als "PoC-within-the-PoC"-pagina's:
+gebouwd en gevalideerd op een aparte stack, nog niet in het sandbox-geheel geïntegreerd. Aparte status
+("PoC-gevalideerd op de parallelle stack, sandbox-integratie pending"); de sandbox blijft source of truth bij overlap.
+
+**Nieuwe pagina's (20, EN + NL):**
+- Components: `transparent-proxy` (TPROXY op linuxpop01), `cosmos` (identity-aware application gateway),
+  `zeek`, `rita` (behavioral C2 / beaconing-analyse), `telemetry-stack` (Grafana / Prometheus / Loki).
+- Concepts: `application-gateway`, `behavioral-analysis`.
+- Decisions: `cosmos-two-layer-ztna`, `hub-vs-switch-visibility`, `rita-rpz-automation`, `grafana-vs-custom-ui`.
+- Findings: `cosmos-hostname-oauth`, `dc-segment-mirror-limit`, `vyos-gre-two-step-commit`, `rfc3164-vs-rfc5424-syslog`.
+- Testing: `transparent-proxy-tests`. Runbooks: `13-cosmos`, `14-zeek-rita`, `15-rita-rpz-integration`, `16-telemetry`.
+
+**Gereframed voor de transparent proxy:** `attack-scenarios` resultaatkolom Verwacht → Gemeten (A3
+report-only-voetnoot); `wpad-vs-transparent-proxy`, `managed-devices-scope`, `wt0-pf-rdr-limitation` gereframed
+zodat de wt0 pf-rdr-beperking waar blijft terwijl post-tunnel TPROXY (Optie D, ontworpen niet getest) de workaround is.
+
+**Registratie:** nav + nav_translations, 20 catalogus-rijen, 17 nieuwe tags, architecture Component Map (apart
+parallel-stack-blok + §6 / §9 hook-notes), 10 bidirectionele back-links.
+
+**Proces:** vijf Opus-drafting-agents (één per cluster) → dubbele Opus-auditors per cluster (feiten + stijl) →
+één geconsolideerde fix-pass → twee registratie-agents → build. Alle facts-audits PASS (geen feitelijke fouten);
+credentials geredacteerd uit de Cosmos-runbook. `mkdocs build` schoon (EN + NL, geen broken links). Bronnen:
+raw/teamdocs (Rayan Cosmos / Zeek-RITA / Telemetry, Verslag07; Marnix TransProxy_Verslag02, Verslag37; V41).
+Geen `raw/`-bestanden gewijzigd.

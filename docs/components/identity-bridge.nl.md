@@ -46,4 +46,5 @@ De antwoordstroom: Squid stuurt `<IP> <group>` → helper queryet `GET /lookup?i
 - [Component: NetBird](netbird.md)
 - [Component: Squid](squid.md)
 - [Component: NATS JetStream](nats-jetstream.md)
+- [Component: Transparante proxy](transparent-proxy.nl.md) — parallel-stack capturepad dat Identity Bridge-dekking zou uitbreiden naar niet-proxyverkeer
 - [Concept: Identity Flow](../concepts/identity-flow.md)

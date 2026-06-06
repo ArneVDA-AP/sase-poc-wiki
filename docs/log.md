@@ -500,3 +500,31 @@ The auditor caught one missed UI path (`clamav-cicap.nl.md`) and a few consisten
 
 **Audit:** Independent Opus auditor PASS after the listed fixes. `mkdocs build` clean (EN + NL, no broken
 links). Deployed to gh-pages.
+
+---
+
+## 2026-06-06 — Teammate parallel-stack PoCs (transparent proxy, Cosmos, Zeek/RITA, Telemetry)
+
+**Goal:** Give the team's parallel-stack capabilities a home as "PoC-within-the-PoC" pages: built and
+validated on a separate stack, not yet integrated into the sandbox whole. Distinct status ("PoC-validated on
+the parallel stack — sandbox integration pending"); the sandbox stays source of truth on any overlap.
+
+**New pages (20, EN + NL):**
+- Components: `transparent-proxy` (TPROXY on linuxpop01), `cosmos` (identity-aware application gateway),
+  `zeek`, `rita` (behavioral C2 / beaconing analysis), `telemetry-stack` (Grafana / Prometheus / Loki).
+- Concepts: `application-gateway`, `behavioral-analysis`.
+- Decisions: `cosmos-two-layer-ztna`, `hub-vs-switch-visibility`, `rita-rpz-automation`, `grafana-vs-custom-ui`.
+- Findings: `cosmos-hostname-oauth`, `dc-segment-mirror-limit`, `vyos-gre-two-step-commit`, `rfc3164-vs-rfc5424-syslog`.
+- Testing: `transparent-proxy-tests`. Runbooks: `13-cosmos`, `14-zeek-rita`, `15-rita-rpz-integration`, `16-telemetry`.
+
+**Reframed for the transparent proxy:** `attack-scenarios` result column Expected → Measured (A3 report-only
+footnote); `wpad-vs-transparent-proxy`, `managed-devices-scope`, `wt0-pf-rdr-limitation` reframed so the wt0
+pf-rdr limitation stays true while post-tunnel TPROXY (Option D, designed not tested) is the documented workaround.
+
+**Registration:** nav + nav_translations, 20 catalog rows, 17 new tags, architecture Component Map (a separate
+parallel-stack block + §6 / §9 hook notes), 10 bidirectional back-links.
+
+**Process:** five Opus drafting agents (one per cluster) → dual Opus auditors per cluster (facts + style) → one
+consolidated fix pass → two registration agents → build. All facts audits PASS (no factual errors); credentials
+redacted from the Cosmos runbook. `mkdocs build` clean (EN + NL, no broken links). Sources: raw/teamdocs (Rayan
+Cosmos / Zeek-RITA / Telemetry, Verslag07; Marnix TransProxy_Verslag02, Verslag37; V41). No `raw/` files modified.

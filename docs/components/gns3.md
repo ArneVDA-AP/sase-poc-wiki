@@ -149,6 +149,8 @@ The OOM-killer can deliver the same abrupt kill to any QEMU guest without warnin
 - [Architecture overview](../overview/architecture.md)
 - [Component: NetBird](netbird.md)
 - [Component: VyOS](vyos.md)
+- [Component: Zeek](zeek.md) — parallel-stack sensor hosted on the SASE_POC topology
+- [Component: Telemetry Stack](telemetry-stack.md) — parallel-stack observability (incl. GNS3 node monitoring)
 - [Finding: iptables FORWARD ordering](../findings/iptables-forward-ordering.md)
 - [Finding: GNS3 host RAM overcommit](../findings/gns3-host-ram-overcommit.md)
 - [Decision: GNS3 vs EVE-NG](../decisions/gns3-vs-eveng.md)

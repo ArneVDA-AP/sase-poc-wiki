@@ -175,6 +175,8 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 
 **Waarom Suricata NIET in de ICAP-pipeline zit:** Suricata is een pakketstroom-engine die TCP-streams herbouwt en patronen over verbindingen heen correleert. Een HTTP-body geleverd via ICAP verliest die context. De splitsing is architectureel fundamenteel, geen PoC-beperking. Zie [Beslissing: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
 
+**Parallel-stack-hook (nog niet geïntegreerd):** Twee parallel-stack-PoC's breiden deze pipeline conceptueel uit maar draaien op een aparte topologie, niet in de sandbox. [Zeek](../components/zeek.md) + [RITA](../components/rita.md) voegen een *gedragsgebaseerde* detectielaag toe die de signaturegebaseerde Laag 4 (Suricata) aanvult: Zeek zet ruwe stromen om in gestructureerde logs en RITA mijnt die op beaconing en C2-over-DNS, waarbij verdachte domeinen worden opgespoord die terugvloeien naar [Unbound RPZ](../components/ioc2rpz.md) (zie [Beslissing: RITA→RPZ-feed](../decisions/rita-rpz-automation.md)). De [transparante proxy](../components/transparent-proxy.md) voegt een netwerklaag-capturepunt toe dat *al* het overlay-verkeer onderschept, inclusief van apps die de WPAD/PAC-instelling voor de expliciete proxy negeren, als aanvulling op Laag 1 en niet als vervanging.
+
 ---
 
 ## 7. Componentenkaart
@@ -197,6 +199,18 @@ Lagen 1–3 zijn sequentieel bij elke HTTP-transactie. Laag 4 draait parallel op
 | Intune Endpoint Enforcement | [intune-endpoint-enforcement.md](../components/intune-endpoint-enforcement.md) | MDM-config-push naar het endpoint (afgedwongen PAC, trusted-cert, firewall, DSCP, split-tunnel) | ✅ Operationeel |
 | Entra ID CA + Intune | [ca-posture-hybrid.md](../decisions/ca-posture-hybrid.md) | Contextbewuste toegang (Gates 1+2) | ✅ Operationeel |
 | M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Laag 2, Office 365 Management Activity API-detectie | ✅ Detectie operationeel; AR-handhaving detect-only (live revoke nog niet actief) |
+
+### Parallel-stack-componenten
+
+De onderstaande rijen zijn PoC-componenten die op een aparte parallelle/SASE_POC-topologie zijn gebouwd en gevalideerd, **niet** geïntegreerd in de sandbox. Ze vullen de sandbox-stack aan maar maken geen deel uit van de huidige staat ervan; waar hun scope een sandbox-component overlapt, is de sandbox de source of truth. Zie de hook-notes in §6 en §9 voor waar elk logisch aanhaakt.
+
+| Component | Pagina | Rol | Status |
+|-----------|--------|-----|--------|
+| Transparante proxy (TPROXY) | [transparent-proxy.md](../components/transparent-proxy.md) | Netwerklaag-capture van al het verkeer voor niet-proxy-bewuste (BYOD) clients | 🟡 PoC-gevalideerd (parallel), sandbox-integratie pending |
+| Cosmos | [cosmos.md](../components/cosmos.md) | Identiteitsbewuste applicatie-admission gateway (per-app login + MFA) | 🟡 PoC-gevalideerd (parallel), sandbox-integratie pending |
+| Zeek | [zeek.md](../components/zeek.md) | Passieve netwerksensor, gestructureerde protocollogs voor gedragsanalyse | 🟡 PoC-gevalideerd (parallel), sandbox-integratie pending |
+| RITA | [rita.md](../components/rita.md) | Gedragsgebaseerde threat-analytics (beaconing, C2-over-DNS) die RPZ voedt | 🟡 PoC-gevalideerd (parallel), sandbox-integratie pending |
+| Telemetry-stack (Grafana + Prometheus + Loki) | [telemetry-stack.md](../components/telemetry-stack.md) | Aanvullende observability-laag naast Wazuh | 🟡 PoC-gevalideerd (parallel), sandbox-integratie pending |
 
 ---
 
@@ -243,6 +257,8 @@ Detectiesilo's (producers)
 ```
 
 De dual-write architectuur garandeert dat detectie-events beschikbaar zijn voor zowel real-time respons (control daemon) als forensisch onderzoek (Wazuh) onafhankelijk. Geen van beide paden is afhankelijk van het andere.
+
+**Parallel-stack-hook (nog niet geïntegreerd):** Twee verdere parallel-stack-PoC's staan naast deze laag zonder in de NATS-bus te zijn gekoppeld. [Cosmos](../components/cosmos.md) voegt een *applicatie-admission*-gate toe vóór interne DC-services (per-applicatie login + MFA bovenop NetBirds netwerk-admissie), die handhaaft op de applicatielaag in plaats van te reageren op events. De [telemetry-stack](../components/telemetry-stack.md) (Grafana + Prometheus + Loki) is een aanvullende observability-laag naast [Wazuh](../components/wazuh.md): Wazuh blijft de source of truth voor security-alerting, terwijl de telemetry-stack metrics en logs samenbrengt in één dashboard voor de PoC-omgeving.
 
 ---
 

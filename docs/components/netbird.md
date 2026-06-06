@@ -219,5 +219,7 @@ NetBird is both a producer and a target for NATS-driven enforcement:
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)
 - [Wazuh](wazuh.md)
+- [Component: Cosmos](cosmos.md) — parallel-stack application-admission layer on top of NetBird
+- [Component: Transparent Proxy](transparent-proxy.md) — parallel-stack overlay-traffic capture
 - [Concept: Identity Flow](../concepts/identity-flow.md)
 - [Runbook: Access Policy](../runbooks/07-access-policy.md)

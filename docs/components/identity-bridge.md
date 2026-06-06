@@ -46,4 +46,5 @@ The response flow: Squid sends `<IP> <group>` → helper queries `GET /lookup?ip
 - [Component: NetBird](netbird.md)
 - [Component: Squid](squid.md)
 - [Component: NATS JetStream](nats-jetstream.md)
+- [Component: Transparent Proxy](transparent-proxy.md) — parallel-stack capture path that would extend Identity Bridge coverage to non-proxy traffic
 - [Concept: Identity Flow](../concepts/identity-flow.md)

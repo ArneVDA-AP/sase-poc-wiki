@@ -45,6 +45,8 @@ echo 'http_port 100.70.154.79:3128 ssl-bump cert=/var/squid/ssl/ca.pem \
 
 **[ClamAV/c-icap](../components/clamav-cicap.md)** and **[Python DLP](../components/python-dlp.md)** — depend on SSL Bump to receive cleartext bodies. Without it, they cannot inspect HTTPS content.
 
+**[Transparent Proxy](../components/transparent-proxy.md)** — the parallel-stack TPROXY interception point runs its own Squid with SSL Bump on the same SASE-PoC-CA, so HTTPS captured transparently is decrypted the same way (not yet integrated into the sandbox).
+
 ## Key distinctions
 
 **ssl-bump on pre-auth listener** — the critical finding documented in [Finding: pre-auth ssl-bump params](../findings/pre-auth-ssl-bump-params.md): if the pre-auth include only has `http_port 100.70.154.79:3128` (no ssl-bump parameters), HTTPS traffic from NetBird clients tunnels as CONNECT without inspection. The full ssl-bump directive must be in the pre-auth conf.

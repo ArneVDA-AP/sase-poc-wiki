@@ -147,6 +147,8 @@ plugins:
             Wazuh dashboard airgap: Wazuh dashboard airgap
             NetBird JWT allow-groups lockout: NetBird JWT allow-groups lockout
             DC LAN isolation route ACL: DC LAN-isolatie route-ACL
+            Transparent Proxy: Transparante Proxy
+            Transparent Proxy Tests: Testblok Transparante Proxy
 
 markdown_extensions:
   - admonition
@@ -197,6 +199,11 @@ nav:
     - Control Daemon: components/control-daemon.md
     - Wazuh: components/wazuh.md
     - Intune Endpoint Enforcement: components/intune-endpoint-enforcement.md
+    - Transparent Proxy: components/transparent-proxy.md
+    - Cosmos: components/cosmos.md
+    - Zeek: components/zeek.md
+    - RITA: components/rita.md
+    - Telemetry Stack: components/telemetry-stack.md
   - Concepts:
     - concepts/index.md
     - SASE: concepts/sase.md
@@ -207,6 +214,8 @@ nav:
     - RPZ: concepts/rpz.md
     - DLP: concepts/dlp.md
     - Identity Flow: concepts/identity-flow.md
+    - Application Gateway: concepts/application-gateway.md
+    - Behavioral Analysis: concepts/behavioral-analysis.md
   - Decisions:
     - decisions/index.md
     - WPAD vs Transparent Proxy: decisions/wpad-vs-transparent-proxy.md
@@ -226,10 +235,15 @@ nav:
     - GroupSync Path B: decisions/groupsync-pad-b.md
     - Three-Layer CASB: decisions/casb-three-layers.md
     - Control Daemon Scope: decisions/control-daemon-scope.md
+    - Cosmos Two-Layer ZTNA: decisions/cosmos-two-layer-ztna.md
+    - Hub vs Switch Visibility: decisions/hub-vs-switch-visibility.md
+    - RITA RPZ Automation: decisions/rita-rpz-automation.md
+    - Grafana vs Custom UI: decisions/grafana-vs-custom-ui.md
   - Testing:
     - Acceptance Tests (F1–F15): testing/acceptance-tests.md
     - Attack Scenarios: testing/attack-scenarios.md
     - Demo Script (per rubric): testing/demo-script.md
+    - Transparent Proxy Tests: testing/transparent-proxy-tests.md
   - Runbooks:
     - runbooks/index.md
     - 01 — Lab Environment: runbooks/01-lab-environment.md
@@ -244,6 +258,10 @@ nav:
     - 10 — NATS JetStream: runbooks/10-nats-jetstream.md
     - 11 — Wazuh: runbooks/11-wazuh.md
     - 12 — Intune Endpoint: runbooks/12-intune-endpoint.md
+    - 13 — Cosmos: runbooks/13-cosmos.md
+    - 14 — Zeek/RITA: runbooks/14-zeek-rita.md
+    - 15 — RITA to RPZ: runbooks/15-rita-rpz-integration.md
+    - 16 — Telemetry: runbooks/16-telemetry.md
   - Findings:
     - findings/index.md
     - wt0 pf rdr limitation: findings/wt0-pf-rdr-limitation.md
@@ -271,6 +289,10 @@ nav:
     - Wazuh dashboard airgap: findings/wazuh-dashboard-airgate.md
     - NetBird JWT allow-groups lockout: findings/netbird-jwt-allow-groups-lockout.md
     - DC LAN isolation route ACL: findings/dc-lan-isolation-route-acl.md
+    - Cosmos hostname/OAuth limit: findings/cosmos-hostname-oauth.md
+    - DC segment mirror limit: findings/dc-segment-mirror-limit.md
+    - VyOS GRE two-step commit: findings/vyos-gre-two-step-commit.md
+    - RFC3164 vs RFC5424 syslog: findings/rfc3164-vs-rfc5424-syslog.md
   - Tags: tags.md
 
 extra:

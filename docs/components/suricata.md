@@ -165,6 +165,8 @@ Suricata publishes IDS alerts to the NATS event bus. A Python producer script on
 - [Finding: Suricata interface default bug](../findings/suricata-interface-default-bug.md)
 - [Finding: Suricata Netmap/virtio](../findings/suricata-netmap-virtio.md)
 - [Finding: wt0 pf rdr limitation](../findings/wt0-pf-rdr-limitation.md)
+- [Component: Zeek](zeek.md) — parallel-stack behavioral sensor complementing the signature IDS
+- [Component: RITA](rita.md) — parallel-stack behavioral analytics (beaconing / C2-over-DNS)
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)
 - [Wazuh](wazuh.md)

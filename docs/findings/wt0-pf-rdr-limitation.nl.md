@@ -24,6 +24,8 @@ Dit is een gedocumenteerde, bekende beperking. OPNsense GitHub issue #3857, gesl
 
 Overgeschakeld naar expliciete proxymodus met WPAD/PAC. Het PAC-bestand op `http://wpad.sandbox.local/wpad.dat` instrueert de browser om verkeer rechtstreeks naar `PROXY 100.70.154.79:3128` te sturen. Geen `pf rdr`-regel nodig.
 
+Voor het verkeer dat de proxy negeert (non-browser-apps) wordt de beperking omzeild in plaats van opgelost: onderschep *na* de tunnel in plaats van op de firewall erachter. Een post-tunnel TPROXY op de linuxpop01-exit-node vangt het gedecapsuleerde verkeer, dat het `wt0`-op-pop01-pad waarover deze bevinding gaat nooit bereikt. Die workaround is gevalideerd op de parallelle stack (de diagnostiek van het asymmetrische return-pad). Zie [Component: Transparante proxy](../components/transparent-proxy.md).
+
 Zie [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md).
 
 ## Lessen

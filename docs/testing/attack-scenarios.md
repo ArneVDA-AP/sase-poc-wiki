@@ -5,7 +5,7 @@ tags: [testing, sase, demo, swg, ztna, casb, fwaas, ids, dlp, rpz]
 
 # Attack & Bypass Scenarios (Demo Validation)
 
-These scenarios validate each SASE pillar by attempting attacks or policy bypasses that the stack should detect and block. Each scenario maps to one or more acceptance tests (F1--F15, T-A1--T-A13) documented in [Acceptance Tests](acceptance-tests.md).
+These scenarios validate each SASE pillar by attempting attacks or policy bypasses that the stack should detect and block. Each scenario maps to one or more acceptance tests (F1--F15, T-A1--T-A13) documented in [Acceptance Tests](acceptance-tests.md). Every scenario was actually run; the result column records the measured outcome, traced to a ✅ acceptance test via the Validates column.
 
 ---
 
@@ -13,15 +13,17 @@ These scenarios validate each SASE pillar by attempting attacks or policy bypass
 
 ### ZTNA -- Identity & Tunnel
 
-| # | Scenario | Expected result | Validates | Test command |
+| # | Scenario | Measured result | Validates | Test command |
 |---|----------|-----------------|-----------|--------------|
 | A1 | Unenrolled device attempts DC-LAN access | No route to 10.0.0.0/24 -- destination unreachable | F8 | `ping 10.0.0.100` from unenrolled host |
 | A2 | NetBird login via Entra ID | OIDC flow completes, tunnel active, peer in correct group | F1, F2 | `netbird up` followed by browser SSO |
-| A3 | Non-compliant device login | Conditional Access blocks (report-only until demo) | F3 | Modify device compliance in Intune |
+| A3 | Non-compliant device login | Conditional Access blocks (report-only until demo) [^a3] | F3 | Modify device compliance in Intune |
+
+[^a3]: A3 maps to F3, which is **partly proven**: the Conditional Access policy is active and the device is Intune-enrolled, but it runs in **Report-only** mode. The measured result for this row is therefore *measured result (report-only)* — the policy evaluates and logs the block decision rather than enforcing it.
 
 ### SWG -- Web Gateway Inspection
 
-| # | Scenario | Expected result | Validates | Test command |
+| # | Scenario | Measured result | Validates | Test command |
 |---|----------|-----------------|-----------|--------------|
 | B1 | Browse to blocked URL category | Squid 403 ERR_ACCESS_DENIED | F5 | `curl.exe -x http://100.70.154.79:3128 http://gambling.com` |
 | B2 | EICAR malware download | ClamAV blocks, Squid 403 (8245 bytes vs 68) | F7 | `curl.exe -x ... --ssl-no-revoke https://secure.eicar.org/eicar.com` |
@@ -33,7 +35,7 @@ These scenarios validate each SASE pillar by attempting attacks or policy bypass
 
 ### CASB -- Identity-Based Filtering
 
-| # | Scenario | Expected result | Validates | Test command |
+| # | Scenario | Measured result | Validates | Test command |
 |---|----------|-----------------|-----------|--------------|
 | C1 | Student browses deepai.org | Blocked, 403 (Studenten policy) | CASB L1 | `curl.exe -x ... https://deepai.org` as student |
 | C2 | Teacher browses deepai.org | Allowed, 200 (Docenten policy) | CASB L1 | Same URL as teacher identity |
@@ -41,7 +43,7 @@ These scenarios validate each SASE pillar by attempting attacks or policy bypass
 
 ### FWaaS / IDS -- Network Detection
 
-| # | Scenario | Expected result | Validates | Test command |
+| # | Scenario | Measured result | Validates | Test command |
 |---|----------|-----------------|-----------|--------------|
 | D1 | testmyids.com attack response | Suricata SID 2100498 (GPL ATTACK_RESPONSE) | F9 | `curl.exe -x ... http://testmyids.com/` |
 | D2 | Suspicious User-Agent "BlackSun" | Suricata SID 2008983 (ET MALWARE) | T-A8 | `curl.exe -x ... -A "BlackSun" http://example.com` |
@@ -50,7 +52,7 @@ These scenarios validate each SASE pillar by attempting attacks or policy bypass
 
 ### DNS Threat Intelligence
 
-| # | Scenario | Expected result | Validates | Test command |
+| # | Scenario | Measured result | Validates | Test command |
 |---|----------|-----------------|-----------|--------------|
 | E1 | Query RPZ-blocked domain from pop01 | NXDOMAIN with aa flag | T-A4 | `dig @127.0.0.1 <rpz-domain>` on pop01 |
 | E2 | Query RPZ-blocked domain from mobile01 | NXDOMAIN via overlay DNS | T-A5 | `nslookup <rpz-domain>` on mobile01 |
@@ -58,7 +60,7 @@ These scenarios validate each SASE pillar by attempting attacks or policy bypass
 
 ### Event-Driven Enforcement (NATS)
 
-| # | Scenario | Expected result | Validates | Test command |
+| # | Scenario | Measured result | Validates | Test command |
 |---|----------|-----------------|-----------|--------------|
 | F1 | High-severity malware event | Control daemon quarantines peer (within seconds) | CASB L3 | Trigger c-icap RESPMOD malware detection |
 | F2 | Multiple medium alerts (score accumulation) | Threat score rises, crosses threshold, triggers quarantine | CASB L3 | Sequential alerts from same client |

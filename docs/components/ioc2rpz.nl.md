@@ -227,6 +227,8 @@ DNS RPZ-block-events worden gepubliceerd naar de NATS event bus via `security.al
 - [Concept: RPZ / DNS-threat intelligence](../concepts/rpz.md)
 - [Beslissing: ioc2rpz vs. Unbound native](../decisions/ioc2rpz-vs-unbound-native.md)
 - [Beslissing: BIND als TSIG-intermediary](../decisions/bind-tsig-intermediary.md)
+- [Beslissing: RITA→RPZ-feed](../decisions/rita-rpz-automation.nl.md) — parallel-stack gedragsdomeinen als derde RPZ-feed
+- [Component: RITA](rita.nl.md) — parallel-stack-bron van beacon-afgeleide RPZ-domeinen
 - [Bevinding: Unbound geen TSIG](../findings/unbound-no-tsig.md)
 - [Bevinding: Unbound-configuratiepad](../findings/unbound-config-path.md)
 - [Bevinding: ioc2rpz GUI JS-bug](../findings/ioc2rpz-gui-js-bug.md)

@@ -24,6 +24,8 @@ This is a documented, known limitation. OPNsense GitHub issue #3857 — closed a
 
 Switched to explicit proxy mode with WPAD/PAC. The PAC file at `http://wpad.sandbox.local/wpad.dat` instructs the browser to send traffic directly to `PROXY 100.70.154.79:3128`. No `pf rdr` rule is needed.
 
+For the traffic that ignores the proxy (non-browser apps), the limitation is sidestepped rather than fixed: intercept *after* the tunnel instead of on the firewall behind it. A post-tunnel TPROXY on the linuxpop01 exit node captures the decapsulated traffic, which never reaches the `wt0`-on-pop01 path this finding is about. That workaround is validated on the parallel stack (the asymmetric-return-path diagnostics) — see [Component: Transparent Proxy](../components/transparent-proxy.md).
+
 See [Decision: WPAD/PAC vs transparent proxy](../decisions/wpad-vs-transparent-proxy.md).
 
 ## Lessons

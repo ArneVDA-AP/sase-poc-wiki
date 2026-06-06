@@ -46,4 +46,5 @@ Voor CASB Laag 2 pollt de `o365_producer` de Office 365 Management Activity API 
 
 - [Component: NATS JetStream](nats-jetstream.md)
 - [Component: Control Daemon](control-daemon.md)
+- [Component: Telemetry-stack](telemetry-stack.nl.md) — aanvullende parallel-stack-observability (Wazuh blijft source of truth voor alerting)
 - [Beslissing: CASB Three Layers](../decisions/casb-three-layers.md)

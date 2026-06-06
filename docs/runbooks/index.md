@@ -43,6 +43,10 @@ Step-by-step deployment guides for building the SASE PoC stack from scratch. Eac
 | 10 | [NATS JetStream](10-nats-jetstream.md) | mgmt01 + pop01 | Operational | Event bus, producers, Control Daemon, Redis |
 | 11 | [Wazuh](11-wazuh.md) | mgmt01 + pop01 | Operational | SIEM stack, NATS forwarder, M365 Active Response |
 | 12 | [Intune Endpoint](12-intune-endpoint.md) | Entra ID + Intune | Implemented | Cert, forced-PAC, firewall block-set, Teams QoS, split-tunnel Remediation; SITE01 enrollment |
+| 13 | [Cosmos](13-cosmos.md) | dc01 (parallel stack) | PoC | Cosmos install and per-app MFA (parallel stack) |
+| 14 | [Zeek/RITA](14-zeek-rita.md) | mgmt01 (parallel stack) | PoC | Hub/GRE setup, Zeek cluster, RITA beacon analysis (parallel stack) |
+| 15 | [RITA to RPZ](15-rita-rpz-integration.md) | mgmt01 + pop01 (parallel stack) | PoC | Automated RITA to ioc2rpz to BIND to Unbound feed (parallel stack) |
+| 16 | [Telemetry](16-telemetry.md) | mgmt01 (parallel stack) | PoC | Grafana / Prometheus / Loki stack deploy (parallel stack) |
 
 ## Dependency graph
 

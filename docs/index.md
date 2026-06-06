@@ -36,6 +36,11 @@ decision point. Opens full-width in a new tab.
 | [Wazuh](components/wazuh.md) | SIEM — NATS forwarder + pop01 agent + M365 Active Response |
 | [Zitadel](components/zitadel.md) | OIDC IdP broker — Entra ID → JWT group sync → NetBird |
 | [Intune Endpoint Enforcement](components/intune-endpoint-enforcement.md) | MDM endpoint config push — forced PAC, trusted-cert, firewall block-set, DSCP/QoS, split-tunnel routes |
+| [Transparent Proxy](components/transparent-proxy.md) | Transparent (TPROXY) interception on linuxpop01 for all-traffic capture (parallel-stack PoC). |
+| [Cosmos](components/cosmos.md) | Identity-aware application gateway with per-app MFA (parallel-stack PoC). |
+| [Zeek](components/zeek.md) | Network security monitor for protocol analysis and behavioral logging (parallel-stack PoC). |
+| [RITA](components/rita.md) | Beaconing / C2 behavioral analysis over Zeek logs, feeding RPZ (parallel-stack PoC). |
+| [Telemetry Stack](components/telemetry-stack.md) | Grafana + Prometheus + Loki observability layer (parallel-stack PoC). |
 | **Concepts** | |
 | [SASE](concepts/sase.md) | Five SASE pillars; our open-source implementation; commercial equivalents |
 | [Zero Trust](concepts/zero-trust.md) | Three-gate model; never trust always verify; Gates 1–3 |
@@ -45,6 +50,8 @@ decision point. Opens full-width in a new tab.
 | [RPZ](concepts/rpz.md) | DNS Response Policy Zones; zone transfer chain; NXDOMAIN enforcement |
 | [DLP](concepts/dlp.md) | Two-layer DLP; algorithmic validation vs pattern matching; upload vs download |
 | [Identity Flow](concepts/identity-flow.md) | Full identity chain: Entra ID → Zitadel → NetBird → Identity Bridge → Squid |
+| [Application Gateway](concepts/application-gateway.md) | Reverse proxy with identity gate and MFA as an application-admission layer. |
+| [Behavioral Analysis](concepts/behavioral-analysis.md) | Beaconing / C2 detection by behavior rather than signature. |
 | **Decisions** | |
 | [WPAD/PAC vs Transparent Proxy](decisions/wpad-vs-transparent-proxy.md) | Why explicit proxy — pf rdr does not work on wt0 |
 | [Two-Layer DLP](decisions/two-layer-dlp.md) | ClamAV (downloads) + Python DLP (uploads) — multipart parsing gap |
@@ -63,10 +70,15 @@ decision point. Opens full-width in a new tab.
 | [Managed devices scope](decisions/managed-devices-scope.md) | BYOD → managed Windows devices (lector mandate R11) |
 | [ZT SD-WAN Branch](decisions/zt-sdwan-branch.md) | Zero Trust Branch replaces classic IPsec SD-WAN |
 | [Control Daemon scope](decisions/control-daemon-scope.md) | IDS correlation + proxy_block removed from threat scoring |
+| [Cosmos Two-Layer ZTNA](decisions/cosmos-two-layer-ztna.md) | Why NetBird (device) plus Cosmos (application) form two ZTNA layers. |
+| [Hub vs Switch Visibility](decisions/hub-vs-switch-visibility.md) | Why a GNS3 Hub (not a Switch) for full traffic visibility to Zeek. |
+| [RITA RPZ Automation](decisions/rita-rpz-automation.md) | RITA beacons as a third dynamic RPZ threat-intel feed. |
+| [Grafana vs Custom UI](decisions/grafana-vs-custom-ui.md) | Why Grafana over a custom React UI for telemetry. |
 | **Testing** | |
 | [Acceptance Tests (F1–F15)](testing/acceptance-tests.md) | Full F1–F15 status table, test commands, actual output, per-pillar coverage, planned tests |
 | [Attack & Bypass Scenarios](testing/attack-scenarios.md) | Demo validation scenarios by SASE pillar: ZTNA, SWG, CASB, FWaaS/IDS, DNS, NATS enforcement |
 | [Demo Script (per rubric)](testing/demo-script.md) | Interactive presentation script mapping each rubric criterion to test, proof, screencap, and voiceover |
+| [Transparent Proxy Tests](testing/transparent-proxy-tests.md) | T-TP / T-ME validation of the transparent-proxy diagnostic and managed enforcement. |
 | **Runbooks** | |
 | [Runbooks overview](runbooks/index.md) | Build order, dependency graph, step-by-step deployment guides |
 | [01 — Lab Environment](runbooks/01-lab-environment.md) | Proxmox VM, GNS3 Server, topology, IP addressing, snapshots |
@@ -80,6 +92,10 @@ decision point. Opens full-width in a new tab.
 | [09 — Identity Bridge](runbooks/09-identity-bridge.md) | FastAPI overlay-IP → persona group, Squid external_acl |
 | [10 — NATS JetStream](runbooks/10-nats-jetstream.md) | Event bus, producers, Control Daemon, Redis |
 | [11 — Wazuh](runbooks/11-wazuh.md) | SIEM stack, NATS forwarder, M365 Active Response |
+| [13 — Cosmos](runbooks/13-cosmos.md) | Cosmos install and per-app MFA (parallel stack). |
+| [14 — Zeek/RITA](runbooks/14-zeek-rita.md) | Hub/GRE setup, Zeek cluster, RITA beacon analysis (parallel stack). |
+| [15 — RITA to RPZ](runbooks/15-rita-rpz-integration.md) | Automated RITA to ioc2rpz to BIND to Unbound feed (parallel stack). |
+| [16 — Telemetry](runbooks/16-telemetry.md) | Grafana / Prometheus / Loki stack deploy (parallel stack). |
 | **Findings** | |
 | [wt0 pf rdr limitation](findings/wt0-pf-rdr-limitation.md) | WireGuard Layer 3 — pf rdr cannot intercept on wt0 |
 | [pre-auth ssl-bump params](findings/pre-auth-ssl-bump-params.md) | Bare http_port without ssl-bump = no inspection on overlay listener |
@@ -106,6 +122,10 @@ decision point. Opens full-width in a new tab.
 | [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard Offline caused by empty UUID after down -v — resolved, in-place 4.14.5 GA bump |
 | [NetBird JWT allow-groups lockout](findings/netbird-jwt-allow-groups-lockout.md) | Enabling JWT allow-groups can lock out all users if misconfigured |
 | [DC-LAN isolation route ACL](findings/dc-lan-isolation-route-acl.md) | NetBird Networks + ACL required for DC-LAN isolation |
+| [Cosmos hostname/OAuth limit](findings/cosmos-hostname-oauth.md) | Hostname-on-IP limits Cosmos cross-domain OAuth/SSO. |
+| [DC segment mirror limit](findings/dc-segment-mirror-limit.md) | FreeBSD cannot kernel-mirror; DC inner-segment visibility is partial. |
+| [VyOS GRE two-step commit](findings/vyos-gre-two-step-commit.md) | VyOS GRE tunnel and mirror need two separate commits. |
+| [RFC3164 vs RFC5424 syslog](findings/rfc3164-vs-rfc5424-syslog.md) | Devices send RFC3164, tools expect RFC5424; rsyslog relay bridges it. |
 
 ---
 

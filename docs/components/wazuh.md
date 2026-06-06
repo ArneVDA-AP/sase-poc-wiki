@@ -46,4 +46,5 @@ For CASB Layer 2, the `o365_producer` polls the Office 365 Management Activity A
 
 - [Component: NATS JetStream](nats-jetstream.md)
 - [Component: Control Daemon](control-daemon.md)
+- [Component: Telemetry Stack](telemetry-stack.md) — complementary parallel-stack observability (Wazuh remains source of truth for alerting)
 - [Decision: CASB Three Layers](../decisions/casb-three-layers.md)

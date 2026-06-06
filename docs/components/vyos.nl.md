@@ -138,7 +138,9 @@ Enkel de *klassieke* IPsec/uCPE-SD-WAN-aanpak is uit scope gehaald: de oorspronk
 - [Architectuuroverzicht](../overview/architecture.md)
 - [Component: NetBird](netbird.md)
 - [Component: GNS3](gns3.md)
+- [Component: Zeek](zeek.nl.md) — parallel-stack-sensor gevoed door een GRE-verkeersmirror van de site-gateway
 - [Concept: SASE](../concepts/sase.md)
 - [Beslissing: SD-WAN uit scope](../decisions/sdwan-descoped.md)
 - [Beslissing: ZT SD-WAN Branch](../decisions/zt-sdwan-branch.md)
 - [Bevinding: DC-LAN-isolatie route ACL](../findings/dc-lan-isolation-route-acl.md)
+- [Bevinding: VyOS GRE twee-staps commit](../findings/vyos-gre-two-step-commit.nl.md) — GRE-tunnel + mirror vereist twee aparte commits

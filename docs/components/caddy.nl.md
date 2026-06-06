@@ -138,6 +138,7 @@ docker compose up -d caddy   # past nieuwe mounts toe
 - [Component: Squid](squid.md)
 - [Component: NetBird](netbird.md)
 - [Component: ioc2rpz](ioc2rpz.md)
+- [Component: Telemetry-stack](telemetry-stack.nl.md) — parallel-stack die Caddy hergebruikt als reverse proxy
 - [Beslissing: WPAD/PAC vs. transparante proxy](../decisions/wpad-vs-transparent-proxy.md)
 - [Beslissing: Zitadel als IdP-broker](../decisions/zitadel-idp-broker.md)
 - [Runbook: ZTNA Overlay](../runbooks/02-ztna-overlay.md)

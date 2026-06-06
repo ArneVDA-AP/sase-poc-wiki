@@ -1,0 +1,5033 @@
+
+<!doctype html>
+<html lang="nl" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="SASE PoC — OPNsense / Squid / ClamAV / c-icap / NetBird">
+      
+      
+        <meta name="author" content="Arne">
+      
+      
+        <link rel="canonical" href="https://ArneVDA-AP.github.io/sase-poc-wiki/nl/components/transparent-proxy/">
+      
+      
+        <link rel="prev" href="../intune-endpoint-enforcement/">
+      
+      
+        <link rel="next" href="../cosmos/">
+      
+      
+        
+          <link rel="alternate" href="../../../components/transparent-proxy/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="nl">
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Transparante proxy: TPROXY op linuxpop01 - Security Project Wiki</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+<script data-goatcounter="https://sase-poc-wiki.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#transparante-proxy-tproxy-op-linuxpop01" class="md-skip">
+          Ga naar inhoud
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../" title="Security Project Wiki" class="md-header__button md-logo" aria-label="Security Project Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Security Project Wiki
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Transparante proxy: TPROXY op linuxpop01
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Selecteer taal">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../components/transparent-proxy/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="nl" class="md-select__link">
+              Nederlands
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Zoeken" placeholder="Zoeken" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Zoeken">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Delen" aria-label="Delen" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Leegmaken" aria-label="Leegmaken" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Zoeken initialiseren
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Startpagina
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../overview/architecture/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Architectuur
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Componenten
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../concepts/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Concepten
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../decisions/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Beslissingen
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../testing/acceptance-tests/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Testen
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../runbooks/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Runbooks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../findings/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Bevindingen
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tags/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tags
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigatie" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Security Project Wiki" class="md-nav__button md-logo" aria-label="Security Project Wiki" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Security Project Wiki
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Startpagina
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architectuur
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Componenten
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Componenten
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../squid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../clamav-cicap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ClamAV / c-icap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python-dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../suricata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ioc2rpz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../netbird/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../caddy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caddy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../gns3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vyos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VyOS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zitadel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zitadel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../identity-bridge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Identity Bridge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nats-jetstream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NATS JetStream
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../control-daemon/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Daemon
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wazuh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../intune-endpoint-enforcement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Intune Endpoint Enforcement
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transparante Proxy
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transparante Proxy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Inhoudsopgave">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Inhoudsopgave
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#probleemstelling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Probleemstelling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#onderzochte-opties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Onderzochte opties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Onderzochte opties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optie-a-tproxy-cache_peer-dubbele-squid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optie A: TPROXY + cache_peer (dubbele Squid)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optie-b-tproxy-standalone-op-linuxpop01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optie B: TPROXY standalone op linuxpop01
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optie-c-routing-only-gateway-pf-rdr-op-pop01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optie C: routing-only gateway + pf rdr op pop01
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt01-als-exit-node-verworpen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt01 als exit node (verworpen)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netbird-route-zonder-exit-node-verworpen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NetBird-route zonder exit node (verworpen)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#de-diagnostiek-waarom-optie-c-faalt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        De diagnostiek: waarom Optie C faalt
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="De diagnostiek: waarom Optie C faalt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stap-1-source-ip-verlies-opsporen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stap 1: source-IP-verlies opsporen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stap-2-masquerade-off-pf-rdr-matcht" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stap 2: masquerade OFF, pf rdr matcht
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stap-3-squid-ontvangt-de-syn-maar-de-client-krijgt-niets-terug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stap 3: Squid ontvangt de SYN, maar de client krijgt niets terug
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stap-4-het-causale-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stap 4: het causale model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#waarom-masquerade-on-het-maskeerde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Waarom masquerade ON het maskeerde
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gekozen-architectuur-optie-d-tproxy-op-linuxpop01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gekozen architectuur: Optie D (TPROXY op linuxpop01)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gekozen architectuur: Optie D (TPROXY op linuxpop01)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#waarom-dit-symmetrisch-is" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Waarom dit symmetrisch is
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-ip-behoud-via-ip_transparent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source-IP-behoud via IP_TRANSPARENT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#twee-complementaire-squids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Twee complementaire Squids
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#de-managed-device-pivot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        De managed-device pivot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxy-bypass-mitigaties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proxy Bypass-mitigaties
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rubric-relevantie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rubric-relevantie
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bekende-problemen-valkuilen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bekende problemen / valkuilen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gerelateerd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gerelateerd
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cosmos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cosmos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../zeek/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zeek
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RITA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../telemetry-stack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Telemetry Stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../concepts/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Concepten
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Concepten
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/sase/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SASE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/zero-trust/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero Trust
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/icap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ICAP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/ssl-bump/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SSL Bump
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/wpad-pac/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WPAD/PAC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/rpz/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RPZ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/identity-flow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Identiteitsstroom
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/application-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Application Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../concepts/behavioral-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Behavioral Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../decisions/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Beslissingen
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Beslissingen
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/wpad-vs-transparent-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WPAD vs Transparante Proxy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/two-layer-dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Twee-laags DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ioc2rpz-vs-unbound-native/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz vs Unbound native
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/bind-tsig-intermediary/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BIND als TSIG-tussenstap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ids-vs-ips/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    IDS vs IPS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/suricata-wan-lan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata WAN+LAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/gns3-vs-eveng/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3 vs EVE-NG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/zitadel-idp-broker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zitadel als IdP-broker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/ca-posture-hybrid/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CA + Posture Hybride
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/sdwan-descoped/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SD-WAN Geschrapt
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/managed-devices-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Beheerde apparaten-scope
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/zt-sdwan-branch/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Zero Trust Branch SD-WAN
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/netbird-service-pat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird Service PAT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/nats-accounts-auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NATS Accounts-auth
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/groupsync-pad-b/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GroupSync Pad B
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/casb-three-layers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Drielaags CASB
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/control-daemon-scope/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Daemon-scope
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/cosmos-two-layer-ztna/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cosmos Two-Layer ZTNA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/hub-vs-switch-visibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hub vs Switch Visibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/rita-rpz-automation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RITA RPZ Automation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decisions/grafana-vs-custom-ui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Grafana vs Custom UI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testen
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testen
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/acceptance-tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Acceptatietests (F1–F15)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/attack-scenarios/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Aanvalsscenario's
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/demo-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo-script (per rubric)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing/transparent-proxy-tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testblok Transparante Proxy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../runbooks/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runbooks
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runbooks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/01-lab-environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    01 — Labomgeving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/02-ztna-overlay/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    02 — ZTNA-overlay
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/03-proxy-wpad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    03 — Proxy & WPAD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/04-malware-dlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    04 — Malware & DLP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/05-ids/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    05 — IDS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/06-dns-threat-intel/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    06 — DNS Threat Intel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/07-access-policy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    07 — Access Policy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/08-groupsync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    08 — GroupSync
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/09-identity-bridge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    09 — Identity Bridge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/10-nats-jetstream/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 — NATS JetStream
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/11-wazuh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    11 — Wazuh
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/12-intune-endpoint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    12 — Intune Endpoint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/13-cosmos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    13 — Cosmos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/14-zeek-rita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    14 — Zeek/RITA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/15-rita-rpz-integration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    15 — RITA to RPZ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../runbooks/16-telemetry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    16 — Telemetry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../findings/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bevindingen
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Bevindingen
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/wt0-pf-rdr-limitation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    wt0 pf rdr beperking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/pre-auth-ssl-bump-params/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pre-auth ssl-bump parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/squid-clearlog-destroys-file/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squid clearlog vernietigt bestand
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/stevenblack-incompatible/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    StevenBlack incompatibel
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/suricata-interface-default-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata interface default bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/suricata-netmap-virtio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata Netmap/virtio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/unbound-no-tsig/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unbound geen TSIG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/unbound-config-path/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Unbound config-pad
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/ioc2rpz-gui-js-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ioc2rpz GUI JS bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/pyicap-collections-bug/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    pyicap collections bug
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/iptables-forward-ordering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    iptables FORWARD-volgorde
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-primary-nameserver/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird primaire nameserver
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-config-zero-bytes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird config nul bytes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/docker-volume-recreation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker volume hermaak
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/curl-ssl-no-revoke/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    curl --ssl-no-revoke op Windows
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/suricata-connection-pooling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Suricata verbindingspooling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-issue-3127/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird issue 3127
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/squid-overlay-bind-race/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Squid overlay bind-race
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/overlay-ip-instability/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overlay-IP-instabiliteit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/nats-store-dir/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NATS store-dir
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/wazuh-cpu-glibc/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wazuh CPU glibc
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/gns3-host-ram-overcommit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GNS3-host RAM-overcommit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/wazuh-dashboard-airgate/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wazuh dashboard airgap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/netbird-jwt-allow-groups-lockout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NetBird JWT allow-groups lockout
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/dc-lan-isolation-route-acl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DC LAN-isolatie route-ACL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/cosmos-hostname-oauth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cosmos hostname/OAuth limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/dc-segment-mirror-limit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DC segment mirror limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/vyos-gre-two-step-commit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VyOS GRE two-step commit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../findings/rfc3164-vs-rfc5424-syslog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    RFC3164 vs RFC5424 syslog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Inhoudsopgave">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Inhoudsopgave
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#probleemstelling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Probleemstelling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#onderzochte-opties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Onderzochte opties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Onderzochte opties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optie-a-tproxy-cache_peer-dubbele-squid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optie A: TPROXY + cache_peer (dubbele Squid)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optie-b-tproxy-standalone-op-linuxpop01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optie B: TPROXY standalone op linuxpop01
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optie-c-routing-only-gateway-pf-rdr-op-pop01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optie C: routing-only gateway + pf rdr op pop01
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mgmt01-als-exit-node-verworpen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        mgmt01 als exit node (verworpen)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netbird-route-zonder-exit-node-verworpen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NetBird-route zonder exit node (verworpen)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#de-diagnostiek-waarom-optie-c-faalt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        De diagnostiek: waarom Optie C faalt
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="De diagnostiek: waarom Optie C faalt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#stap-1-source-ip-verlies-opsporen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stap 1: source-IP-verlies opsporen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stap-2-masquerade-off-pf-rdr-matcht" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stap 2: masquerade OFF, pf rdr matcht
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stap-3-squid-ontvangt-de-syn-maar-de-client-krijgt-niets-terug" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stap 3: Squid ontvangt de SYN, maar de client krijgt niets terug
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stap-4-het-causale-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stap 4: het causale model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#waarom-masquerade-on-het-maskeerde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Waarom masquerade ON het maskeerde
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gekozen-architectuur-optie-d-tproxy-op-linuxpop01" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gekozen architectuur: Optie D (TPROXY op linuxpop01)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gekozen architectuur: Optie D (TPROXY op linuxpop01)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#waarom-dit-symmetrisch-is" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Waarom dit symmetrisch is
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#source-ip-behoud-via-ip_transparent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Source-IP-behoud via IP_TRANSPARENT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#twee-complementaire-squids" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Twee complementaire Squids
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#de-managed-device-pivot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        De managed-device pivot
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#proxy-bypass-mitigaties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Proxy Bypass-mitigaties
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rubric-relevantie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rubric-relevantie
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bekende-problemen-valkuilen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bekende problemen / valkuilen
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gerelateerd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gerelateerd
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <span class="md-tag">enforcement</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">identity-bridge</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">intune</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">netbird</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">proxy</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">sase</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">squid</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">tproxy</span>
+      
+    
+  </nav>
+
+
+
+<h1 id="transparante-proxy-tproxy-op-linuxpop01">Transparante proxy: TPROXY op linuxpop01<a class="headerlink" href="#transparante-proxy-tproxy-op-linuxpop01" title="Permanent link">&para;</a></h1>
+<p><strong>Rol:</strong> Defense-in-depth enforcement voor niet-beheerde (BYOD) devices. Transparante interceptie van al het HTTP/HTTPS-verkeer dat via de NetBird-overlay binnenkomt, ongeacht de clientconfiguratie.<br />
+<strong>Status:</strong> ✅ PoC-validated op de parallelle stack (diagnostiek); Optie D ontworpen, sandbox-integratie pending. De architectuurkeuze is gevalideerd op de <code>.11</code>-omgeving, maar nog niet in het sandbox-geheel geïntegreerd: Sessie 9 is gedeprioriteerd omdat managed-device enforcement via Intune het primaire pad dekt (V41).<br />
+<strong>Node:</strong> linuxpop01 (Ubuntu 24.04). Op de parallelle stack is dit <code>192.168.122.17</code>; de voorgestelde sandbox-node krijgt <code>192.168.122.43</code> en is nog niet aangemaakt.</p>
+<hr />
+<h2 id="probleemstelling">Probleemstelling<a class="headerlink" href="#probleemstelling" title="Permanent link">&para;</a></h2>
+<p>De sandbox gebruikt een <a href="../../decisions/wpad-vs-transparent-proxy/">expliciete proxy via WPAD/PAC</a>: clients sturen hun HTTP/HTTPS-verkeer naar Squid op <code>100.70.154.79:3128</code> omdat het PAC-bestand dat voorschrijft. Dit is een client-side compliance model. De inspectie werkt alleen als de applicatie de systeemproxyinstelling respecteert.</p>
+<p>Het probleem zit bij applicaties met een eigen netwerkstack (Spotify, Teams system services, game launchers, PowerShell-scripts). Die negeren de WinINET-proxy en sturen hun verkeer rechtstreeks via de NetBird-tunnel. Dat verkeer exit-t ongeïnspecteerd via de gemasqueradede tunnel: geen Squid-log, geen DLP, geen URL-filter, geen Identity Bridge-trace.</p>
+<p>Dit raakt de rubric op twee punten:</p>
+<table>
+<thead>
+<tr>
+<th>Rubric-criterium</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SWG, Traffic routing</strong></td>
+<td>"Volledig geforceerd via SWG" vereist dat <em>al</em> het verkeer door de inspectiestack passeert, niet alleen browserverkeer.</td>
+</tr>
+<tr>
+<td><strong>SWG, Identity-based access</strong></td>
+<td>De Identity Bridge (<code>external_acl_type</code> met <code>%SRC</code>) werkt alleen voor verkeer dat Squid passeert. Non-proxy-verkeer is onzichtbaar.</td>
+</tr>
+</tbody>
+</table>
+<p>De fundamentele vraag: hoe dwing je inspectie af voor verkeer dat de proxy negeert?</p>
+<hr />
+<h2 id="onderzochte-opties">Onderzochte opties<a class="headerlink" href="#onderzochte-opties" title="Permanent link">&para;</a></h2>
+<p>Het onderzoek analyseerde vijf architectuuropties. Optie B was operationeel op de <code>.11</code>-omgeving (de werkende implementatie met masquerade ON). Optie C is grondig geïmplementeerd en in meerdere configuraties getest op dezelfde omgeving. De diagnostiek die daaruit volgde is de kern van dit document. De volledige analyse staat in Addendum F v2 (vijf-optie-analyse) en Addendum F v3 (herziening na diagnostiek).</p>
+<h3 id="optie-a-tproxy-cache_peer-dubbele-squid">Optie A: TPROXY + cache_peer (dubbele Squid)<a class="headerlink" href="#optie-a-tproxy-cache_peer-dubbele-squid" title="Permanent link">&para;</a></h3>
+<p>linuxpop01 intercepteert via TPROXY en stuurt door naar pop01 Squid via <code>cache_peer</code>.</p>
+<p><strong>Verworpen.</strong> SSL Bump + cache_peer is fundamenteel incompatibel. Twee scenario's, beide gebroken: (1) beide Squids bumpen, dus dubbele MITM en TLS breekt; (2) alleen pop01 bumpt, dus linuxpop01 kan de CONNECT-tunnel niet inspecteren. Architectureel niet op te lossen zonder de SSL Bump-keten te doorbreken.</p>
+<h3 id="optie-b-tproxy-standalone-op-linuxpop01">Optie B: TPROXY standalone op linuxpop01<a class="headerlink" href="#optie-b-tproxy-standalone-op-linuxpop01" title="Permanent link">&para;</a></h3>
+<p>linuxpop01 draait een eigen Squid met TPROXY (<code>IP_TRANSPARENT</code>), SSL Bump en ICAP. Squid op linuxpop01 is zowel interceptiepunt als connectie-eindpunt.</p>
+<p><strong>Architectureel correct</strong>, de oorspronkelijke keuze. De prijs: een tweede Squid-instantie met eigen SSL Bump- en ICAP-configuratie. In v2 werd deze optie gepasseerd ten gunste van Optie C om één Squid te behouden. In v3 bleek Optie C onhoudbaar en is Optie B (hernoemd naar Optie D met verfijningen) alsnog de gekozen architectuur.</p>
+<h3 id="optie-c-routing-only-gateway-pf-rdr-op-pop01">Optie C: routing-only gateway + pf rdr op pop01<a class="headerlink" href="#optie-c-routing-only-gateway-pf-rdr-op-pop01" title="Permanent link">&para;</a></h3>
+<p>linuxpop01 als lichtgewicht NAT-gateway (alleen <code>ip_forward</code>, geen Squid), met transparante <code>pf rdr</code>-interceptie op pop01 (OPNsense).</p>
+<p><strong>Verworpen na implementatie en diagnostiek.</strong> Optie C is grondig geïmplementeerd en getest op de <code>.11/.17</code>-omgeving. De diagnostiek leverde een sluitend causaal model op voor het falen. Zie <a href="#de-diagnostiek-waarom-optie-c-faalt">De diagnostiek: waarom Optie C faalt</a>.</p>
+<h3 id="mgmt01-als-exit-node-verworpen"><del>mgmt01 als exit node</del> (verworpen)<a class="headerlink" href="#mgmt01-als-exit-node-verworpen" title="Permanent link">&para;</a></h3>
+<p><strong>Verworpen op architectuurprincipe.</strong> Vermengt het control plane (NetBird management, Zitadel, Caddy) met het data plane (exit node). Een schending van het Zero Trust blast radius-principe.</p>
+<h3 id="netbird-route-zonder-exit-node-verworpen"><del>NetBird-route zonder exit node</del> (verworpen)<a class="headerlink" href="#netbird-route-zonder-exit-node-verworpen" title="Permanent link">&para;</a></h3>
+<p>Variant van Optie C. Zelfde routing-pad, zelfde return-pad-probleem.</p>
+<hr />
+<h2 id="de-diagnostiek-waarom-optie-c-faalt">De diagnostiek: waarom Optie C faalt<a class="headerlink" href="#de-diagnostiek-waarom-optie-c-faalt" title="Permanent link">&para;</a></h2>
+<p><em>Bron: TransProxy_Verslag02 (30-31 mei 2026), de volledige diagnostische sessie op de parallelle stack.</em></p>
+<p>De diagnostiek begon als review van de werkende implementatie (masquerade ON) en escaleerde naar een volledige ontrafeling van het return-pad-probleem. De kernbevinding: transparante proxy-interceptie op een node achter een tweede stateful router kan het verkeer niet correct retourneren zodra het source-IP behouden wordt.</p>
+<h3 id="stap-1-source-ip-verlies-opsporen">Stap 1: source-IP-verlies opsporen<a class="headerlink" href="#stap-1-source-ip-verlies-opsporen" title="Permanent link">&para;</a></h3>
+<p>Bevinding 01.9 ("Linux herschrijft source IP bij forwarding") bleek fout gediagnosticeerd. Linux-forwarding herschrijft nooit source-IP's zonder expliciete SNAT of MASQUERADE. De werkelijke oorzaak: NetBird's "Add Exit Node"-functie forceert masquerade ON in een nftables-chain (<code>netbird-rt-postrouting</code>), zonder UI-toggle. De NetBird-documentatie bevestigt dit letterlijk.</p>
+<p><strong>Oplossing:</strong> exit node verwijderen en hermaken als reguliere Network Route (<code>0.0.0.0/0</code>, masquerade OFF).</p>
+<h3 id="stap-2-masquerade-off-pf-rdr-matcht">Stap 2: masquerade OFF, pf rdr matcht<a class="headerlink" href="#stap-2-masquerade-off-pf-rdr-matcht" title="Permanent link">&para;</a></h3>
+<p>Na het verwijderen van de masquerade komt het overlay-IP (<code>100.86.x.x</code>) intact aan op pop01 vtnet0. De <code>pf rdr</code>-regels matchen correct:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>@6 rdr on vtnet0 inet proto tcp from 100.64.0.0/10 ... port = https -&gt; 192.168.122.11 port 3130
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>   [ Packets: 10275  State Creations: 536 ]
+</code></pre></div>
+<h3 id="stap-3-squid-ontvangt-de-syn-maar-de-client-krijgt-niets-terug">Stap 3: Squid ontvangt de SYN, maar de client krijgt niets terug<a class="headerlink" href="#stap-3-squid-ontvangt-de-syn-maar-de-client-krijgt-niets-terug" title="Permanent link">&para;</a></h3>
+<p>De TCP-state op pop01 tijdens een verbinding:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>tcp4  192.168.122.11:3129  100.86.233.213:57989  SYN_RCVD
+</code></pre></div>
+<p><code>SYN_RCVD</code> is het beslissende bewijs: Squid ontving de SYN, de kernel stuurde een SYN-ACK, maar de ACK van de client komt nooit. Twee gelijktijdige tcpdumps op linuxpop01 bevestigden het: de SYN-ACK arriveert onvertaald op ens3 (<code>src=192.168.122.11:3129</code>), maar verschijnt nooit op wt0. Conntrack dropt hem.</p>
+<h3 id="stap-4-het-causale-model">Stap 4: het causale model<a class="headerlink" href="#stap-4-het-causale-model" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Squid antwoordt vanaf 192.168.122.11:3129
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  → pf reverse-translateert NIET (lokaal getermineerde verbinding)
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  → SYN-ACK vertrekt onvertaald: 192.168.122.11:3129 → 100.86.233.213
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>  → Routeert via statische route naar linuxpop01
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  → Op linuxpop01: conntrack verwacht antwoord van origin:80, krijgt 192.168.122.11:3129
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  → INVALID → FORWARD RELATED,ESTABLISHED → DROP
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  → Client krijgt niets → SYN_RCVD hang → timeout
+</code></pre></div>
+<p>Dit is een architecturele mismatch, geen configuratiefout. De interceptie zit op de verkeerde node: een pf rdr achter een tweede stateful router (linuxpop01's conntrack) kan niet symmetrisch retourneren. Dit is precies de reden waarom Linux TPROXY bestaat.</p>
+<h3 id="waarom-masquerade-on-het-maskeerde">Waarom masquerade ON het maskeerde<a class="headerlink" href="#waarom-masquerade-on-het-maskeerde" title="Permanent link">&para;</a></h3>
+<p>Met masquerade ON was de source <code>192.168.122.17</code> (linuxpop01's eigen IP). Squid's antwoord ging naar een lokaal IP, dus lokale aflevering en geen forwarding. linuxpop01's masquerade-conntrack de-NAT'te het terug naar de client. Het werkte niet <em>dóór</em> de masquerade, maar doordat de source toevallig lokaal was. De prijs: source-IP verloren, en daarmee de Identity Bridge onbruikbaar.</p>
+<hr />
+<h2 id="gekozen-architectuur-optie-d-tproxy-op-linuxpop01">Gekozen architectuur: Optie D (TPROXY op linuxpop01)<a class="headerlink" href="#gekozen-architectuur-optie-d-tproxy-op-linuxpop01" title="Permanent link">&para;</a></h2>
+<p><em>Bron: Addendum F v3, TPROXY Herziening (31 mei 2026).</em></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>mobile01
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  └─[WireGuard]──► linuxpop01 (wt0)
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>                     │
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>                     │ iptables mangle PREROUTING
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>                     │   TPROXY: TCP/80  → lokale Squid :3129
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>                     │   TPROXY: TCP/443 → lokale Squid :3130
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>                     ▼
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>                   Squid op linuxpop01
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>                     │  ziet ORIGINELE src (100.86.x.x) + dst
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>                     │  SSL Bump (zelfde SASE-PoC-CA)
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>                     │  ICAP RESPMOD → ClamAV  (pop01:1344)
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>                     │  ICAP REQMOD  → Python DLP (mgmt01:1345)
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>                     │
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>                     └──► ens3 ──► pop01 ──► internet
+</code></pre></div>
+<blockquote>
+<p><strong>Let op (Optie D is ontworpen, niet getest).</strong> Dit ontwerp is architectureel onderbouwd in Addendum F v3, maar nog niet empirisch gevalideerd. De diagnostiek (Optie C faalt) is wél getest op de parallelle stack; de TPROXY-tests 5 en 10 (source-IP-behoud en symmetrisch return-pad) zijn niet uitgevoerd omdat Sessie 9 is gedeprioriteerd. Zie <a href="../../testing/transparent-proxy-tests/">Testblok: transparante proxy en enforcement</a> (T-TP5/T-TP6).</p>
+</blockquote>
+<h3 id="waarom-dit-symmetrisch-is">Waarom dit symmetrisch is<a class="headerlink" href="#waarom-dit-symmetrisch-is" title="Permanent link">&para;</a></h3>
+<p>Squid op linuxpop01 is zowel het interceptiepunt als het connectie-eindpunt. De interceptie gebeurt in <code>mangle PREROUTING</code>, vóór de forwarding-beslissing. Het pakket wordt naar de lokale socket geleid en verlaat de forwarding-pijplijn nooit. Er is geen tweede stateful router tussen client en proxy die de flow-symmetrie kan breken.</p>
+<h3 id="source-ip-behoud-via-ip_transparent">Source-IP-behoud via IP_TRANSPARENT<a class="headerlink" href="#source-ip-behoud-via-ip_transparent" title="Permanent link">&para;</a></h3>
+<p>TPROXY markeert het pakket en de kernel routeert het naar een lokale socket met de <code>IP_TRANSPARENT</code>-socketoptie. Squid's tproxy-listener ontvangt de verbinding met zowel src als dst intact. Daarmee logt Squid het echte client-overlay-IP, de voorwaarde voor de <a href="../identity-bridge/">Identity Bridge</a> (<code>external_acl_type</code> met <code>%SRC</code> → NetBird overlay-IP → Entra ID-gebruiker).</p>
+<h3 id="twee-complementaire-squids">Twee complementaire Squids<a class="headerlink" href="#twee-complementaire-squids" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>pop01 Squid</th>
+<th>linuxpop01 Squid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Modus</td>
+<td>expliciet (WPAD/PAC, <code>:3128</code>)</td>
+<td>transparant (TPROXY, <code>:3129</code>/<code>:3130</code>)</td>
+</tr>
+<tr>
+<td>Doel</td>
+<td>clients die de proxy respecteren</td>
+<td>enforcement voor al het overige verkeer</td>
+</tr>
+<tr>
+<td>SSL Bump</td>
+<td>ja (zelfde CA)</td>
+<td>ja (zelfde CA)</td>
+</tr>
+<tr>
+<td>ICAP</td>
+<td>ClamAV lokaal + DLP mgmt01</td>
+<td>ClamAV pop01 + DLP mgmt01 (over netwerk)</td>
+</tr>
+<tr>
+<td>Identity Bridge</td>
+<td>optioneel</td>
+<td><strong>primair</strong> (ziet echte src-IP)</td>
+</tr>
+</tbody>
+</table>
+<p>WPAD/PAC en TPROXY zijn complementair, niet concurrerend: WPAD is het configuratiemechanisme voor compliant verkeer, TPROXY is de enforcement-boundary voor al het overige.</p>
+<hr />
+<h2 id="de-managed-device-pivot">De managed-device pivot<a class="headerlink" href="#de-managed-device-pivot" title="Permanent link">&para;</a></h2>
+<p><em>Bron: SD-WAN Nulmeting v1.0 §2.1 (3 juni 2026); V41 (Intune-enforcement sessie).</em></p>
+<p>De non-browser-apps-gap was het enige dat transparante interceptie vereiste, en dan nog alleen voor <strong>niet-beheerde</strong> clients. Met mobile01 nu Entra-joined + Intune-enrolled (V40) en de ingelogde user géén lokale admin, is endpoint-enforcement via MDM beschikbaar zonder dat de user het kan terugdraaien. Dit is exact het patroon van Zscaler ZCC en de Netskope-client.</p>
+<p>V41 leverde het bewijs dat managed-device enforcement werkt:</p>
+<table>
+<thead>
+<tr>
+<th>Intune-profiel</th>
+<th>Wat het afdwingt</th>
+<th>Bewijs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>2ITCSC1A-SASE-PoC-CA-Root</code></td>
+<td>SASE-PoC-CA in Computer Root store</td>
+<td>Vervangt de handmatige <code>certutil</code>-stap</td>
+</tr>
+<tr>
+<td><code>2ITCSC1A-SASE-Proxy-PAC</code></td>
+<td>Systeembrede proxy via OMA-URI</td>
+<td>Overlay-<code>%SRC</code> in pop01 access.log (B1)</td>
+</tr>
+<tr>
+<td><code>2ITCSC1A-SASE-FW-BypassBlock</code></td>
+<td>QUIC UDP/443 + DoT TCP/853 geblokkeerd</td>
+<td>QUIC→TCP-fallback + bump bewezen (B3)</td>
+</tr>
+<tr>
+<td><code>2ITCSC1A-Route-Remediation</code></td>
+<td>Teams Optimize via fysieke gateway</td>
+<td><code>Find-NetRoute</code> → fysieke gw (B2)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Gevolg:</strong> TPROXY/linuxpop01 is geen prerequisite meer voor de SD-WAN-pijler en evenmin voor beheerde devices. linuxpop01 keert terug naar zijn oorspronkelijke rol: defense-in-depth voor niet-beheerde devices. Sessie 9 (TPROXY-implementatie) is gedeprioriteerd ten gunste van de rubric-dragende sessies en niet meer uitgevoerd binnen de projectperiode. De architectuur is volledig uitgewerkt en gevalideerd op de <code>.11</code>-omgeving; de implementatiespecificatie (Addendum F v3) ligt klaar voor eventuele toekomstige uitvoering. Zie <a href="../../decisions/managed-devices-scope/">Beslissing: scope beheerde Windows-apparaten</a>.</p>
+<hr />
+<h2 id="proxy-bypass-mitigaties">Proxy Bypass-mitigaties<a class="headerlink" href="#proxy-bypass-mitigaties" title="Permanent link">&para;</a></h2>
+<p><em>Bron: <code>SASE_PoC_Proxy_Bypass_Mitigaties.md</code> (mei 2026).</em></p>
+<p>Het Proxy Bypass-document inventariseert vier resterende omzeilingsmogelijkheden na implementatie van transparante interceptie:</p>
+<table>
+<thead>
+<tr>
+<th>Gap</th>
+<th>Aanval</th>
+<th>Mitigatie</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. QUIC</strong></td>
+<td>HTTP/3 over UDP/443 passeert de TCP-interceptie</td>
+<td><code>iptables -A FORWARD -i wt0 -p udp --dport 443 -j DROP</code> op linuxpop01; de browser valt terug op TCP/443</td>
+<td>Op de sandbox afgedekt door de Intune firewall-CSP (V41)</td>
+</tr>
+<tr>
+<td><strong>2. Non-standard poorten</strong></td>
+<td>SSH-tunnel op 22, SOCKS5 op 1080, enzovoort</td>
+<td>Deny-all FORWARD + expliciete whitelist (80, 443, 53, 123, ICMP)</td>
+<td>Architectureel uitgewerkt; productie-aanpak is full default-deny</td>
+</tr>
+<tr>
+<td><strong>3. DoH/DoT</strong></td>
+<td>DNS over HTTPS/TLS omzeilt Unbound RPZ</td>
+<td>DoT: TCP/853 geblokkeerd (deny-all of expliciete regel); DoH: Squid-ACL blokkeert bekende resolvers op SNI</td>
+<td>Op de sandbox afgedekt door de Intune firewall-CSP (V41)</td>
+</tr>
+<tr>
+<td><strong>4. VPN-in-VPN</strong></td>
+<td>Tweede WireGuard/OpenVPN-client op het device</td>
+<td>Drie-gate circulaire afhankelijkheid: CA compliance → NetBird auth → Intune firewall rules. Architecturele grens: verdedigd, niet opgelost.</td>
+<td>Gedocumenteerd als bekende beperking</td>
+</tr>
+</tbody>
+</table>
+<p>Gaps 1-3 verhuizen van pf-regels op pop01 naar iptables FORWARD op linuxpop01 zodra TPROXY geïmplementeerd wordt. Dat lost en passant bevinding 01.11 op: de floating-rule/<code>quick</code>-interactie die op OPNsense de pf rdr brak, bestaat niet in iptables.</p>
+<hr />
+<h2 id="rubric-relevantie">Rubric-relevantie<a class="headerlink" href="#rubric-relevantie" title="Permanent link">&para;</a></h2>
+<p>De transparante proxy en het bijbehorende onderzoek raken meerdere rubric-criteria, ook zonder live implementatie op de sandbox:</p>
+<table>
+<thead>
+<tr>
+<th>Rubric-criterium</th>
+<th>Bijdrage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SWG, Traffic routing</strong></td>
+<td>Het onderzoek toont architecturaal aan hoe "volledig geforceerd via SWG" bereikt wordt voor non-browser-verkeer. De managed-device-variant (Intune) is live bewezen (V41).</td>
+</tr>
+<tr>
+<td><strong>SWG, Identity-based access</strong></td>
+<td>TPROXY behoudt het client-overlay-IP (<code>%SRC</code>), de voorwaarde voor de Identity Bridge (overlay-IP → Entra ID-gebruiker → persona-ACL). Zonder source-IP-behoud is identity-based filtering onmogelijk voor transparant geïntercepteerd verkeer. Dit was de kernmotivatie voor het hele onderzoek.</td>
+</tr>
+<tr>
+<td><strong>SWG, Malware-inspectie</strong></td>
+<td>Optie D behoudt de volledige ICAP-pijplijn (ClamAV + DLP) voor transparant geïntercepteerd verkeer.</td>
+</tr>
+<tr>
+<td><strong>Algemeen, Troubleshooting</strong></td>
+<td>De <code>SYN_RCVD</code>-diagnostiek (TransProxy_Verslag02) is een diepgaande analyse van een asymmetrisch return-pad, precies het type root cause-analyse dat "Diepgaande analyse" vereist.</td>
+</tr>
+<tr>
+<td><strong>Algemeen, Architectuur</strong></td>
+<td>Vijf opties systematisch geanalyseerd, drie geïmplementeerd en getest, foute diagnose gecorrigeerd, architectuurbeslissing herzien op basis van bewijs.</td>
+</tr>
+<tr>
+<td><strong>Algemeen, Keuze open-source tools</strong></td>
+<td>Afweging pf (FreeBSD) versus iptables/TPROXY (Linux) op basis van kernel-specifieke beperkingen, niet op voorkeur.</td>
+</tr>
+<tr>
+<td><strong>Algemeen, Samenwerking</strong></td>
+<td>De finding en het decision doc van het teamlid vormden het startpunt; de diagnostiek bouwde voort op zijn implementatie; zijn Optie B werd architecturaal gevalideerd.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="bekende-problemen-valkuilen">Bekende problemen / valkuilen<a class="headerlink" href="#bekende-problemen-valkuilen" title="Permanent link">&para;</a></h2>
+<p><strong><code>pf rdr</code> werkt niet op <code>wt0</code>.</strong> Dit is de oorspronkelijke beperking (V17, plugins#3857) die het hele onderzoek in gang zette. WireGuard-forwarded-verkeer wordt na decapsulatie direct in de kernel routing stack geïnjecteerd en verschijnt als egress, niet als ingress. Zie <a href="../../findings/wt0-pf-rdr-limitation/">Bevinding: wt0 pf rdr-beperking</a>.</p>
+<p><strong>"Add Exit Node" forceert masquerade ON.</strong> NetBird's exit-node-functie past masquerade toe in nftables (<code>netbird-rt-postrouting</code>) zonder UI-toggle. Gebruik in plaats daarvan een Network Route (<code>Add Route</code>, range <code>0.0.0.0/0</code>, masquerade OFF) om het source-IP te behouden.</p>
+<p><strong>rdr naar 127.0.0.1 faalt op FreeBSD.</strong> Squid's NAT-lookup kan de oorspronkelijke bestemming niet ophalen bij een rdr naar loopback voor geforward verkeer. De error: <code>NAT lookup failed to locate original IPs</code>. Redirect naar het WAN-IP lost dit op, maar introduceert het return-pad-probleem.</p>
+<p><strong>iptables FORWARD-volgorde.</strong> libvirt (op de GNS3-host) injecteert een <code>REJECT</code>-regel in de FORWARD-chain. Gebruik altijd <code>-I FORWARD 1</code> in plaats van <code>-A FORWARD</code>. Zie <a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a>.</p>
+<p><strong>TPROXY routing-persistentie.</strong> <code>ip rule add fwmark 1 lookup 100</code> en <code>ip route add local 0.0.0.0/0 dev lo table 100</code> overleven geen reboot. Vastleggen via een systemd-unit of een netplan-hook.</p>
+<hr />
+<h2 id="gerelateerd">Gerelateerd<a class="headerlink" href="#gerelateerd" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../squid/">Squid: expliciete proxy</a>: de complementaire proxymodus op pop01</li>
+<li><a href="../identity-bridge/">Identity Bridge</a>: vereist het echte client-overlay-IP dat TPROXY behoudt</li>
+<li><a href="../../decisions/wpad-vs-transparent-proxy/">Beslissing: WPAD/PAC vs. transparante proxy</a>: de oorspronkelijke keuze (V17/V19)</li>
+<li><a href="../../decisions/managed-devices-scope/">Beslissing: scope beheerde Windows-apparaten</a>: de pivot naar endpoint-enforcement</li>
+<li><a href="../../findings/wt0-pf-rdr-limitation/">Bevinding: wt0 pf rdr-beperking</a>: de trigger voor het onderzoek</li>
+<li><a href="../../findings/iptables-forward-ordering/">Bevinding: iptables FORWARD-volgorde</a>: relevant voor de TPROXY iptables-configuratie</li>
+<li><a href="../../concepts/ssl-bump/">Concept: SSL Bump</a>: gedeelde CA-keten tussen beide Squids</li>
+<li><a href="../../testing/transparent-proxy-tests/">Testblok: transparante proxy en enforcement</a>: de diagnostische tests en de managed-device-variant</li>
+<li><a href="../../runbooks/03-proxy-wpad/">Runbook 03: Proxy &amp; WPAD</a>: operationele instructies voor de expliciete proxy</li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Terug naar boven
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2025-2026 Arne Van Den Abbeele — Licensed under Apache 2.0
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "search.highlight", "search.suggest", "search.share", "content.code.copy", "content.tooltips", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Gekopieerd naar klembord", "clipboard.copy": "Kopi\u00ebren naar klembord", "search.result.more.one": "1 extra overeenkomst op deze pagina", "search.result.more.other": "# extra overeenkomsten op deze pagina", "search.result.none": "Geen overeenkomende documenten", "search.result.one": "1 overeenkomende document", "search.result.other": "# overeenkomende documenten", "search.result.placeholder": "Typ om te beginnen met zoeken", "search.result.term.missing": "Ontbreekt", "select.version": "Selecteer versie"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

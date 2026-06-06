@@ -219,5 +219,7 @@ NetBird is zowel producer als doelwit voor NATS-gestuurde handhaving:
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)
 - [Wazuh](wazuh.md)
+- [Component: Cosmos](cosmos.nl.md) — parallel-stack applicatie-admissielaag bovenop NetBird
+- [Component: Transparante proxy](transparent-proxy.nl.md) — parallel-stack capture van overlay-verkeer
 - [Concept: Identity Flow](../concepts/identity-flow.md)
 - [Runbook: Access Policy](../runbooks/07-access-policy.md)

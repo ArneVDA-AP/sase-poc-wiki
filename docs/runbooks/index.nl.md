@@ -43,6 +43,10 @@ Stapsgewijze handleidingen voor het opbouwen van de SASE PoC-stack van nul af aa
 | 10 | [NATS JetStream](10-nats-jetstream.nl.md) | mgmt01 + pop01 | Operationeel | Event bus, producers, Control Daemon, Redis |
 | 11 | [Wazuh](11-wazuh.nl.md) | mgmt01 + pop01 | Operationeel | SIEM-stack, NATS-forwarder, M365 Active Response |
 | 12 | [Intune Endpoint](12-intune-endpoint.nl.md) | Entra ID + Intune | Geïmplementeerd | Certificaat, afgedwongen PAC, firewall-block-set, Teams-QoS, split-tunnel-Remediation; SITE01-enrollment |
+| 13 | [Cosmos](13-cosmos.nl.md) | dc01 (parallelle stack) | PoC | Cosmos-install en per-app MFA (parallelle stack) |
+| 14 | [Zeek/RITA](14-zeek-rita.nl.md) | mgmt01 (parallelle stack) | PoC | Hub/GRE-setup, Zeek-cluster, RITA-beacon-analyse (parallelle stack) |
+| 15 | [RITA naar RPZ](15-rita-rpz-integration.nl.md) | mgmt01 + pop01 (parallelle stack) | PoC | Geautomatiseerde RITA naar ioc2rpz naar BIND naar Unbound-feed (parallelle stack) |
+| 16 | [Telemetry](16-telemetry.nl.md) | mgmt01 (parallelle stack) | PoC | Grafana / Prometheus / Loki-stack deployen (parallelle stack) |
 
 ## Afhankelijkheidsgraph
 

@@ -136,6 +136,7 @@ Additionally, Squid integrates with the [Identity Bridge](identity-bridge.md) vi
 - [Finding: pre-auth ssl-bump params](../findings/pre-auth-ssl-bump-params.md)
 - [Finding: Squid clearlog destroys file](../findings/squid-clearlog-destroys-file.md)
 - [Finding: StevenBlack incompatible](../findings/stevenblack-incompatible.md)
+- [Component: Transparent Proxy](transparent-proxy.md) — parallel-stack TPROXY capture for traffic that ignores the explicit proxy
 - [Identity Bridge](identity-bridge.md)
 - [NATS JetStream](nats-jetstream.md)
 - [Control Daemon](control-daemon.md)

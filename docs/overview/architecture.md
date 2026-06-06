@@ -175,6 +175,8 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 
 **Why Suricata is NOT in the ICAP pipeline:** Suricata is a packet-flow engine that reassembles TCP streams and correlates patterns across connections. An HTTP body delivered via ICAP loses that context. The split is architecturally fundamental, not a PoC limitation. See [Decision: Suricata WAN+LAN](../decisions/suricata-wan-lan.md).
 
+**Parallel-stack hook (not yet integrated):** Two parallel-stack PoCs extend this pipeline conceptually but run on a separate topology, not in the sandbox. [Zeek](../components/zeek.md) + [RITA](../components/rita.md) add a *behavioral* detection layer that complements signature-based Layer 4 (Suricata): Zeek turns raw flows into structured logs and RITA mines them for beaconing and C2-over-DNS, surfacing suspicious domains that feed back into [Unbound RPZ](../components/ioc2rpz.md) (see [Decision: RITA→RPZ feed](../decisions/rita-rpz-automation.md)). The [transparent proxy](../components/transparent-proxy.md) adds a network-layer capture point that intercepts *all* overlay traffic — including from apps that ignore the WPAD/PAC explicit-proxy setting — complementing Layer 1 rather than replacing it.
+
 ---
 
 ## 7. Component Map
@@ -197,6 +199,18 @@ Layers 1–3 are sequential on each HTTP transaction. Layer 4 runs in parallel o
 | Intune Endpoint Enforcement | [intune-endpoint-enforcement.md](../components/intune-endpoint-enforcement.md) | MDM endpoint config push (forced PAC, trusted-cert, firewall, DSCP, split-tunnel) | ✅ Operational |
 | Entra ID CA + Intune | [ca-posture-hybrid.md](../decisions/ca-posture-hybrid.md) | Context-aware access (Gates 1+2) | ✅ Operational |
 | M365 Activity API + Wazuh AR | [wazuh.md](../components/wazuh.md) | CASB Layer 2 — Office 365 Management Activity API detection | ✅ Detection operational; AR enforcement detect-only (live revoke pending) |
+
+### Parallel-stack components
+
+The rows below are PoC components built and validated on a separate parallel/SASE_POC topology, **not** integrated into the sandbox. They complement the sandbox stack but are not part of its current state; where their scope overlaps a sandbox component, the sandbox is the source of truth. See the hook notes in §6 and §9 for where each logically attaches.
+
+| Component | Page | Role | Status |
+|-----------|------|------|--------|
+| Transparent Proxy (TPROXY) | [transparent-proxy.md](../components/transparent-proxy.md) | Network-layer all-traffic capture for non-proxy-aware (BYOD) clients | 🟡 PoC-validated (parallel) — sandbox-integration pending |
+| Cosmos | [cosmos.md](../components/cosmos.md) | Identity-aware application-admission gateway (per-app login + MFA) | 🟡 PoC-validated (parallel) — sandbox-integration pending |
+| Zeek | [zeek.md](../components/zeek.md) | Passive network sensor — structured protocol logs for behavioral analysis | 🟡 PoC-validated (parallel) — sandbox-integration pending |
+| RITA | [rita.md](../components/rita.md) | Behavioral threat analytics (beaconing, C2-over-DNS) feeding RPZ | 🟡 PoC-validated (parallel) — sandbox-integration pending |
+| Telemetry Stack (Grafana + Prometheus + Loki) | [telemetry-stack.md](../components/telemetry-stack.md) | Complementary observability layer alongside Wazuh | 🟡 PoC-validated (parallel) — sandbox-integration pending |
 
 ---
 
@@ -243,6 +257,8 @@ Detection silos (producers)
 ```
 
 The dual-write architecture ensures detection events are available for both real-time response (control daemon) and forensic investigation (Wazuh) independently. Neither path depends on the other.
+
+**Parallel-stack hook (not yet integrated):** Two further parallel-stack PoCs sit alongside this layer without being wired into the NATS bus. [Cosmos](../components/cosmos.md) adds an *application-admission* gate in front of internal DC services (per-application login + MFA on top of NetBird's network admission), enforcing at the application layer rather than reacting to events. The [telemetry stack](../components/telemetry-stack.md) (Grafana + Prometheus + Loki) is a complementary observability layer next to [Wazuh](../components/wazuh.md): Wazuh remains the source of truth for security alerting, while the telemetry stack aggregates metrics and logs into a single dashboard for the PoC environment.
 
 ---
 

@@ -32,18 +32,26 @@ One tag per distinct tool or system component.
 | `caddy` | Caddy — WPAD server, TLS terminator, reverse proxy on mgmt01 |
 | `clamav` | ClamAV — malware scanner and DLP layer 1 engine on pop01 |
 | `control-daemon` | Control Daemon — threat scoring + real-time quarantine via NetBird API on mgmt01 |
+| `cosmos` | Cosmos — identity-aware application gateway with per-app MFA (parallel-stack PoC) |
 | `docker` | Docker / Docker Compose — container runtime on mgmt01 |
+| `gns3` | GNS3 — lab virtualization platform (nested QEMU/KVM on Proxmox) |
+| `grafana` | Grafana — telemetry dashboards in the observability layer (parallel-stack PoC) |
 | `identity-bridge` | Identity Bridge — FastAPI service mapping overlay IPs to Entra ID persona groups on mgmt01 |
 | `ioc2rpz` | ioc2rpz — RPZ zone aggregator on mgmt01 |
+| `loki` | Loki — log aggregation backend in the observability layer (parallel-stack PoC) |
 | `nats-jetstream` | NATS JetStream — central event bus connecting detection silos on mgmt01 |
 | `netbird` | NetBird — WireGuard-based ZTNA overlay (includes Zitadel, Entra ID) |
 | `opnsense` | OPNsense 25.1 — firewall OS on pop01 |
+| `prometheus` | Prometheus — metrics collection in the observability layer (parallel-stack PoC) |
 | `python` | Python ICAP server — upload DLP layer 2 on mgmt01 |
 | `redis` | Redis — threat score store + session state for control daemon on mgmt01 |
+| `rita` | RITA — beaconing / C2 behavioral analysis over Zeek logs, feeding RPZ (parallel-stack PoC) |
+| `smartshield` | SmartShield — Cosmos's adaptive WAF / anti-bot enforcement engine (parallel-stack PoC) |
 | `squid` | Squid 6.x — explicit HTTP/HTTPS proxy on pop01 |
 | `suricata` | Suricata 7.x — IDS on pop01 WAN + LAN interfaces |
 | `unbound` | Unbound — DNS resolver with RPZ enforcement on pop01 |
 | `wazuh` | Wazuh v4.14.5 — SIEM with NATS forwarder + M365 Active Response on mgmt01 |
+| `zeek` | Zeek — network security monitor for protocol analysis and behavioral logging (parallel-stack PoC) |
 | `zitadel` | Zitadel — OIDC IdP broker between NetBird and Entra ID on mgmt01 |
 
 ---
@@ -54,18 +62,23 @@ One tag per distinct tool or system component.
 |-----|---------|
 | `dns` | Domain Name System — resolution, zones, threat intelligence |
 | `firewall` | Packet-filtering firewall (OPNsense pf) |
+| `gre` | Generic Routing Encapsulation — tunnel carrying mirrored traffic to Zeek (parallel-stack PoC) |
 | `icap` | Internet Content Adaptation Protocol — proxy inspection offload |
 | `ids` | Intrusion Detection System mode (PCAP, alert-only) |
 | `ips` | Intrusion Prevention System mode (inline, drop-capable) |
+| `mfa` | Multi-factor authentication — per-app challenge enforced by Cosmos (parallel-stack PoC) |
 | `multipart` | `multipart/form-data` encoding — upload body parsing |
 | `network` | General networking topics: routing, interfaces, segments |
 | `pac` | Proxy Auto-Configuration — the JavaScript PAC file format |
 | `proxy` | HTTP/HTTPS proxy — explicit or transparent |
 | `reqmod` | ICAP REQMOD — request-side content adaptation |
 | `respmod` | ICAP RESPMOD — response-side content adaptation |
+| `reverse-proxy` | Reverse proxy — front-end gateway terminating client connections (Cosmos, Caddy) |
 | `rpz` | DNS Response Policy Zones — DNS-level domain blocking |
 | `ssl-bump` | Squid SSL Bump — HTTPS interception via on-the-fly CA |
+| `telemetry` | Telemetry / observability — metrics, logs, dashboards (Grafana + Prometheus + Loki) |
 | `tls` | TLS/SSL — encryption, certificates, trust stores |
+| `tproxy` | Transparent proxy (TPROXY) — kernel-level interception for all-traffic capture |
 | `wpad` | Web Proxy Auto-Discovery — browser proxy configuration protocol |
 
 ---
@@ -90,6 +103,10 @@ One tag per distinct tool or system component.
 | Tag | Concept |
 |-----|---------|
 | `antivirus` | Signature-based malware detection (ClamAV databases) |
+| `application-gateway` | Reverse proxy with identity gate and MFA as an application-admission layer |
+| `beaconing` | Periodic callback pattern of compromised hosts contacting C2 infrastructure |
+| `behavioral-analysis` | Beaconing / C2 detection by behavior rather than signature (RITA over Zeek logs) |
+| `c2` | Command-and-control — attacker infrastructure that compromised hosts beacon to |
 | `casb` | Cloud Access Security Broker — three-layer enforcement (inline, API, real-time) |
 | `dlp` | Data Loss Prevention — detecting and blocking sensitive data exfiltration |
 | `fwaas` | Firewall as a Service — OPNsense + Suricata IDS |

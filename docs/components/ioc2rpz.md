@@ -229,6 +229,8 @@ DNS RPZ block events are published to the NATS event bus via `security.alert.dns
 - [Concept: RPZ / DNS Threat Intelligence](../concepts/rpz.md)
 - [Decision: ioc2rpz vs Unbound native](../decisions/ioc2rpz-vs-unbound-native.md)
 - [Decision: BIND as TSIG intermediary](../decisions/bind-tsig-intermediary.md)
+- [Decision: RITA→RPZ feed](../decisions/rita-rpz-automation.md) — parallel-stack behavioral domains as a third RPZ feed
+- [Component: RITA](rita.md) — parallel-stack source of beacon-derived RPZ domains
 - [Finding: Unbound no TSIG](../findings/unbound-no-tsig.md)
 - [Finding: Unbound config path](../findings/unbound-config-path.md)
 - [Finding: ioc2rpz GUI JS bug](../findings/ioc2rpz-gui-js-bug.md)

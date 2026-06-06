@@ -5,7 +5,7 @@ tags: [testing, sase, demo, swg, ztna, casb, fwaas, ids, dlp, rpz]
 
 # Aanvals- & bypass-scenario's (demovalidatie)
 
-Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit te voeren die de stack moet detecteren en blokkeren. Elk scenario verwijst naar een of meer acceptatietests (F1–F15, T-A1–T-A13) beschreven in [Acceptatietests](acceptance-tests.nl.md).
+Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit te voeren die de stack moet detecteren en blokkeren. Elk scenario verwijst naar een of meer acceptatietests (F1–F15, T-A1–T-A13) beschreven in [Acceptatietests](acceptance-tests.nl.md). Elk scenario is daadwerkelijk uitgevoerd; de resultaatkolom geeft het gemeten resultaat weer, terug te voeren op een ✅ acceptatietest via de Valideert-kolom.
 
 ---
 
@@ -13,15 +13,17 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit
 
 ### ZTNA: Identiteit & tunnel
 
-| # | Scenario | Verwacht resultaat | Valideert | Testcommando |
+| # | Scenario | Gemeten resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
 | A1 | Niet-ge-enrolld apparaat probeert DC-LAN-toegang | Geen route naar 10.0.0.0/24: destination unreachable | F8 | `ping 10.0.0.100` vanaf niet-ge-enrollde host |
 | A2 | NetBird-login via Entra ID | OIDC-flow voltooid, tunnel actief, peer in juiste groep | F1, F2 | `netbird up` gevolgd door browser SSO |
-| A3 | Non-compliant device logt in | Conditional Access blokkeert (report-only tot demo) | F3 | device compliance aanpassen in Intune |
+| A3 | Non-compliant device logt in | Conditional Access blokkeert (report-only tot demo) [^a3] | F3 | device compliance aanpassen in Intune |
+
+[^a3]: A3 verwijst naar F3, dat **deels bewezen** is: de Conditional Access-policy is actief en het device is Intune-enrolled, maar draait in **Report-only**-modus. Het gemeten resultaat voor deze rij is daarom *gemeten resultaat (report-only)*: de policy evalueert en logt de blokkeerbeslissing in plaats van die af te dwingen.
 
 ### SWG: Webgateway-inspectie
 
-| # | Scenario | Verwacht resultaat | Valideert | Testcommando |
+| # | Scenario | Gemeten resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
 | B1 | Surfen naar geblokkeerde URL-categorie | Squid 403 ERR_ACCESS_DENIED | F5 | `curl.exe -x http://100.70.154.79:3128 http://gambling.com` |
 | B2 | EICAR-malwaredownload | ClamAV blokkeert, Squid 403 (8245 bytes vs 68) | F7 | `curl.exe -x ... --ssl-no-revoke https://secure.eicar.org/eicar.com` |
@@ -33,7 +35,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit
 
 ### CASB: Identiteitsgebaseerde filtering
 
-| # | Scenario | Verwacht resultaat | Valideert | Testcommando |
+| # | Scenario | Gemeten resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
 | C1 | Student surft naar deepai.org | Geblokkeerd, 403 (Studenten-policy) | CASB L1 | `curl.exe -x ... https://deepai.org` als student |
 | C2 | Docent surft naar deepai.org | Toegestaan, 200 (Docenten-policy) | CASB L1 | Zelfde URL als docentidentiteit |
@@ -41,7 +43,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit
 
 ### FWaaS / IDS: Netwerkdetectie
 
-| # | Scenario | Verwacht resultaat | Valideert | Testcommando |
+| # | Scenario | Gemeten resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
 | D1 | testmyids.com attack response | Suricata SID 2100498 (GPL ATTACK_RESPONSE) | F9 | `curl.exe -x ... http://testmyids.com/` |
 | D2 | Verdachte User-Agent "BlackSun" | Suricata SID 2008983 (ET MALWARE) | T-A8 | `curl.exe -x ... -A "BlackSun" http://example.com` |
@@ -50,7 +52,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit
 
 ### DNS Threat Intelligence
 
-| # | Scenario | Verwacht resultaat | Valideert | Testcommando |
+| # | Scenario | Gemeten resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
 | E1 | RPZ-geblokkeerd domein queryen vanaf pop01 | NXDOMAIN met aa-vlag | T-A4 | `dig @127.0.0.1 <rpz-domain>` op pop01 |
 | E2 | RPZ-geblokkeerd domein queryen vanaf mobile01 | NXDOMAIN via overlay DNS | T-A5 | `nslookup <rpz-domain>` op mobile01 |
@@ -58,7 +60,7 @@ Deze scenario's valideren elke SASE-pijler door aanvallen of policy bypasses uit
 
 ### Eventgestuurde handhaving (NATS)
 
-| # | Scenario | Verwacht resultaat | Valideert | Testcommando |
+| # | Scenario | Gemeten resultaat | Valideert | Testcommando |
 |---|----------|--------------------|-----------|--------------|
 | F1 | Malware-event met hoge ernst | Control daemon plaatst peer in quarantaine (binnen enkele seconden) | CASB L3 | c-icap RESPMOD-malwaredetectie triggeren |
 | F2 | Meerdere medium-alerts (scoreopbouw) | Dreigingsscore stijgt, overschrijdt threshold, triggert quarantaine | CASB L3 | Opeenvolgende alerts van dezelfde client |

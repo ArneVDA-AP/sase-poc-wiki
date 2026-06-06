@@ -36,6 +36,11 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [Wazuh](components/wazuh.md) | SIEM: NATS-forwarder + pop01-agent + M365 Active Response |
 | [Zitadel](components/zitadel.md) | OIDC IdP-broker: Entra ID → JWT group sync → NetBird |
 | [Intune Endpoint Enforcement](components/intune-endpoint-enforcement.md) | MDM-config-push naar het endpoint: afgedwongen PAC, trusted-cert, firewall-block-set, DSCP/QoS, split-tunnel-routes |
+| [Transparante Proxy](components/transparent-proxy.md) | Transparante (TPROXY) interceptie op linuxpop01 voor all-traffic capture (parallel-stack PoC). |
+| [Cosmos](components/cosmos.md) | Identity-aware application gateway met per-app MFA (parallel-stack PoC). |
+| [Zeek](components/zeek.md) | Network security monitor voor protocol-analyse en behavioral logging (parallel-stack PoC). |
+| [RITA](components/rita.md) | Beaconing / C2 behavioral analysis over Zeek-logs, voedt RPZ (parallel-stack PoC). |
+| [Telemetry Stack](components/telemetry-stack.md) | Grafana + Prometheus + Loki observability-laag (parallel-stack PoC). |
 | **Concepten** | |
 | [SASE](concepts/sase.md) | Vijf SASE-pijlers; onze open-source invulling; commerciële equivalenten |
 | [Zero Trust](concepts/zero-trust.md) | Drie-gate model; never trust always verify; Gates 1–3 |
@@ -45,6 +50,8 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [RPZ](concepts/rpz.md) | DNS Response Policy Zones; zone-transferketen; NXDOMAIN-handhaving |
 | [DLP](concepts/dlp.md) | Twee-laags DLP; algoritmische validatie vs patroonherkenning; upload vs download |
 | [Identiteitsstroom](concepts/identity-flow.md) | Volledige identiteitsketen: Entra ID → Zitadel → NetBird → Identity Bridge → Squid |
+| [Application Gateway](concepts/application-gateway.md) | Reverse proxy met identity gate en MFA als application-admission-laag. |
+| [Behavioral Analysis](concepts/behavioral-analysis.md) | Beaconing / C2-detectie op gedrag in plaats van signature. |
 | **Beslissingen** | |
 | [WPAD/PAC vs Transparante Proxy](decisions/wpad-vs-transparent-proxy.md) | Waarom expliciete proxy (pf rdr werkt niet op wt0) |
 | [Twee-laags DLP](decisions/two-layer-dlp.md) | ClamAV (downloads) + Python DLP (uploads), multipart-parseerprobleem |
@@ -63,6 +70,10 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [Beheerde apparaten scope](decisions/managed-devices-scope.md) | BYOD naar beheerde Windows-apparaten (lectoraatmandaat R11) |
 | [ZT SD-WAN Branch](decisions/zt-sdwan-branch.md) | Zero Trust Branch vervangt klassieke IPsec SD-WAN |
 | [Control Daemon scope](decisions/control-daemon-scope.md) | IDS-correlatie + proxy_block verwijderd uit threat scoring |
+| [Cosmos Two-Layer ZTNA](decisions/cosmos-two-layer-ztna.md) | Waarom NetBird (device) plus Cosmos (application) twee ZTNA-lagen vormen. |
+| [Hub vs Switch Visibility](decisions/hub-vs-switch-visibility.md) | Waarom een GNS3 Hub (geen Switch) voor volledige traffic-visibility naar Zeek. |
+| [RITA RPZ Automation](decisions/rita-rpz-automation.md) | RITA-beacons als derde dynamische RPZ-threat-intel-feed. |
+| [Grafana vs Custom UI](decisions/grafana-vs-custom-ui.md) | Waarom Grafana boven een custom React-UI voor telemetry. |
 | **Bevindingen** | |
 | [wt0 pf rdr beperking](findings/wt0-pf-rdr-limitation.md) | WireGuard Laag 3: pf rdr kan niet onderscheppen op wt0 |
 | [pre-auth ssl-bump parameters](findings/pre-auth-ssl-bump-params.md) | Kale http_port zonder ssl-bump = geen inspectie op overlay-listener |
@@ -89,10 +100,15 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [Wazuh dashboard airgate](findings/wazuh-dashboard-airgate.md) | Dashboard Offline door lege UUID na down -v, opgelost via in-place 4.14.5 GA bump |
 | [NetBird JWT allow-groups lockout](findings/netbird-jwt-allow-groups-lockout.md) | JWT allow-groups inschakelen kan alle gebruikers buitensluiten bij verkeerde configuratie |
 | [DC-LAN isolatie route ACL](findings/dc-lan-isolation-route-acl.md) | NetBird Networks + ACL vereist voor DC-LAN-isolatie |
+| [Cosmos hostname/OAuth-limiet](findings/cosmos-hostname-oauth.md) | Hostname-op-IP beperkt Cosmos cross-domain OAuth/SSO. |
+| [DC-segment mirror-limiet](findings/dc-segment-mirror-limit.md) | FreeBSD kan niet kernel-mirroren; DC-binnensegment-visibility is partieel. |
+| [VyOS GRE two-step commit](findings/vyos-gre-two-step-commit.md) | VyOS GRE-tunnel en mirror vereisen twee aparte commits. |
+| [RFC3164 vs RFC5424 syslog](findings/rfc3164-vs-rfc5424-syslog.md) | Apparaten sturen RFC3164, tools verwachten RFC5424; rsyslog-relay overbrugt dit. |
 | **Testen** | |
 | [Acceptatietests (F1–F15)](testing/acceptance-tests.nl.md) | Volledige F1–F15-statustabel, testcommando's, werkelijke output, dekking per pijler, geplande tests |
 | [Aanvals- en bypass-scenario's](testing/attack-scenarios.nl.md) | Demovalidatie-scenario's per SASE-pijler: ZTNA, SWG, CASB, FWaaS/IDS, DNS, NATS-handhaving |
 | [Demo-script (per rubric)](testing/demo-script.nl.md) | Interactief presentatiescript dat elk rubric-criterium koppelt aan test, bewijs, screencap en voiceover |
+| [Testblok Transparante Proxy](testing/transparent-proxy-tests.nl.md) | T-TP / T-ME-validatie van de transparent-proxy-diagnostiek en managed enforcement. |
 | **Runbooks** | |
 | [Runbook-overzicht](runbooks/index.md) | Bouwvolgorde, afhankelijkheidsgraph, stapsgewijze handleidingen |
 | [01: Labomgeving](runbooks/01-lab-environment.md) | Proxmox VM, GNS3 Server, topologie, IP-adressering, snapshots |
@@ -106,6 +122,10 @@ policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 | [09: Identity Bridge](runbooks/09-identity-bridge.md) | FastAPI overlay-IP → persona-groep, Squid external_acl |
 | [10: NATS JetStream](runbooks/10-nats-jetstream.md) | Event bus, producers, Control Daemon, Redis |
 | [11: Wazuh](runbooks/11-wazuh.md) | SIEM-stack, NATS-forwarder, M365 Active Response |
+| [13: Cosmos](runbooks/13-cosmos.md) | Cosmos-install en per-app MFA (parallelle stack). |
+| [14: Zeek/RITA](runbooks/14-zeek-rita.md) | Hub/GRE-setup, Zeek-cluster, RITA-beacon-analyse (parallelle stack). |
+| [15: RITA naar RPZ](runbooks/15-rita-rpz-integration.md) | Geautomatiseerde RITA naar ioc2rpz naar BIND naar Unbound-feed (parallelle stack). |
+| [16: Telemetry](runbooks/16-telemetry.md) | Grafana / Prometheus / Loki-stack deployen (parallelle stack). |
 
 ---
 
