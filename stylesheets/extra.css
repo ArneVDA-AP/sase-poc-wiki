@@ -1,7 +1,15 @@
-.md-tabs__list li:last-child {
+/* The two interactive-demo tabs (Leerplatform + Pakketflow) are the last two
+   nav items: pushed to the right of the tab bar, bordered, each with its own
+   icon. Styling is positional, so their order in mkdocs.yml `nav` matters. */
+
+.md-tabs__list li:nth-last-child(2) {
   margin-left: auto;
 }
+.md-tabs__list li:last-child {
+  margin-left: 6px;
+}
 
+.md-tabs__list li:nth-last-child(2) .md-tabs__link,
 .md-tabs__list li:last-child .md-tabs__link {
   font-weight: 700;
   border: 1px solid #fff;
@@ -9,6 +17,7 @@
   padding: 4px 12px;
 }
 
+.md-tabs__list li:nth-last-child(2) .md-tabs__link::before,
 .md-tabs__list li:last-child .md-tabs__link::before {
   content: "";
   display: inline-block;
@@ -16,5 +25,10 @@
   height: 16px;
   margin-right: 6px;
   vertical-align: -2px;
+}
+.md-tabs__list li:nth-last-child(2) .md-tabs__link::before {
   background: url("educational-platform.svg") no-repeat center / contain;
+}
+.md-tabs__list li:last-child .md-tabs__link::before {
+  background: url("packet-flow.svg") no-repeat center / contain;
 }
