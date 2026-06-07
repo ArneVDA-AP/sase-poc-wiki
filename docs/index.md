@@ -20,6 +20,11 @@ A guided, animated walkthrough of the SASE data flow — four tours plus per-com
 exploration, with playback, zoom/pan, and adjustable node spacing. Runs fully standalone in a
 new tab.
 
+[:material-vector-polyline: Open the packet-flow walkthrough &nearr;](demos/pakketflow.html){ .md-button .md-button--primary target=_blank }
+
+A per-path walkthrough of all 52 packet flows, hop by hop (interface, port, protocol, state),
+each linked to the SASE rubric criteria it evidences. Opens standalone in a new tab.
+
 ## Catalog
 
 | Page | Summary |

@@ -20,6 +20,12 @@ Een geleide, geanimeerde rondleiding door de SASE-dataflow: vier tours plus verk
 component, met afspelen, zoom/pan en regelbare ruimte tussen nodes. Draait volledig standalone
 in een nieuw tabblad.
 
+[:material-vector-polyline: Open de pakketflow-walkthrough &nearr;](demos/pakketflow.html){ .md-button .md-button--primary target=_blank }
+
+Een walkthrough per pakketpad van alle 52 flows, hop per hop (interface, poort, protocol,
+status), elk gekoppeld aan de SASE-rubriekcriteria die het aantoont. Opent standalone in een
+nieuw tabblad.
+
 ## Catalogus
 
 | Pagina | Samenvatting |

@@ -60,6 +60,8 @@ plugins:
           build: true
           nav_translations:
             Home: Startpagina
+            Leerplatform: Leerplatform
+            Pakketflow: Pakketflow
             Architecture: Architectuur
             Components: Componenten
             Concepts: Concepten
@@ -294,6 +296,11 @@ nav:
     - VyOS GRE two-step commit: findings/vyos-gre-two-step-commit.md
     - RFC3164 vs RFC5424 syslog: findings/rfc3164-vs-rfc5424-syslog.md
   - Tags: tags.md
+  - Leerplatform: demos/leerplatform.html
+  - Pakketflow: demos/pakketflow.html
+
+extra_css:
+  - stylesheets/extra.css
 
 extra:
   social:
