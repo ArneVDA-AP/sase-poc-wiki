@@ -14,6 +14,12 @@ Deze wiki documenteert de implementatie van een SASE (Secure Access Service Edge
 Een interactief end-to-end-diagram van de SASE PoC: elke component, verkeersstroom en
 policy-beslissingspunt. Opent full-width in een nieuw tabblad.
 
+[:material-play-box-multiple: Open het leerplatform &nearr;](demos/leerplatform.html){ .md-button .md-button--primary target=_blank }
+
+Een geleide, geanimeerde rondleiding door de SASE-dataflow: vier tours plus verkenning per
+component, met afspelen, zoom/pan en regelbare ruimte tussen nodes. Draait volledig standalone
+in een nieuw tabblad.
+
 ## Catalogus
 
 | Pagina | Samenvatting |

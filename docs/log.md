@@ -528,3 +528,25 @@ parallel-stack block + §6 / §9 hook notes), 10 bidirectional back-links.
 consolidated fix pass → two registration agents → build. All facts audits PASS (no factual errors); credentials
 redacted from the Cosmos runbook. `mkdocs build` clean (EN + NL, no broken links). Sources: raw/teamdocs (Rayan
 Cosmos / Zeek-RITA / Telemetry, Verslag07; Marnix TransProxy_Verslag02, Verslag37; V41). No `raw/` files modified.
+
+---
+
+## 2026-06-07 — Interactive learning platform (standalone data-flow walkthrough)
+
+**Goal:** Add the animated SASE data-flow learning platform as a permanent, self-contained part of the wiki —
+a guided walkthrough that runs entirely in the browser with no external dependencies, so it survives intact
+regardless of any tooling changes.
+
+**Files added:**
+- `demos/leerplatform.html` — single-file build (490 KB) of the data-flow learning platform: four guided
+  tours (Oriëntatie, Ontwerpkeuzes, Bewijs & Integratie, Verdediging) plus per-component exploration, with
+  playback controls, zoom/pan, and adjustable node spacing. All JS/CSS and the baked tour graph are inlined;
+  zero network requests.
+
+**Files updated:**
+- `index.md` / `index.nl.md` — added a second homepage button ("Open the learning platform" / "Open het
+  leerplatform") alongside the functional-schema button.
+
+**Build:** Source is a standalone Vite project (React 19 + inline SVG) kept in the project repo at
+`flow-standalone/`; the baked tour snapshot decouples it from the dashboard's graph pipeline. `mkdocs build`
+clean (EN + NL); the demo resolves under the shared `demos/` root for both locales. No `raw/` files modified.

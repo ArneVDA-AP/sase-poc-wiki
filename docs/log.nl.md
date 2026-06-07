@@ -371,3 +371,26 @@ parallel-stack-blok + §6 / §9 hook-notes), 10 bidirectionele back-links.
 credentials geredacteerd uit de Cosmos-runbook. `mkdocs build` schoon (EN + NL, geen broken links). Bronnen:
 raw/teamdocs (Rayan Cosmos / Zeek-RITA / Telemetry, Verslag07; Marnix TransProxy_Verslag02, Verslag37; V41).
 Geen `raw/`-bestanden gewijzigd.
+
+---
+
+## 2026-06-07: Interactief leerplatform (standalone data-flow-rondleiding)
+
+**Doel:** Het geanimeerde SASE-data-flow-leerplatform als permanent, self-contained onderdeel aan de wiki
+toevoegen — een geleide rondleiding die volledig in de browser draait zonder externe afhankelijkheden, zodat
+ze intact blijft ongeacht wijzigingen in de tooling.
+
+**Bestanden toegevoegd:**
+- `demos/leerplatform.html` — single-file build (490 KB) van het data-flow-leerplatform: vier geleide tours
+  (Oriëntatie, Ontwerpkeuzes, Bewijs & Integratie, Verdediging) plus verkenning per component, met
+  afspeelknoppen, zoom/pan en regelbare ruimte tussen nodes. Alle JS/CSS en de gebakken tour-graph zijn
+  inline; nul netwerkverzoeken.
+
+**Bestanden gewijzigd:**
+- `index.md` / `index.nl.md` — tweede homepage-knop ("Open the learning platform" / "Open het leerplatform")
+  toegevoegd naast de functioneel-schema-knop.
+
+**Build:** De bron is een standalone Vite-project (React 19 + inline SVG) in de project-repo onder
+`flow-standalone/`; de gebakken tour-snapshot ontkoppelt ze van de graph-pipeline van het dashboard.
+`mkdocs build` schoon (EN + NL); de demo resolvet voor beide locales onder de gedeelde `demos/`-root.
+Geen `raw/`-bestanden gewijzigd.
